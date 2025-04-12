@@ -38,3 +38,37 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+
+
+# Deployment/Dev notes
+
+Docker:
+```bash
+docker compose build --no-cache
+docker compose logs backend
+docker compose up --no-cache
+docker compose down
+```
+In frontend:
+```bash
+npm run dev
+NODE_OPTIONS='--inspect' npm run dev
+DEBUG=* npm run dev
+```
+
+In backend:
+```bash
+npm start
+```
+Postgres:
+```bash
+psql -h localhost -p 5432 -U user -d vhsdb -W -c "CREATE DATABASE my_app_db;"
+
+psql -h localhost -p 5432 -U user -d vhsdb -W -c "\nCREATE TABLE users (\n  id SERIAL PRIMARY KEY,\n  username VARCHAR(50) UNIQUE NOT NULL,\n  email VARCHAR(100) UNIQUE NOT NULL,\n  password VARCHAR(255) NOT NULL,\n  created_at TIMESTAMP DEFAULT NOW()\n);"
+```
+
+Clean cache:
+```bash
+npm cache clean --force
+rm -rf frintend/.next
+```
