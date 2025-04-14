@@ -84,6 +84,9 @@ vhsdb=# CREATE TABLE users (
 
 Clean cache:
 ```bash
-npm cache clean --force
-rm -rf frintend/.next
+cd ~/sites/vhs && npm cache clean --force
+cd ~/sites/vhs/frontend && npm cache clean --force
+cd ~/sites/vhs/backend && npm cache clean --force
+
+cd ~/sites/vhs/frontend &&  rm -rf frontend/.next
 ```

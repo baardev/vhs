@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
@@ -31,17 +31,7 @@ export default function Profile() {
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      router.push('/login');
-      return;
-    }
-
-    fetchUserProfile(token);
-  }, [router]);
-
-  const fetchUserProfile = async (token: string) => {
+  const fetchUserProfile = useCallback(async (token: string) => {
     try {
       const response = await axios.get('http://localhost:4000/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` }
@@ -56,7 +46,17 @@ export default function Profile() {
       localStorage.removeItem('token');
       router.push('/login');
     }
-  };
+  }, [router]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      router.push('/login');
+      return;
+    }
+
+    fetchUserProfile(token);
+  }, [router, fetchUserProfile]);
 
   const handleUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -79,12 +79,16 @@ export default function Profile() {
       setUser(response.data);
       setSuccess('Profile updated successfully!');
       setIsEditing(false);
-    } catch (err: any) {
-      setError(
-        err.response?.data?.error ||
-        err.response?.data?.errors?.[0]?.msg ||
-        'Failed to update profile.'
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error ||
+          error.response?.data?.errors?.[0]?.msg ||
+          'Failed to update profile.'
+        );
+      } else {
+        setError('Failed to update profile.');
+      }
     }
   };
 
@@ -111,7 +115,8 @@ export default function Profile() {
 
       localStorage.removeItem('token');
       router.push('/login');
-    } catch (err: any) {
+    } catch (error: unknown) {
+      console.error('Error deleting account:', error);
       setError('Failed to delete account.');
     }
   };

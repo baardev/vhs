@@ -3,6 +3,8 @@ import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
+import newsRouter from './routes/news';
+
 
 // Load environment variables
 dotenv.config();
@@ -21,6 +23,10 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Route handlers
+
+app.use('/api', newsRouter);
+
+
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req: Request, res: Response) => {
