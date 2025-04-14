@@ -114,9 +114,12 @@ export default function Home() {
         </div>
       </main>
 
-      <div className="row-start-3 flex space-x-4 justify-center">
-        <button onClick={() => changeLanguage('en')} className="bg-blue-500 text-white px-4 py-2 rounded-md">English</button>
-        <button onClick={() => changeLanguage('es')} className="bg-blue-500 text-white px-4 py-2 rounded-md ml-2">Español</button>
+      <div className="row-start-3 flex flex-wrap space-x-3 justify-center">
+        <button onClick={() => changeLanguage('en')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">English</button>
+        <button onClick={() => changeLanguage('es')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Español</button>
+        <button onClick={() => changeLanguage('he')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">עברית</button>
+        <button onClick={() => changeLanguage('ru')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Русский</button>
+        <button onClick={() => changeLanguage('zh')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">中文</button>
       </div>
 
       <footer className="row-start-4 flex gap-[24px] flex-wrap items-center justify-center">
