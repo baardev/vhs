@@ -5,7 +5,7 @@ import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
-import GolfNewsCarousel from '../components/GolfNewsCarousel';
+import GolfNewsHeadlines from '../components/GolfNewsHeadlines';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -109,7 +109,7 @@ export default function Home() {
 
           <div className="w-full md:w-1/2">
             <h2 className="text-2xl font-bold mb-6">Golf News</h2>
-            <GolfNewsCarousel />
+            <GolfNewsHeadlines />
           </div>
         </div>
       </main>

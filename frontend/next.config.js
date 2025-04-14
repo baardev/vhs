@@ -16,6 +16,15 @@ const nextConfig = {
     // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
+  // Add rewrites to direct API requests to the backend server
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://backend:4000/api/:path*', // This directs to your backend service
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig

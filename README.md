@@ -82,7 +82,8 @@ vhsdb=# CREATE TABLE users (
 
 ```
 
-Clean cache:
+Clean cache
+Client-side:
 ```bash
 cd ~/sites/vhs && npm cache clean --force
 cd ~/sites/vhs/frontend && npm cache clean --force
@@ -90,3 +91,6 @@ cd ~/sites/vhs/backend && npm cache clean --force
 
 cd ~/sites/vhs/frontend &&  rm -rf frontend/.next
 ```
+
+Server-side:
+docker-compose exec frontend rm -rf node_modules/.cache

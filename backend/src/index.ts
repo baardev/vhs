@@ -23,10 +23,10 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Route handlers
+// Mount news router at the correct path
+app.use('/', newsRouter);
 
-app.use('/api', newsRouter);
-
-
+// Other routes
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req: Request, res: Response) => {
