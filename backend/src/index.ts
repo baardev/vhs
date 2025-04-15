@@ -6,6 +6,7 @@ import authRoutes from './routes/auth';
 import newsRouter from './routes/news';
 import randomQuoteRouter from './routes/randomQuote';
 import testDbRouter from './routes/testDb';
+import coursesRouter from './routes/courses';
 
 
 // Load environment variables
@@ -36,6 +37,7 @@ app.use('/', newsRouter);
 
 // Other routes
 app.use('/api/auth', authRoutes);
+app.use('/api/courses', coursesRouter);
 app.use('/api', randomQuoteRouter);
 app.use('/api', testDbRouter);
 
@@ -50,6 +52,9 @@ app.get('/api', (req: Request, res: Response) => {
 app.get('/health', (req: Request, res: Response) => {
   res.status(200).json({ status: 'Backend is healthy!' });
 });
+
+// Serve uploaded files
+app.use('/uploads', express.static('uploads'));
 
 // Global error handler middleware (must be after all routes)
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
