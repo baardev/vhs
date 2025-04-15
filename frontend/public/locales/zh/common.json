@@ -4,6 +4,7 @@
   "signIn": "登录",
   "createAccount": "创建账户",
   "features": "功能",
+  "golfNews": "高尔夫新闻",
   "organizeCollection": "组织收藏",
   "organizeDescription": "通过简单的分类来跟踪您所有的电影和节目。",
   "trackProgress": "追踪进度",
@@ -15,8 +16,9 @@
   "about": "关于我们",
   "privacy": "隐私政策",
   "terms": "使用条款",
+  "forgotPassword": "忘记密码？",
   "login": {
-    "title": "登录 VHS Golf",
+    "title": "登录 VHS",
     "orCreateAccount": "或创建新账户",
     "emailLabel": "电子邮箱",
     "passwordLabel": "密码",

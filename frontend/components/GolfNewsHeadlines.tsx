@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
 
 interface Article {
     title: string;
@@ -12,12 +13,14 @@ export default function GolfNewsHeadlines() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [debug, setDebug] = useState<string | null>(null);
+    const router = useRouter();
+    const { locale } = router;
 
     useEffect(() => {
         async function fetchHeadlines() {
             try {
                 setLoading(true);
-                const apiUrl = '/api/golf-news';
+                const apiUrl = `/api/golf-news?lang=${locale || 'en'}`;
                 setDebug(`Fetching from ${window.location.origin}${apiUrl}...`);
 
                 const response = await fetch(apiUrl, {
@@ -49,7 +52,7 @@ export default function GolfNewsHeadlines() {
         }
 
         fetchHeadlines();
-    }, []);
+    }, [locale]);
 
     // Show loading state
     if (loading) {

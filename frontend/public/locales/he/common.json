@@ -4,6 +4,7 @@
   "signIn": "התחברות",
   "createAccount": "צור חשבון",
   "features": "תכונות",
+  "golfNews": "חדשות גולף",
   "organizeCollection": "ארגן את האוסף שלך",
   "organizeDescription": "עקוב אחר כל הסרטים והתוכניות שלך עם קטגוריזציה קלה.",
   "trackProgress": "מעקב אחר התקדמות",
@@ -15,8 +16,9 @@
   "about": "אודות",
   "privacy": "פרטיות",
   "terms": "תנאים",
+  "forgotPassword": "שכחת את הסיסמה שלך?",
   "login": {
-    "title": "התחבר ל-VHS Golf",
+    "title": "התחבר ל-VHS",
     "orCreateAccount": "או צור חשבון חדש",
     "emailLabel": "כתובת אימייל",
     "passwordLabel": "סיסמה",

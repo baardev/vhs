@@ -4,6 +4,7 @@
   "signIn": "Sign In",
   "createAccount": "Create Account",
   "features": "Features",
+  "golfNews": "Golf News",
   "organizeCollection": "Organize Collection",
   "organizeDescription": "Keep track of all your movies and shows with easy categorization.",
   "trackProgress": "Track Progress",
@@ -15,8 +16,9 @@
   "about": "About",
   "privacy": "Privacy",
   "terms": "Terms",
+  "forgotPassword": "Forgot your password?",
   "login": {
-    "title": "Sign in to VHS Golf",
+    "title": "Sign in to VHS",
     "orCreateAccount": "Or create a new account",
     "emailLabel": "Email address",
     "passwordLabel": "Password",

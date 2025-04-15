@@ -4,6 +4,9 @@ import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 import HomeLink from '../components/common/HomeLink';
+import { useTranslation } from 'next-i18next';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,6 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export default function Login() {
+  const { t } = useTranslation('common');
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -33,7 +37,7 @@ export default function Login() {
       localStorage.setItem('user', JSON.stringify(response.data.user));
       router.push('/profile');
     } catch (err: any) {
-      setError(err.response?.data?.error || 'Login failed. Please check your credentials.');
+      setError(err.response?.data?.error || t('login.loginFailed'));
     } finally {
       setIsLoading(false);
     }
@@ -44,11 +48,11 @@ export default function Login() {
       <HomeLink />
       <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Sign in to VHS</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('login.title')}</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Or{' '}
+            {t('login.orCreateAccount')}{' '}
             <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-              create a new account
+              {t('createAccount')}
             </Link>
           </p>
         </div>
@@ -63,7 +67,7 @@ export default function Login() {
           <div className="space-y-4">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email address
+                {t('login.emailLabel')}
               </label>
               <input
                 id="email"
@@ -79,7 +83,7 @@ export default function Login() {
             </div>
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
+                {t('login.passwordLabel')}
               </label>
               <input
                 id="password"
@@ -105,7 +109,7 @@ export default function Login() {
                   : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
               }`}
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? t('login.signingIn') : t('login.signIn')}
             </button>
           </div>
 
@@ -114,11 +118,20 @@ export default function Login() {
               href="/forgot-password"
               className="text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
             >
-              Forgot your password?
+              {t('forgotPassword')}
             </Link>
           </div>
         </form>
       </div>
     </div>
   );
+}
+
+// This function gets called at build time
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || 'en', ['common'])),
+    },
+  }
 }

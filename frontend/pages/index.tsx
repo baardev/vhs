@@ -114,7 +114,7 @@ export default function Home() {
           </div>
 
           <div className="w-full md:w-1/2">
-            <h2 className="text-2xl font-bold mb-6">Golf News</h2>
+            <h2 className="text-2xl font-bold mb-6">{t('golfNews')}</h2>
             <GolfNewsHeadlines />
           </div>
         </div>

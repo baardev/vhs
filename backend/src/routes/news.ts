@@ -42,6 +42,26 @@ router.get('/api/debug-news', (req: Request, res: Response): void => {
 router.get('/api/golf-news', async (req: Request, res: Response<NewsApiResponse['articles'] | ErrorResponse>): Promise<void> => {
     try {
         const apiKey = process.env.NEWS_API_KEY;
+        // Get language from query parameter, default to 'en'
+        const lang = req.query.lang as string || 'en';
+
+        // Map the locale to NewsAPI supported languages
+        // NewsAPI supports: ar, de, en, es, fr, he, it, nl, no, pt, ru, sv, ud, zh
+        let newsApiLang = lang;
+
+        // Handle specific language mappings or fallbacks
+        if (lang === 'zh-CN' || lang === 'zh-TW') {
+            newsApiLang = 'zh';
+        } else if (lang.includes('-')) {
+            // Extract the primary language code if it's a locale with region (e.g., 'en-US' -> 'en')
+            newsApiLang = lang.split('-')[0];
+        }
+
+        // Validate that the language is supported by NewsAPI
+        const supportedLangs = ['ar', 'de', 'en', 'es', 'fr', 'he', 'it', 'nl', 'no', 'pt', 'ru', 'sv', 'ud', 'zh'];
+        if (!supportedLangs.includes(newsApiLang)) {
+            newsApiLang = 'en'; // Default to English if not supported
+        }
 
         if (!apiKey) {
             console.error('NEWS_API_KEY not found in environment variables');
@@ -52,7 +72,8 @@ router.get('/api/golf-news', async (req: Request, res: Response<NewsApiResponse[
             return;
         }
 
-        const url = `https://newsapi.org/v2/everything?q=golf&sortBy=publishedAt&apiKey=${apiKey}`;
+        console.log(`Using language: ${newsApiLang} (requested: ${lang})`);
+        const url = `https://newsapi.org/v2/everything?q=golf&language=${newsApiLang}&sortBy=publishedAt&apiKey=${apiKey}`;
 
         console.log('Fetching news from:', url);
         const response = await axios.get<NewsApiResponse>(url);

@@ -4,6 +4,7 @@
   "signIn": "Войти",
   "createAccount": "Создать аккаунт",
   "features": "Особенности",
+  "golfNews": "Новости гольфа",
   "organizeCollection": "Организуйте коллекцию",
   "organizeDescription": "Отслеживайте все ваши фильмы и шоу с помощью удобной категоризации.",
   "trackProgress": "Отслеживайте прогресс",
@@ -15,8 +16,9 @@
   "about": "О нас",
   "privacy": "Конфиденциальность",
   "terms": "Условия",
+  "forgotPassword": "Забыли пароль?",
   "login": {
-    "title": "Вход в VHS Golf",
+    "title": "Вход в VHS",
     "orCreateAccount": "Или создайте новый аккаунт",
     "emailLabel": "Электронная почта",
     "passwordLabel": "Пароль",

@@ -4,6 +4,7 @@
   "signIn": "Iniciar Sesión",
   "createAccount": "Crear Cuenta",
   "features": "Características",
+  "golfNews": "Noticias de Golf",
   "organizeCollection": "Organiza tu Colección",
   "organizeDescription": "Lleva un registro de todas tus películas y programas con fácil categorización.",
   "trackProgress": "Seguimiento de Progreso",
@@ -15,8 +16,9 @@
   "about": "Acerca de",
   "privacy": "Privacidad",
   "terms": "Términos",
+  "forgotPassword": "¿Olvidaste tu contraseña?",
   "login": {
-    "title": "Inicia sesión en VHS Golf",
+    "title": "Inicia sesión en VHS",
     "orCreateAccount": "O crea una nueva cuenta",
     "emailLabel": "Dirección de correo",
     "passwordLabel": "Contraseña",
