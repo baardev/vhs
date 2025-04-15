@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
+import HomeLink from '../components/common/HomeLink';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,7 +59,8 @@ export default function Register() {
   };
 
   return (
-    <div className={`${geistSans.className} ${geistMono.className} min-h-screen flex items-center justify-center bg-[#fafafa] dark:bg-[#111]`}>
+    <div className={`${geistSans.className} ${geistMono.className} min-h-screen flex items-center justify-center bg-[#fafafa] dark:bg-[#111] relative`}>
+      <HomeLink />
       <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>

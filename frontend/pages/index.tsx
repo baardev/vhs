@@ -28,27 +28,29 @@ export default function Home() {
 
   return (
     <div
-      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_auto_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
+      className={`${geistSans.className} ${geistMono.className} grid grid-rows-[40px_1fr_auto_40px] items-center justify-items-center min-h-screen p-8 pb-20 gap-12 sm:p-24 font-[family-name:var(--font-geist-sans)]`}
     >
-      <header>
+      <header className="w-full">
         <RandomQuote />
       </header>
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-4xl">
-        <div className="text-center sm:text-left w-full">
-          <h1 className="text-4xl font-bold mb-4">{t('welcome')}</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 mb-8">
-            {t('subtitle')}
-          </p>
+      <main className="flex flex-col gap-[48px] row-start-2 items-center sm:items-start w-full max-w-4xl">
+        <div className="text-center sm:text-left w-full mt-6">
+          <h1 className="text-5xl font-bold mb-8">{t('welcome')}</h1>
+          {t('subtitle') && (
+            <p className="text-xl text-gray-600 dark:text-gray-400 mb-12">
+              {t('subtitle')}
+            </p>
+          )}
 
-          <div className="flex gap-4 items-center flex-col sm:flex-row justify-center sm:justify-start">
+          <div className="flex gap-6 items-center flex-col sm:flex-row justify-center sm:justify-start mt-8">
             <Link
-              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto"
+              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 w-full sm:w-auto"
               href="/login"
             >
               {t('signIn')}
             </Link>
             <Link
-              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto"
+              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 w-full sm:w-auto"
               href="/register"
             >
               {t('createAccount')}
@@ -56,7 +58,7 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="w-full mt-12 flex flex-col md:flex-row gap-8">
+        <div className="w-full mt-16 flex flex-col md:flex-row gap-12">
           <div className="w-full md:w-1/2 bg-white dark:bg-[#1a1a1a] rounded-lg p-8 shadow-sm">
             <h2 className="text-2xl font-bold mb-6">{t('features')}</h2>
 

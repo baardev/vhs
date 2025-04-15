@@ -10,7 +10,6 @@ services:
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
     depends_on:
-      - frontend
       - backend
     networks:
       - app-network
@@ -43,18 +42,18 @@ services:
     networks:
       - app-network
 
-  frontend:
-    build: ./frontend
-    ports:
-      - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    command: npm run dev
-    depends_on:
-      - backend
-    networks:
-      - app-network
+  # frontend:
+  #   build: ./frontend
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #   command: npm run dev
+  #   depends_on:
+  #     - backend
+  #   networks:
+  #     - app-network
 
 volumes:
   vhsdb_data:
