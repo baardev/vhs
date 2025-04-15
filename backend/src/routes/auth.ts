@@ -152,7 +152,7 @@ router.post(
 router.get('/profile', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userResult = await pool.query(
-      'SELECT id, username, email, created_at FROM users WHERE id = $1',
+      'SELECT id, username, email, created_at, name, family_name, matricula, handicap FROM users WHERE id = $1',
       [req.user?.id]
     );
 
@@ -173,7 +173,11 @@ router.put(
   authenticateToken,
   [
     body('username').trim().optional().isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
-    body('email').optional().isEmail().withMessage('Must provide a valid email')
+    body('email').optional().isEmail().withMessage('Must provide a valid email'),
+    body('name').optional().isLength({ min: 2 }).withMessage('Name must be at least 2 characters'),
+    body('family_name').optional().isLength({ min: 2 }).withMessage('Family name must be at least 2 characters'),
+    body('matricula').optional().isLength({ min: 5 }).withMessage('Matricula must be at least 5 characters'),
+    body('handicap').optional().isLength({ min: 1 }).withMessage('Handicap must be at least 1 character')
   ],
   async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -184,7 +188,7 @@ router.put(
         return;
       }
 
-      const { username, email } = req.body;
+      const { username, email, name, family_name, matricula, handicap } = req.body;
 
       // Build SET clause for SQL dynamically based on provided fields
       const updates: string[] = [];
@@ -201,6 +205,26 @@ router.put(
         values.push(email);
       }
 
+      if (name !== undefined) {
+        updates.push(`name = $${paramCount++}`);
+        values.push(name);
+      }
+
+      if (family_name !== undefined) {
+        updates.push(`family_name = $${paramCount++}`);
+        values.push(family_name);
+      }
+
+      if (matricula !== undefined) {
+        updates.push(`matricula = $${paramCount++}`);
+        values.push(matricula);
+      }
+
+      if (handicap !== undefined) {
+        updates.push(`handicap = $${paramCount++}`);
+        values.push(handicap);
+      }
+
       if (updates.length === 0) {
         res.status(400).json({ error: 'No update data provided' });
         return;
@@ -211,7 +235,7 @@ router.put(
 
       // Update user
       const updatedUser = await pool.query(
-        `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING id, username, email`,
+        `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING id, username, email, name, family_name, matricula, handicap`,
         values
       );
 

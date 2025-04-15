@@ -28,6 +28,19 @@
     "success": "If an account with this email exists, a password reset link has been sent to your email.",
     "error": "Failed to process your request. Please try again."
   },
+  "resetPassword": {
+    "title": "Reset your password",
+    "subtitle": "Create a new password for your account",
+    "newPasswordLabel": "New Password",
+    "confirmPasswordLabel": "Confirm New Password",
+    "resetting": "Resetting password...",
+    "resetButton": "Reset password",
+    "returnToLogin": "Return to login",
+    "success": "Your password has been reset successfully!",
+    "invalidLink": "Invalid reset link. Please request a new password reset.",
+    "passwordsNotMatch": "Passwords do not match",
+    "resetFailed": "Failed to reset your password. The link may be expired or invalid."
+  },
   "login": {
     "title": "Sign in to VHS",
     "orCreateAccount": "Or create a new account",

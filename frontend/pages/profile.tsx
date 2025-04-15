@@ -20,6 +20,10 @@ interface User {
   username: string;
   email: string;
   created_at?: string;
+  name?: string;
+  family_name?: string;
+  matricula?: string;
+  handicap?: number;
 }
 
 export default function Profile() {
@@ -28,19 +32,27 @@ export default function Profile() {
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
+  const [familyName, setFamilyName] = useState('');
+  const [matricula, setMatricula] = useState('');
+  const [handicap, setHandicap] = useState<string>('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(true);
 
   const fetchUserProfile = useCallback(async (token: string) => {
     try {
-      const response = await axios.get('http://localhost:4000/api/auth/profile', {
+      const response = await axios.get('/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       setUser(response.data);
       setUsername(response.data.username);
       setEmail(response.data.email);
+      setName(response.data.name || '');
+      setFamilyName(response.data.family_name || '');
+      setMatricula(response.data.matricula || '');
+      setHandicap(response.data.handicap !== null && response.data.handicap !== undefined ? response.data.handicap.toString() : '');
       setIsLoading(false);
     } catch (err) {
       console.error('Error fetching profile:', err);
@@ -71,9 +83,18 @@ export default function Profile() {
     }
 
     try {
+      const handicapValue = handicap.trim() !== '' ? parseFloat(handicap) : null;
+
       const response = await axios.put(
-        'http://localhost:4000/api/auth/profile',
-        { username, email },
+        '/api/auth/profile',
+        {
+          username,
+          email,
+          name: name || null,
+          family_name: familyName || null,
+          matricula: matricula || null,
+          handicap: handicapValue
+        },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
@@ -110,7 +131,7 @@ export default function Profile() {
     }
 
     try {
-      await axios.delete('http://localhost:4000/api/auth/profile', {
+      await axios.delete('/api/auth/profile', {
         headers: { Authorization: `Bearer ${token}` }
       });
 
@@ -195,6 +216,59 @@ export default function Profile() {
                     />
                   </div>
 
+                  <div>
+                    <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Name
+                    </label>
+                    <input
+                      id="name"
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="familyName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Family Name
+                    </label>
+                    <input
+                      id="familyName"
+                      type="text"
+                      value={familyName}
+                      onChange={(e) => setFamilyName(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="matricula" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Matricula
+                    </label>
+                    <input
+                      id="matricula"
+                      type="text"
+                      value={matricula}
+                      onChange={(e) => setMatricula(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="handicap" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Handicap
+                    </label>
+                    <input
+                      id="handicap"
+                      type="number"
+                      step="0.1"
+                      value={handicap}
+                      onChange={(e) => setHandicap(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
                   <div className="flex justify-end space-x-3">
                     <button
                       type="button"
@@ -202,6 +276,10 @@ export default function Profile() {
                         setIsEditing(false);
                         setUsername(user?.username || '');
                         setEmail(user?.email || '');
+                        setName(user?.name || '');
+                        setFamilyName(user?.family_name || '');
+                        setMatricula(user?.matricula || '');
+                        setHandicap(user?.handicap !== undefined && user?.handicap !== null ? user.handicap.toString() : '');
                       }}
                       className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
@@ -230,6 +308,34 @@ export default function Profile() {
                     Email
                   </h3>
                   <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.email}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Name
+                  </h3>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.name || '—'}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Family Name
+                  </h3>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.family_name || '—'}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Matricula
+                  </h3>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.matricula || '—'}</p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Handicap
+                  </h3>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.handicap !== undefined && user?.handicap !== null ? user.handicap.toString() : '—'}</p>
                 </div>
 
                 {user?.created_at && (
