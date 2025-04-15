@@ -1,0 +1,5 @@
+docker-compose restart nginx
+docker-compose restart frontend
+docker-compose restart backend
+docker-compose restart db
+

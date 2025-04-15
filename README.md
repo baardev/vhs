@@ -94,3 +94,6 @@ cd ~/sites/vhs/frontend &&  rm -rf frontend/.next
 
 Server-side:
 docker-compose exec frontend rm -rf node_modules/.cache
+
+
+Frontend → Nginx → Backend → Database → Backend → Nginx → Frontend

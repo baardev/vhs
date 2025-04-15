@@ -35,15 +35,18 @@ export default function Register() {
     setIsLoading(true);
 
     try {
-      await axios.post('http://localhost:4000/api/auth/register', {
+      console.log('Starting registration process...');
+      const response = await axios.post('/api/auth/register', {
         username,
         email,
         password,
       });
 
+      console.log('Registration successful:', response.data);
       // Redirect to login page on successful registration
       router.push('/login?registered=true');
-    } catch (err) {
+    } catch (err: any) {
+      console.error('Registration error:', err);
       setError(
         err.response?.data?.error ||
         err.response?.data?.errors?.[0]?.msg ||

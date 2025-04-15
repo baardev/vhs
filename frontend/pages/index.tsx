@@ -6,6 +6,7 @@ import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useRouter } from 'next/router';
 import GolfNewsHeadlines from '../components/GolfNewsHeadlines';
+import RandomQuote from '../components/RandomQuote';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,6 +30,9 @@ export default function Home() {
     <div
       className={`${geistSans.className} ${geistMono.className} grid grid-rows-[20px_1fr_auto_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]`}
     >
+      <header>
+        <RandomQuote />
+      </header>
       <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start w-full max-w-4xl">
         <div className="text-center sm:text-left w-full">
           <h1 className="text-4xl font-bold mb-4">{t('welcome')}</h1>

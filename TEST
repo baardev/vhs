@@ -1,0 +1,9 @@
+#!/bin/bash
+# db operations
+docker exec -it vhs-db-1 sh -c "psql -U user -d vhsdb -c 'SELECT * FROM users;'"
+# backend debugging
+docker exec vhs-backend-1 sh -c "nc -zv db 5432"
+# Service monitoring
+docker-compose exec backend sh -c "npm run test"
+# Database connection test (from previous steps):
+docker exec vhs-backend-1 sh -c "curl -s http://localhost:3000/api/auth/db-test"

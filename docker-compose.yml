@@ -38,15 +38,15 @@ services:
       DATABASE_URL: postgres://user:password@db:5432/vhsdb
     depends_on:
       - db
-    expose:
-      - "4000"
+    ports:
+      - "4000:4000"
     networks:
       - app-network
 
   frontend:
     build: ./frontend
-    expose:
-      - "3000"
+    ports:
+      - "3000:3000"
     volumes:
       - ./frontend:/app
       - /app/node_modules

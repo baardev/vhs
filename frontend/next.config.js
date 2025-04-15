@@ -21,7 +21,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: 'http://backend:4000/api/:path*', // This directs to your backend service
+        destination: 'https://localhost/api/:path*', // Use absolute HTTPS URL
       },
     ];
   },
