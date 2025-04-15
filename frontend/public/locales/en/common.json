@@ -17,6 +17,17 @@
   "privacy": "Privacy",
   "terms": "Terms",
   "forgotPassword": "Forgot your password?",
+  "forgotPassword": {
+    "link": "Forgot your password?",
+    "title": "Forgot your password?",
+    "subtitle": "No worries, we'll send you a reset link",
+    "emailLabel": "Email address",
+    "sending": "Sending reset link...",
+    "send": "Send reset link",
+    "return": "Return to login",
+    "success": "If an account with this email exists, a password reset link has been sent to your email.",
+    "error": "Failed to process your request. Please try again."
+  },
   "login": {
     "title": "Sign in to VHS",
     "orCreateAccount": "Or create a new account",

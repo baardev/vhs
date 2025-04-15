@@ -17,6 +17,17 @@
   "privacy": "隐私政策",
   "terms": "使用条款",
   "forgotPassword": "忘记密码？",
+  "forgotPassword": {
+    "link": "忘记密码？",
+    "title": "忘记密码？",
+    "subtitle": "别担心，我们会向您发送重置链接",
+    "emailLabel": "电子邮箱地址",
+    "sending": "正在发送重置链接...",
+    "send": "发送重置链接",
+    "return": "返回登录",
+    "success": "如果此电子邮箱存在账户，密码重置链接已发送到您的邮箱。",
+    "error": "处理您的请求失败。请重试。"
+  },
   "login": {
     "title": "登录 VHS",
     "orCreateAccount": "或创建新账户",

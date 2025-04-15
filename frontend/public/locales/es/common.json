@@ -17,6 +17,17 @@
   "privacy": "Privacidad",
   "terms": "Términos",
   "forgotPassword": "¿Olvidaste tu contraseña?",
+  "forgotPassword": {
+    "link": "¿Olvidaste tu contraseña?",
+    "title": "¿Olvidaste tu contraseña?",
+    "subtitle": "No te preocupes, te enviaremos un enlace para restablecer",
+    "emailLabel": "Dirección de correo electrónico",
+    "sending": "Enviando enlace...",
+    "send": "Enviar enlace",
+    "return": "Volver al inicio de sesión",
+    "success": "Si existe una cuenta con este correo electrónico, se ha enviado un enlace para restablecer la contraseña.",
+    "error": "No se pudo procesar tu solicitud. Por favor intenta nuevamente."
+  },
   "login": {
     "title": "Inicia sesión en VHS",
     "orCreateAccount": "O crea una nueva cuenta",

@@ -4,6 +4,9 @@ import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 import HomeLink from '../components/common/HomeLink';
+import { useTranslation } from 'next-i18next';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,15 +20,16 @@ const geistMono = Geist_Mono({
 
 export default function ForgotPassword() {
   const router = useRouter();
+  const { t } = useTranslation('common');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [successShown, setSuccessShown] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
-    setSuccess('');
+    setSuccessShown(false);
     setIsLoading(true);
 
     try {
@@ -34,13 +38,13 @@ export default function ForgotPassword() {
       });
 
       // Show success message
-      setSuccess('If an account with this email exists, a password reset link has been sent to your email.');
+      setSuccessShown(true);
       setEmail(''); // Clear the form
     } catch (err: any) {
       setError(
         err.response?.data?.error ||
         err.response?.data?.errors?.[0]?.msg ||
-        'Failed to process your request. Please try again.'
+        t('forgotPassword.error')
       );
     } finally {
       setIsLoading(false);
@@ -53,19 +57,19 @@ export default function ForgotPassword() {
       <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">
-            Forgot your password?
+            {t('forgotPassword.title')}
           </h2>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            No worries, we'll send you a reset link
+            {t('forgotPassword.subtitle')}
           </p>
         </div>
 
-        {success ? (
+        {successShown ? (
           <div className="rounded-md bg-green-50 dark:bg-green-900 p-4 mb-6">
             <div className="flex">
               <div className="ml-3">
                 <p className="text-sm font-medium text-green-800 dark:text-green-200">
-                  {success}
+                  {t('forgotPassword.success')}
                 </p>
               </div>
             </div>
@@ -87,7 +91,7 @@ export default function ForgotPassword() {
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-              Email address
+              {t('forgotPassword.emailLabel')}
             </label>
             <div className="mt-1">
               <input
@@ -110,17 +114,26 @@ export default function ForgotPassword() {
               disabled={isLoading}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {isLoading ? 'Sending reset link...' : 'Send reset link'}
+              {isLoading ? t('forgotPassword.sending') : t('forgotPassword.send')}
             </button>
           </div>
 
           <div className="text-sm text-center">
             <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400">
-              Return to login
+              {t('forgotPassword.return')}
             </Link>
           </div>
         </form>
       </div>
     </div>
   );
+}
+
+// This function gets called at build time
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale || 'en', ['common'])),
+    },
+  }
 }
