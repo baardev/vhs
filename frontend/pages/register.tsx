@@ -4,8 +4,8 @@ import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 import { useTranslation } from 'next-i18next';
-import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+// import { GetStaticProps } from 'next';
+// import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
