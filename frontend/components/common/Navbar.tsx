@@ -1,24 +1,40 @@
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
+import LogoutButton from '../LogoutButton';
 
 const Navbar = () => {
   const { t } = useTranslation('common');
-  const router = useRouter();
+//   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
     // Check if user is logged in
-    const user = localStorage.getItem('user');
-    setIsLoggedIn(!!user);
-  }, []);
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    router.push('/');
-  };
+    // Update login state when storage changes
+    const handleStorageChange = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    // Custom event for logout from other components
+    const handleAuthChange = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    };
+
+    window.addEventListener('authChange', handleAuthChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('authChange', handleAuthChange);
+    };
+  }, []);
 
   return (
     <nav className="w-full bg-white dark:bg-gray-900 shadow-sm py-4">
@@ -58,12 +74,10 @@ const Navbar = () => {
                 <Link href="/profile" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
                   {t('profile.yourProfile')}
                 </Link>
-                <button
-                  onClick={handleLogout}
+                <LogoutButton
+                  variant="text"
                   className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]"
-                >
-                  {t('profile.logout')}
-                </button>
+                />
               </>
             ) : (
               <>

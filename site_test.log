@@ -1,0 +1,136 @@
+2025-04-16 18:10:41,248 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 18:10:41,249 - INFO - Testing: https://localhost
+2025-04-16 18:10:42,197 - INFO - Testing: https://localhost/
+2025-04-16 18:10:44,166 - INFO - Testing: https://localhost/courses
+2025-04-16 18:10:47,215 - INFO - Testing: https://localhost/login
+2025-04-16 18:10:50,161 - INFO - Testing: https://localhost/register
+2025-04-16 18:10:54,597 - INFO - Testing: https://localhost/about
+2025-04-16 18:10:56,024 - INFO - Testing: https://localhost/privacy
+2025-04-16 18:10:56,973 - INFO - Testing: https://localhost/terms
+2025-04-16 18:10:58,393 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 18:11:15,331 - INFO - Testing completed!
+2025-04-16 18:11:15,332 - INFO - Total URLs: 9
+2025-04-16 18:11:15,332 - INFO - OK: 6
+2025-04-16 18:11:15,332 - INFO - Errors: 3
+2025-04-16 18:11:15,332 - INFO - Exceptions: 0
+2025-04-16 18:11:15,332 - INFO - Skipped: 0
+2025-04-16 18:11:15,332 - INFO - Results written to site_test_results.txt
+2025-04-16 18:18:26,488 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 18:18:26,488 - INFO - Testing: https://localhost
+2025-04-16 18:18:27,429 - INFO - Testing: https://localhost/
+2025-04-16 18:18:29,360 - INFO - Testing: https://localhost/courses
+2025-04-16 18:18:31,793 - INFO - Testing: https://localhost/login
+2025-04-16 18:18:34,724 - INFO - Testing: https://localhost/register
+2025-04-16 18:18:38,651 - INFO - Testing: https://localhost/about
+2025-04-16 18:18:39,583 - INFO - Testing: https://localhost/privacy
+2025-04-16 18:18:40,515 - INFO - Testing: https://localhost/terms
+2025-04-16 18:18:41,942 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 18:18:58,378 - INFO - Testing completed!
+2025-04-16 18:18:58,379 - INFO - Total URLs: 9
+2025-04-16 18:18:58,379 - INFO - OK: 6
+2025-04-16 18:18:58,379 - INFO - Errors: 3
+2025-04-16 18:18:58,380 - INFO - Exceptions: 0
+2025-04-16 18:18:58,380 - INFO - Skipped: 0
+2025-04-16 18:18:58,380 - INFO - Results written to site_test_results.txt
+2025-04-16 18:28:56,094 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 18:28:56,095 - INFO - Testing: https://localhost
+2025-04-16 18:28:57,038 - INFO - Testing: https://localhost/
+2025-04-16 18:28:58,995 - INFO - Testing: https://localhost/courses
+2025-04-16 18:29:02,012 - INFO - Testing: https://localhost/login
+2025-04-16 18:29:05,276 - INFO - Testing: https://localhost/register
+2025-04-16 18:29:09,558 - INFO - Testing: https://localhost/about
+2025-04-16 18:29:10,516 - INFO - Testing: https://localhost/privacy
+2025-04-16 18:29:11,434 - INFO - Testing: https://localhost/terms
+2025-04-16 18:29:12,859 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 18:29:29,820 - INFO - Testing completed!
+2025-04-16 18:29:29,820 - INFO - Total URLs: 9
+2025-04-16 18:29:29,820 - INFO - OK: 6
+2025-04-16 18:29:29,820 - INFO - Errors: 3
+2025-04-16 18:29:29,820 - INFO - Exceptions: 0
+2025-04-16 18:29:29,820 - INFO - Skipped: 0
+2025-04-16 18:29:29,820 - INFO - Results written to site_test_results.txt
+2025-04-16 18:43:26,479 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 18:43:26,479 - INFO - Testing: https://localhost
+2025-04-16 18:43:29,769 - INFO - Testing: https://localhost/
+2025-04-16 18:43:31,739 - INFO - Testing: https://localhost/courses
+2025-04-16 18:43:34,589 - INFO - Testing: https://localhost/login
+2025-04-16 18:43:37,793 - INFO - Testing: https://localhost/register
+2025-04-16 18:43:42,001 - INFO - Testing: https://localhost/about
+2025-04-16 18:43:43,303 - INFO - Testing: https://localhost/privacy
+2025-04-16 18:43:44,246 - INFO - Testing: https://localhost/terms
+2025-04-16 18:43:45,687 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 18:44:02,660 - INFO - Testing completed!
+2025-04-16 18:44:02,660 - INFO - Total URLs: 9
+2025-04-16 18:44:02,660 - INFO - OK: 6
+2025-04-16 18:44:02,660 - INFO - Errors: 3
+2025-04-16 18:44:02,660 - INFO - Exceptions: 0
+2025-04-16 18:44:02,660 - INFO - Skipped: 0
+2025-04-16 18:44:02,660 - INFO - Results written to site_test_results.txt
+2025-04-16 19:29:19,047 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 19:29:19,047 - INFO - Testing: https://localhost
+2025-04-16 19:29:20,609 - INFO - Testing: https://localhost/
+2025-04-16 19:29:22,529 - INFO - Testing: https://localhost/courses
+2025-04-16 19:29:25,318 - INFO - Testing: https://localhost/login
+2025-04-16 19:29:28,245 - INFO - Testing: https://localhost/register
+2025-04-16 19:29:32,609 - INFO - Testing: https://localhost/about
+2025-04-16 19:29:33,774 - INFO - Testing: https://localhost/privacy
+2025-04-16 19:29:34,688 - INFO - Testing: https://localhost/terms
+2025-04-16 19:29:36,101 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 19:29:53,012 - INFO - Testing completed!
+2025-04-16 19:29:53,012 - INFO - Total URLs: 9
+2025-04-16 19:29:53,012 - INFO - OK: 6
+2025-04-16 19:29:53,012 - INFO - Errors: 3
+2025-04-16 19:29:53,013 - INFO - Exceptions: 0
+2025-04-16 19:29:53,013 - INFO - Skipped: 0
+2025-04-16 19:29:53,013 - INFO - Results written to site_test_results.txt
+2025-04-16 19:34:59,338 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 19:34:59,338 - INFO - Testing: https://localhost
+2025-04-16 19:35:00,278 - INFO - Testing: https://localhost/
+2025-04-16 19:35:02,207 - INFO - Testing: https://localhost/courses
+2025-04-16 19:35:04,630 - INFO - Testing: https://localhost/login
+2025-04-16 19:35:07,553 - INFO - Testing: https://localhost/register
+2025-04-16 19:35:11,489 - INFO - Testing: https://localhost/about
+2025-04-16 19:35:12,444 - INFO - Testing: https://localhost/privacy
+2025-04-16 19:35:13,370 - INFO - Testing: https://localhost/terms
+2025-04-16 19:35:14,783 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 19:35:31,241 - INFO - Testing completed!
+2025-04-16 19:35:31,242 - INFO - Total URLs: 9
+2025-04-16 19:35:31,242 - INFO - OK: 6
+2025-04-16 19:35:31,242 - INFO - Errors: 3
+2025-04-16 19:35:31,242 - INFO - Exceptions: 0
+2025-04-16 19:35:31,242 - INFO - Skipped: 0
+2025-04-16 19:35:31,242 - INFO - Results written to site_test_results.txt
+2025-04-16 19:39:44,162 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 19:39:44,162 - INFO - Testing: https://localhost
+2025-04-16 19:39:45,089 - INFO - Testing: https://localhost/
+2025-04-16 19:39:47,044 - INFO - Testing: https://localhost/courses
+2025-04-16 19:39:49,475 - INFO - Testing: https://localhost/login
+2025-04-16 19:39:52,406 - INFO - Testing: https://localhost/register
+2025-04-16 19:39:56,331 - INFO - Testing: https://localhost/about
+2025-04-16 19:39:57,247 - INFO - Testing: https://localhost/privacy
+2025-04-16 19:39:58,161 - INFO - Testing: https://localhost/terms
+2025-04-16 19:39:59,579 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 19:40:16,009 - INFO - Testing completed!
+2025-04-16 19:40:16,009 - INFO - Total URLs: 9
+2025-04-16 19:40:16,009 - INFO - OK: [32m6[0m
+2025-04-16 19:40:16,009 - INFO - Errors: [31m3[0m
+2025-04-16 19:40:16,009 - INFO - Exceptions: 0
+2025-04-16 19:40:16,009 - INFO - Skipped: 0
+2025-04-16 19:40:16,009 - INFO - Results written to site_test_results.txt
+2025-04-16 19:51:10,650 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 19:51:10,650 - INFO - Testing: https://localhost
+2025-04-16 19:51:11,592 - INFO - Testing: https://localhost/
+2025-04-16 19:51:13,517 - INFO - Testing: https://localhost/courses
+2025-04-16 19:51:16,298 - INFO - Testing: https://localhost/login
+2025-04-16 19:51:19,224 - INFO - Testing: https://localhost/register
+2025-04-16 19:51:23,375 - INFO - Testing: https://localhost/about
+2025-04-16 19:51:27,318 - INFO - Testing: https://localhost/privacy
+2025-04-16 19:51:31,751 - INFO - Testing: https://localhost/terms
+2025-04-16 19:51:38,688 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 19:51:55,420 - INFO - Testing completed!
+2025-04-16 19:51:55,420 - INFO - Total URLs: 9
+2025-04-16 19:51:55,420 - INFO - OK: [32m9[0m
+2025-04-16 19:51:55,421 - INFO - Errors: 0
+2025-04-16 19:51:55,421 - INFO - Exceptions: 0
+2025-04-16 19:51:55,421 - INFO - Skipped: 0
+2025-04-16 19:51:55,421 - INFO - Results written to site_test_results.txt

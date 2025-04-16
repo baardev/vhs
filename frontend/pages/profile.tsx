@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
+import LogoutButton from '../components/LogoutButton';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -113,11 +114,6 @@ export default function Profile() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    router.push('/login');
-  };
-
   const handleDeleteAccount = async () => {
     if (!window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       return;
@@ -157,12 +153,7 @@ export default function Profile() {
           <div className="border-b border-gray-200 dark:border-gray-800 px-4 py-5 sm:px-6">
             <div className="flex items-center justify-between">
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">Your Profile</h1>
-              <button
-                onClick={handleLogout}
-                className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-full text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-              >
-                Logout
-              </button>
+              <LogoutButton variant="secondary" className="text-sm" />
             </div>
           </div>
 

@@ -1,6 +1,9 @@
-FROM node:18
+FROM node:lts
 
 WORKDIR /app
+
+# Update npm as part of the build process
+RUN npm install -g npm@latest
 
 # Copy package files and install dependencies
 COPY package.json package-lock.json ./

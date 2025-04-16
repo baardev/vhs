@@ -79,5 +79,10 @@
     "updateFailed": "Failed to update profile.",
     "deleteFailed": "Failed to delete account.",
     "loading": "Loading..."
+  },
+  "logout": {
+    "signOut": "Sign out",
+    "loggingOut": "Signing out...",
+    "success": "You have been successfully logged out."
   }
 }

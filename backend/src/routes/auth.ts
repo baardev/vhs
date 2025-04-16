@@ -330,6 +330,17 @@ router.post(
   }
 );
 
+// Logout endpoint
+router.post('/logout', authenticateToken, (req: AuthRequest, res: Response): void => {
+  // Since JWT tokens are stateless, we can't truly invalidate them on the server
+  // In a production environment, you might want to add the token to a blacklist
+  // or use Redis to track invalidated tokens until they expire
+
+  // For now, we'll just return a success message
+  console.log('User logged out:', req.user?.id);
+  res.status(200).json({ message: 'Successfully logged out' });
+});
+
 // Reset password using token
 router.post(
   '/reset-password',

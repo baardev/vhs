@@ -1,0 +1,29 @@
+{
+  "login": {
+    "status": "Success",
+    "user": {
+      "id": 3,
+      "username": "jm42",
+      "email": "jm42@example.com"
+    }
+  },
+  "protected_routes": {
+    "/api/auth/profile": {
+      "status": "Success",
+      "status_code": 200,
+      "data": {
+        "id": 3,
+        "username": "jm42",
+        "email": "jm42@example.com",
+        "created_at": "2025-04-16T22:34:30.656Z",
+        "name": null,
+        "family_name": null,
+        "matricula": null,
+        "handicap": null
+      }
+    }
+  },
+  "logout": {
+    "status": "Success"
+  }
+}

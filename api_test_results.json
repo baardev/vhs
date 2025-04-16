@@ -1,0 +1,1363 @@
+{
+  "/api/golf-news": {
+    "status_code": 200,
+    "headers": {
+      "Server": "nginx/1.27.5",
+      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": "85277",
+      "Connection": "keep-alive",
+      "X-Powered-By": "Express",
+      "Access-Control-Allow-Origin": "*",
+      "ETag": "W/\"14d1d-T0vu7e7nUr8OU7OS2muTokx5qig\""
+    },
+    "data": [
+      {
+        "source": {
+          "id": null,
+          "name": "West Central Tribune"
+        },
+        "author": "Michael Lyne",
+        "title": "Girls golf: Willmar's depth will be plus this season",
+        "description": "Head coach Bryan Mara has a deeper on his hands. That starts with Section 8AAA team returnees in senior Avery Olson and juniors Lily Jorgenson and Kennedy Mara. Bryan Mara got a glimpse into what some of his golfers have when the Cardinals kicked off their se\u2026",
+        "url": "https://www.wctrib.com/sports/prep/girls-golf-willmars-depth-will-be-plus-this-season",
+        "urlToImage": "https://cdn.forumcomm.com/dims4/default/0cbe876/2147483647/strip/true/crop/1652x1180+0+0/resize/1492x1066!/quality/90/?url=https%3A%2F%2Fforum-communications-production-web.s3.us-west-2.amazonaws.com%2Fbrightspot%2Fdb%2F5e%2Fc9d4da5e4634ab8b4adbc909dd96%2Fwillmar-gg-invitational-041025-13.jpg",
+        "publishedAt": "2025-04-15T22:41:00Z",
+        "content": "WILLMAR\r\nHead coach Bryan Mara has a deeper \r\nWillmar girls golf team\r\non his hands.\r\nThat starts with Section 8AAA team returnees in senior Avery Olson and juniors Lily Jorgenson and Kennedy Mara.\r\n\u2026 [+3021 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "West Central Tribune"
+        },
+        "author": "Michael Lyne",
+        "title": "Boys golf: Willmar Cardinals show some promise",
+        "description": "It might be young, but the talent is there for the . Four of the six golfers from the Section 8AAA team return for the Cardinals this spring. Aden Jacobson and Luke Larson highlight Willmar's returners. Both are sophomores back for their third year. \"They are\u2026",
+        "url": "https://www.wctrib.com/sports/prep/boys-golf-willmar-cardinals-show-some-promise",
+        "urlToImage": "https://cdn.forumcomm.com/dims4/default/250a837/2147483647/strip/true/crop/2727x1948+0+0/resize/1492x1066!/quality/90/?url=https%3A%2F%2Fforum-communications-production-web.s3.us-west-2.amazonaws.com%2Fbrightspot%2Fee%2Fdd%2F9a4c192a483e86e22bdc23654f31%2Fcardinal-wildcat-invitational-day-2-042624-08.jpg",
+        "publishedAt": "2025-04-15T22:41:00Z",
+        "content": "WILLMAR\r\nIt might be young, but the talent is there for the \r\nWillmar boys golf team\r\n.\r\nFour of the six golfers from the Section 8AAA team return for the Cardinals this spring.\r\nAden Jacobson and Lu\u2026 [+2911 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Joplin Globe"
+        },
+        "author": "Laurie Sisk | lsisk@joplinglobe.com",
+        "title": "Spencer, Lowry lead CJ to Horton Smith win",
+        "description": "Carl Junction golfers Jack Spencer and Logan Lowry finished first and second to lead the Bulldogs to the team title at the 14-team Horton Smith Invitational Tuesday at Schifferdecker Golf Course. Spencer paced Carl Junction with a 2-under 69 to win the indivi\u2026",
+        "url": "https://www.joplinglobe.com/sports/spencer-lowry-lead-cj-to-horton-smith-win/article_6ba44d30-89aa-4fcc-bff4-74b66d888424.html",
+        "urlToImage": "https://bloximages.chicago2.vip.townnews.com/joplinglobe.com/content/tncms/assets/v3/editorial/0/03/00318896-af73-4fcd-9ef6-49b2a409d954/67feb05aea0eb.image.jpg?crop=1705%2C895%2C0%2C159&resize=1200%2C630&order=crop%2Cresize",
+        "publishedAt": "2025-04-15T22:41:00Z",
+        "content": "Joplin, MO\r\n(64801)\r\nToday\r\nClear skies. Low 44F. Winds SSW at 5 to 10 mph..\r\nTonight\r\nClear skies. Low 44F. Winds SSW at 5 to 10 mph.\r\n Updated: April 15, 2025 @ 5:39 pm"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Hollywood Reporter"
+        },
+        "author": "Mike Barnes",
+        "title": "Wink Martindale Dead: 'Tic-Tac-Dough' Game Show Host Was 91",
+        "description": "He presided over 20 such programs after forging a radio and TV career in Memphis and becoming pals with Elvis Presley.",
+        "url": "http://www.hollywoodreporter.com/tv/tv-news/wink-martindale-dead-tic-tac-dough-game-show-host-1236191994/",
+        "urlToImage": "https://www.hollywoodreporter.com/wp-content/uploads/2017/08/tic_tac_dough_2_-_h_2017.jpg?w=1296&h=730&crop=1",
+        "publishedAt": "2025-04-15T22:26:02Z",
+        "content": "Wink Martindale, a rock \u2018n\u2019 roll disc jockey and good friend of Elvis Presley who gained fame as the host of such TV game shows as Tic-Tac-Dough, Gambit and High Rollers, died Tuesday in Rancho Mirag\u2026 [+3547 chars]"
+      },
+      {
+        "source": {
+          "id": "the-jerusalem-post",
+          "name": "The Jerusalem Post"
+        },
+        "author": "BY MEITAL SHARABI/MAARIV",
+        "title": "Visiting Mauritius is worth every minute of travel",
+        "description": "Mauritius is much more than just a beach destination \u2013 it\u2019s a country with a unique culture, blending Indian, African, French, and British influences.",
+        "url": "https://www.jpost.com/j-spot/article-850251",
+        "urlToImage": "https://images.jpost.com/image/upload/f_auto,fl_lossy/c_fill,g_faces:center,h_407,w_690/659082",
+        "publishedAt": "2025-04-15T22:11:44Z",
+        "content": "One moment, I was working like any normal person, and the next, I found myself flying to a tropical island in the Indian Ocean with a name that only a few could pinpoint exactly on a map.\r\nMauritius,\u2026 [+10351 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Yahoo Entertainment"
+        },
+        "author": "Broderick Turner",
+        "title": "'We are here': Tyronn Lue knew the Clippers could exceed expectations",
+        "description": "Most experts thought the Clippers would have to fight for a play-in spot, but they finished fifth and enter playoff series against Denver healthy and hopeful...",
+        "url": "https://sports.yahoo.com/article/tyronn-lue-knew-clippers-could-220457298.html",
+        "urlToImage": "https://media.zenfs.com/en/la_times_articles_853/2d77652f2c563255ff885ff53d952395",
+        "publishedAt": "2025-04-15T22:04:57Z",
+        "content": "Clippers forward Kawhi Leonard, talking with coach Tyronn Lue, is again healthy and playing well heading into the playoffs. (Luis Sinco / Los Angeles Times)\r\nTyronn Lue glided into the Clippers postg\u2026 [+5079 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Android Central"
+        },
+        "author": "michael.hicks@futurenet.com (Michael L Hicks)",
+        "title": "This RARE, all-time-low Meta Quest 3S deal is also your last chance at free Batman",
+        "description": "Meta rarely discounts its headsets, and its free Batman: Arkham Shadow credit expires by end of April. That's TWO reasons to snag this deal now.",
+        "url": "https://www.androidcentral.com/gaming/virtual-reality/all-time-low-meta-quest-3s-deal-is-your-last-chance-at-free-batman-arkham-shadow",
+        "urlToImage": "https://cdn.mos.cms.futurecdn.net/VmhgPSSJMmbqhSEKmJkgyS.jpg",
+        "publishedAt": "2025-04-15T22:01:08Z",
+        "content": "Meta doesn't like to discount its Quest headsets. It used to give out gift cards on Black Friday while keeping the Quest 2 and 3 at full price, and the Quest 3 512GB hasn't fallen below $499 since it\u2026 [+2239 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Uncrate.com"
+        },
+        "author": "Uncrate",
+        "title": "Jordan Brand Air Rev Golf Shoes",
+        "description": "Far from a converted basketball sneaker, the Jordan Brand Air Rev was built from the ground up for golf. It has a Flight Lock system that pairs a dial-adjusted lacing system with a le\u00f1o weave strap and a sidewall pouch...",
+        "url": "https://uncrate.com/jordan-brand-air-rev-golf-shoes/",
+        "urlToImage": "https://uncrate.com/p/2025/04/jordan-air-rev-golf-shoe-1.jpg",
+        "publishedAt": "2025-04-15T22:00:01Z",
+        "content": "Launched last April, Vita Coco Treats is a new coconutmilk beverage crafted for those moments when you're in the mood for something light, sweet, and satisfying. Combining the flavors of creamy cocon\u2026 [+576 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "MMA Mania"
+        },
+        "author": "Alexander Behunin",
+        "title": "\u2018I\u2019ll Beat (Dana) Ass\u2019",
+        "description": "Former UFC Welterweight champion Tyron Woodley has explained who \u201cI\u2019ll Beat Yo Ass\u201d is about",
+        "url": "https://www.mmamania.com/2025/4/15/24409204/dissed-dana-white-secretly-tyron-woodley-targeted-in-ufc-fighters-rap-song-thats-why-made-that-song",
+        "urlToImage": "https://cdn.vox-cdn.com/thumbor/s6S5oY4IqYAUjKvFp1GBFTz0qrQ=/0x359:4335x2629/fit-in/1200x630/cdn.vox-cdn.com/uploads/chorus_asset/file/25955174/1419937547.jpg",
+        "publishedAt": "2025-04-15T22:00:00Z",
+        "content": "Photo by Chris Trotman/LIV Golf via Getty Images\r\n\n \n\n In September 2018, former UFC Welterweight champion Tyron Woodley dropped his debut rap single, \u201cI\u2019ll Beat Yo Ass,\u201d days after dominating Darren\u2026 [+1405 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Bringatrailer.com"
+        },
+        "author": "bringatrailer",
+        "title": "2019 Volkswagen Golf Alltrack SEL 6-Speed",
+        "description": "This 2019 Volkswagen Golf Alltrack SEL is finished in Pure White over Marrakesh Brown V-Tex leatherette, and it now indicates 51k miles. The car spent time in California before its 2022 acquisition by the seller, who tells us that it was subsequently modified\u2026",
+        "url": "https://bringatrailer.com/listing/2019-volkswagen-golf-alltrack-28/",
+        "urlToImage": "https://bringatrailer.com/wp-content/uploads/2025/03/2019_volkswagen_golf-alltrack_extfl_low-69812.jpeg",
+        "publishedAt": "2025-04-15T21:55:07Z",
+        "content": "This 2019 Volkswagen Golf Alltrack SEL is finished in Pure White over Marrakesh Brown V-Tex leatherette, and it now indicates 51k miles. The car spent time in California before its 2022 acquisition b\u2026 [+4080 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Lewiston Morning Tribune"
+        },
+        "author": null,
+        "title": "AREA ROUNDUP: Troy topples once-undefeated Kendrick baseball",
+        "description": "Apr. 15\u2014AREA ROUNDUP TROY \u2014 The Kendrick Tigers were handed their first loss of the season, falling 4-2 to the host Trojans in a Whitepine league baseball matchup at Troy on Monday. The Trojans (5-2, 2-0) were led by Dominic Holden, who pitched a complete gam\u2026",
+        "url": "https://www.lmtribune.com/sports/troy-topples-once-undefeated-kendrick-baseball-19232568",
+        "urlToImage": "https://public-assets-prod.pubgen.ai/brand_4fc3eb37-4c8a-4951-9324-365f6e4b53fd/asset_f934173f-972a-4a8e-85a0-fe0bfe88dd88.jpg",
+        "publishedAt": "2025-04-15T21:48:00Z",
+        "content": "Singles Gabie Mills, Clk, def. Elizabeth Karazhova, 6-1, 6-0; Rachel Gall, Clk, def. Miriam Mutono 6-0, 6-0; Daniella Lucas, Clk, def. Annora Mahnke 6-0, 6-2; Kendyll Barnea, Clk, def. Auda Maneza 6-\u2026 [+5328 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "The Mac Observer"
+        },
+        "author": "Jose Luansing Jr.",
+        "title": "Upcoming Apple Arcade Games That Might Be Worth Subscribing for in 2025",
+        "description": "When Apple Arcade launched in 2019, the initial public reaction was \u201cWhy should I pay monthly for mobile games?\u201d Most people are used to free-to-play apps. Although they generally come with ads and add-ons, they\u2019re technically still free. You can imagine how \u2026",
+        "url": "https://www.macobserver.com/tips/round-ups/upcoming-apple-arcade-games-that-might-be-worth-subscribing-for-in-2025/",
+        "urlToImage": "https://www.macobserver.com/wp-content/uploads/2025/04/Upcoming-Apple-Arcade-Games-That-Might-Be-Worth-Subscribing-for-in-2025.jpg",
+        "publishedAt": "2025-04-15T21:46:14Z",
+        "content": "When Apple Arcade launched in 2019, the initial public reaction was Why should I pay monthly for mobile games? Most people are used to free-to-play apps. Although they generally come with ads and add\u2026 [+3164 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Bangor Daily News"
+        },
+        "author": "Matt Junker",
+        "title": "Penobscot Valley Country Club sold to owners of Lucerne Golf Club",
+        "description": "The new owners plan to keep the 101-year-old country club as an 18-hole golf course and to open for the season soon.",
+        "url": "http://www.bangordailynews.com/2025/04/15/sports/penobscot-valley-country-club-sold-to-owners-lucerne-golf-course/",
+        "urlToImage": "https://bdn-data.s3.amazonaws.com/uploads/2025/04/PVCC091417-005.jpg",
+        "publishedAt": "2025-04-15T21:45:21Z",
+        "content": "The Penobscot Valley Country Club in Orono was sold to the\u00a0owners of the Lucerne Golf Club in Dedham, who have now bought their second Donald Ross-designed course in the area. \u00a0\r\nMatt Kirtland said t\u2026 [+2986 chars]"
+      },
+      {
+        "source": {
+          "id": "espn",
+          "name": "ESPN"
+        },
+        "author": null,
+        "title": "Scheffler: 'Really cool' to see McIlroy get Slam",
+        "description": "Scottie Scheffler said it was \"really cool\" to be able to see \"good friend\" Rory McIlroy win the Masters to complete the career Grand Slam.",
+        "url": "https://www.espn.com/golf/story/_/id/44688093/scottie-scheffler-applauds-good-friend-rory-mcilroy-masters-win",
+        "urlToImage": "https://a1.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0415%2Fr1479236_1296x729_16%2D9.jpg",
+        "publishedAt": "2025-04-15T21:20:45Z",
+        "content": "Apr 15, 2025, 05:18 PM ET\r\nScottie Scheffler woke up Sunday with a realistic chance to come from behind and win another Masters. Once that was out of the picture, he had no issue taking a supporting \u2026 [+3824 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Backwoodshome.com"
+        },
+        "author": "admin",
+        "title": "Rain, rain, go away",
+        "description": "Yes, we need the moisture but gee, I want to go outside and play! Yesterday, I added more wood chip mulch to the front flower bed under the edge of the solar array after mowing the leftover stalks with the lawn mower. (I also mowed the small garden next to th\u2026",
+        "url": "https://www.backwoodshome.com/blogs/JackieClay/2025/04/15/rain-rain-go-away-5/",
+        "urlToImage": null,
+        "publishedAt": "2025-04-15T21:14:30Z",
+        "content": "Yes, we need the moisture but gee, I want to go outside and play! Yesterday, I added more wood chip mulch to the front flower bed under the edge of the solar array after mowing the leftover stalks wi\u2026 [+2199 chars]"
+      },
+      {
+        "source": {
+          "id": "usa-today",
+          "name": "USA Today"
+        },
+        "author": "Michael Kates",
+        "title": "Fanatics Sportsbook Promo | Pocket up to $300 in Bonus Bets for NBA Playoffs",
+        "description": "Bettors looking to wager on the NBA Play-In Tournament can do so after using the Fanatics Sportsbook promo, which delivers up to $300 in Bonus Bets.",
+        "url": "https://mmajunkie.usatoday.com/2025/04/fanatics-sportsbook-promo-300-bonus-bets-nba-playoffs",
+        "urlToImage": "https://mmajunkie.usatoday.com/wp-content/uploads/sites/91/2025/02/fanatics-bet30get300.jpg?w=1024&h=576&crop=1",
+        "publishedAt": "2025-04-15T21:00:36Z",
+        "content": "Wager on the excitement of the NBA postseason play-in games and claim up to $300 in bonus bets if you sign up today and claim this exclusive Fanatics Sportsbook promo.\r\nStarting Tuesday, Orlando, Atl\u2026 [+10093 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Sky Sports"
+        },
+        "author": null,
+        "title": "Papers: Blackburn reportedly considering Rooney as next boss",
+        "description": "The top stories and transfer rumours from Wednesday's newspapers...",
+        "url": "https://www.skysports.com/football/transfer-paper-talk/12709/13349675/wayne-rooney-is-in-line-for-a-shock-return-to-management-with-blackburn-reportedly-considering-him-paper-talk",
+        "urlToImage": "https://e0.365dm.com/25/03/1600x900/skysports-paper-talk-brand-refresh_6852897.jpg?20250311094415",
+        "publishedAt": "2025-04-15T21:00:00Z",
+        "content": "The top stories and transfer rumours from Wednesday's newspapers...\r\nTHE SUN\r\nWayne Rooney is in line for a shock return to management just four months after being sacked by Plymouth Argyle. Blackbur\u2026 [+3741 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Sky Sports"
+        },
+        "author": null,
+        "title": "Papers: Blackburn reportedly considering Rooney as next boss",
+        "description": "The top stories and transfer rumours from Wednesday's newspapers...",
+        "url": "https://www.skysports.com/football/transfer-paper-talk/12709/13349675/wayne-rooney-is-in-line-for-a-shock-return-to-management-with-blackburn-reportedly-considering-him-paper-talk",
+        "urlToImage": "https://e0.365dm.com/25/03/1600x900/skysports-paper-talk-brand-refresh_6852897.jpg?20250311094415",
+        "publishedAt": "2025-04-15T21:00:00Z",
+        "content": "The top stories and transfer rumours from Wednesday's newspapers...\r\nTHE SUN\r\nWayne Rooney is in line for a shock return to management just four months after being sacked by Plymouth Argyle. Blackbur\u2026 [+3741 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "New York Post"
+        },
+        "author": "Jennifer Gould",
+        "title": "This charming Hamptons beach cottage was quietly bought and suddenly disappeared \u2014 now neighbors are finally learning what happened to it",
+        "description": "A British real estate developer has been identified as the buyer who nabbed a $12 million Further Lane property by the Maidstone Club in East Hampton.",
+        "url": "https://nypost.com/2025/04/15/real-estate/mysterious-disappearance-of-12m-hamptons-cottage-is-solved/",
+        "urlToImage": "https://nypost.com/wp-content/uploads/sites/2/2025/04/100853400.jpg?quality=75&strip=all&w=1024",
+        "publishedAt": "2025-04-15T20:54:30Z",
+        "content": "The mysterious disappearance of a luxury Hamptons beach cottage, nearly 100 years old and abutting an ultra-exclusive golf course country getaway, has been solved.\u00a0\r\nA British real estate mogul pulle\u2026 [+3346 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "CNA"
+        },
+        "author": null,
+        "title": "Scottie Scheffler: \u2018Really cool\u2019 to watch McIlroy complete career Slam",
+        "description": "Scottie Scheffler woke up Sunday with a realistic chance to come from behind and win another Masters. Once that was out of the picture, he had no issue taking a supporting role in Rory McIlroy's big day.As last year's champion at Augusta National, Scheffler d\u2026",
+        "url": "https://www.channelnewsasia.com/sport/scottie-scheffler-really-cool-watch-mcilroy-complete-career-slam-5068116",
+        "urlToImage": "https://dam.mediacorp.sg/image/upload/s--9DB83bB_--/fl_relative,g_south_east,l_mediacorp:cna:watermark:2024-04:reuters_1,w_0.1/f_auto,q_auto/c_fill,g_auto,h_676,w_1200/v1/one-cms/core/2025-04-15t205038z_1_lynxmpel3e119_rtroptp_3_golf.jpg?itok=Ubt3_3hh",
+        "publishedAt": "2025-04-15T20:50:38Z",
+        "content": "Scottie Scheffler woke up Sunday with a realistic chance to come from behind and win another Masters. Once that was out of the picture, he had no issue taking a supporting role in Rory McIlroy's big \u2026 [+3713 chars]"
+      },
+      {
+        "source": {
+          "id": "fox-news",
+          "name": "Fox News"
+        },
+        "author": "Peter D'Abrosca, Samantha Daigle",
+        "title": "Trump assassination attempt suspect Ryan Routh smiles and laughs as attorneys spar over gun",
+        "description": "President Donald Trump's alleged would-be assassin smiled and laughed during his Tuesday court hearing regarding the weapon he allegedly intended to use to shoot the president.",
+        "url": "https://www.foxnews.com/us/trump-assassination-attempt-suspect-ryan-routh-smiles-laughs-attorneys-spar-over-gun",
+        "urlToImage": "https://static.foxnews.com/foxnews.com/content/uploads/2024/09/Ryan-Wesley-Routh-mug-split-2.jpg",
+        "publishedAt": "2025-04-15T20:50:14Z",
+        "content": "The man arrested in connection with a suspected plot to assassinate then-presidential candidate Donald Trump was seen laughing and smiling as he appeared in federal court Tuesday morning for a pre-tr\u2026 [+3370 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Bleeding Cool News"
+        },
+        "author": "Jeremy Konrad",
+        "title": "Happy Gilmore Is Returning To Theaters On April 27 & 30",
+        "description": "Happy Gilmore is returning to theaters as the long-awaited sequel prepares for release this summer on Netflix. The comedy classic stars Adam Sandler,\u00a0Christopher McDonald, Julie Bowen, Frances Bay, and the late Carl Weathers and features cameos from professio\u2026",
+        "url": "https://bleedingcool.com/movies/universal-happy-gilmore-theaters-april-re-release/",
+        "urlToImage": "https://bleedingcool.com/wp-content/uploads/2025/04/ezgif-122a4cc28b4e18-2000x1125.jpg",
+        "publishedAt": "2025-04-15T20:47:07Z",
+        "content": "Posted in: Movies, Universal | Tagged: adam sandler, happy Gilmore, happy gilmore 2\r\nUniversal is re-releasing Happy Gilmore into theaters later this month before the sequel releases in July on Netfl\u2026 [+2602 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Boston Herald"
+        },
+        "author": "Doug Kyed",
+        "title": "Patriots extra points: DeMario Douglas to attend LLS fundraiser Thursday",
+        "description": "Patriots wide receiver DeMario \u201cPop\u201d Douglas will be on hand for a pre-draft charity event on Thursday, April 17 at Vitamin Sea Brewing in Weymouth at 7 p.m. ET to benefit my Leukemia and Lymphoma Society \u201cVisionaries of the Year\u201d campaign. Tickets are $25 an\u2026",
+        "url": "https://www.bostonherald.com/2025/04/15/patriots-extra-points-demario-douglas-to-attend-lls-fundraiser-thursday/",
+        "urlToImage": "https://www.bostonherald.com/wp-content/uploads/2025/04/AP24366632205954.jpg?w=1024&h=682",
+        "publishedAt": "2025-04-15T20:43:52Z",
+        "content": "Patriots wide receiver DeMario \u201cPop\u201d Douglas will be on hand for a pre-draft charity event on Thursday, April 17 at Vitamin Sea Brewing in Weymouth at 7 p.m. ET to benefit my Leukemia and Lymphoma So\u2026 [+1887 chars]"
+      },
+      {
+        "source": {
+          "id": "the-irish-times",
+          "name": "The Irish Times"
+        },
+        "author": "Andy Bull",
+        "title": "Grace of Masters nearly man Justin Rose enhanced McIlroy\u2019s historic win",
+        "description": "Perennial competitor demonstrates magnanimous attitude in defeat: \u2018If you can\u2019t be a great winner, you can still be a good loser\u2019",
+        "url": "https://www.irishtimes.com/sport/golf/2025/04/16/grace-of-masters-nearly-man-justin-rose-enhanced-mcilroys-historic-win/",
+        "urlToImage": "https://www.irishtimes.com/resizer/v2/UNIZLF3AB6IMDM2VV6HDNRQAMU.jpg?smart=true&auth=5cb90fb00a4fb44f97b4be42af7feb943f1f46db867e720a7a40969147104d76&width=1200&height=630",
+        "publishedAt": "2025-04-15T20:26:16Z",
+        "content": "There was one very happy man at Augusta on Monday morning, and there were 52 all in a stew, turning over thoughts of what went right and what went wrong, that short putt on the 6th, that wayward chip\u2026 [+4363 chars]"
+      },
+      {
+        "source": {
+          "id": "the-irish-times",
+          "name": "The Irish Times"
+        },
+        "author": "Andy Bull",
+        "title": "Grace of Masters nearly man Justin Rose enhanced Rory McIlroy\u2019s historic win",
+        "description": "Perennial competitor demonstrates magnanimous attitude in defeat: \u2018If you can\u2019t be a great winner, you can still be a good loser\u2019",
+        "url": "https://www.irishtimes.com/sport/golf/2025/04/15/grace-of-masters-nearly-man-justin-rose-enhanced-rory-mcilroys-historic-win/",
+        "urlToImage": "https://www.irishtimes.com/resizer/v2/UNIZLF3AB6IMDM2VV6HDNRQAMU.jpg?smart=true&auth=5cb90fb00a4fb44f97b4be42af7feb943f1f46db867e720a7a40969147104d76&width=1200&height=630",
+        "publishedAt": "2025-04-15T20:26:16Z",
+        "content": "There was one very happy man at Augusta on Monday morning, and there were 52 all in a stew, turning over thoughts of what went right and what went wrong, that short putt on the 6th, that wayward chip\u2026 [+4363 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Forbes"
+        },
+        "author": "Mark Ewing, Senior Contributor, \n Mark Ewing, Senior Contributor\n https://www.forbes.com/sites/markewing/",
+        "title": "Test Driving The Mercedes-AMG G 63, The Swabian Ibex Maximus Hot Rod",
+        "description": "Mercedes-AMG G 63 is an exotic hot rod SUV for blasting along boulevards, a big rumbling war wagon that never, ever fails to bring a big grin and a chuckle.",
+        "url": "https://www.forbes.com/sites/markewing/2025/04/15/test-driving-the-mercedes-amg-g-63-the-swabian-ibex-maximus-hot-rod/",
+        "urlToImage": "https://imageio.forbes.com/specials-images/imageserve/67feb9bf87b29fcf08b9b9c4/0x0.jpg?format=jpg&crop=3000,1687,x0,y70,safe&height=900&width=1600&fit=bounds",
+        "publishedAt": "2025-04-15T20:24:59Z",
+        "content": "Mercedes-AMG G 63 is a Swabian hot rod for blasting along the boulevards of suburbia, a big ... More rumblefish that never, ever fails to bring a big grin and a chuckle. &amp;nbsp;\r\nMercedes-Benz AG\r\u2026 [+13095 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Snopes.com"
+        },
+        "author": "Jordan Liles",
+        "title": "Rory McIlroy rumor claiming he donated $4.2M Masters earnings to charity is unfounded",
+        "description": "After McIlroy's career Grand Slam at the 2025 Masters, users shared a rumor alleging he donated his $4.2 million in earnings to U.K. charity Mencap.",
+        "url": "https://www.snopes.com//news/2025/04/15/masters-rory-mcilroy-donates-winnings/",
+        "urlToImage": "https://mediaproxy.snopes.com/width/1200/https://media.snopes.com/2025/04/rory_mcilroy_trophy_green.jpg",
+        "publishedAt": "2025-04-15T20:13:00Z",
+        "content": "A rumor that circulated online in April 2025 claimed golfer Rory McIlroy donated his $4.2 million in earnings from winning the 2025 Masters Tournament to Mencap. The charity based in the U.K. includi\u2026 [+5780 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "TheJournal.ie"
+        },
+        "author": "Muiris O'Cearbhaill",
+        "title": "Here's What Happened Today: Tuesday",
+        "description": "Grace Case Report published, murder probe launched in Youghal and Trump seeks to tariffs pharma.",
+        "url": "https://www.thejournal.ie/newsfix-150425-6679234-Apr2025/",
+        "urlToImage": "https://img2.thejournal.ie/article/6679234/river/?height=400&version=6679269",
+        "publishedAt": "2025-04-15T20:11:57Z",
+        "content": "NEED TO CATCH up? The Journal brings you a round-up of todays news.\r\nIRELAND\r\nDetails from the much-anticipated Grace case report were published today after an eight-year investigation. Alamy, file\r\n\u2026 [+1472 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Forbes"
+        },
+        "author": "Jay Ginsbach, Contributor, \n Jay Ginsbach, Contributor\n https://www.forbes.com/sites/jayginsbach/",
+        "title": "RBC Heritage 2025 Golf Betting Preview, Odds, PGA Picks And Props",
+        "description": "The RBC Heritage 2025 golf betting preview. PGA Tour Signature Event with just 71 players including 26 of the top 30 in the world golf rankings shooting for $3.6 million of the $20 million prize pool. Odds, picks, props, Pete Dye-designed course info and info\u2026",
+        "url": "https://www.forbes.com/sites/jayginsbach/2025/04/15/rbc-heritage-2025-golf-betting-preview-odds-pga-picks-and-props/",
+        "urlToImage": "https://imageio.forbes.com/specials-images/imageserve/67fe84f9ba9fbc81fa7091fc/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds",
+        "publishedAt": "2025-04-15T20:02:51Z",
+        "content": "RBC Heritage golf tournament at Harbour Town Golf Links on Hilton Head Island, S.C. (AP Photo/Mic ... More Smith)\r\nAssociated Press\r\nFollowing a most memorable Masters and Rory McIlroy winning hist f\u2026 [+9293 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Sneaker News"
+        },
+        "author": "Matt Varga",
+        "title": "The New Balance 550 Golf Gets Two New Colorways For The Masters",
+        "description": "You really couldn\u2019t have scripted the 2025 Masters any better, capping off with Rory McIlroy completing a Grand Slam title 14 years in the making,...\n\n\u00a9 Sneaker News, 2025. |\nPermalink\n|\nNo comment\n|\nAdd todel.icio.us\n\n\nThe post The New Balance 550 Golf Gets \u2026",
+        "url": "https://sneakernews.com/2025/04/15/new-balance-550-golf-mg550wge-mg550wt/",
+        "urlToImage": "https://sneakernews.com/wp-content/uploads/2025/04/new-balance-550-golf-april-2025.jpg",
+        "publishedAt": "2025-04-15T20:00:27Z",
+        "content": "You really couldn\u2019t have scripted the 2025 Masters any better, capping off with Rory McIlroy completing a Grand Slam title 14 years in the making, following only the fourth sudden death playoff hole \u2026 [+1797 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Consequence.net"
+        },
+        "author": "Liz Shannon Miller",
+        "title": "Adam Sandler\u2019s Happy Gilmore Returning to Movie Theaters This April",
+        "description": "Happy learned how to re-release his movie! Uh-oh!\nAdam Sandler\u2019s Happy Gilmore Returning to Movie Theaters This April\nLiz Shannon Miller",
+        "url": "https://consequence.net/2025/04/happy-gilmore-movie-theaters-re-release/",
+        "urlToImage": "https://consequence.net/wp-content/uploads/2021/02/Happy-Gilmore-Universal.jpg",
+        "publishedAt": "2025-04-15T19:52:50Z",
+        "content": "Fans of golf and/or hockey and/or Adam Sandler should mark their calendars for April 27th and 30th, as Universal Pictures has announced plans to rerelease the seminal 1996 film Happy Gilmore in theat\u2026 [+1523 chars]"
+      },
+      {
+        "source": {
+          "id": "fox-news",
+          "name": "Fox News"
+        },
+        "author": "Ryan Canfield",
+        "title": "Jordan Spieth says it's 'frustrating' to not be able to talk about mud balls at Masters",
+        "description": "Jordan Spieth aired his frustrations about not being able to talk about mud balls at the Masters because \"you're not supposed to talk about them.\"",
+        "url": "https://www.foxnews.com/sports/jordan-spieth-says-its-frustrating-not-able-talk-about-mud-balls-masters",
+        "urlToImage": "https://static.foxnews.com/foxnews.com/content/uploads/2025/04/jordan-spieth-2.jpg",
+        "publishedAt": "2025-04-15T19:44:23Z",
+        "content": "Jordan Spieth was not only just letting it fly on the golf course at Augusta National this weekend, but at the podium too.\u00a0\r\nSpieth, 31, said he dealt with mud balls during his second and third round\u2026 [+2517 chars]"
+      },
+      {
+        "source": {
+          "id": "msnbc",
+          "name": "MSNBC"
+        },
+        "author": "Steve Benen",
+        "title": "The key detail about cognitive tests that Trump still doesn\u2019t seem to understand",
+        "description": "The more Donald Trump talks about the results of his latest cognitive test, the clearer it becomes that he doesn't understand the purpose of cognitive tests.",
+        "url": "https://www.msnbc.com/rachel-maddow-show/maddowblog/key-detail-cognitive-tests-trump-still-doesnt-seem-understand-rcna201401",
+        "urlToImage": "https://media-cldnry.s-nbcnews.com/image/upload/t_nbcnews-fp-1200-630,f_auto,q_auto:best/rockcms/2025-04/250415-donald-trump-se-310p-125940.jpg",
+        "publishedAt": "2025-04-15T19:34:51Z",
+        "content": "After years of unexplained secrecy surrounding his medical records, Donald Trump had his first physical exam of his second term last week, undergoing a nearly five-hour physical exam at Walter Reed N\u2026 [+3565 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "esquire.com"
+        },
+        "author": "Luke Guillory",
+        "title": "35 Best Father\u2019s Day Gifts of 2025",
+        "description": "From tech to style to food, these are 35 best Father\u2019s Day gifts. Whether you\u2019re a son or daughter, wife or husband, you\u2019ll find something for your dad here.",
+        "url": "https://www.esquire.com/lifestyle/g64483749/best-fathers-day-gifts-ideas/",
+        "urlToImage": "https://hips.hearstapps.com/hmg-prod/images/2-67fe962188569.jpg?crop=1.00xw:1.00xh;0,0&resize=1200:*",
+        "publishedAt": "2025-04-15T19:25:00Z",
+        "content": "He might wear a way too old T-shirt, or waste time muttering aloud about the state of the world while scrolling through Apple News, but you've got to love the man. He's got good taste, even if you're\u2026 [+834 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "GlobeNewswire"
+        },
+        "author": "Toll Brothers, Inc.",
+        "title": "New Toll Brothers 55+ Community Coming Soon to Sellersville, Pennsylvania",
+        "description": "SELLERSVILLE, Pa., April 15, 2025 (GLOBE NEWSWIRE) -- Toll Brothers, Inc.\r\n\u00a0(NYSE:TOL), the nation\u2019s leading builder of luxury homes, today announced its newest 55+ active-adult community,\u00a0Regency at Rockhill Ridge\r\n, is coming soon to Sellersville, Pennsylva\u2026",
+        "url": "https://www.globenewswire.com/news-release/2025/04/15/3062091/1924/en/New-Toll-Brothers-55-Community-Coming-Soon-to-Sellersville-Pennsylvania.html",
+        "urlToImage": "https://ml.globenewswire.com/Resource/Download/496b0ba8-eb1f-480d-a0a9-21b28de81d5f",
+        "publishedAt": "2025-04-15T19:24:00Z",
+        "content": "SELLERSVILLE, Pa., April 15, 2025 (GLOBE NEWSWIRE) -- Toll Brothers, Inc.\r\n\u00a0(NYSE:TOL), the nations leading builder of luxury homes, today announced its newest 55+ active-adult community,\u00a0Regency at \u2026 [+3952 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Littlethings.com"
+        },
+        "author": "Ileana Paules-bronet",
+        "title": "Lawmakers Blast Donald Trump For Racking Up Massive Golf Tab",
+        "description": "Lawmakers Blast Donald Trump For Racking Up Massive Golf Tablittlethings.com",
+        "url": "https://littlethings.com/entertainment/lawmakers-blast-donald-trump-for-racking-up-massive-golf-tab",
+        "urlToImage": "https://littlethings.com/wp-content/uploads/2025/04/GettyImages-2207738072-scaled.jpg",
+        "publishedAt": "2025-04-15T19:05:59Z",
+        "content": "Donald Trump\u00a0and\u00a0Elon Musk\u00a0have been busy cutting jobs via DOGE all in the name of wiping out wasteful government spending.\r\nAll the while though, Trump has been rolling up millions close to $30 mill\u2026 [+2217 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Yahoo Entertainment"
+        },
+        "author": null,
+        "title": "Golf Fans Stunned By What Influencer Paige Spiranac Earned Compared To A Major Champion",
+        "description": "Golf fans are stunned as influencer Paige Spiranac\u2019s earnings surpass those of a major champion, leaving many shocked.",
+        "url": "https://consent.yahoo.com/v2/collectConsent?sessionId=1_cc-session_2cae17f8-9aca-4cd2-aa0d-023ea9de297f",
+        "urlToImage": null,
+        "publishedAt": "2025-04-15T19:00:52Z",
+        "content": "If you click 'Accept all', we and our partners, including 239 who are part of the IAB Transparency &amp; Consent Framework, will also store and/or access information on a device (in other words, use \u2026 [+702 chars]"
+      },
+      {
+        "source": {
+          "id": "the-irish-times",
+          "name": "The Irish Times"
+        },
+        "author": "Mary Hannigan",
+        "title": "Who is the greatest Irish sports star of them all?",
+        "description": "What do you mean it\u2019s a silly question? Don\u2019t pretend you don\u2019t have an answer ready to fire at us!",
+        "url": "https://www.irishtimes.com/sport/2025/04/15/who-is-the-greatest-irish-sports-star-of-them-all/",
+        "urlToImage": "https://www.irishtimes.com/resizer/v2/OALRP4ROX5H57PMJZUTPMEDUPE.jpg?smart=true&auth=be6551435ae4fd3bb1955e28642e7f04dc9b482873e23fe3391e8431aca805a1&width=1200&height=630",
+        "publishedAt": "2025-04-15T18:46:52Z",
+        "content": "Is there anything more pointless than those heated debates that kick off after monumental sporting events, when the arguments start over whether the latest feat proves beyond question that [blankety-\u2026 [+2286 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "NBCSports.com"
+        },
+        "author": "Rex Hoggard",
+        "title": "Scottie Scheffler returns to defend RBC Heritage, but not as reigning Masters champ",
+        "description": "Scheffler was feeling a little more tired this time around after being in contention, but not winning, the Masters.",
+        "url": "https://www.nbcsports.com/golf/news/scottie-scheffler-returns-to-defend-rbc-heritage-but-not-as-reigning-masters-champ",
+        "urlToImage": "https://nbcsports.brightspotcdn.com/dims4/default/4469b8c/2147483647/strip/true/crop/5148x2896+0+128/resize/1440x810!/quality/90/?url=https%3A%2F%2Fnbc-sports-production-nbc-sports.s3.us-east-1.amazonaws.com%2Fbrightspot%2F9b%2F5a%2F06a965234f5bb328e24ac6a3799c%2Fhttps-delivery-gettyimages.com%2Fdownloads%2F2210435507",
+        "publishedAt": "2025-04-15T18:46:26Z",
+        "content": "HILTON HEAD ISLAND, S.C. Scottie Scheffler is back at Harbour Town Golf Links following his three-stroke victory at last years RBC Heritage.\r\nAlthough hes still the worlds top-ranked player and the e\u2026 [+1512 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "NBCSports.com"
+        },
+        "author": "Rex Hoggard",
+        "title": "PGA Tour begins allowing distance-measuring devices at RBC Heritage",
+        "description": "The temporary use of DMDs is part of the Tour's \"Fan Forward\" initiative to improve pace of play.",
+        "url": "https://www.nbcsports.com/golf/news/pga-tour-begins-allowing-distance-measuring-devices-at-rbc-heritage",
+        "urlToImage": "https://nbcsports.brightspotcdn.com/dims4/default/6548da8/2147483647/strip/true/crop/5139x2891+0+285/resize/1440x810!/quality/90/?url=https%3A%2F%2Fnbc-sports-production-nbc-sports.s3.us-east-1.amazonaws.com%2Fbrightspot%2F21%2F4d%2F1afc5e154b2aa153d43c2267033c%2Fhttps-delivery-gettyimages.com%2Fdownloads%2F1923757973",
+        "publishedAt": "2025-04-15T18:38:27Z",
+        "content": "HILTON HEAD ISLAND, S.C. Observers will notice something is different at this weeks RBC Heritage.\r\nThe post-Masters celebration will have a solid field as the seasons sixth signature event, Harbour T\u2026 [+4605 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Commercial Observer"
+        },
+        "author": "Acoen",
+        "title": "Madison Realty Capital Upsizes Brooklyn Resi Tower Loan by $70M",
+        "description": "The Rabsky Group has received an additional $70 million of financing to complete and lease-up its planned multifamily tower in Downtown Brooklyn, nearly a year after sealing a $485 million loan for the recapitalization of the 39-story project. Madison Realty \u2026",
+        "url": "http://commercialobserver.com/2025/04/madison-realty-capital-upsizes-brooklyn-resi-tower-loan-70m/",
+        "urlToImage": "https://commercialobserver.com/wp-content/uploads/sites/3/2025/04/Josh-Zegen-625-Fulton-Street-BK-credit-Kidfly182_CC-by-4.0-via-Wikimedia-Commons.jpg?quality=80&crop=0px%2C0px%2C2000px%2C1051px&resize=1200%2C630&strip",
+        "publishedAt": "2025-04-15T18:32:14Z",
+        "content": "The Rabsky Group has received an additional $70 million of financing to complete and lease-up its planned multifamily tower in Downtown Brooklyn, nearly a year after sealing a $485 million loan for t\u2026 [+1400 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "menshealth.com"
+        },
+        "author": "Tim Kohut",
+        "title": "Amazon Warehouse Deals April 2025: Save Up to 69% on Samsung, Amazon, Apple, and More",
+        "description": "Get big savings on brand-name gear from Apple, Samsung, DeWalt, and more in Amazon\u2019s Resale section.",
+        "url": "https://www.menshealth.com/technology-gear/a64480096/amazon-warehouse-deals-april-2025/",
+        "urlToImage": "https://hips.hearstapps.com/hmg-prod/images/amazon-warehouse-deals-67fe8f78290b0.jpg?crop=1.00xw:1.00xh;0,0&resize=1200:*",
+        "publishedAt": "2025-04-15T18:29:00Z",
+        "content": "WHEN IT COMES to Amazon and its slew of daily discounts and deals, the Amazon Resale section is rarely mentioned. While its not necessarily hidden, its seldom advertised by the site and is still rela\u2026 [+4888 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "ARTnews"
+        },
+        "author": "Maximil\u00edano Dur\u00f3n",
+        "title": "Elaine Wynn, Casino Resort Billionaire and Top Art Collector, Dies at\u00a082",
+        "description": "Elaine Wynn, a cofounder of Wynn Resorts who used her wealth to support art and education philanthropy, has died at 82.",
+        "url": "https://www.artnews.com/art-news/news/elaine-wynn-top-art-collector-dead-1234738750/",
+        "urlToImage": "https://www.artnews.com/wp-content/uploads/2025/04/GettyImages-2182595293.jpg?w=1024",
+        "publishedAt": "2025-04-15T18:22:19Z",
+        "content": "Elaine Wynn, a cofounder of Wynn Resorts in Las Vegas who put her billions toward arts and education philanthropy, has died at 82. The news was confirmed by her namesake family foundation on Tuesday,\u2026 [+10559 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "KicksOnFire.com"
+        },
+        "author": "Kicksonfire",
+        "title": "Jordan Air Rev Golf White / Metallic Silver",
+        "description": "The Jordan Air Rev Golf White/Metallic Silver is an elegant fusion of street style and golf-specific functionality, designed to meet the demands of both games enthusiasts and fashion-forward individuals. This shoe showcases a primarily white upper, constructe\u2026",
+        "url": "https://www.kicksonfire.com/jordan-air-rev-golf-white-metallic-silver",
+        "urlToImage": "https://2app.kicksonfire.com/kofapp/upload/events_master_images/ipad_jordan-air-rev-golf-white-metallic-silver.png",
+        "publishedAt": "2025-04-15T18:21:02Z",
+        "content": "The Jordan Air Rev Golf White/Metallic Silver is an elegant fusion of street style and golf-specific functionality, designed to meet the demands of both games enthusiasts and fashion-forward individu\u2026 [+1276 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "KicksOnFire.com"
+        },
+        "author": "Kicksonfire",
+        "title": "Air Jordan 14 Golf Us Open White / Metallic Copper",
+        "description": "The Air Jordan 14 Golf \"US Open\" edition in White and Metallic Copper is a sophisticated fusion of classic style and modern performance, designed specifically for the golf course. This unique iteration pays homage to one of the most prestigious tournaments in\u2026",
+        "url": "https://www.kicksonfire.com/air-jordan-14-golf-us-open-white-metallic-copper",
+        "urlToImage": "https://2app.kicksonfire.com/kofapp/upload/events_master_images/ipad_air-jordan-14-golf-us-open-white-metallic-copper.png",
+        "publishedAt": "2025-04-15T18:19:12Z",
+        "content": "The Air Jordan 14 Golf \"US Open\" edition in White and Metallic Copper is a sophisticated fusion of classic style and modern performance, designed specifically for the golf course. This unique iterati\u2026 [+1401 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "KicksOnFire.com"
+        },
+        "author": "Kicksonfire",
+        "title": "Jordan Air Rev Golf White / University Blue",
+        "description": "The Jordan Air Rev Golf in White and University Blue is a perfect fusion of athletic performance and iconic style. This shoe, inspired by the timeless Air Jordan aesthetics, offers golfers a unique opportunity to blend their love for basketball heritage with \u2026",
+        "url": "https://www.kicksonfire.com/jordan-air-rev-golf-white-university-blue",
+        "urlToImage": "https://2app.kicksonfire.com/kofapp/upload/events_master_images/ipad_jordan-air-rev-golf-white-university-blue.png",
+        "publishedAt": "2025-04-15T18:18:44Z",
+        "content": "The Jordan Air Rev Golf in White and University Blue is a perfect fusion of athletic performance and iconic style. This shoe, inspired by the timeless Air Jordan aesthetics, offers golfers a unique o\u2026 [+1303 chars]"
+      },
+      {
+        "source": {
+          "id": "the-times-of-india",
+          "name": "The Times of India"
+        },
+        "author": "Global Desk",
+        "title": "Golfer\u2019s girlfriend steals spotlight at the Masters with bold Rory McIlroy message that has fans buzzing on social media",
+        "description": "Rory McIlroy's Masters victory, completing his career grand slam, was slightly overshadowed by Makena White's viral tweet. The girlfriend of golfer Jake Knapp humorously expressed the intense emotions of watching McIlroy's performance. Her relatable post, jok\u2026",
+        "url": "https://economictimes.indiatimes.com/news/international/us/golfers-girlfriend-steals-spotlight-at-the-masters-with-bold-rory-mcilroy-message-that-has-fans-buzzing-on-social-media/articleshow/120320140.cms",
+        "urlToImage": "https://img.etimg.com/thumb/msid-120320147,width-1200,height-630,imgsize-26496,overlay-economictimes/articleshow.jpg",
+        "publishedAt": "2025-04-15T18:16:50Z",
+        "content": "Rory McIlroy completed his career grand slam by winning the Masters, but someone else stole some of the spotlight. Makena White, Jake Knapp's girlfriend, had social media in stitches with her outrage\u2026 [+2486 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "PEOPLE"
+        },
+        "author": "Sharareh Drury",
+        "title": "'Happy Gilmore' Is Returning to Theaters",
+        "description": "'Happy Gilmore' will return to theaters for two days in April ahead of the 1996 comedy's Netflix sequel arrived on the streamer July 25. Adam Sandler will reprise his role as Happy Gilmore, and star alongside Christopher McDonald and Julie Bowen.",
+        "url": "https://people.com/happy-gilmore-is-returning-to-theaters-before-netflix-sequel-11715533",
+        "urlToImage": "https://people.com/thmb/6GOydsFcxZFE3GkJTB4HoGITCQI=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc():focal(582x216:584x218)/happy-gilmore-adam-sandler-041525-ca933744bf224acfa8503f406601d7a3.jpg",
+        "publishedAt": "2025-04-15T18:16:47Z",
+        "content": "<ul><li>Happy Gilmore is returning to theaters for two days in April ahead of the movie's sequel hitting Netflix in July</li><li>Adam Sandler will reprise his role as hockey player-turned-golfer Happ\u2026 [+2279 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "The Denver Post"
+        },
+        "author": "Jessica Alvarado Gamez",
+        "title": "Trader Joe\u2019s to open ninth Colorado location in Westminster",
+        "description": "In addition to unconventional finds, fresh flowers and everyday basics like milk, eggs, meat, bakery items and fresh produce, the new Westminster location will also offer beer and wine.",
+        "url": "https://www.denverpost.com/2025/04/15/trader-joes-colorado-westminster/",
+        "urlToImage": "https://www.denverpost.com/wp-content/uploads/2024/01/SJM-L-TRADERJOES-0103.jpg?w=1024&h=682",
+        "publishedAt": "2025-04-15T18:13:56Z",
+        "content": "Trader Joes is bringing its quirky charm to Westminster, with the popular grocery store chain set to open its ninth Colorado location later this year.\r\nThe national neighborhood grocer, known for its\u2026 [+1611 chars]"
+      },
+      {
+        "source": {
+          "id": "espn",
+          "name": "ESPN"
+        },
+        "author": null,
+        "title": "Reed rises to 49th in ranking, assuring PGA spot",
+        "description": "After finishing third in the Masters, Patrick Reed has moved up to No. 49 in the world ranking, which at the very least assures a spot in the PGA Championship.",
+        "url": "https://www.espn.com/golf/story/_/id/44685756/patrick-reed-rises-rankings-assured-pga-championship-spot",
+        "urlToImage": "https://a3.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0412%2Fr1477797_1296x729_16%2D9.jpg",
+        "publishedAt": "2025-04-15T18:07:05Z",
+        "content": "Apr 15, 2025, 01:54 PM ET\r\nAUGUSTA, Ga. -- Patrick Reed was so consumed with a putter that went cold during the Masters that he might not have contemplated where his third-place finish could lead.\r\nH\u2026 [+1772 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "CBS Sports"
+        },
+        "author": "Robby Kalland",
+        "title": "2025 Masters: Ranking Rory McIlroy's nine best shots that defined his iconic win at Augusta National",
+        "description": "McIlroy hit some incredible approach shots to help him win the Masters, so we ranked his nine best",
+        "url": "https://www.cbssports.com/golf/news/2025-masters-ranking-rory-mcilroys-nine-best-shots-that-defined-his-iconic-win-at-augusta-national/",
+        "urlToImage": "https://sportshub.cbsistatic.com/i/r/2025/04/14/544e9dda-10d3-489a-8fb0-87ef5f949136/thumbnail/1200x675/049dec7932d867e4a4448a64e25fd3bd/rory-swing.jpg",
+        "publishedAt": "2025-04-15T18:04:48Z",
+        "content": "Rory McIlroy put on one of the all-time great shot-making displays during the final three rounds of the 2025 Masters. While he putt well and hit some jaw-dropping drives, it was his iron and wedge pl\u2026 [+7005 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Yahoo Entertainment"
+        },
+        "author": "KIRO 7 News Staff",
+        "title": "Opening day of lowland lakes fishing brings big trout, big prizes across Washington",
+        "description": "Prizes include fishing gear, gift cards, Seattle Mariners tickets, aquarium passes, guided fishing trips, rounds of golf, resort stays, a kayak, and GPS units, among others.",
+        "url": "https://sports.yahoo.com/article/opening-day-lowland-lakes-fishing-180427946.html",
+        "urlToImage": "https://media.zenfs.com/en/kiro_cox_articles_720/490c88d8d9fa9d425cb69849c1c31921",
+        "publishedAt": "2025-04-15T18:04:27Z",
+        "content": "Anglers across Washington can prepare for the opening day of lowland lakes fishing on April 26, with more than 14.5 million trout expected to be stocked statewide, according to the Washington Departm\u2026 [+2998 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Independent.ie"
+        },
+        "author": "Mark Bain",
+        "title": "Gerry Kelly on Rory McIlroy appearance: \u2018I wish I had a pound for every time someone mentioned that washing machine\u2019",
+        "description": "It was 1999 when a young Rory McIlroy made his TV debut in what is now seen as one of the top highlights of Gerry Kelly\u2019s long-running Friday night chat show.",
+        "url": "https://www.independent.ie/irish-news/gerry-kelly-on-rory-mcilroy-appearance-i-wish-i-had-a-pound-for-every-time-someone-mentioned-that-washing-machine/a1323375098.html",
+        "urlToImage": "https://focus.independent.ie/thumbor/aJzaHsbZZGKDH9SyxI5OhBpdDvY=/150x0:1770x1080/629x0/prod-mh-ireland/bfe172ed-1d78-4ce7-ba83-e6aae02b0886/28eedda4-839a-4d43-bd0a-430a0e417ad6/a849e1ef-ce61-4f52-b56c-c6d415436402.jpg",
+        "publishedAt": "2025-04-15T18:00:00Z",
+        "content": "It was 1999 when a young Rory McIlroy made his TV debut in what is now seen as one of the top highlights of Gerry Kellys long-running Friday night chat show.\r\nThe nine-year-old sat on the sofa chatti\u2026 [+88 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Asla.org"
+        },
+        "author": "ASLA staff",
+        "title": "Emerging Trends in Recreation and Sports",
+        "description": "by Bronwen Mastro, ASLA, LEED BD+C, and Hans Klein-Hewett, ASLA, PLA Does it seem like suddenly everyone is talking about going to the pump track (or the need to build one in your community)? Is futsal now the rage? Are\u2026 Continue reading \u2192",
+        "url": "https://thefield.asla.org/2025/04/15/emerging-trends-in-recreation-and-sports/",
+        "urlToImage": "https://thefield.asla.org/wp-content/uploads/2025/04/RiverFloat_BendOR.jpg",
+        "publishedAt": "2025-04-15T17:59:01Z",
+        "content": "by Bronwen Mastro, ASLA, LEED BD+C, and Hans Klein-Hewett, ASLA, PLA\r\nPickleball at Albert-Oakland Park in Columbia, Missouri. LED lights allow play to continue on until the park closes at 11pm. Colu\u2026 [+13197 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "CBS Sports"
+        },
+        "author": "Robby Kalland",
+        "title": "Mixed-team golf approved for Olympics, event will debut at 2028 Summer Games in Los Angeles",
+        "description": "A third golf event is coming to the Olympics in 2028 as the best men and women from each country will team up",
+        "url": "https://www.cbssports.com/golf/news/mixed-team-golf-approved-for-olympics-event-will-debut-at-2028-summer-games-in-los-angeles/",
+        "urlToImage": "https://sportshub.cbsistatic.com/i/r/2025/04/15/30c26021-392a-4557-b7d2-6fe48f8ee7f3/thumbnail/1200x675/44d6cfa095796710d80d54afc8eee825/day-ko.jpg",
+        "publishedAt": "2025-04-15T17:57:18Z",
+        "content": "Ever since golf made its return to the Olympics stage at the 2016 Summer Games in Rio de Janeiro, fans have been hoping to see some form of team golf added to the individual event for the men and wom\u2026 [+1372 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Crooksandliars.com"
+        },
+        "author": "Heather",
+        "title": "Jimmy Kimmel Has A Field Day With Trump's Latest Quack Doctor",
+        "description": "Ronnie Jackson may be long gone, but apparently there is no shortage of lying sycophants to take his place.\nAs we discussed here, our oldest sitting \"president\" had a physical that lasted around 5 hours this week, and he has to go back for a follow-up colonos\u2026",
+        "url": "https://crooksandliars.com/2025/04/jimmy-kimmel-has-field-day-trumps-latest",
+        "urlToImage": "https://crooksandliars.com/files/primary_image/25/04/abc-love-trump-041425.png",
+        "publishedAt": "2025-04-15T17:46:49Z",
+        "content": "Ronnie Jackson may be long gone, but apparently there is no shortage of lying sycophants to take his place.Thankfully, for what's left of the sane among us, late night host Jimmy Kimmel had a field d\u2026 [+2955 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Forbes"
+        },
+        "author": "Kris Holt, Contributor, \n Kris Holt, Contributor\n https://www.forbes.com/sites/krisholt/",
+        "title": "NYT \u2018Strands\u2019 Today: Hints Spangram, Answers For Wednesday, April 16",
+        "description": "Looking for some help with today's NYT Strands? An extra hint and the answers are right here to help you finish the grid.",
+        "url": "https://www.forbes.com/sites/krisholt/2025/04/15/nyt-strands-today-hints-answers-clues-help-wednesday-april-16-408-fore/",
+        "urlToImage": "https://imageio.forbes.com/specials-images/imageserve/6622d37751713d67a500e5cd/0x0.jpg?format=jpg&height=900&width=1600&fit=bounds",
+        "publishedAt": "2025-04-15T17:45:23Z",
+        "content": "Today's NYT Strands hints and answers.\r\nNew York Times\r\nLooking for Tuesdays Strands hints, spangram and answers? You can find them here:\r\nForbesNYT Strands Hints, Spangram Answers For Tuesday, April\u2026 [+3811 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "PCMag.com"
+        },
+        "author": "Emily Forlini",
+        "title": "Big Changes at WiTricity, Tesla Hint at the Future of Wireless EV Charging",
+        "description": "The most prominent startup scales down its electric vehicle charging ambitions to golf carts, while Tesla ramps up its plans and teases new charging tech.\nWireless charging technology has come a long way in recent years, especially for mobile phones. It's sti\u2026",
+        "url": "https://me.pcmag.com/en/cars-auto/29369/big-changes-at-witricity-tesla-hint-at-the-future-of-wireless-ev-charging",
+        "urlToImage": "https://sm.pcmag.com/t/pcmag_me/news/b/big-change/big-changes-at-witricity-tesla-hint-at-the-future-of-wireles_snqr.1200.jpg",
+        "publishedAt": "2025-04-15T17:40:53Z",
+        "content": "Wireless charging technology has come a long way in recent years, especially for mobile phones. It's still not available for electric cars, but some of the biggest companies working on the tech are m\u2026 [+3699 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "PCMag.com"
+        },
+        "author": "Emily Forlini",
+        "title": "Big Changes at WiTricity, Tesla Hint at the Future of Wireless EV Charging",
+        "description": "The most prominent startup scales down its electric vehicle charging ambitions to golf carts, while Tesla ramps up its plans and teases new charging tech.\nWireless charging technology has come a long way in recent years, especially for mobile phones. It's sti\u2026",
+        "url": "https://uk.pcmag.com/cars-auto/157583/big-changes-at-witricity-tesla-hint-at-the-future-of-wireless-ev-charging",
+        "urlToImage": "https://sm.pcmag.com/t/pcmag_uk/news/b/big-change/big-changes-at-witricity-tesla-hint-at-the-future-of-wireles_yutv.1200.jpg",
+        "publishedAt": "2025-04-15T17:40:53Z",
+        "content": "Wireless charging technology has come a long way in recent years, especially for mobile phones. It's still not available for electric cars, but some of the biggest companies working on the tech are m\u2026 [+3699 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "NBCSports.com"
+        },
+        "author": "Golf Channel Staff",
+        "title": "RBC Heritage 2025: Odds, favorites for Harbour Town Golf Links",
+        "description": "Fresh off a thrilling Masters is a signature event on the PGA Tour. Here are the betting favorites and odds.",
+        "url": "https://www.nbcsports.com/golf/news/rbc-heritage-2025-odds-favorites-for-harbour-town-golf-links",
+        "urlToImage": "https://nbcsports.brightspotcdn.com/dims4/default/0ed14fb/2147483647/strip/true/crop/1920x1080+0+0/resize/1440x810!/quality/90/?url=https%3A%2F%2Fnbc-sports-production-nbc-sports.s3.us-east-1.amazonaws.com%2Fbrightspot%2F4a%2F4e%2F30a1f86e42d38a74fb3860478a3a%2Fscheffler.jpg",
+        "publishedAt": "2025-04-15T17:40:42Z",
+        "content": "What, you needed a cool-down? \r\nGolf stops for nothing, so the PGA Tour rolls right ahead with a signature event this weekend in the wake of a Masters as memorable as any. Its the RBC Heritage at Har\u2026 [+865 chars]"
+      },
+      {
+        "source": {
+          "id": "fox-news",
+          "name": "Fox News"
+        },
+        "author": "Paulina Dedaj",
+        "title": "Bryson DeChambeau says Rory McIlroy 'didn't talk to me once' during final Masters round",
+        "description": "Rory McIlroy apparently ignored his final pairing partner, Bryson DeChambeau, on a tense day at Augusta National, the LIV star revealed after Sunday's round.",
+        "url": "https://www.foxnews.com/sports/bryson-dechambeau-says-rory-mcilroy-didnt-talk-me-once-during-final-masters-round",
+        "urlToImage": "https://static.foxnews.com/foxnews.com/content/uploads/2025/04/rory-bryson2.jpg",
+        "publishedAt": "2025-04-15T17:30:40Z",
+        "content": "Bryson DeChambeau was paired with Rory McIlroy in the final round of\u00a0the Masters\r\n on Sunday, but the two apparently didnt exchange any words during the tense day that saw both golfers struggle until\u2026 [+2130 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Yahoo Entertainment"
+        },
+        "author": "DOUG FERGUSON",
+        "title": "Patrick Reed has a good Masters that brings US Open into view",
+        "description": "Patrick Reed was so consumed with a putter that went cold during the Masters that he might not have contemplated where his third-place finish could lead. The PGA Championship, to be played May 15-18 at Quail Hollow, is the final week before the U.S. Open exem\u2026",
+        "url": "https://sports.yahoo.com/article/patrick-reed-good-masters-brings-173027439.html",
+        "urlToImage": "https://s.yimg.com/ny/api/res/1.2/ElGIC8ewXft5XMN1ov6lOg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/cff707ddc7f3d06c53aa1ffab7b97f39",
+        "publishedAt": "2025-04-15T17:30:27Z",
+        "content": "AUGUSTA, Ga. (AP) Patrick Reed was so consumed with a putter that went cold during the Masters that he might not have contemplated where his third-place finish could lead.\r\nHe moved up to No. 49 in t\u2026 [+6721 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "/FILM"
+        },
+        "author": "staff@slashfilm.com (Witney Seibold)",
+        "title": "Rick & Morty's Meeseeks Episode Got Another Ending Outside Of Adult Swim",
+        "description": "Rick and Morty continued the story of one Mr. Meeseeks after an episode's conclusion, but fans had to jump into another medium in order to check it out.",
+        "url": "https://www.slashfilm.com/1832071/rick-and-morty-meeseeks-episode-ending-outside-adult-swim-comics/",
+        "urlToImage": "https://www.slashfilm.com/img/gallery/rick-mortys-meeseeks-episode-got-another-ending-outside-of-adult-swim/l-intro-1744387198.jpg",
+        "publishedAt": "2025-04-15T17:30:00Z",
+        "content": "In the \"Rick and Morty\" episode \"Meeseeks and Destroy\" (January 20, 2014) a fan favorite, although maybe not one of the best Rick reveals a miraculous widget called the Meeseeks Box, a device that ca\u2026 [+1838 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Independent.ie"
+        },
+        "author": "Rian Noctor",
+        "title": "IOC approve addition of mixed golf event for 2028 Olympic Games in Los Angeles",
+        "description": "The International Golf Federation (IGF) have confirmed that the International Olympic Committee (IOC) executive board has approved the addition of an Olympic golf mixed-team event, which will debut at the Olympic Games in Los Angeles in 2028.",
+        "url": "https://www.independent.ie/sport/golf/ioc-approve-addition-of-mixed-golf-event-for-2028-olympic-games-in-los-angeles/a984663980.html",
+        "urlToImage": "https://focus.independent.ie/thumbor/aO1QptJp7WLJxs6BEJGRaikb5k8=/0x13:3194x2142/629x0/prod-mh-ireland/6920b035-1f61-46a1-8ad8-08593088bbf3/e8bd3909-883c-4f95-b87d-b2b13e519c09/6920b035-1f61-46a1-8ad8-08593088bbf3.jpg",
+        "publishedAt": "2025-04-15T17:27:26Z",
+        "content": "The International Golf Federation (IGF) have confirmed that the International Olympic Committee (IOC) executive board has approved the addition of an Olympic golf mixed-team event, which will debut a\u2026 [+1468 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Rivals.com"
+        },
+        "author": "FSU sports information",
+        "title": "FSU signs Notre Dame transfer guard Emma Risch",
+        "description": "Florida State head coach Brooke Wyckoff announced the signing of guard Emma Risch on Tuesday. Risch will join the Seminoles for the 2025-26 season as a junior after spending two seasons at Notre Dame, appearing in 20 games. \u201cI am thrilled to welcome Emma Risc\u2026",
+        "url": "https://floridastate.rivals.com/news/fsu-signs-notre-dame-transfer-guard-emma-risch?yptr=yahoo",
+        "urlToImage": "https://images.rivals.com/image/upload/f_auto,q_auto,t_headline_primary/dburwpment1hwyvik9w0",
+        "publishedAt": "2025-04-15T17:25:42Z",
+        "content": "Florida State head coach Brooke Wyckoff announced the signing of guard Emma Risch on Tuesday. Risch will join the Seminoles for the 2025-26 season as a junior after spending two seasons at Notre Dame\u2026 [+2582 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "BBC News"
+        },
+        "author": "Timothy Abraham",
+        "title": "LA 2028 to feature Olympic mixed-team golf event",
+        "description": "A mixed-team golf event will be held at the Olympic Games in Los Angeles following approval by the IOC.",
+        "url": "https://www.bbc.com/sport/golf/articles/c62xwy07py9o",
+        "urlToImage": "https://ichef.bbci.co.uk/ace/branded_sport/1200/cpsprodpb/8b3a/live/4c79b850-1a1b-11f0-9742-7bfd3ee821a0.jpg",
+        "publishedAt": "2025-04-15T17:16:54Z",
+        "content": "A mixed-team golf event will be held at the Olympic Games in Los Angeles following approval by the International Olympic Committee executive board.\r\nOrganisers have said it will contested as 36-hole \u2026 [+1168 chars]"
+      },
+      {
+        "source": {
+          "id": "the-irish-times",
+          "name": "The Irish Times"
+        },
+        "author": null,
+        "title": "Mixed golf event approved for Los Angeles Olympic Games",
+        "description": "The 36-hole event will take place in between the men\u2019s and women\u2019s individual competitions",
+        "url": "https://www.irishtimes.com/sport/golf/2025/04/15/mixed-golf-event-approved-for-los-angeles-olympic-games/",
+        "urlToImage": "https://www.irishtimes.com/resizer/v2/CHIGV54A2SAVLYGALUD67DEO5I.jpg?smart=true&auth=59bd917f34b97476ef521cc838a463f5e740b2a9ff567e0962cb9c4c8efa97b6&width=1200&height=630",
+        "publishedAt": "2025-04-15T17:16:48Z",
+        "content": "A mixed-team golf event will debut at the Los Angeles 2028 Olympics, the International Golf Federation (IGF) said on Tuesday, with teams comprised of one male and one female athlete from the individu\u2026 [+894 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Eonline.com"
+        },
+        "author": null,
+        "title": "2025 Masters Tournament: Rory McIlroy & More Jaw-Dropping Paychecks",
+        "description": "Rory McIlRoy latest paycheck has him wearing and rolling in green.\u00a0\nThe Irish golfer hit a career high at the Masters April 13, finally winning the Augusta National Golf Club-based tournament...",
+        "url": "https://www.eonline.com/news/1416156/masters-paychecks-for-golfers-rory-mcilroy-justin-rose",
+        "urlToImage": "https://akns-images.eonline.com/eol_images/Entire_Site/20250415/717bb65c-fba6-4bb5-a3f9-de5c4f6d2d47_1744740092.jpg?fit=around%7C1080:1080&output-quality=90&crop=1080:1080;center,top",
+        "publishedAt": "2025-04-15T17:10:00Z",
+        "content": "Taraji P. Hensonearned a Best Supporting Actress Oscar nomination for 2008s The Curious Case of Benjamin Button, but years later she was still fired up by the $150,000 she accepted to be in the movie\u2026 [+1200 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "TODAY"
+        },
+        "author": "Meghan Holohan",
+        "title": "While playing tennis, man, 53, broke his collarbone. It led to a surprising diagnosis",
+        "description": "After breaking his collarbone, man, 53, learned he had Stage 4 kidney cancer and a horseshoe kidney. Surgery involved separating kidneys and removing the tumor.",
+        "url": "https://www.today.com/health/disease/mans-broken-collabrone-kidney-cancer-diagnosis-rcna201169",
+        "urlToImage": "https://media-cldnry.s-nbcnews.com/image/upload/t_social_share_1200x630_center,f_auto,q_auto:best/rockcms/2025-04/Rick-O-Keefe-cancer-mc-250414-01-2fee9b.jpg",
+        "publishedAt": "2025-04-15T17:09:22Z",
+        "content": "During a doubles tennis match, Rick OKeefe hit a hard serve and returned the ball powerfully when his collarbone snapped.\u00a0\r\nI was playing with three other guys and one of them was a doctor and hes li\u2026 [+6769 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Reformation21.org"
+        },
+        "author": "Grant Van Leuven",
+        "title": "Keep Getting Up Again and AGAIN!",
+        "description": "Keep Getting Up Again and AGAIN!\r\n\n \n \n \n \n \n \n Grant Van Leuven\r\n\n \r\n\n \n \n \n \n \n \n\r\nApr 15, 2025\r\nPaul Harvey, the beloved radio broadcaster who chronicled mysterious \u201crest of the stories\u201d for America with his nationally syndicated program, shared this sad b\u2026",
+        "url": "https://www.reformation21.org/blog/keep-getting-up-again-and-again",
+        "urlToImage": "https://www.reformation21.org/sites/default/files/field/image/boat_13.jpg",
+        "publishedAt": "2025-04-15T17:03:20Z",
+        "content": "Paul Harvey, the beloved radio broadcaster who chronicled mysterious rest of the stories for America with his nationally syndicated program, shared this sad but true account of Sparky:\r\nWHEN HE WAS a\u2026 [+9351 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Powder Magazine"
+        },
+        "author": "Izzy Lidsky",
+        "title": "Idaho Ski Area Selling Celebratory 90 Cent Lift Tickets",
+        "description": "In honor of its 90th season, Lookout Pass is running a deal that seems too good to be true.",
+        "url": "https://www.powder.com/news/idaho-ski-area-90-cent-lift-tickets",
+        "urlToImage": "https://www.powder.com/.image/ar_1.91%2Cc_fill%2Ccs_srgb%2Cfl_progressive%2Cg_faces:center%2Cq_auto:eco%2Cw_1200/MjA5NzAxMTg5Mjc5ODE5NDMz/shutterstock_1890852619.jpg",
+        "publishedAt": "2025-04-15T17:02:29Z",
+        "content": "Nowadays, it's hard to imagine spending less than $50 on a lift ticket. In fact, at most mountains, it's hard to imagine spending less than $200 on a lift ticket.To celebrate its 90th season, Lookout\u2026 [+1717 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "New Zealand Herald"
+        },
+        "author": "Jane Phare",
+        "title": "On the Up: Xero co-founder Hamish Edwards\u2019 battle to build a links golf course",
+        "description": "The course will feature restored sand dunes and 180,000 native plants.",
+        "url": "https://www.nzherald.co.nz/business/rma-horror-xero-co-founder-hamish-edwards-battle-to-build-a-links-golf-course/X2KTTIFV3VG7DN4P4D5FABJFEM/",
+        "urlToImage": "https://www.nzherald.co.nz/resizer/v2/O3ASD3W5BJBS7NP6WZ7D6X3LJE.jpg?auth=645910529402a9a6f2f9ff4934f5cccb24b90dacaf362f0268390dfe2ab3e06c&width=1200&height=675&quality=70&smart=true",
+        "publishedAt": "2025-04-15T17:00:00Z",
+        "content": "Edwards, 52, has left his sky-blue Porsche 296 at the farm gate, hitching a ride up to the cabin in a 4WD. A 700m road will eventually connect to the clubhouse but thatll be about it in terms of tar \u2026 [+12367 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "New Zealand Herald"
+        },
+        "author": null,
+        "title": "Rory McIlroy\u2019s Masters triumph is the best reality TV \u2013 Editorial",
+        "description": "OPINION: Who couldn't relate to the golfer's adversity on Monday morning?",
+        "url": "https://www.nzherald.co.nz/nz/rory-mcilroys-masters-triumph-is-the-best-reality-tv-editorial/I77CREQ5CFECTL5E3HG7DIPFNQ/",
+        "urlToImage": "https://www.nzherald.co.nz/resizer/v2/XOS6UGSG4RHEHCI3SNKBWHMRW4.jpg?auth=723df2af8f0ba59d692c88a1330d265c12ba35c08d121d13c2ce3c90520e1796&width=1200&height=675&quality=70&smart=true",
+        "publishedAt": "2025-04-15T17:00:00Z",
+        "content": "No wonder the likes of Netflix and Amazon are shelling out millions for the rights to stream live sport.\r\nOn Monday, there was of course the rare history we witnessed: a 35-year-old becoming the sixt\u2026 [+1979 chars]"
+      },
+      {
+        "source": {
+          "id": "fox-news",
+          "name": "Fox News"
+        },
+        "author": "Ashley DiMella",
+        "title": "Fisherman catches prehistoric-looking alligator gar in 4-hour \u2018epic battle\u2019",
+        "description": "An angler from Kentucky says he may have broken a record for a 153-pound alligator gar caught in Lake Livingston, Texas after a four-hour battle to reel in the massive fish.",
+        "url": "https://www.foxnews.com/travel/fisherman-catches-prehistoric-looking-alligator-gar-4-hour-epic-battle",
+        "urlToImage": "https://static.foxnews.com/foxnews.com/content/uploads/2025/04/massive-fish-possible-world-record.jpg",
+        "publishedAt": "2025-04-15T16:50:37Z",
+        "content": "An angler may have broken a world record after\u00a0reeling in a massive prehistoric-looking fish.\r\nArt Weston, a Kentucky resident, went to Lake Livingston, Texas, to catch an alligator gar with the help\u2026 [+2276 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Hip-Hop Wired"
+        },
+        "author": "O Mazariego",
+        "title": "Jordan Brand Drops New Innovative Kicks For Golfers",
+        "description": "Golf may not be thee most popular sport in the culture, but regardless the good folks over at Jordan Brand are doing what they can to help golfers take their game to the next level. The house that Air Jordan built has introduced their latest footwear tech to \u2026",
+        "url": "https://hiphopwired.com/2678641/jordan-brand-drops-new-innovative-kicks-for-golfers/",
+        "urlToImage": "https://hiphopwired.com/wp-content/uploads/sites/43/2025/04/17447351574833.jpeg",
+        "publishedAt": "2025-04-15T16:43:16Z",
+        "content": "HipHopWired Featured Video\r\nSource: Jordan Brand / Jordan Brand\r\nGolf may not be thee most popular sport in the culture, but regardless the good folks over at Jordan Brand are doing what they can to \u2026 [+2346 chars]"
+      },
+      {
+        "source": {
+          "id": "espn",
+          "name": "ESPN"
+        },
+        "author": null,
+        "title": "Mixed team golf event to debut at '28 Olympics",
+        "description": "A mixed-team golf event will debut at the Los Angeles 2028 Olympics with teams comprised of one male and one female athlete from the individual competitions.",
+        "url": "https://www.espn.com/olympics/story/_/id/44684762/mixed-team-golf-event-debut-los-angeles-2028-olympics",
+        "urlToImage": "https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2025%2F0415%2Fr1479086_1296x729_16%2D9.jpg",
+        "publishedAt": "2025-04-15T16:39:20Z",
+        "content": "Apr 15, 2025, 12:28 PM ET\r\nNEW YORK -- A mixed-team golf event will debut at the Los Angeles 2028 Olympics, the International Golf Federation said on Tuesday, with teams comprised of one male and one\u2026 [+933 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Bringatrailer.com"
+        },
+        "author": "bringatrailer",
+        "title": "1983 Volkswagen Rabbit GTI",
+        "description": "This 1983 Volkswagen Rabbit GTI was sold new at Tom McGann Volkswagen of Madison, Wisconsin, and was relocated to Oregon in 1990, where it would remain with its second owner for approximately 26 years. It was acquired by the current owner in 2020, and subsequ\u2026",
+        "url": "https://bringatrailer.com/listing/1983-volkswagen-gti/",
+        "urlToImage": "https://bringatrailer.com/wp-content/uploads/2025/03/1983_volkswagen_gti-us_dsc2798-70095.jpg",
+        "publishedAt": "2025-04-15T16:30:17Z",
+        "content": "This 1983 Volkswagen Rabbit GTI was sold new at Tom McGann Volkswagen of Madison, Wisconsin, and was relocated to Oregon in 1990, where it would remain with its second owner for approximately 26 year\u2026 [+2682 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "GlobeNewswire"
+        },
+        "author": "Toll Brothers, Inc.",
+        "title": "Toll Brothers Announces Grand Opening of Model Homes at Cross Kirkland Towns in Kirkland, Washington",
+        "description": "New decorated model homes showcase sophisticated design and contemporary style New decorated model homes showcase sophisticated design and contemporary style",
+        "url": "https://www.globenewswire.com/news-release/2025/04/15/3061992/1924/en/Toll-Brothers-Announces-Grand-Opening-of-Model-Homes-at-Cross-Kirkland-Towns-in-Kirkland-Washington.html",
+        "urlToImage": "https://ml.globenewswire.com/Resource/Download/496b0ba8-eb1f-480d-a0a9-21b28de81d5f",
+        "publishedAt": "2025-04-15T16:12:00Z",
+        "content": "KIRKLAND, Wash., April 15, 2025 (GLOBE NEWSWIRE) -- Toll Brothers, Inc.\r\n\u00a0(NYSE: TOL), the nations leading builder of luxury homes, is excited to announce the grand opening of its model homes at\u00a0Cros\u2026 [+4702 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "BBC News"
+        },
+        "author": "John Haughey",
+        "title": "McIlroy's 2025 - could Portrush top Augusta win?",
+        "description": "It seems inconceivable the drama of his career Grand Slam-clinching Masters triumph could be matched but Rory McIlroy still has much golf to play in 2025.",
+        "url": "https://www.bbc.com/sport/golf/articles/cy5rp22ngk3o",
+        "urlToImage": "https://ichef.bbci.co.uk/ace/branded_sport/1200/cpsprodpb/aeb4/live/33b5a7e0-1a0f-11f0-95f9-83e0a180f556.jpg",
+        "publishedAt": "2025-04-15T16:08:48Z",
+        "content": "Following the Zurich Classic two-man event in New Orleans, McIlroy will only have a three-week wait before the season's second major, the US PGA Championship, which will take place at a Quail Hollow \u2026 [+886 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Us Weekly"
+        },
+        "author": "Ryan Hudgins",
+        "title": "Will Arnett Reunites With Ex-Wife Amy Poehler on \u2018Smartless\u2019: Recap",
+        "description": "Amy Poehler shocked ex-husband Will Arnett when she appeared as a guest on his podcast, prompting a surprise reunion. As fans of \u201cSmartless\u201d know, Arnett and cohosts Jason Bateman and Sean Hayes take turns picking their guests and leave the other two in the d\u2026",
+        "url": "https://www.usmagazine.com/celebrity-news/news/will-arnett-and-ex-wife-amy-poehler-reunite-on-smartless-podcast/#article",
+        "urlToImage": "https://www.usmagazine.com/wp-content/uploads/2025/04/Smartless-Revs-Will-Arnett-Says-Hes-Very-Proud-of-His-Coparenting-Relationship-With-Ex-Amy-Poehler-Really-Lucky-1.jpg?crop=0px%2C0px%2C1998px%2C1051px&resize=1200%2C630&quality=78&strip=all",
+        "publishedAt": "2025-04-15T16:06:04Z",
+        "content": "Amy Poehler shocked ex-husband Will Arnett when she appeared as a guest on his podcast, prompting a surprise reunion.\r\nAs fans of \u201cSmartless\u201d know, Arnett and cohosts Jason Bateman and Sean Hayes tak\u2026 [+6701 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "GlobeNewswire"
+        },
+        "author": "Toll Brothers, Inc.",
+        "title": "Toll Brothers Unveils New Regency 55+ Active-Adult Home Designs within Chambers Creek Master-Planned Community in Willis, Texas",
+        "description": "WILLIS, Texas, April 15, 2025 (GLOBE NEWSWIRE) -- Toll Brothers, Inc.\u00a0(NYSE:TOL), the nation\u2019s leading builder of luxury homes, has unveiled the new home designs that will be offered in its first Regency 55+ active-adult offering in the Houston area. The Toll\u2026",
+        "url": "https://www.globenewswire.com/news-release/2025/04/15/3061986/1924/en/Toll-Brothers-Unveils-New-Regency-55-Active-Adult-Home-Designs-within-Chambers-Creek-Master-Planned-Community-in-Willis-Texas.html",
+        "urlToImage": "https://ml.globenewswire.com/Resource/Download/496b0ba8-eb1f-480d-a0a9-21b28de81d5f",
+        "publishedAt": "2025-04-15T16:04:00Z",
+        "content": "WILLIS, Texas, April 15, 2025 (GLOBE NEWSWIRE) -- Toll Brothers, Inc.\u00a0(NYSE:TOL), the nations leading builder of luxury homes, has unveiled the new home designs that will be offered in its first Rege\u2026 [+4728 chars]"
+      },
+      {
+        "source": {
+          "id": "the-irish-times",
+          "name": "The Irish Times"
+        },
+        "author": null,
+        "title": "Rory McIlroy\u2019s putting coach Brad Faxon believes he can go on to win 10 Majors",
+        "description": "\u2018He has played professional golf for more than half his life now and there is nothing that can stop this guy\u2019",
+        "url": "https://www.irishtimes.com/sport/golf/2025/04/15/rory-mcilroys-putting-coach-brad-faxon-believes-he-can-go-on-to-win-10-majors/",
+        "urlToImage": "https://www.irishtimes.com/resizer/v2/ORLPAGWF6ZVRIOE3N2FMHUVX6I.jpg?smart=true&auth=2075ad977a863bc555458515e632c2745e877c5dd8453d8e62a8356cd8c0ca08&width=1200&height=630",
+        "publishedAt": "2025-04-15T16:00:36Z",
+        "content": "Rory McIlroy waited more than a decade to win his fifth Major but putting coach Brad Faxon said his triumph at the Masters on Sunday will give the Northern Irishman a platform to kick on and win five\u2026 [+1174 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "GlobeNewswire"
+        },
+        "author": "United States Mint",
+        "title": "2025 American Women Quarters Silver Proof Set\u2122 Available April 22",
+        "description": "WASHINGTON D.C., April 15, 2025 (GLOBE NEWSWIRE) -- The United States Mint (Mint) 2025 American Women Quarters Silver Proof Set (product code 25WS) will be available for purchase on April 22 at noon EDT. \u00a0Orders are limited to five sets per household for the \u2026",
+        "url": "https://www.globenewswire.com/news-release/2025/04/15/3061967/0/en/2025-American-Women-Quarters-Silver-Proof-Set-Available-April-22.html",
+        "urlToImage": "https://ml.globenewswire.com/Resource/Download/28363668-fe11-4b3f-a11c-ffa382279049",
+        "publishedAt": "2025-04-15T16:00:00Z",
+        "content": "WASHINGTON D.C., April 15, 2025 (GLOBE NEWSWIRE) -- The United States Mint (Mint) 2025 American Women Quarters Silver Proof Set (product code 25WS) will be available for purchase on April 22 at noon \u2026 [+4201 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Yahoo Entertainment"
+        },
+        "author": "DOUG FERGUSON",
+        "title": "Rory McIlroy has the Masters and a Grand Slam. That gives him freedom to chase more",
+        "description": "The Mount Rushmore of golf now has six faces carved into granite, and for that Rory McIlroy should feel as though he achieved the highest pinnacle in golf. In his 18 years on tour \u2014 half his life as a professional golfer \u2014 McIlroy has never won three times be\u2026",
+        "url": "https://sports.yahoo.com/article/rory-mcilroy-masters-grand-slam-155349488.html",
+        "urlToImage": "https://s.yimg.com/ny/api/res/1.2/yzyX0fKg1Ken2BhS6LOoKg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD04MDA7Y2Y9d2VicA--/https://media.zenfs.com/en/ap.org/fd1238c3d82c3b23898c6097043708b1",
+        "publishedAt": "2025-04-15T15:53:49Z",
+        "content": "AUGUSTA, Ga. (AP) The Mount Rushmore of golf now has six faces carved into granite, and for that Rory McIlroy should feel as though he achieved the highest pinnacle in golf.\r\nBut there is so much mor\u2026 [+5468 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Yahoo Entertainment"
+        },
+        "author": "Kelsi Karruli",
+        "title": "Billionaire Jeff Bezos Sells Seattle Mansion for a Record $63 Million\u2014After He and Lauren Sanchez Relocated to Miami",
+        "description": "Amazon founder Bezos, 61, has offloaded one of his many Seattle-area homes, an expansive mansion in the tony neighborhood of Hunts Point.",
+        "url": "https://www.yahoo.com/lifestyle/billionaire-jeff-bezos-sells-seattle-154547245.html",
+        "urlToImage": "https://s.yimg.com/ny/api/res/1.2/Jn8p243QhB3.4bn4nOKlzg--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU-/https://media.zenfs.com/en/realtor_com_468/a8619dc7cf481d2b9e4f4cce9443cfa5",
+        "publishedAt": "2025-04-15T15:45:47Z",
+        "content": "Billionaire Amazon founder Jeff Bezos has sold his sprawling Hunts Point, WA, estate for a record-breaking $63 million, less than two years after he and fianc\u00e9e Lauren Sanchez moved their primary res\u2026 [+7922 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "NBCSports.com"
+        },
+        "author": "Rex Hoggard",
+        "title": "Details, format revealed for mixed-gender golf event at 2028 LA Olympics",
+        "description": "The International Golf Federation announced Tuesday how mixed-gender golf will look in the 2028 LA Games.",
+        "url": "https://www.nbcsports.com/golf/news/details-format-revealed-for-mixed-gender-golf-event-at-2028-la-olympics",
+        "urlToImage": "https://nbcsports.brightspotcdn.com/dims4/default/d6e57a6/2147483647/strip/true/crop/5881x3308+0+275/resize/1440x810!/quality/90/?url=https%3A%2F%2Fnbc-sports-production-nbc-sports.s3.us-east-1.amazonaws.com%2Fbrightspot%2Fa5%2Fc0%2Fdad0445d458ba48444708929a872%2Fhttps-delivery-gettyimages.com%2Fdownloads%2F2165090436",
+        "publishedAt": "2025-04-15T15:31:07Z",
+        "content": "Golfs return to the Olympics in 2016 was largely successful and that momentum carried over to the 2024 Games in Paris, but for some there was something missing.\r\nThat something arrived Tuesday when t\u2026 [+1117 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Decider"
+        },
+        "author": "mliss1578",
+        "title": "Where Was \u2018Your Friends And Neighbors\u2019 Filmed? All About The \u2018Your Friends and Neighbors\u2019 Filming Locations",
+        "description": "Don't get your hopes up about buying a house in this neighborhood anytime soon.",
+        "url": "https://decider.com/2025/04/15/your-friends-and-neighbors-filming-locations/",
+        "urlToImage": "https://decider.com/wp-content/uploads/2025/04/yfan.jpg?quality=75&strip=all&w=1200",
+        "publishedAt": "2025-04-15T15:30:00Z",
+        "content": "Your Friends &amp; Neighbors is the brand-new sexy-smart dramedy on Apple TV+ that everyone \u2014 including your own friends and neighbors \u2014 is talking about. \r\nWith an all-star cast led by Jon Hamm, Oli\u2026 [+3327 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Commercial Observer"
+        },
+        "author": "Ostrowski",
+        "title": "5 Questions With Palm Beach County Developer Dan Catalfumo",
+        "description": "Dan Catalfumo, a longtime developer in Palm Beach County, Fla., has been building a variety of projects in Palm Beach Gardens. Catalfumo Companies recently put the roof on the Ritz-Carlton Residences, a luxury condominium complex on a 14-acre parcel at 2200 P\u2026",
+        "url": "http://commercialobserver.com/2025/04/catalfumo-palm-beach-florida-development-housing/",
+        "urlToImage": "https://commercialobserver.com/wp-content/uploads/sites/3/2025/04/Dan-Catalfumo-WEB.jpg?quality=80&crop=0px%2C832px%2C2000px%2C1051px&resize=1200%2C630&strip",
+        "publishedAt": "2025-04-15T15:10:37Z",
+        "content": "Dan Catalfumo, a longtime developer in Palm Beach County, Fla., has been building a variety of projects in Palm Beach Gardens.\r\nCatalfumo Companies recently put the roof on the Ritz-Carlton Residence\u2026 [+2767 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "CBS Sports"
+        },
+        "author": "Patrick McDonald",
+        "title": "2025 Masters takeaways: Rory McIlroy delivers as best version of himself, Justin Rose proves he's a champion",
+        "description": "It was a Masters unlike any other, and even beyond McIlroy's historic win, magic could be found across the grounds at Augusta National Golf Club",
+        "url": "https://www.cbssports.com/golf/news/2025-masters-takeaways-rory-mcilroy-delivers-as-best-version-of-himself-justin-rose-proves-hes-a-champion/",
+        "urlToImage": "https://sportshub.cbsistatic.com/i/r/2025/04/15/5d352903-7c29-4035-a6c0-835dd241d44d/thumbnail/1200x675/cc032846f5be2b6b8756bc712d834c74/justin-rose-rory-mcilroy-masters-2025-b.jpg",
+        "publishedAt": "2025-04-15T15:06:26Z",
+        "content": "AUGUSTA, Ga. -- A family of four wandered. They weren't lost; they were exactly where they were supposed to be. Bumping off patrons and sneaking between corridors, they attempted to carve any angle t\u2026 [+13039 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Yahoo Entertainment"
+        },
+        "author": "Jason Russell",
+        "title": "The Masters Ticket Lottery Is Dumb",
+        "description": "Plus: Paying college athletes, sports betting isn\u2019t bad, and pickleball?",
+        "url": "https://sports.yahoo.com/article/masters-ticket-lottery-dumb-150018541.html",
+        "urlToImage": "https://s.yimg.com/ny/api/res/1.2/0w84WM597B4rIE9k6wJFGw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/reason_com_245/c2dacd8b10a1afbb57c8fd14374665f9",
+        "publishedAt": "2025-04-15T15:00:18Z",
+        "content": "JOHN ANGELILLO/UPI/Newscom\r\nGood morning and welcome to another edition of Free Agent! Be better than the vice president and learn how to handle a trophy today.\r\nSunday's action at the Masters was pe\u2026 [+7841 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "BroBible"
+        },
+        "author": "Connor Toole",
+        "title": "Ken Griffey Jr. Snapped One Of The Best Photos Of Rory McIlroy\u2019s Emotional Reaction To Winning The Masters",
+        "description": "There were plenty of notable names among the massive crowd of people that watched Rory McIlroy complete the career grand slam with a win at The Masters. That includes Ken Griffey Jr., who was covering the event as a credentialed photographer and got one of th\u2026",
+        "url": "https://brobible.com/sports/article/ken-griffey-jr-rory-mcilroy-masters-win-photo/",
+        "urlToImage": "https://brobible.com/wp-content/uploads/2025/04/ken-griffey-jr-masters.jpg",
+        "publishedAt": "2025-04-15T14:59:04Z",
+        "content": "Peter Casey-Imagn Images\r\nThere were plenty of notable names among the massive crowd of people that watched Rory McIlroy complete the career grand slam with a win at The Masters. That includes Ken Gr\u2026 [+2023 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "CBS Sports"
+        },
+        "author": "Robby Kalland",
+        "title": "How many majors will Rory McIlroy win in 2025? Favorable path lies ahead after ending decade-long drought",
+        "description": "McIlroy's major drought came to an end at the Masters, and that could be just the beginning of an incredible major year",
+        "url": "https://www.cbssports.com/golf/news/how-many-majors-will-rory-mcilroy-win-in-2025-favorable-path-lies-ahead-after-ending-decade-long-drought/",
+        "urlToImage": "https://sportshub.cbsistatic.com/i/r/2025/04/14/65126211-217a-4a77-9a56-613643a3668d/thumbnail/1200x675/b48a0eb8d80f526f8f6125157bd7240d/mcilroy.jpg",
+        "publishedAt": "2025-04-15T14:54:17Z",
+        "content": "When Rory McIlroy finally sank the winning putt on Sunday at the Masters, completing the career grand slam and securing the green jacket that had eluded him for 17 years, he collapsed to his knees on\u2026 [+4570 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "The Cut"
+        },
+        "author": "Bindu Bansinath",
+        "title": "Happy Hour With Chuck and Hailee",
+        "description": "Even the most stalwart snarkers don\u2019t have shit to say about New Jersey chefs Chuck Cruz and Hailee Catalano, who rose to TikTok fame with their cooking accounts and Friday-night dinner series. Catalano\u2019s cookbook, \u2018By Heart\u2019 is out from DK.",
+        "url": "http://www.thecut.com/article/hailee-catalano-chuck-cruz-chef-couple-instagram-interview-happy-hour.html",
+        "urlToImage": "https://pyxis.nymag.com/v1/imgs/527/386/03a9eaad17fd0afaaaf409faebfb4d470a-lede-2.1x.rsocial.w1200.jpg",
+        "publishedAt": "2025-04-15T14:51:27Z",
+        "content": "Internet strangers are burned out on TikToks food creators. Snark forums pick apart excessive Grazia olive-oil ads and lengthy pre-recipe personal anecdotes. But even the most stalwart snarkers dont \u2026 [+7283 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Raw Story"
+        },
+        "author": "Travis Gettys",
+        "title": "Trump loosens rules on seasonal workers after lobbyists party at his properties: watchdog",
+        "description": "A government watchdog is alleging that President Donald Trump loosened up rules around some foreign-born workers after industry lobbyists put on a fundraiser at Mar-a-Lago and invited attendees to stay at another one of his properties.The Trump administration\u2026",
+        "url": "https://www.rawstory.com/trump-seasonal-workers/",
+        "urlToImage": "https://www.rawstory.com/media-library/u-s-president-donald-trump-speaks-at-mar-a-lago-in-palm-beach-florida-u-s-february-18-2025-reuters-kevin-lamarque.jpg?id=56538067&width=1200&height=600&coordinates=0%2C343%2C0%2C343",
+        "publishedAt": "2025-04-15T14:40:00Z",
+        "content": "A government watchdog is alleging that President Donald Trump loosened up rules around some foreign-born workers after industry lobbyists put on a fundraiser at Mar-a-Lago and invited attendees to st\u2026 [+1971 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Reason"
+        },
+        "author": "Jason Russell",
+        "title": "The Masters Ticket Lottery Is Dumb",
+        "description": "Plus: Paying college athletes, sports betting isn\u2019t bad, and pickleball?",
+        "url": "https://reason.com/2025/04/15/the-masters-ticket-lottery-is-dumb/",
+        "urlToImage": "https://d2eehagpk5cl65.cloudfront.net/img/q60/uploads/2025/04/upiphotosthree067921-scaled-e1744661070201.jpg",
+        "publishedAt": "2025-04-15T14:39:17Z",
+        "content": "Good morning and welcome to another edition of Free Agent! Be better than the vice president and learn how to handle a trophy today. Sunday's action at the Masters was perhaps the most engaging golf \u2026 [+8175 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "ZDNet"
+        },
+        "author": "Matthew Miller",
+        "title": "I tested Garmin's latest smartwatch, and it has the right balance of style and features",
+        "description": "The Vivoactive 6 is a crowd-pleaser with a small, stylish form factor, brilliant AMOLED display, and support for Garmin's vast ecosystem.",
+        "url": "https://www.zdnet.com/article/i-tested-garmins-latest-smartwatch-and-it-has-the-right-balance-of-style-and-features/",
+        "urlToImage": "https://www.zdnet.com/a/img/resize/db4ca96458c22af357ed4cab7d0ba89f9d4567c7/2025/04/14/9233257b-188e-4b2e-bb0e-9e4c4e387d70/garmin-vivoactive-64.jpg?auto=webp&fit=crop&height=675&width=1200",
+        "publishedAt": "2025-04-15T14:35:00Z",
+        "content": "Garmin's latest smartwatch for the masses, the Vivoactive 6, brings a fresh perspective to its lineup with a stylish design and approachable price. \r\nWith the continuation of its upgrade cycle, Garmi\u2026 [+4459 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "New York Post"
+        },
+        "author": "Jaclyn Hendricks",
+        "title": "Caroline Wozniacki\u2019s Masters \u2018winner\u2019 comments resurface after ex Rory McIlroy\u2019s major triumph",
+        "description": "McIlroy and Wozniacki ended their engagement in 2014.",
+        "url": "https://nypost.com/2025/04/15/sports/caroline-wozniackis-masters-winner-comments-resurface-after-ex-rory-mcilroys-win/",
+        "urlToImage": "https://nypost.com/wp-content/uploads/sites/2/2025/04/newspress-collage-p85keblm6-1744725670529.jpg?quality=75&strip=all&1744711383&w=1024",
+        "publishedAt": "2025-04-15T14:31:18Z",
+        "content": "The fallout from Rory McIlroy\u2019s thrilling 2025 Masters win continues. \r\nDays after the Northern Irishman completed a career Grand Slam at Augusta National, where he defeated England\u2019s Justin Rose in \u2026 [+2678 chars]"
+      }
+    ],
+    "status": "Success"
+  },
+  "/api/random-quote": {
+    "status_code": 200,
+    "headers": {
+      "Server": "nginx/1.27.5",
+      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": "145",
+      "Connection": "keep-alive",
+      "X-Powered-By": "Express",
+      "Access-Control-Allow-Origin": "*",
+      "ETag": "W/\"91-iXlzF9xEty3TiftEJrjbtah6DxI\""
+    },
+    "data": {
+      "id": 9,
+      "quote": "Mistakes are part of the game. It's how well you recover from them, that's the mark of a great player.",
+      "author": "Alice Cooper"
+    },
+    "status": "Success"
+  },
+  "/api/auth/login": {
+    "status_code": 200,
+    "headers": {
+      "Server": "nginx/1.27.5",
+      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": "216",
+      "Connection": "keep-alive",
+      "X-Powered-By": "Express",
+      "Access-Control-Allow-Origin": "*",
+      "ETag": "W/\"d8-hKq+er/lUgnz3zqkaw+KX6RYfnY\""
+    },
+    "data": {
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0NDg0Mzg3MCwiZXhwIjoxNzQ0ODUxMDcwfQ.1dvhlC37ZAjzDrscKPZTPUhjRg1BEkxDNE0QywyuYQw",
+      "user": {
+        "id": 3,
+        "username": "jm42",
+        "email": "jm42@example.com"
+      }
+    },
+    "status": "Success"
+  },
+  "/api/auth/register": {
+    "status_code": 201,
+    "headers": {
+      "Server": "nginx/1.27.5",
+      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": "80",
+      "Connection": "keep-alive",
+      "X-Powered-By": "Express",
+      "Access-Control-Allow-Origin": "*",
+      "ETag": "W/\"50-KQc8pSIaGWz5oRjIMGXH5JlOvP0\""
+    },
+    "data": {
+      "id": 5,
+      "username": "test_jm42_1744843869",
+      "email": "test_1744843869@example.com"
+    },
+    "status": "Success"
+  },
+  "/api/auth/profile": {
+    "status_code": 200,
+    "headers": {
+      "Server": "nginx/1.27.5",
+      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Content-Type": "application/json; charset=utf-8",
+      "Content-Length": "157",
+      "Connection": "keep-alive",
+      "X-Powered-By": "Express",
+      "Access-Control-Allow-Origin": "*",
+      "ETag": "W/\"9d-/iTnK0oeKNvPhByvn30lKrBjNpY\""
+    },
+    "data": {
+      "id": 3,
+      "username": "jm42",
+      "email": "jm42@example.com",
+      "created_at": "2025-04-16T22:34:30.656Z",
+      "name": null,
+      "family_name": null,
+      "matricula": null,
+      "handicap": null
+    },
+    "status": "Success"
+  }
+}

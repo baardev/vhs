@@ -3,21 +3,65 @@ import requests
 import json
 import argparse
 import logging
+import sys
+import time
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+# Try to import colorama for colored output
+try:
+    from colorama import init, Fore, Style
+    has_colorama = True
+    # Initialize colorama
+    init()
+except ImportError:
+    has_colorama = False
 
 # Suppress the insecure request warning for self-signed certificates
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+# Custom logging formatter with colors
+class ColorFormatter(logging.Formatter):
+    """Logging formatter with colored output if colorama is available"""
+
+    def __init__(self, fmt=None, datefmt=None, style='%'):
+        super().__init__(fmt, datefmt, style)
+
+    def format(self, record):
+        message = super().format(record)
+
+        if not has_colorama:
+            return message
+
+        if record.levelno == logging.INFO:
+            if "Success" in message:
+                return f"{Fore.GREEN}{message}{Style.RESET_ALL}"
+            else:
+                return message
+        elif record.levelno == logging.WARNING:
+            return f"{Fore.YELLOW}{message}{Style.RESET_ALL}"
+        elif record.levelno == logging.ERROR:
+            return f"{Fore.RED}{message}{Style.RESET_ALL}"
+        else:
+            return message
+
 # Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('api_test.log'),
-        logging.StreamHandler()
-    ]
-)
 logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Clear any existing handlers
+logger.handlers = []
+
+# Add file handler
+file_handler = logging.FileHandler('api_test.log')
+file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
+# Add stream handler with color
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_formatter = ColorFormatter('%(asctime)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(stream_formatter)
+logger.addHandler(stream_handler)
 
 def test_api_endpoint(session, url, method='GET', data=None, headers=None):
     """Test an API endpoint with the specified method and data."""
@@ -134,6 +178,11 @@ def main():
         else:
             logger.warning("Failed to get authentication token, proceeding with unauthenticated requests")
 
+    # Generate a unique suffix for test user registration
+    timestamp = int(time.time())
+    test_username = f"test_{username}_{timestamp}"
+    test_email = f"test_{timestamp}@example.com"
+
     # Define the endpoints to test
     # Format: [endpoint, method, request_data, requires_auth]
     endpoints = [
@@ -143,7 +192,7 @@ def main():
 
         # Auth endpoints
         ["/api/auth/login", "POST", {"username": username, "password": password}, False],
-        ["/api/auth/register", "POST", {"username": f"test_{username}", "email": "test@example.com", "password": "password123"}, False],
+        ["/api/auth/register", "POST", {"username": test_username, "email": test_email, "password": "password123"}, False],
 
         # Protected endpoints
         ["/api/auth/profile", "GET", None, True],
@@ -181,10 +230,27 @@ def main():
 
     logger.info("Testing completed!")
     logger.info(f"Total endpoints: {len(endpoints)}")
-    logger.info(f"Success: {success_count}")
-    logger.info(f"Errors: {error_count}")
-    logger.info(f"Exceptions: {exception_count}")
-    logger.info(f"Skipped: {skipped_count}")
+
+    # Color the summary output
+    if has_colorama:
+        logger.info(f"Success: {Fore.GREEN}{success_count}{Style.RESET_ALL}")
+        if error_count > 0:
+            logger.info(f"Errors: {Fore.RED}{error_count}{Style.RESET_ALL}")
+        else:
+            logger.info(f"Errors: {error_count}")
+        if exception_count > 0:
+            logger.info(f"Exceptions: {Fore.RED}{exception_count}{Style.RESET_ALL}")
+        else:
+            logger.info(f"Exceptions: {exception_count}")
+        if skipped_count > 0:
+            logger.info(f"Skipped: {Fore.YELLOW}{skipped_count}{Style.RESET_ALL}")
+        else:
+            logger.info(f"Skipped: {skipped_count}")
+    else:
+        logger.info(f"Success: {success_count}")
+        logger.info(f"Errors: {error_count}")
+        logger.info(f"Exceptions: {exception_count}")
+        logger.info(f"Skipped: {skipped_count}")
 
 if __name__ == "__main__":
     main()

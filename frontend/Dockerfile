@@ -1,11 +1,15 @@
-FROM node:22-alpine AS builder
+FROM node:lts AS builder
 WORKDIR /app
+
+# Update npm as part of the build process
+RUN npm install -g npm@latest
+
 COPY package.json package-lock.json ./
 RUN npm install
 COPY . .
 RUN npm run build
 
-FROM node:22-alpine AS runner
+FROM node:lts AS runner
 WORKDIR /app
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules

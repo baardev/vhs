@@ -5,21 +5,81 @@ import urllib.parse
 import logging
 import argparse
 import time
+import sys
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
+
+# Try to import colorama for colored output
+try:
+    from colorama import init, Fore, Style
+    has_colorama = True
+    # Initialize colorama
+    init()
+except ImportError:
+    has_colorama = False
 
 # Suppress the insecure request warning for self-signed certificates
 requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
 
+# Custom logging formatter with colors
+class ColorFormatter(logging.Formatter):
+    """Logging formatter with colored output if colorama is available"""
+
+    def __init__(self, fmt=None, datefmt=None, style='%'):
+        super().__init__(fmt, datefmt, style)
+
+    def format(self, record):
+        message = super().format(record)
+
+        if not has_colorama:
+            return message
+
+        if record.levelno == logging.INFO:
+            # Colorize success messages in green
+            if 'OK' in message or 'completed' in message or 'success' in message.lower():
+                return f"{Fore.GREEN}{message}{Style.RESET_ALL}"
+            else:
+                return message
+        elif record.levelno == logging.WARNING:
+            return f"{Fore.YELLOW}{message}{Style.RESET_ALL}"
+        elif record.levelno == logging.ERROR:
+            return f"{Fore.RED}{message}{Style.RESET_ALL}"
+        else:
+            return message
+
 # Set up logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('site_test.log'),
-        logging.StreamHandler()
-    ]
-)
 logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+
+# Clear any existing handlers
+logger.handlers = []
+
+# Add file handler
+file_handler = logging.FileHandler('site_test.log')
+file_formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+file_handler.setFormatter(file_formatter)
+logger.addHandler(file_handler)
+
+# Add stream handler with color
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_formatter = ColorFormatter('%(asctime)s - %(levelname)s - %(message)s')
+stream_handler.setFormatter(stream_formatter)
+logger.addHandler(stream_handler)
+
+def get_status_line(url, status):
+    """Return a status line with color coding if colorama is available"""
+    if not has_colorama:
+        return f"{url}: {status}"
+
+    if status.startswith('OK'):
+        return f"{url}: {Fore.GREEN}{status}{Style.RESET_ALL}"
+    elif status.startswith('Error'):
+        return f"{url}: {Fore.RED}{status}{Style.RESET_ALL}"
+    elif status.startswith('Exception'):
+        return f"{url}: {Fore.RED}{status}{Style.RESET_ALL}"
+    elif status.startswith('Skipped'):
+        return f"{url}: {Fore.YELLOW}{status}{Style.RESET_ALL}"
+    else:
+        return f"{url}: {status}"
 
 def test_url(url, session, visited_urls, base_url, delay=0.2):
     """Test a URL and recursively find and test all linked URLs within the same domain."""
@@ -105,7 +165,7 @@ def main():
     visited_urls = {}
     visited_urls = test_url(base_url, session, visited_urls, base_url, delay)
 
-    # Write results to file
+    # Write results to file with colors stripped
     with open(output_file, 'w') as f:
         for url, status in visited_urls.items():
             f.write(f"{url}: {status}\n")
@@ -118,11 +178,35 @@ def main():
 
     logger.info("Testing completed!")
     logger.info(f"Total URLs: {len(visited_urls)}")
-    logger.info(f"OK: {ok_count}")
-    logger.info(f"Errors: {error_count}")
-    logger.info(f"Exceptions: {exception_count}")
-    logger.info(f"Skipped: {skipped_count}")
+
+    # Color the summary output
+    if has_colorama:
+        logger.info(f"OK: {Fore.GREEN}{ok_count}{Style.RESET_ALL}")
+        if error_count > 0:
+            logger.info(f"Errors: {Fore.RED}{error_count}{Style.RESET_ALL}")
+        else:
+            logger.info(f"Errors: {error_count}")
+        if exception_count > 0:
+            logger.info(f"Exceptions: {Fore.RED}{exception_count}{Style.RESET_ALL}")
+        else:
+            logger.info(f"Exceptions: {exception_count}")
+        if skipped_count > 0:
+            logger.info(f"Skipped: {Fore.YELLOW}{skipped_count}{Style.RESET_ALL}")
+        else:
+            logger.info(f"Skipped: {skipped_count}")
+    else:
+        logger.info(f"OK: {ok_count}")
+        logger.info(f"Errors: {error_count}")
+        logger.info(f"Exceptions: {exception_count}")
+        logger.info(f"Skipped: {skipped_count}")
+
     logger.info(f"Results written to {output_file}")
+
+    # Print the detailed results to the console with colors
+    if has_colorama:
+        print("\nDetailed Results:")
+        for url, status in sorted(visited_urls.items()):
+            print(get_status_line(url, status))
 
 if __name__ == "__main__":
     main()
