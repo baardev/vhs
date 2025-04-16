@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
-import HomeLink from '../components/common/HomeLink';
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -19,7 +18,7 @@ const geistMono = Geist_Mono({
 });
 
 export default function ForgotPassword() {
-  const router = useRouter();
+  // const router = useRouter();
   const { t } = useTranslation('common');
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
@@ -31,7 +30,6 @@ export default function ForgotPassword() {
     setError('');
     setSuccessShown(false);
     setIsLoading(true);
-
     try {
       await axios.post('/api/auth/forgot-password', {
         email,
@@ -40,20 +38,23 @@ export default function ForgotPassword() {
       // Show success message
       setSuccessShown(true);
       setEmail(''); // Clear the form
-    } catch (err: any) {
-      setError(
-        err.response?.data?.error ||
-        err.response?.data?.errors?.[0]?.msg ||
-        t('forgotPassword.error')
-      );
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.error ||
+          err.response?.data?.errors?.[0]?.msg ||
+          t('forgotPassword.error')
+        );
+      } else {
+        setError('An unexpected error occurred.');
+      }
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} min-h-screen flex items-center justify-center bg-[#fafafa] dark:bg-[#111] relative`}>
-      <HomeLink />
       <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md">
         <div className="text-center">
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white">

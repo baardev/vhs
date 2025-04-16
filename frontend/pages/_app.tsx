@@ -2,11 +2,15 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { appWithTranslation } from 'next-i18next'
 import Footer from '../components/common/Footer';
+import Navbar from '../components/common/Navbar';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <div className="flex flex-col min-h-screen">
-      <Component {...pageProps} />
+      <Navbar />
+      <main className="flex-grow">
+        <Component {...pageProps} />
+      </main>
       <Footer />
     </div>
   );

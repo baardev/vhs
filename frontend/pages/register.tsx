@@ -3,7 +3,9 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
-import HomeLink from '../components/common/HomeLink';
+import { useTranslation } from 'next-i18next';
+import { GetStaticProps } from 'next';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,6 +25,7 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -46,13 +49,17 @@ export default function Register() {
       console.log('Registration successful:', response.data);
       // Redirect to login page on successful registration
       router.push('/login?registered=true');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Registration error:', err);
-      setError(
-        err.response?.data?.error ||
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.error ||
         err.response?.data?.errors?.[0]?.msg ||
-        'Registration failed. Please try again.'
-      );
+          'Registration failed. Please try again.'
+        );
+      } else {
+        setError('Registration failed. Please try again.');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -60,14 +67,13 @@ export default function Register() {
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} min-h-screen flex items-center justify-center bg-[#fafafa] dark:bg-[#111] relative`}>
-      <HomeLink />
       <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md">
         <div className="text-center">
-          <h1 className="text-3xl font-bold tracking-tight">Create an account</h1>
+          <h1 className="text-3xl font-bold tracking-tight">{t('register.title')}</h1>
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Or{' '}
+            {t('register.orSignIn')}{' '}
             <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-              sign in to your existing account
+              {t('signIn')}
             </Link>
           </p>
         </div>

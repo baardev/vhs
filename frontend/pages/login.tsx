@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
-import HomeLink from '../components/common/HomeLink';
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -21,7 +20,7 @@ const geistMono = Geist_Mono({
 export default function Login() {
   const { t } = useTranslation('common');
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -32,12 +31,23 @@ export default function Login() {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('/api/auth/login', { email, password });
+      console.log('Sending login request with:', { username, password });
+      const response = await axios.post('/api/auth/login', {
+        username,
+        password
+      });
+      console.log('Login successful, received response:', response.data);
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('user', JSON.stringify(response.data.user));
       router.push('/profile');
-    } catch (err: any) {
-      setError(err.response?.data?.error || t('login.loginFailed'));
+    } catch (err: unknown) {
+      console.error('Login error:', err);
+      if (axios.isAxiosError(err)) {
+        console.error('Axios error details:', err.response?.data);
+        setError(err.response?.data?.error || t('login.loginFailed'));
+      } else {
+        setError(t('login.loginFailed'));
+      }
     } finally {
       setIsLoading(false);
     }
@@ -45,7 +55,6 @@ export default function Login() {
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} min-h-screen flex items-center justify-center bg-[#fafafa] dark:bg-[#111] relative`}>
-      <HomeLink />
       <div className="w-full max-w-md p-8 space-y-8 bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md">
         <div className="text-center">
           <h1 className="text-3xl font-bold tracking-tight">{t('login.title')}</h1>
@@ -66,19 +75,19 @@ export default function Login() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                {t('login.emailLabel')}
+              <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('login.usernameLabel')}
               </label>
               <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
+                id="username"
+                name="username"
+                type="text"
+                autoComplete="username email"
                 required
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="you@example.com"
+                placeholder="username or email"
               />
             </div>
             <div>

@@ -1,0 +1,6 @@
+ id | username  |         email         |         created_at         
+----+-----------+-----------------------+----------------------------
+  1 | adminuser | admin@example.com     | 2025-04-16 16:00:15.951617
+  2 | jm42      | jeff.milton@gmail.com | 2025-04-16 16:19:15.663511
+(2 rows)
+

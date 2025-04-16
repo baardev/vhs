@@ -1,0 +1,20 @@
+#!/bin/bash
+docker-compose down -v
+#docker rmi vhs_backend vhs_frontend  # replace with your exact image names
+
+# wipe everythiung
+docker rmi $(docker images -q) -f
+
+docker-compose build
+docker-compose up -d
+docker-compose ps
+
+sleep 15
+
+
+docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\dt"
+docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/01_setup_database.sql
+docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/02_create_quotes_table.sql
+docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/03_course_tables.sql
+docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/04_update_user_table.sql
+docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\dt"

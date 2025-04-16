@@ -3,6 +3,8 @@
   "subtitle": "מערכת ההנדיקפ הפתוחה שלך",
   "signIn": "התחברות",
   "createAccount": "יצירת חשבון",
+  "home": "דף הבית",
+  "courses": "מסלולים",
   "features": "תכונות",
   "golfNews": "חדשות גולף",
   "organizeCollection": "ארגן את האוסף שלך",
@@ -43,7 +45,7 @@
   "login": {
     "title": "התחברות ל-VHS",
     "orCreateAccount": "או צור חשבון חדש",
-    "emailLabel": "דוא\"ל",
+    "usernameLabel": "שם משתמש או דוא\"ל",
     "passwordLabel": "סיסמה",
     "signingIn": "מתחבר...",
     "signIn": "התחבר",

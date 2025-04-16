@@ -3,6 +3,8 @@
   "subtitle": "Tu sistema de hándicap abierto",
   "signIn": "Iniciar Sesión",
   "createAccount": "Crear Cuenta",
+  "home": "Inicio",
+  "courses": "Campos",
   "features": "Características",
   "golfNews": "Noticias de Golf",
   "organizeCollection": "Organiza tu colección",
@@ -43,7 +45,7 @@
   "login": {
     "title": "Iniciar Sesión en VHS",
     "orCreateAccount": "o crear una nueva cuenta",
-    "emailLabel": "Correo electrónico",
+    "usernameLabel": "Nombre de usuario o Correo electrónico",
     "passwordLabel": "Contraseña",
     "signingIn": "Iniciando sesión...",
     "signIn": "Iniciar Sesión",

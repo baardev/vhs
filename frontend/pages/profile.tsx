@@ -3,7 +3,6 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
-import HomeLink from '../components/common/HomeLink';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -153,7 +152,6 @@ export default function Profile() {
 
   return (
     <div className={`${geistSans.className} ${geistMono.className} min-h-screen bg-[#fafafa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative`}>
-      <HomeLink />
       <div className="max-w-3xl mx-auto">
         <div className="bg-white dark:bg-[#1a1a1a] overflow-hidden shadow rounded-lg">
           <div className="border-b border-gray-200 dark:border-gray-800 px-4 py-5 sm:px-6">

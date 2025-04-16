@@ -3,6 +3,8 @@
   "subtitle": "您的开放式差点系统",
   "signIn": "登录",
   "createAccount": "创建账户",
+  "home": "首页",
+  "courses": "球场",
   "features": "功能",
   "golfNews": "高尔夫新闻",
   "organizeCollection": "整理您的收藏",
@@ -43,7 +45,7 @@
   "login": {
     "title": "登录 VHS",
     "orCreateAccount": "或创建新账户",
-    "emailLabel": "电子邮箱",
+    "usernameLabel": "用户名或电子邮箱",
     "passwordLabel": "密码",
     "signingIn": "登录中...",
     "signIn": "登录",

@@ -3,6 +3,8 @@
   "subtitle": "",
   "signIn": "Sign In",
   "createAccount": "Create Account",
+  "home": "Home",
+  "courses": "Courses",
   "features": "Features",
   "golfNews": "Golf News",
   "organizeCollection": "Organize Collection",
@@ -16,7 +18,6 @@
   "about": "About",
   "privacy": "Privacy",
   "terms": "Terms",
-  "forgotPassword": "Forgot your password?",
   "forgotPassword": {
     "link": "Forgot your password?",
     "title": "Forgot your password?",
@@ -44,7 +45,7 @@
   "login": {
     "title": "Sign in to VHS",
     "orCreateAccount": "Or create a new account",
-    "emailLabel": "Email address",
+    "usernameLabel": "Username or Email",
     "passwordLabel": "Password",
     "signingIn": "Signing in...",
     "signIn": "Sign in",

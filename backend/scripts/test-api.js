@@ -31,7 +31,7 @@ async function testApi() {
     // Test local backend API
     console.log('\nTesting local backend API...');
     try {
-      const backendResponse = await axios.get('http://localhost:4000/api/golf-news');
+      const backendResponse = await axios.get('/api/golf-news');
       console.log('Backend API call status:', backendResponse.status);
       console.log('Backend API articles count:', backendResponse.data?.length || 0);
       console.log('First article title:', backendResponse.data?.[0]?.title || 'No article');

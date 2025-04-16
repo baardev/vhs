@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-import { useRouter } from 'next/router';
+// import { useRouter } from 'next/router';
 import GolfNewsHeadlines from '../components/GolfNewsHeadlines';
 import RandomQuote from '../components/RandomQuote';
 
@@ -20,11 +20,11 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   const { t } = useTranslation('common');
-  const router = useRouter();
+  // const _router = useRouter();
 
-  const changeLanguage = (locale: string) => {
-    router.push(router.pathname, router.asPath, { locale });
-  };
+  // const changeLanguage = (locale: string) => {
+  //   router.push(router.pathname, router.asPath, { locale });
+  // };
 
   return (
     <div

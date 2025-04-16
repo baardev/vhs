@@ -3,6 +3,8 @@
   "subtitle": "Ваша открытая система гандикапов",
   "signIn": "Войти",
   "createAccount": "Создать аккаунт",
+  "home": "Главная",
+  "courses": "Поля",
   "features": "Особенности",
   "golfNews": "Новости гольфа",
   "organizeCollection": "Организуйте коллекцию",
@@ -16,7 +18,6 @@
   "about": "О нас",
   "privacy": "Конфиденциальность",
   "terms": "Условия",
-  "forgotPassword": "Забыли пароль?",
   "forgotPassword": {
     "link": "Забыли пароль?",
     "title": "Забыли пароль?",
@@ -31,7 +32,7 @@
   "login": {
     "title": "Вход в VHS",
     "orCreateAccount": "Или создайте новый аккаунт",
-    "emailLabel": "Электронная почта",
+    "usernameLabel": "Имя пользователя или Электронная почта",
     "passwordLabel": "Пароль",
     "signingIn": "Вход в систему...",
     "signIn": "Войти",

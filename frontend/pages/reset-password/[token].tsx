@@ -62,12 +62,16 @@ export default function ResetPassword() {
       setTimeout(() => {
         router.push('/login?reset=success');
       }, 3000);
-    } catch (err: any) {
-      setError(
-        err.response?.data?.error ||
-        err.response?.data?.errors?.[0]?.msg ||
-        'Failed to reset your password. The link may be expired or invalid.'
-      );
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        setError(
+          err.response?.data?.error ||
+          err.response?.data?.errors?.[0]?.msg ||
+          'Failed to reset your password. The link may be expired or invalid.'
+        );
+      } else {
+        setError('Failed to reset your password. The link may be expired or invalid.');
+      }
     } finally {
       setIsLoading(false);
     }

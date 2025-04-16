@@ -104,27 +104,42 @@ router.post(
 router.post(
   '/login',
   [
-    body('email').isEmail().withMessage('Must provide a valid email'),
+    body('username').trim().notEmpty().withMessage('Username is required'),
     body('password').notEmpty().withMessage('Password is required')
   ],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      // Validate input
+      console.log('Login attempt received with body:', JSON.stringify(req.body));
+
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
+        console.log('Login validation errors:', errors.array());
         res.status(400).json({ errors: errors.array() });
         return;
       }
 
-      const { email, password } = req.body;
+      const { username, password } = req.body;
+      console.log('Login attempt with username:', username);
 
-      // Find user
-      const userResult = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+      // Allow login with either username or email
+      const userResult = await pool.query(
+        'SELECT * FROM users WHERE username = $1 OR email = $1',
+        [username]
+      );
+
+      if (userResult.rows.length === 0) {
+        console.log('No user found with username/email:', username);
+        res.status(401).json({ error: 'Invalid credentials' });
+        return;
+      }
+
       const user = userResult.rows[0];
+      console.log('User found, validating password');
 
       // Validate credentials
-      if (!user || !(await bcrypt.compare(password, user.password))) {
-        res.status(401).json({ error: 'Invalid email or password' });
+      if (!(await bcrypt.compare(password, user.password))) {
+        console.log('Password validation failed');
+        res.status(401).json({ error: 'Invalid credentials' });
         return;
       }
 
@@ -133,6 +148,7 @@ router.post(
 
       // Generate JWT token
       const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: '2h' });
+      console.log('Login successful for user:', user.username);
 
       res.json({
         token,
@@ -143,7 +159,8 @@ router.post(
         }
       });
     } catch (error) {
-      next(error);
+      console.error('Login error:', error);
+      res.status(500).json({ error: 'Server error' });
     }
   }
 );

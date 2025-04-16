@@ -25,11 +25,10 @@ const RandomQuote: React.FC = () => {
   if (!quote) {
     return <p>Loading...</p>;
   }
-
   return (
     <div className="random-quote">
       <blockquote>
-        "{quote.quote}"
+        &quot;{quote.quote}&quot;
         <footer>- {quote.author}</footer>
       </blockquote>
     </div>
