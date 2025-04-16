@@ -1,4 +1,8 @@
 #!/bin/bash
+
+export COMPOSE_BAKE=true
+
+
 docker-compose down -v
 #docker rmi vhs_backend vhs_frontend  # replace with your exact image names
 
