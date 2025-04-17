@@ -52,14 +52,23 @@ docker-compose ps
 
 sleep 15
 
-docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\dt"
-docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/01_setup_database.sql
-docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/02_create_quotes_table.sql
-docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/03_course_tables.sql
-docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/04_update_user_table.sql
-docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/05_todo_table.sql
-docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/06_create_default_users.sql
-docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\dt"
-docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\q"
+DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
 
-docker exec -it vhs-db-1 psql -U user -d vhsdb -c "SELECT id, username, email, password FROM users;"
+if [ -z "$DB_CONTAINER" ]; then
+    echo "Database container not found"
+    exit 1
+fi
+
+docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\dt"
+docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\q"
+
+docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/01_setup_database.sql
+docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/02_create_quotes_table.sql
+docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/03_course_tables.sql
+docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/04_update_user_table.sql
+docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/05_todo_table.sql
+docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/06_create_default_users.sql
+docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\dt"
+docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\q"
+
+docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "SELECT id, username, email, password FROM users;"
