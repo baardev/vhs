@@ -1,6 +1,7 @@
 services:
   nginx:
     image: nginx:alpine
+    container_name: vhs-nginx
     ports:
       - "443:443"
       - "80:80"
@@ -23,6 +24,7 @@ services:
 
   db:
     image: postgres:latest
+    container_name: vhs-db
     environment:
       POSTGRES_USER: user
       POSTGRES_PASSWORD: password
@@ -34,6 +36,7 @@ services:
 
   backend:
     build: ./backend
+    container_name: vhs-backend
     environment:
       DATABASE_URL: postgres://user:password@db:5432/vhsdb
     depends_on:
@@ -45,6 +48,7 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: vhs-frontend
     ports:
       - "3000:3000"
     volumes:

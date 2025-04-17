@@ -30,22 +30,14 @@ docker-compose down -v
 #docker rmi vhs_backend vhs_frontend  # replace with your exact image names
 
 # wipe everything
+docker stop $(docker ps -q)
+docker rm $(docker ps -a -q)
 docker rmi $(docker images -q) -f
 
 # Configure buildx if requested
-if [ "$BUILDX" = true ]; then
-    echo "Setting up Docker Buildx"
-    docker buildx create --use
-fi
-
-# Build using the appropriate command
-if [ "$BAKE" = true ]; then
-    echo "Building with bake"
-    docker-compose -f docker-compose.yml -f docker-compose.build.yml build
-else
-    echo "Building normally"
-    docker-compose build
-fi
+docker buildx create --use
+# docker-compose -f docker-compose.yml -f docker-compose.build.yml build
+# docker-compose build
 
 docker-compose up -d
 docker-compose ps
