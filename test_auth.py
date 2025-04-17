@@ -4,7 +4,8 @@ import json
 import argparse
 import logging
 import sys
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
 
 # Try to import colorama for colored output
 try:
@@ -16,7 +17,7 @@ except ImportError:
     has_colorama = False
 
 # Suppress the insecure request warning for self-signed certificates
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+urllib3.disable_warnings(InsecureRequestWarning)
 
 # Custom logging formatter with colors
 class ColorFormatter(logging.Formatter):

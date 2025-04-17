@@ -4,8 +4,8 @@ import json
 import argparse
 import logging
 import sys
-import time
-from requests.packages.urllib3.exceptions import InsecureRequestWarning
+import urllib3
+from urllib3.exceptions import InsecureRequestWarning
 
 # Try to import colorama for colored output
 try:
@@ -17,7 +17,7 @@ except ImportError:
     has_colorama = False
 
 # Suppress the insecure request warning for self-signed certificates
-requests.packages.urllib3.disable_warnings(InsecureRequestWarning)
+urllib3.disable_warnings(InsecureRequestWarning)
 
 # Custom logging formatter with colors
 class ColorFormatter(logging.Formatter):
@@ -178,11 +178,6 @@ def main():
         else:
             logger.warning("Failed to get authentication token, proceeding with unauthenticated requests")
 
-    # Generate a unique suffix for test user registration
-    timestamp = int(time.time())
-    test_username = f"test_{username}_{timestamp}"
-    test_email = f"test_{timestamp}@example.com"
-
     # Define the endpoints to test
     # Format: [endpoint, method, request_data, requires_auth]
     endpoints = [
@@ -192,7 +187,7 @@ def main():
 
         # Auth endpoints
         ["/api/auth/login", "POST", {"username": username, "password": password}, False],
-        ["/api/auth/register", "POST", {"username": test_username, "email": test_email, "password": "password123"}, False],
+        ["/api/auth/register", "POST", {"username": f"test_{username}", "email": "test@example.com", "password": "password123"}, False],
 
         # Protected endpoints
         ["/api/auth/profile", "GET", None, True],

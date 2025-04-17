@@ -153,3 +153,35 @@
 2025-04-16 19:51:10,513 - INFO - Login test: [32mPASSED[0m
 2025-04-16 19:51:10,513 - INFO - Protected routes test: [32mPASSED[0m (1/1)
 2025-04-16 19:51:10,513 - INFO - Logout test: [32mPASSED[0m
+2025-04-16 22:00:20,003 - INFO - Starting authentication tests with base URL: https://localhost
+2025-04-16 22:00:20,003 - INFO - Testing login with username: jm42
+2025-04-16 22:00:20,058 - INFO - Login successful!
+2025-04-16 22:00:20,058 - INFO - User data: {
+  "id": 3,
+  "username": "jm42",
+  "email": "jm42@example.com"
+}
+2025-04-16 22:00:20,058 - INFO - Testing protected route: https://localhost/api/auth/profile
+2025-04-16 22:00:20,061 - INFO - Successfully accessed /api/auth/profile
+2025-04-16 22:00:20,062 - INFO - Testing logout
+2025-04-16 22:00:20,064 - INFO - Logout successful!
+2025-04-16 22:00:20,064 - INFO - Results written to auth_test_results.json
+2025-04-16 22:00:20,064 - INFO - Login test: [32mPASSED[0m
+2025-04-16 22:00:20,064 - INFO - Protected routes test: [32mPASSED[0m (1/1)
+2025-04-16 22:00:20,064 - INFO - Logout test: [32mPASSED[0m
+2025-04-16 23:04:14,293 - INFO - Starting authentication tests with base URL: https://localhost
+2025-04-16 23:04:14,293 - INFO - Testing login with username: jm42
+2025-04-16 23:04:14,349 - INFO - Login successful!
+2025-04-16 23:04:14,350 - INFO - User data: {
+  "id": 2,
+  "username": "jm42",
+  "email": "jeff.milton@gmail.com"
+}
+2025-04-16 23:04:14,350 - INFO - Testing protected route: https://localhost/api/auth/profile
+2025-04-16 23:04:14,353 - INFO - Successfully accessed /api/auth/profile
+2025-04-16 23:04:14,353 - INFO - Testing logout
+2025-04-16 23:04:14,355 - INFO - Logout successful!
+2025-04-16 23:04:14,355 - INFO - Results written to auth_test_results.json
+2025-04-16 23:04:14,355 - INFO - Login test: [32mPASSED[0m
+2025-04-16 23:04:14,356 - INFO - Protected routes test: [32mPASSED[0m (1/1)
+2025-04-16 23:04:14,356 - INFO - Logout test: [32mPASSED[0m

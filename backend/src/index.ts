@@ -7,6 +7,7 @@ import newsRouter from './routes/news';
 import randomQuoteRouter from './routes/randomQuote';
 import testDbRouter from './routes/testDb';
 import coursesRouter from './routes/courses';
+import todosRouter from './routes/todos';
 
 
 // Load environment variables
@@ -40,6 +41,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/courses', coursesRouter);
 app.use('/api', randomQuoteRouter);
 app.use('/api', testDbRouter);
+app.use('/api', todosRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from VHS backend!');

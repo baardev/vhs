@@ -134,3 +134,37 @@
 2025-04-16 19:51:55,421 - INFO - Exceptions: 0
 2025-04-16 19:51:55,421 - INFO - Skipped: 0
 2025-04-16 19:51:55,421 - INFO - Results written to site_test_results.txt
+2025-04-16 22:00:20,200 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 22:00:20,200 - INFO - Testing: https://localhost
+2025-04-16 22:00:21,133 - INFO - Testing: https://localhost/
+2025-04-16 22:00:23,067 - INFO - Testing: https://localhost/courses
+2025-04-16 22:00:26,102 - INFO - Testing: https://localhost/login
+2025-04-16 22:00:29,058 - INFO - Testing: https://localhost/register
+2025-04-16 22:00:33,456 - INFO - Testing: https://localhost/about
+2025-04-16 22:00:37,576 - INFO - Testing: https://localhost/privacy
+2025-04-16 22:00:42,263 - INFO - Testing: https://localhost/terms
+2025-04-16 22:00:49,493 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 22:01:06,390 - INFO - Testing completed!
+2025-04-16 22:01:06,391 - INFO - Total URLs: 9
+2025-04-16 22:01:06,391 - INFO - OK: [32m9[0m
+2025-04-16 22:01:06,391 - INFO - Errors: 0
+2025-04-16 22:01:06,391 - INFO - Exceptions: 0
+2025-04-16 22:01:06,392 - INFO - Skipped: 0
+2025-04-16 22:01:06,392 - INFO - Results written to site_test_results.txt
+2025-04-16 23:04:14,484 - INFO - Starting URL testing with base URL: https://localhost
+2025-04-16 23:04:14,484 - INFO - Testing: https://localhost
+2025-04-16 23:04:15,625 - INFO - Testing: https://localhost/
+2025-04-16 23:04:17,588 - INFO - Testing: https://localhost/courses
+2025-04-16 23:04:20,557 - INFO - Testing: https://localhost/login
+2025-04-16 23:04:23,690 - INFO - Testing: https://localhost/register
+2025-04-16 23:04:27,636 - INFO - Testing: https://localhost/about
+2025-04-16 23:04:31,968 - INFO - Testing: https://localhost/privacy
+2025-04-16 23:04:36,582 - INFO - Testing: https://localhost/terms
+2025-04-16 23:04:43,722 - INFO - Testing: https://localhost/forgot-password
+2025-04-16 23:05:00,639 - INFO - Testing completed!
+2025-04-16 23:05:00,639 - INFO - Total URLs: 9
+2025-04-16 23:05:00,640 - INFO - OK: [32m9[0m
+2025-04-16 23:05:00,640 - INFO - Errors: 0
+2025-04-16 23:05:00,640 - INFO - Exceptions: 0
+2025-04-16 23:05:00,640 - INFO - Skipped: 0
+2025-04-16 23:05:00,641 - INFO - Results written to site_test_results.txt

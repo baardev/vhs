@@ -2,9 +2,9 @@
   "login": {
     "status": "Success",
     "user": {
-      "id": 3,
+      "id": 2,
       "username": "jm42",
-      "email": "jm42@example.com"
+      "email": "jeff.milton@gmail.com"
     }
   },
   "protected_routes": {
@@ -12,10 +12,10 @@
       "status": "Success",
       "status_code": 200,
       "data": {
-        "id": 3,
+        "id": 2,
         "username": "jm42",
-        "email": "jm42@example.com",
-        "created_at": "2025-04-16T22:34:30.656Z",
+        "email": "jeff.milton@gmail.com",
+        "created_at": "2025-04-17T01:52:48.035Z",
         "name": null,
         "family_name": null,
         "matricula": null,

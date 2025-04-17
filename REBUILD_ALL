@@ -1,24 +1,30 @@
 #!/bin/bash
 
+# Enable the COMPOSE_BAKE environment variable
 export COMPOSE_BAKE=true
-
 
 docker-compose down -v
 #docker rmi vhs_backend vhs_frontend  # replace with your exact image names
 
-# wipe everythiung
+# wipe everything
 docker rmi $(docker images -q) -f
 
-docker-compose build
+# Use docker-compose bake command
+docker buildx create --use
+docker-compose -f docker-compose.yml -f docker-compose.build.yml build
 docker-compose up -d
 docker-compose ps
 
 sleep 15
-
 
 docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\dt"
 docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/01_setup_database.sql
 docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/02_create_quotes_table.sql
 docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/03_course_tables.sql
 docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/04_update_user_table.sql
+docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/05_todo_table.sql
+docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/06_create_default_users.sql
 docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\dt"
+docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\q"
+
+ docker exec -it vhs-db-1 psql -U user -d vhsdb -c "SELECT id, username, email, password FROM users;"

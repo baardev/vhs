@@ -3,15 +3,119 @@
     "status_code": 200,
     "headers": {
       "Server": "nginx/1.27.5",
-      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Date": "Thu, 17 Apr 2025 02:04:14 GMT",
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Length": "85277",
+      "Content-Length": "85193",
       "Connection": "keep-alive",
       "X-Powered-By": "Express",
       "Access-Control-Allow-Origin": "*",
-      "ETag": "W/\"14d1d-T0vu7e7nUr8OU7OS2muTokx5qig\""
+      "ETag": "W/\"14cc9-RTaFl8zymAs3ssMZV7EiKQgXUfs\""
     },
     "data": [
+      {
+        "source": {
+          "id": null,
+          "name": "Prtimes.jp"
+        },
+        "author": null,
+        "title": "SMART GOLF\u306e\u65b0\u30b3\u30f3\u30bb\u30d7\u30c8\u696d\u614b\u300c\u30b9\u30de\u30b4\u30eb\u300d2025\u5e744\u6708\u30aa\u30fc\u30d7\u30f3\u5e97\u8217\u306e\u304a\u77e5\u3089\u305b",
+        "description": "[\u682a\u5f0f\u4f1a\u793e\uff33\uff2d\uff21\uff32\uff34\u3000\uff27\uff2f\uff2c\uff26]\n[\u753b\u50cf1: https://prcdn.freetls.fastly.net/release_image/132489/32/132489-32-ca4fbb2ad315e01d1ee72f2c5cff9901-1014x568.png?width=536&quality=85%2C75&format=jpeg&auto=webp&fit=bounds&a...",
+        "url": "https://prtimes.jp/main/html/rd/p/000000032.000132489.html",
+        "urlToImage": "https://prcdn.freetls.fastly.net/release_image/132489/32/132489-32-ca4fbb2ad315e01d1ee72f2c5cff9901-1014x568.png?format=jpeg&auto=webp&fit=bounds&width=2400&height=1260",
+        "publishedAt": "2025-04-16T02:00:00Z",
+        "content": "ITSMART GOLFSMART GOLF8\r\n202412 / / SMART GOLFGOLFZON WAVE8,800\r\n20254\r\nSMART GOLF \r\n!\r\n<ul><li>GOLFZON WAVE\r\n34\r\n</li><li>8,800\r\n8,80001\r\n</li><li>24365*\r\n24365\r\n</li><li>OK\r\n</li><li></li></ul>FC\r\n\u2026 [+146 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Complex"
+        },
+        "author": "Trace William Cowen",
+        "title": "How Snoop Dogg Ended Up on a Country Song With ERNEST",
+        "description": "According to ERNEST, the collab started with him \u201cweaseling\u201d his way into Snoop\u2019s green room at a Jelly Roll show.",
+        "url": "https://www.complex.com/music/a/tracewilliamcowen/snoop-dogg-ernest-gettin-gone-country-song",
+        "urlToImage": "https://images.complex.com/complex/image/upload/ar_1.91,c_fill,g_auto,q_auto,w_1200/v1744224635/ERN_and_SNOOP_1_k8ipnw",
+        "publishedAt": "2025-04-16T01:42:18Z",
+        "content": "Snoop Dogg, who once called the late Johnny Cash his main man and a real American gangster, is digging deeper into his Nashville country bag with a new collaboration with ERNEST. But first, it is my \u2026 [+3578 chars]"
+      },
+      {
+        "source": {
+          "id": "espn",
+          "name": "ESPN"
+        },
+        "author": "Keith Jenkins",
+        "title": "RBC Heritage 2025: PGA schedule, how to watch on ESPN+",
+        "description": "The PGA event runs Thursday to Sunday, March 20-23 at the Copperhead Course.",
+        "url": "https://www.espn.com/golf/story/_/id/44690049/rbc-heritage-2025-pga-schedule-how-watch-espn-plus",
+        "urlToImage": "https://a4.espncdn.com/combiner/i?img=%2Fphoto%2F2024%2F0420%2Fr1321729_1296x729_16%2D9.jpg",
+        "publishedAt": "2025-04-16T00:50:16Z",
+        "content": "Apr 15, 2025, 07:41 PM ET\r\nDays after Rory McIlroy completed a career grand slam by winning his first green jacket at the 89th Masters Tournament, many of the PGA Tour's best head to Hilton Head Isla\u2026 [+1398 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "Boston Herald"
+        },
+        "author": "Kristina Banahan, Brian Roach, Tom Mulherin, Kevin Barrucci",
+        "title": "High school roundup: B-R lacrosse star Emily Keefe has 6 goals, 200 for career",
+        "description": "BASEBALL Ryan Baker struck out 12 in a one-hitter as Whitman-Hanson (5-0) shutout Pembroke 3-0 in Patriot League play. BOYS LACROSSE Cole Rodgers scored four times and is now tied for the all-time program lead with Avery Richardson with 184 career goals as Sa\u2026",
+        "url": "https://www.bostonherald.com/2025/04/15/high-school-roundup-b-r-lacrosse-star-emily-keefe-has-6-goals-200-for-career/",
+        "urlToImage": "https://www.bostonherald.com/wp-content/uploads/2025/04/lacrossems03.jpg?w=1024&h=690",
+        "publishedAt": "2025-04-16T00:36:36Z",
+        "content": "BASEBALL\r\nRyan Baker struck out 12 in a one-hitter as Whitman-Hanson (5-0) shutout Pembroke 3-0 in Patriot League play.\r\nBOYS LACROSSE\r\nCole Rodgers scored four times and is now tied for the all-time\u2026 [+3115 chars]"
+      },
+      {
+        "source": {
+          "id": "newsweek",
+          "name": "Newsweek"
+        },
+        "author": "Julio Cesar Valdera Morales",
+        "title": "LA Olympics Add New Golf Competition Fans Have Been Asking For",
+        "description": "The International Golf Federation has confirmed that there will be a mixed team golf tournament at the 2028 Olympic Games in Los Angeles.",
+        "url": "https://www.newsweek.com/sports/golf/pga-tour-lpga-news-la-olympics-golf-competition-2060155",
+        "urlToImage": "https://d.newsweek.com/en/full/2627692/corey-conners-brooke-henderson.jpg",
+        "publishedAt": "2025-04-16T00:22:58Z",
+        "content": "Golf fans will have an extraordinary opportunity at the 2028 Olympic Games in Los Angeles when a mixed team event will be played. The International Golf Federation (IGF) has confirmed the news and pr\u2026 [+3123 chars]"
+      },
+      {
+        "source": {
+          "id": "newsweek",
+          "name": "Newsweek"
+        },
+        "author": "Julio Cesar Valdera Morales",
+        "title": "Amid Bryson DeChambeau Masters Misery, Heads Straight to US Open Site",
+        "description": "Bryson DeChambeau's famous bunker shot to win the 2024 US Open has been immortalized with a plaque at Pinehurst No. 2.",
+        "url": "https://www.newsweek.com/sports/golf/masters-bryson-dechambeau-misery-us-open-site-2060123",
+        "urlToImage": "https://d.newsweek.com/en/full/2627603/bryson-dechambeau-us-open-2024.jpg",
+        "publishedAt": "2025-04-16T00:14:29Z",
+        "content": "Bryson DeChambeau had little time to put his poor final round at the Masters Tournament behind him, as he had a date with history the next day in Pinehurst, North Carolina.\r\nThe United States Golf As\u2026 [+2867 chars]"
+      },
+      {
+        "source": {
+          "id": null,
+          "name": "New York Post"
+        },
+        "author": "Andrew Battifarano",
+        "title": "Rory McIlroy\u2019s sports psychologist reveals reason behind Bryson DeChambeau silent treatment at Masters",
+        "description": "Rory McIlroy's Masters win on Sunday was years in the making, but one of the stories that made plenty of headlines during the major was him giving the silent treatment to his playing partner.",
+        "url": "https://nypost.com/2025/04/15/sports/rory-mcilroy-sports-psychologist-opens-up-on-bryson-dechambeau-silent-treatment/",
+        "urlToImage": "https://nypost.com/wp-content/uploads/sites/2/2025/04/newspress-collage-9o5525oph-1744760320395.jpg?quality=75&strip=all&1744745934&w=1024",
+        "publishedAt": "2025-04-15T23:49:58Z",
+        "content": "Rory McIlroy\u2019s Masters win on Sunday was years in the making, but one of the stories that made plenty of headlines during the major was him giving the silent treatment to his playing partner, Bryson \u2026 [+2204 chars]"
+      },
+      {
+        "source": {
+          "id": "fox-news",
+          "name": "Fox News"
+        },
+        "author": "Ryan Morik",
+        "title": "Rory McIlroy's sports psychologist explains Bryson DeChambeau silent treatment during Masters final round",
+        "description": "Bryson DeChambeau said golfer Rory McIlroy \"didn't talk to\" him throughout the final round of the Masters, and that was all apparently part of the plan.",
+        "url": "https://www.foxnews.com/sports/rory-mcilroys-sports-psychologist-explains-bryson-dechambeau-silent-treatment-during-masters-final-round",
+        "urlToImage": "https://static.foxnews.com/foxnews.com/content/uploads/2025/04/rory-bryson-masters.jpg",
+        "publishedAt": "2025-04-15T23:22:55Z",
+        "content": "When it's in between the lines or with golf, inside the ropes it's all business for Rory McIlroy.\r\nThat memo apparently did not get to Bryson DeChambeau ahead of the final round of the Masters.\u00a0\r\nThe\u2026 [+1844 chars]"
+      },
       {
         "source": {
           "id": null,
@@ -1168,110 +1272,6 @@
         "urlToImage": "https://sportshub.cbsistatic.com/i/r/2025/04/15/5d352903-7c29-4035-a6c0-835dd241d44d/thumbnail/1200x675/cc032846f5be2b6b8756bc712d834c74/justin-rose-rory-mcilroy-masters-2025-b.jpg",
         "publishedAt": "2025-04-15T15:06:26Z",
         "content": "AUGUSTA, Ga. -- A family of four wandered. They weren't lost; they were exactly where they were supposed to be. Bumping off patrons and sneaking between corridors, they attempted to carve any angle t\u2026 [+13039 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "Yahoo Entertainment"
-        },
-        "author": "Jason Russell",
-        "title": "The Masters Ticket Lottery Is Dumb",
-        "description": "Plus: Paying college athletes, sports betting isn\u2019t bad, and pickleball?",
-        "url": "https://sports.yahoo.com/article/masters-ticket-lottery-dumb-150018541.html",
-        "urlToImage": "https://s.yimg.com/ny/api/res/1.2/0w84WM597B4rIE9k6wJFGw--/YXBwaWQ9aGlnaGxhbmRlcjt3PTEyMDA7aD02NzU7Y2Y9d2VicA--/https://media.zenfs.com/en/reason_com_245/c2dacd8b10a1afbb57c8fd14374665f9",
-        "publishedAt": "2025-04-15T15:00:18Z",
-        "content": "JOHN ANGELILLO/UPI/Newscom\r\nGood morning and welcome to another edition of Free Agent! Be better than the vice president and learn how to handle a trophy today.\r\nSunday's action at the Masters was pe\u2026 [+7841 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "BroBible"
-        },
-        "author": "Connor Toole",
-        "title": "Ken Griffey Jr. Snapped One Of The Best Photos Of Rory McIlroy\u2019s Emotional Reaction To Winning The Masters",
-        "description": "There were plenty of notable names among the massive crowd of people that watched Rory McIlroy complete the career grand slam with a win at The Masters. That includes Ken Griffey Jr., who was covering the event as a credentialed photographer and got one of th\u2026",
-        "url": "https://brobible.com/sports/article/ken-griffey-jr-rory-mcilroy-masters-win-photo/",
-        "urlToImage": "https://brobible.com/wp-content/uploads/2025/04/ken-griffey-jr-masters.jpg",
-        "publishedAt": "2025-04-15T14:59:04Z",
-        "content": "Peter Casey-Imagn Images\r\nThere were plenty of notable names among the massive crowd of people that watched Rory McIlroy complete the career grand slam with a win at The Masters. That includes Ken Gr\u2026 [+2023 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "CBS Sports"
-        },
-        "author": "Robby Kalland",
-        "title": "How many majors will Rory McIlroy win in 2025? Favorable path lies ahead after ending decade-long drought",
-        "description": "McIlroy's major drought came to an end at the Masters, and that could be just the beginning of an incredible major year",
-        "url": "https://www.cbssports.com/golf/news/how-many-majors-will-rory-mcilroy-win-in-2025-favorable-path-lies-ahead-after-ending-decade-long-drought/",
-        "urlToImage": "https://sportshub.cbsistatic.com/i/r/2025/04/14/65126211-217a-4a77-9a56-613643a3668d/thumbnail/1200x675/b48a0eb8d80f526f8f6125157bd7240d/mcilroy.jpg",
-        "publishedAt": "2025-04-15T14:54:17Z",
-        "content": "When Rory McIlroy finally sank the winning putt on Sunday at the Masters, completing the career grand slam and securing the green jacket that had eluded him for 17 years, he collapsed to his knees on\u2026 [+4570 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "The Cut"
-        },
-        "author": "Bindu Bansinath",
-        "title": "Happy Hour With Chuck and Hailee",
-        "description": "Even the most stalwart snarkers don\u2019t have shit to say about New Jersey chefs Chuck Cruz and Hailee Catalano, who rose to TikTok fame with their cooking accounts and Friday-night dinner series. Catalano\u2019s cookbook, \u2018By Heart\u2019 is out from DK.",
-        "url": "http://www.thecut.com/article/hailee-catalano-chuck-cruz-chef-couple-instagram-interview-happy-hour.html",
-        "urlToImage": "https://pyxis.nymag.com/v1/imgs/527/386/03a9eaad17fd0afaaaf409faebfb4d470a-lede-2.1x.rsocial.w1200.jpg",
-        "publishedAt": "2025-04-15T14:51:27Z",
-        "content": "Internet strangers are burned out on TikToks food creators. Snark forums pick apart excessive Grazia olive-oil ads and lengthy pre-recipe personal anecdotes. But even the most stalwart snarkers dont \u2026 [+7283 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "Raw Story"
-        },
-        "author": "Travis Gettys",
-        "title": "Trump loosens rules on seasonal workers after lobbyists party at his properties: watchdog",
-        "description": "A government watchdog is alleging that President Donald Trump loosened up rules around some foreign-born workers after industry lobbyists put on a fundraiser at Mar-a-Lago and invited attendees to stay at another one of his properties.The Trump administration\u2026",
-        "url": "https://www.rawstory.com/trump-seasonal-workers/",
-        "urlToImage": "https://www.rawstory.com/media-library/u-s-president-donald-trump-speaks-at-mar-a-lago-in-palm-beach-florida-u-s-february-18-2025-reuters-kevin-lamarque.jpg?id=56538067&width=1200&height=600&coordinates=0%2C343%2C0%2C343",
-        "publishedAt": "2025-04-15T14:40:00Z",
-        "content": "A government watchdog is alleging that President Donald Trump loosened up rules around some foreign-born workers after industry lobbyists put on a fundraiser at Mar-a-Lago and invited attendees to st\u2026 [+1971 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "Reason"
-        },
-        "author": "Jason Russell",
-        "title": "The Masters Ticket Lottery Is Dumb",
-        "description": "Plus: Paying college athletes, sports betting isn\u2019t bad, and pickleball?",
-        "url": "https://reason.com/2025/04/15/the-masters-ticket-lottery-is-dumb/",
-        "urlToImage": "https://d2eehagpk5cl65.cloudfront.net/img/q60/uploads/2025/04/upiphotosthree067921-scaled-e1744661070201.jpg",
-        "publishedAt": "2025-04-15T14:39:17Z",
-        "content": "Good morning and welcome to another edition of Free Agent! Be better than the vice president and learn how to handle a trophy today. Sunday's action at the Masters was perhaps the most engaging golf \u2026 [+8175 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "ZDNet"
-        },
-        "author": "Matthew Miller",
-        "title": "I tested Garmin's latest smartwatch, and it has the right balance of style and features",
-        "description": "The Vivoactive 6 is a crowd-pleaser with a small, stylish form factor, brilliant AMOLED display, and support for Garmin's vast ecosystem.",
-        "url": "https://www.zdnet.com/article/i-tested-garmins-latest-smartwatch-and-it-has-the-right-balance-of-style-and-features/",
-        "urlToImage": "https://www.zdnet.com/a/img/resize/db4ca96458c22af357ed4cab7d0ba89f9d4567c7/2025/04/14/9233257b-188e-4b2e-bb0e-9e4c4e387d70/garmin-vivoactive-64.jpg?auto=webp&fit=crop&height=675&width=1200",
-        "publishedAt": "2025-04-15T14:35:00Z",
-        "content": "Garmin's latest smartwatch for the masses, the Vivoactive 6, brings a fresh perspective to its lineup with a stylish design and approachable price. \r\nWith the continuation of its upgrade cycle, Garmi\u2026 [+4459 chars]"
-      },
-      {
-        "source": {
-          "id": null,
-          "name": "New York Post"
-        },
-        "author": "Jaclyn Hendricks",
-        "title": "Caroline Wozniacki\u2019s Masters \u2018winner\u2019 comments resurface after ex Rory McIlroy\u2019s major triumph",
-        "description": "McIlroy and Wozniacki ended their engagement in 2014.",
-        "url": "https://nypost.com/2025/04/15/sports/caroline-wozniackis-masters-winner-comments-resurface-after-ex-rory-mcilroys-win/",
-        "urlToImage": "https://nypost.com/wp-content/uploads/sites/2/2025/04/newspress-collage-p85keblm6-1744725670529.jpg?quality=75&strip=all&1744711383&w=1024",
-        "publishedAt": "2025-04-15T14:31:18Z",
-        "content": "The fallout from Rory McIlroy\u2019s thrilling 2025 Masters win continues. \r\nDays after the Northern Irishman completed a career Grand Slam at Augusta National, where he defeated England\u2019s Justin Rose in \u2026 [+2678 chars]"
       }
     ],
     "status": "Success"
@@ -1280,18 +1280,18 @@
     "status_code": 200,
     "headers": {
       "Server": "nginx/1.27.5",
-      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Date": "Thu, 17 Apr 2025 02:04:14 GMT",
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Length": "145",
+      "Content-Length": "98",
       "Connection": "keep-alive",
       "X-Powered-By": "Express",
       "Access-Control-Allow-Origin": "*",
-      "ETag": "W/\"91-iXlzF9xEty3TiftEJrjbtah6DxI\""
+      "ETag": "W/\"62-GT5A13Bh7ZzLEpMO+AFeU7dCxj4\""
     },
     "data": {
-      "id": 9,
-      "quote": "Mistakes are part of the game. It's how well you recover from them, that's the mark of a great player.",
-      "author": "Alice Cooper"
+      "id": 45,
+      "quote": "If you wish to hide your character, do not play golf.",
+      "author": "Percey Boomer"
     },
     "status": "Success"
   },
@@ -1299,20 +1299,20 @@
     "status_code": 200,
     "headers": {
       "Server": "nginx/1.27.5",
-      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Date": "Thu, 17 Apr 2025 02:04:14 GMT",
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Length": "216",
+      "Content-Length": "221",
       "Connection": "keep-alive",
       "X-Powered-By": "Express",
       "Access-Control-Allow-Origin": "*",
-      "ETag": "W/\"d8-hKq+er/lUgnz3zqkaw+KX6RYfnY\""
+      "ETag": "W/\"dd-z55IvtcJ6fy/HfDnoiXqZZffY1k\""
     },
     "data": {
-      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjMsImlhdCI6MTc0NDg0Mzg3MCwiZXhwIjoxNzQ0ODUxMDcwfQ.1dvhlC37ZAjzDrscKPZTPUhjRg1BEkxDNE0QywyuYQw",
+      "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIsImlhdCI6MTc0NDg1NTQ1NCwiZXhwIjoxNzQ0ODYyNjU0fQ.VkkL8Xcg2zSZOt88V_pffkn3ry0x6orjUJVNlLvuvgU",
       "user": {
-        "id": 3,
+        "id": 2,
         "username": "jm42",
-        "email": "jm42@example.com"
+        "email": "jeff.milton@gmail.com"
       }
     },
     "status": "Success"
@@ -1321,18 +1321,18 @@
     "status_code": 201,
     "headers": {
       "Server": "nginx/1.27.5",
-      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Date": "Thu, 17 Apr 2025 02:04:14 GMT",
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Length": "80",
+      "Content-Length": "58",
       "Connection": "keep-alive",
       "X-Powered-By": "Express",
       "Access-Control-Allow-Origin": "*",
-      "ETag": "W/\"50-KQc8pSIaGWz5oRjIMGXH5JlOvP0\""
+      "ETag": "W/\"3a-bZb/xvcDP1e37EyvUjvqNphyhSE\""
     },
     "data": {
-      "id": 5,
-      "username": "test_jm42_1744843869",
-      "email": "test_1744843869@example.com"
+      "id": 3,
+      "username": "test_jm42",
+      "email": "test@example.com"
     },
     "status": "Success"
   },
@@ -1340,19 +1340,19 @@
     "status_code": 200,
     "headers": {
       "Server": "nginx/1.27.5",
-      "Date": "Wed, 16 Apr 2025 22:51:10 GMT",
+      "Date": "Thu, 17 Apr 2025 02:04:14 GMT",
       "Content-Type": "application/json; charset=utf-8",
-      "Content-Length": "157",
+      "Content-Length": "162",
       "Connection": "keep-alive",
       "X-Powered-By": "Express",
       "Access-Control-Allow-Origin": "*",
-      "ETag": "W/\"9d-/iTnK0oeKNvPhByvn30lKrBjNpY\""
+      "ETag": "W/\"a2-5o+AF+HGcZDqoi9WxVtZadi3B6g\""
     },
     "data": {
-      "id": 3,
+      "id": 2,
       "username": "jm42",
-      "email": "jm42@example.com",
-      "created_at": "2025-04-16T22:34:30.656Z",
+      "email": "jeff.milton@gmail.com",
+      "created_at": "2025-04-17T01:52:48.035Z",
       "name": null,
       "family_name": null,
       "matricula": null,
