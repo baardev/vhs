@@ -9,6 +9,8 @@ RUN npm install
 COPY . .
 RUN npm run build
 
+RUN npm update
+
 FROM node:lts AS runner
 WORKDIR /app
 COPY --from=builder /app/.next ./.next
