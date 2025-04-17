@@ -18,4 +18,5 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
+// Export with translation wrapper
 export default appWithTranslation(MyApp);
