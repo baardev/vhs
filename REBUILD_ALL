@@ -1,7 +1,30 @@
 #!/bin/bash
 
-# Enable the COMPOSE_BAKE environment variable
-export COMPOSE_BAKE=true
+# Parse command line arguments
+BUILDX=false
+BAKE=false
+
+for arg in "$@"
+do
+    case $arg in
+        --buildx)
+        BUILDX=true
+        shift
+        ;;
+        --bake)
+        BAKE=true
+        shift
+        ;;
+    esac
+done
+
+# Set environment variables based on arguments
+if [ "$BAKE" = true ]; then
+    export COMPOSE_BAKE=true
+    echo "Bake mode enabled"
+else
+    echo "Bake mode disabled"
+fi
 
 docker-compose down -v
 #docker rmi vhs_backend vhs_frontend  # replace with your exact image names
@@ -9,9 +32,21 @@ docker-compose down -v
 # wipe everything
 docker rmi $(docker images -q) -f
 
-# Use docker-compose bake command
-docker buildx create --use
-docker-compose -f docker-compose.yml -f docker-compose.build.yml build
+# Configure buildx if requested
+if [ "$BUILDX" = true ]; then
+    echo "Setting up Docker Buildx"
+    docker buildx create --use
+fi
+
+# Build using the appropriate command
+if [ "$BAKE" = true ]; then
+    echo "Building with bake"
+    docker-compose -f docker-compose.yml -f docker-compose.build.yml build
+else
+    echo "Building normally"
+    docker-compose build
+fi
+
 docker-compose up -d
 docker-compose ps
 
@@ -27,4 +62,4 @@ docker exec -i vhs-db-1 psql -U user -d vhsdb < backend/sql/06_create_default_us
 docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\dt"
 docker exec -it vhs-db-1 psql -U user -d vhsdb -c "\q"
 
- docker exec -it vhs-db-1 psql -U user -d vhsdb -c "SELECT id, username, email, password FROM users;"
+docker exec -it vhs-db-1 psql -U user -d vhsdb -c "SELECT id, username, email, password FROM users;"
