@@ -185,3 +185,9 @@
 2025-04-16 23:04:14,355 - INFO - Login test: [32mPASSED[0m
 2025-04-16 23:04:14,356 - INFO - Protected routes test: [32mPASSED[0m (1/1)
 2025-04-16 23:04:14,356 - INFO - Logout test: [32mPASSED[0m
+2025-04-17 16:53:36,143 - INFO - Starting authentication tests with base URL: https://localhost
+2025-04-17 16:53:36,144 - INFO - Testing login with username: jm42
+2025-04-17 16:53:36,155 - ERROR - Login failed with status code: 401
+2025-04-17 16:53:36,155 - ERROR - Response: {"error":"Invalid credentials"}
+2025-04-17 16:53:36,156 - INFO - Results written to auth_test_results.json
+2025-04-17 16:53:36,156 - INFO - Login test: [31mFAILED[0m

@@ -5,7 +5,13 @@ import argparse
 import logging
 import sys
 import urllib3
-from urllib3.exceptions import InsecureRequestWarning
+
+# Import from the correct location in urllib3
+try:
+    from urllib3.exceptions import InsecureRequestWarning
+except ImportError:
+    # For newer versions of urllib3
+    from urllib3 import InsecureRequestWarning
 
 # Try to import colorama for colored output
 try:

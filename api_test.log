@@ -298,3 +298,23 @@
 2025-04-16 23:04:14,202 - INFO - Errors: 0
 2025-04-16 23:04:14,202 - INFO - Exceptions: 0
 2025-04-16 23:04:14,202 - INFO - Skipped: 0
+2025-04-17 16:53:34,571 - INFO - Starting API tests with base URL: https://localhost
+2025-04-17 16:53:34,571 - INFO - Getting authentication token for user: jm42
+2025-04-17 16:53:34,589 - ERROR - Login failed with status code: 401
+2025-04-17 16:53:34,590 - WARNING - Failed to get authentication token, proceeding with unauthenticated requests
+2025-04-17 16:53:34,590 - INFO - Testing API endpoint: https://localhost/api/golf-news with method GET
+2025-04-17 16:53:35,969 - INFO - Success (Status 200)
+2025-04-17 16:53:35,969 - INFO - Testing API endpoint: https://localhost/api/random-quote with method GET
+2025-04-17 16:53:35,972 - INFO - Success (Status 200)
+2025-04-17 16:53:35,972 - INFO - Testing API endpoint: https://localhost/api/auth/login with method POST
+2025-04-17 16:53:35,974 - ERROR - Failed with status code: 401
+2025-04-17 16:53:35,974 - INFO - Testing API endpoint: https://localhost/api/auth/register with method POST
+2025-04-17 16:53:36,026 - INFO - Success (Status 201)
+2025-04-17 16:53:36,027 - WARNING - Skipping authenticated endpoint /api/auth/profile (no token)
+2025-04-17 16:53:36,028 - INFO - Results written to api_test_results.json
+2025-04-17 16:53:36,028 - INFO - Testing completed!
+2025-04-17 16:53:36,028 - INFO - Total endpoints: 5
+2025-04-17 16:53:36,028 - INFO - Success: [32m3[0m
+2025-04-17 16:53:36,028 - INFO - Errors: [31m1[0m
+2025-04-17 16:53:36,028 - INFO - Exceptions: 0
+2025-04-17 16:53:36,028 - INFO - Skipped: [33m1[0m

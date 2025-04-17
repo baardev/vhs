@@ -1,0 +1,27 @@
+URL,Response Code
+https://localhost/,200
+https://localhost/_next/static/chunks/main.js,200
+https://localhost/_next/static/chunks/pages/_app.js,200
+https://localhost/_next/static/chunks/pages/about.js,200
+https://localhost/_next/static/chunks/pages/courses.js,200
+https://localhost/_next/static/chunks/pages/forgot-password.js,200
+https://localhost/_next/static/chunks/pages/index.js,200
+https://localhost/_next/static/chunks/pages/login.js,200
+https://localhost/_next/static/chunks/pages/privacy.js,200
+https://localhost/_next/static/chunks/pages/register.js,200
+https://localhost/_next/static/chunks/pages/terms.js,200
+https://localhost/_next/static/chunks/polyfills.js,200
+https://localhost/_next/static/chunks/react-refresh.js,200
+https://localhost/_next/static/chunks/webpack.js,200
+https://localhost/_next/static/development/_buildManifest.js,200
+https://localhost/_next/static/development/_ssgManifest.js,200
+https://localhost/_next/static/media/569ce4b8f30dc480-s.p.woff2,200
+https://localhost/_next/static/media/93f479601ee12b01-s.p.woff2,200
+https://localhost/about,200
+https://localhost/courses,200
+https://localhost/forgot-password,200
+https://localhost/login,200
+https://localhost/privacy,200
+https://localhost/register,200
+https://localhost/robots.txt,404
+https://localhost/terms,200

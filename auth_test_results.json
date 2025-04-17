@@ -1,29 +1,6 @@
 {
   "login": {
-    "status": "Success",
-    "user": {
-      "id": 2,
-      "username": "jm42",
-      "email": "jeff.milton@gmail.com"
-    }
-  },
-  "protected_routes": {
-    "/api/auth/profile": {
-      "status": "Success",
-      "status_code": 200,
-      "data": {
-        "id": 2,
-        "username": "jm42",
-        "email": "jeff.milton@gmail.com",
-        "created_at": "2025-04-17T01:52:48.035Z",
-        "name": null,
-        "family_name": null,
-        "matricula": null,
-        "handicap": null
-      }
-    }
-  },
-  "logout": {
-    "status": "Success"
+    "status": "Failure",
+    "user": null
   }
 }
