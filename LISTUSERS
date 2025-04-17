@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# Find the database container
+DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
+
+if [ -z "$DB_CONTAINER" ]; then
+  echo "Error: Database container not found. Is the database running?"
+  exit 1
+fi
+
+# Check if is_admin column exists
+COLUMN_CHECK=$(docker exec -i $DB_CONTAINER psql -U user -d vhsdb -t -c "SELECT column_name FROM information_schema.columns WHERE table_name='users' AND column_name='is_admin';")
+
+if [ -z "$COLUMN_CHECK" ]; then
+  # is_admin column doesn't exist, show without it
+  echo "Note: is_admin column doesn't exist in the users table."
+  docker exec -i $DB_CONTAINER psql -U user -d vhsdb -c "SELECT username, email, password FROM users ORDER BY id ASC;"
+else
+  # is_admin column exists, include it
+  docker exec -i $DB_CONTAINER psql -U user -d vhsdb -c "SELECT username, email, password, is_admin FROM users ORDER BY id ASC;"
+fi
+
+echo "Done."
+

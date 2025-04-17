@@ -32,7 +32,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
 
       // Clear local storage
       localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('userData');
 
       // Dispatch auth change event to notify other components
       window.dispatchEvent(new Event('authChange'));
@@ -44,7 +44,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
 
       // Even if the API call fails, clear the local storage and redirect
       localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      localStorage.removeItem('userData');
       router.push('/login');
     } finally {
       setIsLoggingOut(false);

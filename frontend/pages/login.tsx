@@ -32,13 +32,32 @@ export default function Login() {
 
     try {
       console.log('Sending login request with:', { username, password });
-      const response = await axios.post('/api/auth/login', {
-        username,
-        password
-      });
+
+      // Wrap the axios call in a try-catch within the main try block
+      let response;
+      try {
+        response = await axios.post('/api/auth/login', {
+          username,
+          password
+        });
+      } catch (axiosErr) {
+        // Handle 401 errors silently
+        if (axios.isAxiosError(axiosErr) && axiosErr.response?.status === 401) {
+          setError('Username or password incorrect');
+          setIsLoading(false);
+          return; // Exit early
+        }
+        // Re-throw other errors to be caught by outer catch
+        throw axiosErr;
+      }
+
       console.log('Login successful, received response:', response.data);
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      localStorage.setItem('userData', JSON.stringify(response.data.user));
+
+      // Dispatch auth change event
+      window.dispatchEvent(new Event('authChange'));
+
       router.push('/profile');
     } catch (err: unknown) {
       console.error('Login error:', err);

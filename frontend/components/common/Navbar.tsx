@@ -3,36 +3,54 @@ import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import LogoutButton from '../LogoutButton';
+import AdminLink from './AdminLink';
 
 const Navbar = () => {
   const { t } = useTranslation('common');
 //   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
 
   useEffect(() => {
-    // Check if user is logged in
+    // Check if user is logged in and get username
     const token = localStorage.getItem('token');
+    const userData = localStorage.getItem('userData');
+
     setIsLoggedIn(!!token);
+
+    if (userData) {
+      try {
+        const user = JSON.parse(userData);
+        setUsername(user.username || '');
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+      }
+    }
 
     // Update login state when storage changes
     const handleStorageChange = () => {
       const token = localStorage.getItem('token');
+      const userData = localStorage.getItem('userData');
       setIsLoggedIn(!!token);
+
+      if (userData) {
+        try {
+          const user = JSON.parse(userData);
+          setUsername(user.username || '');
+        } catch (error) {
+          console.error('Error parsing user data:', error);
+        }
+      } else {
+        setUsername('');
+      }
     };
 
     window.addEventListener('storage', handleStorageChange);
-
-    // Custom event for logout from other components
-    const handleAuthChange = () => {
-      const token = localStorage.getItem('token');
-      setIsLoggedIn(!!token);
-    };
-
-    window.addEventListener('authChange', handleAuthChange);
+    window.addEventListener('authChange', handleStorageChange);
 
     return () => {
       window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('authChange', handleAuthChange);
+      window.removeEventListener('authChange', handleStorageChange);
     };
   }, []);
 
@@ -62,22 +80,29 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="flex space-x-6">
+          <div className="flex items-center space-x-6">
             <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
               {t('home')}
             </Link>
             <Link href="/courses" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
               {t('courses')}
             </Link>
+
             {isLoggedIn ? (
               <>
-                <Link href="/profile" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
-                  {t('profile.yourProfile')}
-                </Link>
-                <LogoutButton
-                  variant="text"
-                  className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]"
-                />
+                <AdminLink />
+                <div className="flex items-center ml-6">
+                  <Link
+                    href="/profile"
+                    className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] font-medium mr-3"
+                  >
+                    {username}
+                  </Link>
+                  <LogoutButton
+                    variant="text"
+                    className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]"
+                  />
+                </div>
               </>
             ) : (
               <>

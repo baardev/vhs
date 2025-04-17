@@ -18,6 +18,22 @@
   "about": "אודות",
   "privacy": "פרטיות",
   "terms": "תנאים",
+  "todo": {
+    "title": "משימות גולף",
+    "placeholder": "הוסף משימה חדשה...",
+    "addButton": "הוסף",
+    "deleteButton": "מחק",
+    "noTasks": "אין משימות פעילות",
+    "errorAdding": "שגיאה בהוספת המשימה",
+    "errorLoading": "שגיאה בטעינת המשימות",
+    "errorDeleting": "שגיאה במחיקת המשימה",
+    "categories": {
+      "practice": "אימון",
+      "schedule": "לוח זמנים",
+      "equipment": "ציוד",
+      "other": "אחר"
+    }
+  },
   "forgotPassword": {
     "link": "שכחת את הסיסמה?",
     "title": "שכחת את הסיסמה?",
@@ -79,5 +95,35 @@
     "updateFailed": "עדכון הפרופיל נכשל.",
     "deleteFailed": "מחיקת החשבון נכשלה.",
     "loading": "טוען..."
+  },
+  "admin": {
+    "title": "לוח בקרה למנהל",
+    "users": "ניהול משתמשים",
+    "userManagement": "ניהול משתמשים",
+    "userTable": {
+      "username": "שם משתמש",
+      "email": "דוא\"ל",
+      "admin": "מנהל",
+      "actions": "פעולות",
+      "edit": "ערוך",
+      "delete": "מחק"
+    },
+    "editUser": "ערוך משתמש",
+    "deleteUser": "מחק משתמש",
+    "confirmDelete": "אשר מחיקה",
+    "deleteConfirmation": "האם אתה בטוח שברצונך למחוק את המשתמש {{username}}?",
+    "deleteWarning": "פעולה זו היא בלתי הפיכה וכל הנתונים המשויכים למשתמש יימחקו.",
+    "saving": "שומר...",
+    "save": "שמור",
+    "cancel": "ביטול",
+    "delete": "מחק",
+    "deleting": "מוחק...",
+    "successful": "הפעולה הושלמה בהצלחה",
+    "updateSuccessful": "המשתמש עודכן בהצלחה",
+    "deleteSuccessful": "המשתמש נמחק בהצלחה",
+    "errorLoading": "שגיאה בטעינת משתמשים",
+    "errorUpdating": "שגיאה בעדכון משתמש",
+    "errorDeletingUser": "שגיאה במחיקת משתמש",
+    "adminSection": "אזור ניהול"
   }
 }

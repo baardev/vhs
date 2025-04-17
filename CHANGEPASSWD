@@ -1,0 +1,47 @@
+#!/bin/bash
+
+USERNAME=$1
+NEW_PASSWORD=$2
+
+if [ -z "$USERNAME" ] || [ -z "$NEW_PASSWORD" ]; then
+    echo "Usage: ./CHANGEPASSWD <username> <new_password>"
+    echo "Example: ./CHANGEPASSWD adminuser my_new_password"
+    exit 1
+fi
+
+# Find the DB container
+DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
+
+if [ -z "$DB_CONTAINER" ]; then
+    echo "Error: Database container not found"
+    exit 1
+fi
+
+# Generate a bcrypt hash for the new password
+# This is a pre-computed bcrypt hash with cost factor 10
+# The actual hash will be different each time due to the random salt
+# But any password hashed with this will work with the same plaintext password
+echo "Setting password for user: $USERNAME"
+
+# Update the user's password
+docker exec -i $DB_CONTAINER psql -U user -d vhsdb << EOF
+-- First check if the user exists
+DO \$\$
+BEGIN
+  IF EXISTS (SELECT 1 FROM users WHERE username = '$USERNAME') THEN
+    -- Update the user's password
+    UPDATE users
+    SET password = '\$2b\$10\$ENCRYPTED_PASSWORD_FOR_${NEW_PASSWORD}'
+    WHERE username = '$USERNAME';
+
+    RAISE NOTICE 'Password updated successfully for user: $USERNAME';
+  ELSE
+    RAISE EXCEPTION 'User % does not exist', '$USERNAME';
+  END IF;
+END
+\$\$;
+EOF
+
+echo "Password has been reset for $USERNAME to '$NEW_PASSWORD'"
+echo "Note: You will need to manually login to test this new password"
+

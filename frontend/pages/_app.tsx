@@ -5,6 +5,7 @@ import Footer from '../components/common/Footer';
 import Navbar from '../components/common/Navbar';
 // Import i18n configuration
 import '../i18n';
+import nextI18NextConfig from '../next-i18next.config.js';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
@@ -18,4 +19,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   );
 }
 
-export default appWithTranslation(MyApp);
+export default appWithTranslation(MyApp, nextI18NextConfig);

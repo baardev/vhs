@@ -8,6 +8,7 @@ import randomQuoteRouter from './routes/randomQuote';
 import testDbRouter from './routes/testDb';
 import coursesRouter from './routes/courses';
 import todosRouter from './routes/todos';
+import adminRouter from './routes/admin';
 
 
 // Load environment variables
@@ -39,6 +40,7 @@ app.use('/', newsRouter);
 // Other routes
 app.use('/api/auth', authRoutes);
 app.use('/api/courses', coursesRouter);
+app.use('/api/admin', adminRouter);
 app.use('/api', randomQuoteRouter);
 app.use('/api', testDbRouter);
 app.use('/api', todosRouter);

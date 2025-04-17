@@ -1,8 +1,99 @@
-#docker compose down
-#docker compose build --no-cache backend
-#docker compose up
+#!/bin/bash
 
-npm run build
-docker compose down
-docker compose build backend
-docker compose up
+# Parse command line arguments
+ALL=false
+RESTART_FRONTEND=false
+RESTART_BACKEND=false
+
+for arg in "$@"
+do
+    case $arg in
+        --all)
+        ALL=true
+        shift
+        ;;
+        --restart_frontend)
+        RESTART_FRONTEND=true
+        shift
+        ;;
+        --restart_backend)
+        RESTART_BACKEND=true
+        shift
+        ;;
+        *)
+        # Unknown option
+        echo "Unknown option: $arg"
+        echo "Usage: ./REBUILD [--all] [--restart_frontend] [--restart_backend]"
+        exit 1
+        ;;
+    esac
+done
+
+if $RESTART_FRONTEND; then
+    echo "Restarting frontend container..."
+    docker-compose stop frontend
+    docker-compose build frontend
+    docker-compose up -d frontend
+    echo "Frontend container restarted successfully."
+    exit 0
+fi
+
+if $RESTART_BACKEND; then
+    echo "Restarting backend container..."
+    docker-compose stop backend
+    docker-compose build backend
+    docker-compose up -d backend
+    echo "Backend container restarted successfully."
+    exit 0
+fi
+
+if $ALL; then
+    docker-compose down -v
+    #docker rmi vhs_backend vhs_frontend  # replace with your exact image names
+
+    # wipe everything
+    docker stop $(docker ps -q)
+    docker rm $(docker ps -a -q)
+    docker rmi $(docker images -q) -f
+
+    # Configure buildx if requested
+    docker buildx create --use
+    # docker-compose -f docker-compose.yml -f docker-compose.build.yml build
+    # docker-compose build
+
+    docker-compose up -d
+    docker-compose ps
+
+    echo "pausing 15 seconds..."
+    sleep 15
+
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
+
+    if [ -z "$DB_CONTAINER" ]; then
+        echo "Database container not found"
+        exit 1
+    fi
+
+    docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\dt"
+    docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\q"
+
+    docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/01_setup_database.sql
+    docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/02_create_quotes_table.sql
+    docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/03_course_tables.sql
+    docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/04_update_user_table.sql
+    docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/05_todo_table.sql
+    # docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/06_create_default_users.sql
+    docker exec -i $DB_CONTAINER psql -U user -d vhsdb < backend/sql/07_create_admin_field.sql
+    docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\dt"
+    docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\q"
+
+    docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "SELECT id, username, email, password FROM users;"
+else
+    echo "No options specified. Use one of the following:"
+    echo "  --all               Full rebuild of all containers"
+    echo "  --restart_frontend  Rebuild and restart only the frontend container"
+    echo "  --restart_backend   Rebuild and restart only the backend container"
+    echo ""
+    echo "Usage: ./REBUILD [--all] [--restart_frontend] [--restart_backend]"
+    exit 1
+fi

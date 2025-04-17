@@ -1,0 +1,3 @@
+#!/bin/bash
+DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
+docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\dt"

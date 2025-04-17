@@ -1,6 +1,5 @@
 // import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
@@ -42,20 +41,7 @@ export default function Home() {
             </p>
           )}
 
-          <div className="flex gap-6 items-center flex-col sm:flex-row justify-center sm:justify-start mt-8">
-            <Link
-              className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 w-full sm:w-auto"
-              href="/login"
-            >
-              {t('signIn')}
-            </Link>
-            <Link
-              className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-base sm:text-lg h-12 sm:h-14 px-6 sm:px-8 w-full sm:w-auto"
-              href="/register"
-            >
-              {t('createAccount')}
-            </Link>
-          </div>
+
         </div>
 
         <div className="w-full mt-16 flex flex-col md:flex-row gap-12">

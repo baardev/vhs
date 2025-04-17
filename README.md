@@ -97,3 +97,21 @@ docker-compose exec frontend rm -rf node_modules/.cache
 
 
 Frontend → Nginx → Backend → Database → Backend → Nginx → Frontend
+
+Error Checking
+
+These have no effect
+```sh
+frontend/.eslintignore  (deprecated)
+frontend/.eslintrc.json
+frontend/tsconfig.json
+
+
+this does works
+```sh
+frontend/next.config.js
+frontend/eslint.config.mjs  (maybe works?)
+
+
+
+```
