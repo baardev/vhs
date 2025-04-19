@@ -1,0 +1,31 @@
+rebuild_database() {
+    local db_container=$1
+    PW=`cat ~/sites/vhs/.adminpw`
+    
+    # wipe the database as well
+    echo "Dropping and recreating database..."
+    /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'DROP DATABASE IF EXISTS vhsdb;'
+    /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'CREATE DATABASE vhsdb;'
+
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/000_create_admin_user.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/010_setup_database.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/020_create_quotes_table.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/030_course_tables.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/040_todo_table.sql
+
+    # Create admin user first
+    echo "Creating admin user..."
+    curl -X POST http://localhost:4000/api/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"username":"adminuser","email":"admin@example.com","password":"'${PW}'","is_admin":true}'
+
+    SETADMIN adminuser
+    # Verify database structure
+    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\dt"
+    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"
+
+    # Show users table
+    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT id, username, email, password FROM users;"
+}
+
+rebuild_database $(docker ps --format "{{.Names}}" | grep db)
