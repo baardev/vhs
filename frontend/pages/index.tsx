@@ -95,7 +95,7 @@ export default function Home() {
 
           <div className="w-full md:w-1/2">
             <h2 className="text-2xl font-bold mb-6">{t('golfNews')}</h2>
-            {/* <GolfNewsHeadlines /> */}
+            {<GolfNewsHeadlines />}
           </div>
         </div>
       </main>
