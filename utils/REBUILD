@@ -128,12 +128,14 @@ if $ALL; then
     echo "pausing 5 seconds..."
     sleep 5
 
+    # Detect the database container *after* the stack has started
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+
     if [ -z "$DB_CONTAINER" ]; then
         echo "Database container not found"
         exit 1
     fi
     # Call the function with the database container
-    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
     rebuild_database "$DB_CONTAINER"
 else
     echo "No options specified. Use one of the following:"
