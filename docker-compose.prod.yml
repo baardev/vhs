@@ -41,6 +41,11 @@ services:
     container_name: dev-vhs-backend
     environment:
       DATABASE_URL: postgres://admin:admin123@db:5432/vhsdb
+      PGUSER: admin
+      PGPASSWORD: admin123
+      PGDATABASE: vhsdb
+      PGHOST: db
+      PGPORT: 5432
     depends_on:
       - db
     ports:
