@@ -7,11 +7,11 @@ rebuild_database() {
     /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'DROP DATABASE IF EXISTS vhsdb;'
     /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'CREATE DATABASE vhsdb;'
 
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/000_create_admin_user.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/010_setup_database.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/020_create_quotes_table.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/030_course_tables.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/040_todo_table.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/000_create_admin_user.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/010_setup_database.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/020_create_quotes_table.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/030_course_tables.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/040_todo_table.sql
 
     # Create admin user first
     echo "Creating admin user..."
