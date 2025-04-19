@@ -89,7 +89,9 @@ router.get('/api/golf-news', async (req: Request, res: Response<NewsApiResponse[
             return;
         }
 
-        res.json(response.data.articles);
+        // Limit the results to the first 3 articles before sending the response
+        const limitedArticles = response.data.articles.slice(0, 3);
+        res.json(limitedArticles);
     } catch (error: unknown) {
         console.error('Detailed error:', error);
 
