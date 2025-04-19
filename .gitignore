@@ -7,3 +7,5 @@ db-data/
 .env
 PUSH
 .adminpw
+ssl*/
+nginx/ssl
