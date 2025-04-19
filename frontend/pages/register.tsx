@@ -4,8 +4,8 @@ import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 import { useTranslation } from 'next-i18next';
-// import { GetStaticProps } from 'next';
-// import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { GetStaticProps } from 'next';
+import { getI18nProps } from '../utils/i18n-helpers';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function Register() {
+const Register = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -25,28 +25,26 @@ export default function Register() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { t } = useTranslation();
+  const { t } = useTranslation('common');
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('register.passwordsNotMatch', 'Passwords do not match'));
       return;
     }
 
     setIsLoading(true);
 
     try {
-      console.log('Starting registration process...');
-      const response = await axios.post('/api/auth/register', {
+      await axios.post('/api/auth/register', {
         username,
         email,
         password,
       });
 
-      console.log('Registration successful:', response.data);
       // Redirect to login page on successful registration
       router.push('/login?registered=true');
     } catch (err: unknown) {
@@ -54,11 +52,11 @@ export default function Register() {
       if (axios.isAxiosError(err)) {
         setError(
           err.response?.data?.error ||
-        err.response?.data?.errors?.[0]?.msg ||
-          'Registration failed. Please try again.'
+          err.response?.data?.errors?.[0]?.msg ||
+          t('register.registrationFailed', 'Registration failed. Please try again.')
         );
       } else {
-        setError('Registration failed. Please try again.');
+        setError(t('register.registrationFailed', 'Registration failed. Please try again.'));
       }
     } finally {
       setIsLoading(false);
@@ -73,7 +71,7 @@ export default function Register() {
           <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
             {t('register.orSignIn')}{' '}
             <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
-              {t('signIn')}
+              {t('login.signIn', 'Sign in')}
             </Link>
           </p>
         </div>
@@ -88,7 +86,7 @@ export default function Register() {
           <div className="space-y-4">
             <div>
               <label htmlFor="username" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Username
+                {t('register.usernameLabel', 'Username')}
               </label>
               <input
                 id="username"
@@ -104,7 +102,7 @@ export default function Register() {
 
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Email address
+                {t('register.emailLabel', 'Email address')}
               </label>
               <input
                 id="email"
@@ -121,7 +119,7 @@ export default function Register() {
 
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Password
+                {t('register.passwordLabel', 'Password')}
               </label>
               <input
                 id="password"
@@ -138,7 +136,7 @@ export default function Register() {
 
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                Confirm Password
+                {t('register.confirmPasswordLabel', 'Confirm Password')}
               </label>
               <input
                 id="confirmPassword"
@@ -163,11 +161,17 @@ export default function Register() {
                   : 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500'
               }`}
             >
-              {isLoading ? 'Creating account...' : 'Create account'}
+              {isLoading ? t('register.creatingAccount', 'Creating account...') : t('register.createAccount', 'Create account')}
             </button>
           </div>
         </form>
       </div>
     </div>
   );
-}
+};
+
+export const getStaticProps: GetStaticProps = async ({ locale }) => {
+  return getI18nProps(locale);
+};
+
+export default Register;

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Geist, Geist_Mono } from "next/font/google";
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import AdminUserTable from '../../components/admin/UserTable';
+import { getI18nProps } from '../../utils/i18n-helpers';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function AdminDashboard() {
+const AdminDashboard = () => {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -87,13 +87,10 @@ export default function AdminDashboard() {
       </div>
     </div>
   );
-}
+};
 
-// This function gets called at build time
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || 'en', ['common'])),
-    },
-  }
-}
+  return getI18nProps(locale);
+};
+
+export default AdminDashboard;

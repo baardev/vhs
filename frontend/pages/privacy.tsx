@@ -1,7 +1,7 @@
 import React from 'react';
 import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
+import { getI18nProps } from '../utils/i18n-helpers';
 
 const PrivacyPage: React.FC = () => {
   const { t } = useTranslation('common');
@@ -117,11 +117,7 @@ const PrivacyPage: React.FC = () => {
 };
 
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || 'en', ['common'])),
-    },
-  };
+  return getI18nProps(locale);
 };
 
 export default PrivacyPage;

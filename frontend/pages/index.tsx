@@ -1,11 +1,10 @@
 // import Image from "next/image";
 import { Geist, Geist_Mono } from "next/font/google";
 import { useTranslation } from 'next-i18next';
-import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
-// import { useRouter } from 'next/router';
+import { GetServerSideProps } from 'next';
 import GolfNewsHeadlines from '../components/GolfNewsHeadlines';
 import RandomQuote from '../components/RandomQuote';
+import { getI18nProps } from '../utils/i18n-helpers';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,11 +18,6 @@ const geistMono = Geist_Mono({
 
 export default function Home() {
   const { t } = useTranslation('common');
-  // const _router = useRouter();
-
-  // const changeLanguage = (locale: string) => {
-  //   router.push(router.pathname, router.asPath, { locale });
-  // };
 
   return (
     <div
@@ -101,7 +95,7 @@ export default function Home() {
 
           <div className="w-full md:w-1/2">
             <h2 className="text-2xl font-bold mb-6">{t('golfNews')}</h2>
-            <GolfNewsHeadlines />
+            {/* <GolfNewsHeadlines /> */}
           </div>
         </div>
       </main>
@@ -109,11 +103,9 @@ export default function Home() {
   );
 }
 
-// This function gets called at build time
-export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || 'en', ['common'])),
-    },
-  }
+// This function now runs on every request
+export const getServerSideProps: GetServerSideProps = async ({ locale }) => {
+  // Assuming getI18nProps is compatible with GetServerSideProps context
+  // or adjust getI18nProps if needed based on context type differences
+  return getI18nProps(locale);
 }

@@ -1,7 +1,0 @@
-#!/bin/bash
-
-# First, find your database container
-DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
-
-# Then run this SQL command to update a specific user
-docker exec -i $DB_CONTAINER psql -U user -d vhsdb -c "UPDATE users SET is_admin = true WHERE username = 'xxx';"

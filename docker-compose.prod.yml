@@ -1,0 +1,75 @@
+services:
+  nginx:
+    image: nginx:alpine
+    container_name: dev-vhs-nginx
+    ports:
+      - "443:443"
+      - "80:80"
+    volumes:
+      - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/ssl:/etc/nginx/ssl
+      - ./nginx/certbot/conf:/etc/letsencrypt
+      - ./nginx/certbot/www:/var/www/certbot
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - app-network
+
+  # certbot:
+  #   image: certbot/certbot
+  #   volumes:
+  #     - ./nginx/certbot/conf:/etc/letsencrypt
+  #     - ./nginx/certbot/www:/var/www/certbot
+
+  db:
+    image: postgres:latest
+    container_name: dev-vhs-db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: vhsdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - vhsdb_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  backend:
+    build: ./backend
+    container_name: dev-vhs-backend
+    environment:
+      DATABASE_URL: postgres://admin:admin123@db:5432/vhsdb
+    depends_on:
+      - db
+    ports:
+      - "4000:4000"
+    networks:
+      - app-network
+
+  frontend:
+    build: 
+      context: ./frontend
+      args:
+        - NODE_ENV=dev
+    container_name: dev-vhs-frontend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+      - frontend_next_cache:/app/.next
+    command: npm run dev
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+volumes:
+  vhsdb_data:
+  frontend_next_cache:
+
+networks:
+  app-network:
+    driver: bridge

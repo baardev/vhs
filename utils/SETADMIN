@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+
+# -----------------------------------------------------------------------------
+# Promote a user to admin in the Postgres database running inside Docker.
+#
+# Usage:  SETADMIN <username> [container_name]
+#
+#   <username>        – the username to promote (required)
+#   [container_name]  – optional explicit db container name. If omitted the
+#                       script will try to auto‑detect the first running
+#                       container whose name contains "db" or "postgres".
+#
+# Environment variables you can override:
+#   DB_USER   (default: user)
+#   DB_NAME   (default: vhsdb)
+# -----------------------------------------------------------------------------
+set -euo pipefail
+
+usage() {
+  echo "Usage: $0 <username> [container_name]" >&2
+  exit 1
+}
+
+if [[ $# -lt 1 ]]; then
+  usage
+fi
+
+USERNAME="$1"
+CONTAINER="${2:-}"       # Allow explicit container name as 2nd arg
+DB_USER="${DB_USER:-user}"
+DB_NAME="${DB_NAME:-vhsdb}"
+
+# Auto‑detect container if not provided
+if [[ -z "$CONTAINER" ]]; then
+  CONTAINER=$(docker ps --format '{{.Names}}' | grep -E 'db|postgres' | head -n1 || true)
+  if [[ -z "$CONTAINER" ]]; then
+    echo "Error: Could not detect a running Postgres container. Please pass it as second argument." >&2
+    exit 1
+  fi
+fi
+
+echo "Promoting user '$USERNAME' to admin using container '$CONTAINER'…"
+
+# Run the update inside the container
+if docker exec -i "$CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -tAc \
+  "UPDATE users SET is_admin = true WHERE username = '$USERNAME' RETURNING id" | grep -q "^[0-9]"; then
+  echo "✅  User '$USERNAME' is now an admin."
+else
+  echo "⚠️  No rows updated – user '$USERNAME' may not exist." >&2
+fi

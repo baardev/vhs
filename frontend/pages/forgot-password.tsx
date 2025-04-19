@@ -5,7 +5,7 @@ import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { getI18nProps } from '../utils/i18n-helpers';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -132,9 +132,5 @@ export default function ForgotPassword() {
 
 // This function gets called at build time
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || 'en', ['common'])),
-    },
-  }
+  return getI18nProps(locale);
 }

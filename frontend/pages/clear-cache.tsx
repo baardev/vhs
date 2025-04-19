@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import Link from 'next/link';
+import { getI18nProps } from '../utils/i18n-helpers';
 
 export default function ClearCache() {
   const [cleared, setCleared] = useState(false);
@@ -65,9 +65,5 @@ export default function ClearCache() {
 
 // This function gets called at build time
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || 'en', ['common'])),
-    },
-  };
+  return getI18nProps(locale);
 };

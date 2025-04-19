@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import axios from 'axios';
+// import axios from 'axios'; // Removed unused import
 import { Geist, Geist_Mono } from "next/font/google";
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { getI18nProps } from '../utils/i18n-helpers';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export default function Login() {
+const Login = () => {
   const { t } = useTranslation('common');
   const router = useRouter();
   const [username, setUsername] = useState('');
@@ -25,48 +25,40 @@ export default function Login() {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
 
     try {
-      console.log('Sending login request with:', { username, password });
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
+      });
 
-      // Wrap the axios call in a try-catch within the main try block
-      let response;
-      try {
-        response = await axios.post('/api/auth/login', {
-          username,
-          password
-        });
-      } catch (axiosErr) {
-        // Handle 401 errors silently
-        if (axios.isAxiosError(axiosErr) && axiosErr.response?.status === 401) {
-          setError('Username or password incorrect');
-          setIsLoading(false);
-          return; // Exit early
+      const data = await response.json();
+
+      if (response.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userData', JSON.stringify(data.user));
+
+        window.dispatchEvent(new Event('authChange'));   //  <<< add this line
+        
+        // Redirect based on admin status
+        if (data.user.is_admin) {
+          router.push('/admin');
+        } else {
+          router.push('/');
         }
-        // Re-throw other errors to be caught by outer catch
-        throw axiosErr;
-      }
-
-      console.log('Login successful, received response:', response.data);
-      localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userData', JSON.stringify(response.data.user));
-
-      // Dispatch auth change event
-      window.dispatchEvent(new Event('authChange'));
-
-      router.push('/profile');
-    } catch (err: unknown) {
-      console.error('Login error:', err);
-      if (axios.isAxiosError(err)) {
-        console.error('Axios error details:', err.response?.data);
-        setError(err.response?.data?.error || t('login.loginFailed'));
       } else {
-        setError(t('login.loginFailed'));
+        setError(data.message || t('login.invalidCredentials', 'Invalid credentials'));
       }
+    } catch (err) {
+      setError(t('login.serverError', 'Server error. Please try again.'));
+      console.error('Login error:', err);
     } finally {
       setIsLoading(false);
     }
@@ -153,13 +145,10 @@ export default function Login() {
       </div>
     </div>
   );
-}
+};
 
-// This function gets called at build time
 export const getStaticProps: GetStaticProps = async ({ locale }) => {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale || 'en', ['common'])),
-    },
-  }
-}
+  return getI18nProps(locale);
+};
+
+export default Login;

@@ -1,0 +1,29 @@
+#!/bin/bash
+
+# Check if table name is provided
+if [ -z "$1" ]; then
+    echo "Usage: ./DUMPTABLE <table_name>"
+    echo "Example: ./DUMPTABLE courses"
+    exit 1
+fi
+
+TABLE=$1
+DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
+
+# Check if database container is running
+if [ -z "$DB_CONTAINER" ]; then
+    echo "Error: Database container not found"
+    exit 1
+fi
+
+# Check if table exists
+if ! docker exec $DB_CONTAINER psql -U user -d vhsdb -t -c "\dt $TABLE" | grep -q "$TABLE"; then
+    echo "Error: Table '$TABLE' does not exist"
+    echo "Available tables:"
+    docker exec $DB_CONTAINER psql -U user -d vhsdb -c "\dt"
+    exit 1
+fi
+
+# Dump table content
+echo "Dumping content of table '$TABLE':"
+docker exec $DB_CONTAINER psql -U user -d vhsdb -c "SELECT * FROM $TABLE;"

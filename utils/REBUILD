@@ -1,0 +1,146 @@
+#!/bin/bash
+
+
+cd ~/sites/vhs
+
+# Parse command line arguments
+ALL=false
+REBUILD_FRONTEND=false
+REBUILD_BACKEND=false
+LIVE=false
+
+# Use standard environment names
+NODE_ENV=production
+FILEARG="-f docker-compose.prod.yml"
+
+
+
+
+# Function to rebuild database
+
+rebuild_database() {
+    local db_container=$1
+    PW=`cat ~/sites/vhs/.adminpw`
+    
+    # wipe the database as well
+    echo "Dropping and recreating database..."
+    /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'DROP DATABASE IF EXISTS vhsdb;'
+    /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'CREATE DATABASE vhsdb;'
+
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/000_create_admin_user.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/010_setup_database.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/020_create_quotes_table.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/030_course_tables.sql
+    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < backend/sql/040_todo_table.sql
+
+    # Create admin user first
+    echo "Creating admin user..."
+    curl -X POST http://localhost:4000/api/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"username":"adminuser","email":"admin@example.com","password":"'${PW}'","is_admin":true}'
+
+    SETADMIN adminuser
+    # Verify database structure
+    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\dt"
+    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"
+
+    # Show users table
+    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT id, username, email, password FROM users;"
+}
+
+
+
+/usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker stop "$1}'|bash
+/usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rm "$1}'|bash
+/usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rmi "$1}'|bash
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --all)
+            ALL=true
+            shift
+            ;;
+        --frontend)
+            REBUILD_FRONTEND=true
+            shift
+            ;;
+        --backend)
+            REBUILD_BACKEND=true
+            shift
+            ;;
+        *)
+            # Unknown option
+            echo "Unknown option: $1"
+            echo "Usage: ./REBUILD [--all] [--restart_frontend] [--restart_backend]"
+            exit 1
+            ;;
+    esac
+done
+
+if $REBUILD_FRONTEND; then
+    echo "Clearing frontend cache..."
+    CLEARCACHE --frontend
+
+    echo "Restarting frontend container..."
+    /usr/bin/docker compose ${FILEARG} stop frontend
+    /usr/bin/docker compose ${FILEARG} build --build-arg NODE_ENV=${NODE_ENV} frontend
+    /usr/bin/docker compose ${FILEARG} up -d frontend
+    echo "Frontend container restarted successfully."
+    exit 0
+fi
+
+if $REBUILD_BACKEND; then
+    echo "Clearing backend cache..."
+    CLEARCACHE --backend
+
+    echo "Completely wiping backend server..."
+    /usr/bin/docker compose ${FILEARG} stop backend
+    /usr/bin/docker ps --format "{{.Names}}"|grep backend|awk '{print "docker rm -f "$1}'|bash
+    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep backend|awk '{print "docker rmi -f "$1}'|bash
+
+    echo "Rebuilding backend from scratch..."
+    /usr/bin/docker compose ${FILEARG} build --no-cache --build-arg NODE_ENV=${NODE_ENV} backend
+    /usr/bin/docker compose ${FILEARG} up -d backend
+    
+    echo "Backend server completely wiped and rebuilt successfully."
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
+    rebuild_database "$DB_CONTAINER"
+
+    exit 0
+fi
+
+if $ALL; then
+    echo "Clearing all caches..."
+    CLEARCACHE --all
+
+    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
+    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
+    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
+
+    # Configure buildx if requested
+    /usr/bin/docker buildx create --use
+
+    # Pass NODE_ENV to the build process
+    /usr/bin/docker compose ${FILEARG} build --build-arg NODE_ENV=${NODE_ENV}
+    /usr/bin/docker compose ${FILEARG} up -d
+    /usr/bin/docker compose ${FILEARG} ps
+
+    echo "pausing 5 seconds..."
+    sleep 5
+
+    if [ -z "$DB_CONTAINER" ]; then
+        echo "Database container not found"
+        exit 1
+    fi
+    # Call the function with the database container
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
+    rebuild_database "$DB_CONTAINER"
+else
+    echo "No options specified. Use one of the following:"
+    echo "  --all               Full rebuild of all containers"
+    echo "  --restart_frontend  Rebuild and restart only the frontend container"
+    echo "  --restart_backend   Rebuild and restart only the backend container"
+    echo "  --live              Use live environment configuration"
+    echo ""
+    echo "Usage: ./REBUILD [--all] [--restart_frontend] [--restart_backend] [--live]"
+    exit 1
+fi

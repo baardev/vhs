@@ -1,0 +1,79 @@
+#!/usr/bin/env bash
+
+# Exit on any error and print commands when they run (useful for debugging)
+set -e
+
+# ------------------------------
+# Helper functions
+# ------------------------------
+usage() {
+  echo "Usage: $0 [--all|--frontend|--backend]" >&2
+  echo "  --all       Clear caches for both frontend and backend (default)" >&2
+  echo "  --frontend  Clear caches only for the frontend" >&2
+  echo "  --backend   Clear caches only for the backend" >&2
+  exit 1
+}
+
+clear_frontend() {
+  echo "\n=== Clearing FRONTEND caches ==="
+  cd ~/sites/vhs/frontend
+
+  # npm cache
+  npm cache clean --force || true
+
+  # Next.js build cache
+  rm -rf .next || true
+
+  # Remove vite/webpack cache inside container (ignore error if container not running)
+  docker compose -f ~/sites/vhs/docker-compose.prod.yml exec frontend rm -rf node_modules/.cache || true
+
+  # Ensure correct ownership
+  sudo chown -R jw:jw ~/sites/vhs/frontend/.next || true
+
+  echo "Frontend cache cleared."
+}
+
+clear_backend() {
+  echo "\n=== Clearing BACKEND caches ==="
+  cd ~/sites/vhs/backend
+
+  # npm cache
+  npm cache clean --force || true
+
+  echo "Backend cache cleared."
+}
+
+# ------------------------------
+# Parse argument
+# ------------------------------
+MODE="all"  # default
+
+if [[ $# -gt 1 ]]; then
+  usage
+fi
+
+if [[ $# -eq 1 ]]; then
+  case "$1" in
+    --all) MODE="all" ;;
+    --frontend) MODE="frontend" ;;
+    --backend) MODE="backend" ;;
+    *) usage ;;
+  esac
+fi
+
+# ------------------------------
+# Execute based on chosen mode
+# ------------------------------
+if [[ "$MODE" == "all" || "$MODE" == "frontend" ]]; then
+  clear_frontend
+fi
+
+if [[ "$MODE" == "all" || "$MODE" == "backend" ]]; then
+  clear_backend
+fi
+
+#sudo chmod -R jw:jw  ~/sites/vhs/backend
+# rm ./backend/node_modules/.package-lock.json
+# rm ./frontend/package-lock.json
+# rm ./frontend/node_modules/.package-lock.json
+

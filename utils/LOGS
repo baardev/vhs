@@ -1,0 +1,4 @@
+#!/bin/bash
+cd ~/sites/vhs
+clear
+docker compose -f ~/sites/vhs/docker-compose.prod.yml  logs -f 
