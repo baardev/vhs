@@ -9,3 +9,4 @@ PUSH
 .adminpw
 ssl*/
 nginx/ssl
+package-lock.json

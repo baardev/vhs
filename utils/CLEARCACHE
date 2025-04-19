@@ -28,7 +28,7 @@ clear_frontend() {
   docker compose -f ~/sites/vhs/docker-compose.prod.yml exec frontend rm -rf node_modules/.cache || true
 
   # Ensure correct ownership
-  sudo chown -R jw:jw ~/sites/vhs/frontend/.next || true
+  sudo chown -R 1000:1001 ~/sites/vhs/frontend/.next || true
 
   echo "Frontend cache cleared."
 }
