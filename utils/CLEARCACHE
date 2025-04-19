@@ -22,13 +22,13 @@ clear_frontend() {
   npm cache clean --force || true
 
   # Next.js build cache
-  rm -rf .next || true
+  rm -rf .next/* || true
 
   # Remove vite/webpack cache inside container (ignore error if container not running)
   docker compose -f ~/sites/vhs/docker-compose.prod.yml exec frontend rm -rf node_modules/.cache || true
 
   # Ensure correct ownership
-  sudo chown -R 1000:1001 ~/sites/vhs/frontend/.next || true
+  sudo chown -R 1000:1000 ~/sites/vhs/frontend/.next || true
 
   echo "Frontend cache cleared."
 }

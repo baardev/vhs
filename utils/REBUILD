@@ -13,8 +13,9 @@ LIVE=false
 NODE_ENV=production
 FILEARG="-f docker-compose.prod.yml"
 
-sudo chown -R 1000:1001 /home/jw/sites/vhs/frontend/.next
-
+sudo chown -R 1000:1000 /home/jw/sites/vhs/frontend/.next
+docker system  prune -fa
+docker volume  prune -fa
 
 # Function to rebuild database
 
