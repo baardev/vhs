@@ -1,4 +1,32 @@
 #!/bin/bash
 cd ~/sites/vhs
 clear
-docker compose -f ~/sites/vhs/docker-compose.prod.yml  logs -f 
+
+SERVICES=""
+
+# Process command line arguments
+if [[ $# -gt 0 ]]; then
+  for arg in "$@"; do
+    case $arg in
+      --db)
+        SERVICES="$SERVICES db"
+        ;;
+      --frontend)
+        SERVICES="$SERVICES frontend"
+        ;;
+      --backend)
+        SERVICES="$SERVICES backend"
+        ;;
+      --nginx)
+        SERVICES="$SERVICES nginx"
+        ;;
+    esac
+  done
+fi
+
+# Execute docker compose logs command
+if [[ -n "$SERVICES" ]]; then
+  docker compose -f ~/sites/vhs/docker-compose.prod.yml logs -f $SERVICES
+else
+  docker compose -f ~/sites/vhs/docker-compose.prod.yml logs -f
+fi 

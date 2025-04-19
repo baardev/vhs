@@ -27,7 +27,7 @@ fi
 
 USERNAME="$1"
 CONTAINER="${2:-}"       # Allow explicit container name as 2nd arg
-DB_USER="${DB_USER:-user}"
+DB_USER="${DB_USER:-admin}"
 DB_NAME="${DB_NAME:-vhsdb}"
 
 # Auto‑detect container if not provided
