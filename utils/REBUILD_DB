@@ -28,4 +28,4 @@ rebuild_database() {
     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT id, username, email, password FROM users;"
 }
 
-rebuild_database `docker ps --format "{{.Names}}" | grep db`%   
+rebuild_database $(docker ps --format "{{.Names}}" | grep db)
