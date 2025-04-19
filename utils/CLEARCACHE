@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 # Exit on any error and print commands when they run (useful for debugging)
 set -e

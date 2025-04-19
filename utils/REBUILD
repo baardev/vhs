@@ -112,11 +112,9 @@ if $ALL; then
     echo "Clearing all caches..."
     CLEARCACHE --all
 
-set -
     /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
     /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
     /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
-set +
 
     # Configure buildx if requested
     /usr/bin/docker buildx create --use
