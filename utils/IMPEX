@@ -1,0 +1,91 @@
+#!/bin/bash
+
+cd /home/jw/sites/vhs 
+
+# Create a dated directory name
+DATE=$(date "+%Y%m%d.%H%M%S")
+BACKUP_DIR="backup/${DATE}"
+DUMP_FILE="vhsdb_dump"
+
+# Function to show usage
+usage() {
+  echo "Usage: $0 [--export|--import] [--file filename]"
+  echo ""
+  echo "Options:"
+  echo "  --export       Export database to SQL dump file"
+  echo "  --import       Import database from SQL dump file"
+  echo "  --file FILE    Specify dump filename (default: vhsdb_dump.sql)"
+  echo ""
+  echo "Examples:"
+  echo "  $0 --export                  Export to dated directory with default filename"
+  echo "  $0 --import                  Import from latest backup"
+  echo "  $0 --export --file backup.sql    Export with custom filename"
+  exit 1
+}
+
+# Parse arguments
+EXPORT=false
+IMPORT=false
+
+# Check if no arguments provided
+if [ $# -eq 0 ]; then
+  usage
+fi
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --export)
+      EXPORT=true
+      shift
+      ;;
+    --import)
+      IMPORT=true
+      shift
+      ;;
+    --file)
+      DUMP_FILE="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1"
+      usage
+      ;;
+  esac
+done
+
+# Check if both or neither export/import specified
+if { [ "$EXPORT" = true ] && [ "$IMPORT" = true ]; } || { [ "$EXPORT" = false ] && [ "$IMPORT" = false ]; }; then
+  echo "ERROR: Please specify either --export or --import"
+  usage
+fi
+
+# Execute requested operation
+DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+if [ "$EXPORT" = true ]; then
+  # Create the dated directory
+  mkdir -p "${BACKUP_DIR}"
+  
+  echo "Exporting database to ${BACKUP_DIR}/${DUMP_FILE}..."
+
+  docker exec -t $DB_CONTAINER pg_dump --clean -U admin vhsdb > "${BACKUP_DIR}/${DUMP_FILE}.sql"
+  docker exec -i $DB_CONTAINER pg_dump --format c --clean -U admin vhsdb > "${BACKUP_DIR}/${DUMP_FILE}_c.dump"  
+  docker exec -i $DB_CONTAINER pg_dump --format p --clean -U admin vhsdb > "${BACKUP_DIR}/${DUMP_FILE}_p.dump"
+  docker exec -i $DB_CONTAINER pg_dump --format t --clean -U admin vhsdb | gzip > "${BACKUP_DIR}/${DUMP_FILE}_t.dump.gz"
+  
+  # Update latest references
+  cp "${BACKUP_DIR}/${DUMP_FILE}_c.dump" backup/latest_c.dump
+  cp "${BACKUP_DIR}/${DUMP_FILE}.sql" backup/latest.sql
+
+  echo "Export complete! Backup saved to ${BACKUP_DIR}"
+elif [ "$IMPORT" = true ]; then
+#   echo -e "\033[0;32mImporting database from backup/latest.sql...\033[0m"
+#   docker cp backup/latest.sql $DB_CONTAINER:/latest.sql
+#   docker exec -i $DB_CONTAINER psql -U admin -d vhsdb -f /latest.sql
+#   echo "Import complete!"
+
+  docker cp backup/latest_c.dump $DB_CONTAINER:/latest_c.dump
+  docker exec -i $DB_CONTAINER pg_restore --clean -U admin -d vhsdb /latest_c.dump
+
+  echo "Restore complete!"
+fi

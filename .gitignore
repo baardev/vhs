@@ -15,3 +15,6 @@ package-lock.json
 *.txt
 *.csv
 !frontend/robots.txt
+backup/
+!backup/latest.sql
+!backup/latest_c.dump

@@ -58,5 +58,14 @@ rebuild_database() {
     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT id, username, email, password FROM users;"
 }
 
-rebuild_database $(docker ps --format "{{.Names}}" | grep db)
-utils/SETADMIN adminuser
+# Check if restore flag is set
+if [ "$RESTORE" = true ]; then
+    echo "Restoring database from backup using IMPEX..."
+    utils/IMPEX --import
+    echo "Database restore complete!"
+    exit 0
+else
+    # Only run the normal rebuild process if not restoring
+    rebuild_database $(docker ps --format "{{.Names}}" | grep db)
+    utils/SETADMIN adminuser
+fi
