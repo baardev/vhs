@@ -3,7 +3,14 @@ import { i18n } from './next-i18next.config.js';
 
 const nextConfig = {
   reactStrictMode: true,
-  i18n,
+  i18n: {
+    // List all supported languages
+    locales: ['en', 'es', 'zh', 'ru', 'he'],
+    // Default language when no locale is specified in URL
+    defaultLocale: 'en',
+    // Enable URL-based locale detection
+    localeDetection: true
+  },
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if

@@ -1,13 +1,7 @@
-version: '3'
-
-x-production-only: &production-only
-  profiles:
-    - production
-
 services:
   nginx:
     image: nginx:alpine
-    container_name: ${NODE_ENV:-dev}-vhs-nginx
+    container_name: dev-vhs-nginx
     ports:
       - "443:443"
       - "80:80"
@@ -21,83 +15,70 @@ services:
       - frontend
     networks:
       - app-network
-    restart: unless-stopped
 
-  certbot:
-    <<: *production-only
-    image: certbot/certbot
-    volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
+  # certbot:
+  #   image: certbot/certbot
+  #   volumes:
+  #     - ./nginx/certbot/conf:/etc/letsencrypt
+  #     - ./nginx/certbot/www:/var/www/certbot
 
   db:
     image: postgres:latest
-    container_name: ${NODE_ENV:-dev}-vhs-db
+    container_name: dev-vhs-db
     environment:
-      POSTGRES_USER: ${DB_USER:-admin}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin123}
-      POSTGRES_DB: ${DB_NAME:-vhsdb}
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: vhsdb
     ports:
-      - "${DB_PORT_BIND:-5432}:5432"
+      - "5432:5432"
     volumes:
       - vhsdb_data:/var/lib/postgresql/data
     networks:
       - app-network
-    restart: unless-stopped
 
   backend:
-    build:
-      context: ./backend
-      args:
-        - NODE_ENV=${NODE_ENV:-dev}
-    container_name: ${NODE_ENV:-dev}-vhs-backend
+    build: ./backend
+    container_name: dev-vhs-backend
     environment:
-      NODE_ENV: ${NODE_ENV:-dev}
-      DB_USER: ${DB_USER:-admin}
-      DB_PASSWORD: ${DB_PASSWORD:-admin123}
-      DB_NAME: ${DB_NAME:-vhsdb}
+      DB_USER: admin
+      DB_PASSWORD: admin123
+      DB_NAME: vhsdb
       DB_HOST: db
       DB_PORT: 5432
-      DATABASE_URL: postgres://${DB_USER:-admin}:${DB_PASSWORD:-admin123}@db:5432/${DB_NAME:-vhsdb}
-      PGUSER: ${DB_USER:-admin}
-      PGPASSWORD: ${DB_PASSWORD:-admin123}
-      PGDATABASE: ${DB_NAME:-vhsdb}
+      DATABASE_URL: postgres://admin:admin123@db:5432/vhsdb
+      PGUSER: admin
+      PGPASSWORD: admin123
+      PGDATABASE: vhsdb
       PGHOST: db
       PGPORT: 5432
     depends_on:
       - db
     ports:
-      - "${BACKEND_PORT_BIND:-4000}:4000"
+      - "4000:4000"
     networks:
       - app-network
-    restart: unless-stopped
-    command: npm run ${NODE_ENV:-dev}
 
   frontend:
-    build:
+    build: 
       context: ./frontend
       args:
-        - NODE_ENV=${NODE_ENV:-dev}
-    container_name: ${NODE_ENV:-dev}-vhs-frontend
-    environment:
-      - NODE_ENV=${NODE_ENV:-dev}
+        - NODE_ENV=dev
+    container_name: dev-vhs-frontend
     ports:
-      - "${FRONTEND_PORT_BIND:-3000}:3000"
+      - "3000:3000"
     volumes:
-      - ${FRONTEND_VOLUMES:-./frontend:/app}
+      - ./frontend:/app
       - /app/node_modules
-      - ${FRONTEND_CACHE_VOLUME:-frontend_next_cache:/app/.next}
-    command: npm run ${NODE_ENV:-dev}
+      - frontend_next_cache:/app/.next
+    command: npm run dev
     depends_on:
       - backend
     networks:
       - app-network
-    restart: unless-stopped
 
 volumes:
   vhsdb_data:
   frontend_next_cache:
-  frontend_next_build:
 
 networks:
   app-network:

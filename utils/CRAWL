@@ -1,0 +1,7 @@
+crawl.py --urls \
+https://libronico.com/,\
+https://libronico.com/en/,\
+https://libronico.com/es/,\
+https://libronico.com/ru/,\
+https://libronico.com/zh\,\
+https://libronico.com/he/\

@@ -33,6 +33,19 @@ app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   res.status(500).json({ error: 'Something went wrong!' });
 });
 
+// Serve robots.txt
+app.get('/robots.txt', (req: Request, res: Response) => {
+  res.type('text/plain');
+  res.send(`
+# robots.txt for VHS website API
+User-agent: *
+Allow: /health
+Allow: /api/health
+Disallow: /api/
+Disallow: /
+`);
+});
+
 // Route handlers
 // Mount news router at the correct path
 app.use('/', newsRouter);

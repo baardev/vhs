@@ -1,5 +1,7 @@
 #!/bin/bash
 
+echo "REBUILD $1"
+echo "----------------------------------------------------"
 
 cd ~/sites/vhs
 
@@ -7,53 +9,147 @@ cd ~/sites/vhs
 ALL=false
 REBUILD_FRONTEND=false
 REBUILD_BACKEND=false
+REBUILD_NGINX=false
+REBUILD_POSTGRES=false
+REBUILD_WIPE=false
 LIVE=false
+COMPOSE_BAKE=true
 
 # Use standard environment names
-NODE_ENV=production
-FILEARG="-f docker-compose.prod.yml"
+NODE_ENV=production  
+FILEARG="-f docker-compose.yml"
 
-sudo chown -R 1000:1000 /home/jw/sites/vhs/frontend/.next
-docker system  prune -fa
-docker volume  prune -fa
-
-# Function to rebuild database
-
-rebuild_database() {
-    local db_container=$1
-    PW=`cat ~/sites/vhs/.adminpw`
+# Function to wipe all containers and volumes
+wipe_all() {
+    echo "--------------------------------------------------------"
+    echo -e "\033[0;32mWiping all containers and volumes...\033[0m"
+    echo "--------------------------------------------------------"
     
-    # wipe the database as well
-    echo "Dropping and recreating database..."
-    /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'DROP DATABASE IF EXISTS vhsdb;'
-    /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'CREATE DATABASE vhsdb;'
-
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/000_create_admin_user.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/010_setup_database.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/020_create_quotes_table.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/030_course_tables.sql
-    /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/040_todo_table.sql
-
-    # Create admin user first
-    echo "Creating admin user..."
-    curl -X POST http://localhost:4000/api/auth/register \
-     -H "Content-Type: application/json" \
-     -d '{"username":"adminuser","email":"admin@example.com","password":"'${PW}'","is_admin":true}'
-
-    SETADMIN adminuser
-    # Verify database structure
-    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\dt"
-    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"
-
-    # Show users table
-    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT id, username, email, password FROM users;"
+    sudo chown -R 1000:1000 /home/jw/sites/vhs/frontend/.next
+    docker system prune -fa
+    docker volume prune -fa
+    
+    echo -e "\033[0;32mClearing all caches...\033[0m"
+    CLEARCACHE --all
+    
+    # Stop, remove, and delete any dev containers
+    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
+    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
+    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
+    
+    # Stop, remove, and delete any buildx containers
+    /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker stop "$1}'|bash
+    /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rm "$1}'|bash
+    /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rmi "$1}'|bash
+    
+    echo -e "\033[0;32mAll containers and volumes wiped successfully\033[0m"
 }
 
+# Function to rebuild frontend
+rebuild_frontend() {
+    echo "--------------------------------------------------------"
+    echo "Clearing frontend cache..."
+    echo "--------------------------------------------------------"
+    CLEARCACHE --frontend
 
+    echo "Restarting frontend container..."
+    /usr/bin/docker compose ${FILEARG} stop frontend
+    /usr/bin/docker compose ${FILEARG} build --build-arg NODE_ENV=${NODE_ENV} frontend
+    /usr/bin/docker compose ${FILEARG} up -d frontend
+    echo "Frontend container restarted successfully."
+}
 
-/usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker stop "$1}'|bash
-/usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rm "$1}'|bash
-/usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rmi "$1}'|bash
+# Function to rebuild backend
+rebuild_backend() {
+    echo "--------------------------------------------------------"
+    echo "Clearing backend cache..."
+    echo "--------------------------------------------------------"
+    CLEARCACHE --backend
+
+    echo "Completely wiping backend server..."
+    /usr/bin/docker compose ${FILEARG} stop backend
+    /usr/bin/docker ps --format "{{.Names}}"|grep backend|awk '{print "docker rm -f "$1}'|bash
+    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep backend|awk '{print "docker rmi -f "$1}'|bash
+
+    # Make sure DB is running before rebuilding backend
+    echo "Ensuring database container is running..."
+    /usr/bin/docker compose ${FILEARG} up -d db
+    
+    # Add a wait for DB to be ready
+    echo "Waiting for database to be ready..."
+    sleep 10  # Give DB time to initialize
+    
+    echo "Rebuilding backend from scratch..."
+    /usr/bin/docker compose ${FILEARG} build --no-cache --build-arg NODE_ENV=${NODE_ENV} backend
+    /usr/bin/docker compose ${FILEARG} up -d backend
+    
+    echo "Backend server completely wiped and rebuilt successfully."
+    
+    # Wait a bit longer for backend to connect to database
+    echo "Waiting for services to stabilize..."
+    sleep 5
+    
+    # Get the actual database container name
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+    if [ -z "$DB_CONTAINER" ]; then
+        echo "Database container not found"
+        docker ps
+        exit 1
+    fi
+    
+    # Now rebuild tables using the container name
+    utils/REBUILD_TABLES
+}
+
+# Function to rebuild nginx
+rebuild_nginx() {
+    echo "--------------------------------------------------------"
+    echo "Completely wiping nginx server..."
+    echo "--------------------------------------------------------"
+    /usr/bin/docker compose ${FILEARG} stop nginx
+    /usr/bin/docker ps --format "{{.Names}}"|grep nginx|awk '{print "docker rm -f "$1}'|bash
+    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep nginx|awk '{print "docker rmi -f "$1}'|bash
+
+    echo "Rebuilding nginx from scratch..."
+    /usr/bin/docker compose ${FILEARG} build --no-cache nginx
+    /usr/bin/docker compose ${FILEARG} up -d nginx
+    
+    echo "Nginx server completely wiped and rebuilt successfully."
+}
+
+# Function to rebuild postgres
+rebuild_postgres() {
+    echo "--------------------------------------------------------"
+    echo "Completely wiping PostgreSQL database..."
+    echo "--------------------------------------------------------"
+    /usr/bin/docker compose ${FILEARG} stop db
+    /usr/bin/docker ps --format "{{.Names}}"|grep db|awk '{print "docker rm -f "$1}'|bash
+    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep postgres|awk '{print "docker rmi -f "$1}'|bash
+    
+    # Remove database volume to ensure clean start
+    echo "Removing database volume..."
+    docker volume rm $(docker volume ls -q | grep vhsdb_data) 2>/dev/null || true
+    
+    echo "Rebuilding PostgreSQL from scratch..."
+    /usr/bin/docker compose ${FILEARG} up -d db
+    
+    echo "Waiting for database to initialize..."
+    sleep 15
+    
+    # Get the actual database container name
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+    if [ -z "$DB_CONTAINER" ]; then
+        echo "Database container not found"
+        docker ps
+        exit 1
+    fi
+    
+    echo "Rebuilding database tables..."
+    utils/REBUILD_TABLES
+    
+    echo "PostgreSQL database completely wiped and rebuilt successfully."
+}
+
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --all)
@@ -68,82 +164,84 @@ while [[ $# -gt 0 ]]; do
             REBUILD_BACKEND=true
             shift
             ;;
+        --nginx)
+            REBUILD_NGINX=true
+            shift
+            ;;
+        --postgres)
+            REBUILD_POSTGRES=true
+            shift
+            ;;
+        --wipe)
+            REBUILD_WIPE=true
+            shift
+            ;;
         *)
             # Unknown option
             echo "Unknown option: $1"
-            echo "Usage: ./REBUILD [--all] [--restart_frontend] [--restart_backend]"
+            echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe]"
             exit 1
             ;;
     esac
 done
 
 if $REBUILD_FRONTEND; then
-    echo "Clearing frontend cache..."
-    CLEARCACHE --frontend
-
-    echo "Restarting frontend container..."
-    /usr/bin/docker compose ${FILEARG} stop frontend
-    /usr/bin/docker compose ${FILEARG} build --build-arg NODE_ENV=${NODE_ENV} frontend
-    /usr/bin/docker compose ${FILEARG} up -d frontend
-    echo "Frontend container restarted successfully."
+    rebuild_frontend
     exit 0
 fi
 
 if $REBUILD_BACKEND; then
-    echo "Clearing backend cache..."
-    CLEARCACHE --backend
+    rebuild_backend
+    exit 0
+fi
 
-    echo "Completely wiping backend server..."
-    /usr/bin/docker compose ${FILEARG} stop backend
-    /usr/bin/docker ps --format "{{.Names}}"|grep backend|awk '{print "docker rm -f "$1}'|bash
-    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep backend|awk '{print "docker rmi -f "$1}'|bash
+if $REBUILD_NGINX; then
+    rebuild_nginx
+    exit 0
+fi
 
-    echo "Rebuilding backend from scratch..."
-    /usr/bin/docker compose ${FILEARG} build --no-cache --build-arg NODE_ENV=${NODE_ENV} backend
-    /usr/bin/docker compose ${FILEARG} up -d backend
-    
-    echo "Backend server completely wiped and rebuilt successfully."
-    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
-    rebuild_database "$DB_CONTAINER"
+if $REBUILD_POSTGRES; then
+    rebuild_postgres
+    exit 0
+fi
 
+if $REBUILD_WIPE; then
+    wipe_all
     exit 0
 fi
 
 if $ALL; then
-    echo "Clearing all caches..."
-    CLEARCACHE --all
-
-    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
-    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
-    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
-
-    # Configure buildx if requested
+    # Call the wipe function first
+    wipe_all
+    
+    echo -e "\033[0;32mConfiguring buildx...\033[0m"
     /usr/bin/docker buildx create --use
-
-    # Pass NODE_ENV to the build process
-    /usr/bin/docker compose ${FILEARG} build --build-arg NODE_ENV=${NODE_ENV}
-    /usr/bin/docker compose ${FILEARG} up -d
+    
+    # Rebuild postgres first to ensure database is ready for other services
+    echo -e "\033[0;32mRebuilding PostgreSQL...\033[0m"
+    rebuild_postgres
+    
+    # Now rebuild the other services
+    echo -e "\033[0;32mRebuilding Backend...\033[0m"
+    rebuild_backend
+    
+    echo -e "\033[0;32mRebuilding Frontend...\033[0m"
+    rebuild_frontend
+    
+    echo -e "\033[0;32mRebuilding Nginx...\033[0m"
+    rebuild_nginx
+    
+    echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
     /usr/bin/docker compose ${FILEARG} ps
-
-    echo "pausing 5 seconds..."
-    sleep 5
-
-    # Detect the database container *after* the stack has started
-    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
-
-    if [ -z "$DB_CONTAINER" ]; then
-        echo "Database container not found"
-        exit 1
-    fi
-    # Call the function with the database container
-    rebuild_database "$DB_CONTAINER"
 else
     echo "No options specified. Use one of the following:"
     echo "  --all               Full rebuild of all containers"
-    echo "  --restart_frontend  Rebuild and restart only the frontend container"
-    echo "  --restart_backend   Rebuild and restart only the backend container"
-    echo "  --live              Use live environment configuration"
+    echo "  --frontend          Rebuild and restart only the frontend container"
+    echo "  --backend           Rebuild and restart only the backend container"
+    echo "  --nginx             Rebuild and restart only the nginx container"
+    echo "  --postgres          Rebuild and restart only the PostgreSQL database"
+    echo "  --wipe              Wipe all containers and volumes without rebuilding"
     echo ""
-    echo "Usage: ./REBUILD [--all] [--restart_frontend] [--restart_backend] [--live]"
+    echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe]"
     exit 1
 fi

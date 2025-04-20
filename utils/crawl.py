@@ -2,7 +2,7 @@
 """
 Website Crawler and URL Extractor
 
-This script crawls a website (localhost by default) using wget to discover all accessible URLs
+This script crawls one or more websites using wget to discover all accessible URLs
 and their HTTP response codes. It then parses the wget output and creates a CSV file with
 the results.
 
@@ -11,15 +11,15 @@ Requirements:
     - wget command-line tool installed and available in PATH
 
 Usage:
-    python3 crawl.py [--url START_URL] [--input INPUT_FILE] [--output OUTPUT_FILE]
+    python3 crawl.py [--urls URL1,URL2,URL3] [--input INPUT_FILE] [--output OUTPUT_FILE]
 
 Arguments:
-    --url       Starting URL for crawling (default: http://localhost)
+    --urls      Comma-separated list of URLs for crawling (default: http://localhost)
     --input     Path to wget output file (default: wget_output.txt)
     --output    Path to output CSV file (default: endpoints.csv)
 
 Example:
-    python3 crawl.py --url https://example.com --output site_urls.csv
+    python3 crawl.py --urls https://example.com,https://another-site.com --output site_urls.csv
 
 Output:
     A CSV file containing two columns:
@@ -34,9 +34,9 @@ import argparse
 import csv
 import re
 import subprocess
+import os
 
-
-def run_wget(start_url="http://localhost"):
+def run_wget(url, output_file="wget_output.txt"):
     # Define the wget command and its arguments
     cmd = [
         "wget",
@@ -45,12 +45,12 @@ def run_wget(start_url="http://localhost"):
         "--no-parent",
         "--level=5",
         "--no-check-certificate",
-        "-o", "wget_output.txt",
-        start_url
+        "-o", output_file,
+        url
     ]
-    print(f"Running wget command to crawl {start_url}...")
+    print(f"Running wget command to crawl {url}...")
     subprocess.run(cmd, check=True)
-    print("wget command executed successfully.")
+    print(f"wget command executed successfully for {url}.")
 
 
 def parse_wget_output(input_file):
@@ -60,7 +60,7 @@ def parse_wget_output(input_file):
         for line in f:
             line = line.strip()
             # Look for a line containing a URL with "https"
-            if "https" in line:
+            if "https" in line or "http:" in line:
                 url_match = re.search(r"(https?://\S+)", line)
                 if url_match:
                     # Remove any trailing punctuation or quotes
@@ -92,19 +92,19 @@ def write_csv(data, output_file):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="Run wget to generate output and parse it to create a CSV file with endpoint URLs and their response codes."
+        description="Run wget to crawl multiple URLs and create a CSV file with endpoint URLs and their response codes."
     )
     parser.add_argument(
-        "--url",
+        "--urls",
         type=str,
         default="http://localhost",
-        help="Starting URL for crawling (default: http://localhost)",
+        help="Comma-separated list of URLs for crawling (default: http://localhost)",
     )
     parser.add_argument(
         "--input",
         type=str,
         default="wget_output.txt",
-        help="Input wget output file (default: wget_output.txt)",
+        help="Input wget output file prefix (default: wget_output.txt)",
     )
     parser.add_argument(
         "--output",
@@ -114,13 +114,35 @@ def main():
     )
     args = parser.parse_args()
 
-    # Execute the wget command to generate the output file
-    run_wget(args.url)
-
-    # Parse wget output to extract endpoints and response codes
-    endpoints = parse_wget_output(args.input)
-    write_csv(endpoints, args.output)
-    print(f"CSV file '{args.output}' generated with {len(endpoints)} endpoints (duplicates removed).")
+    # Split the comma-separated URLs
+    urls = [url.strip() for url in args.urls.split(',')]
+    
+    all_endpoints = []
+    
+    # Process each URL
+    for i, url in enumerate(urls):
+        # Create a unique output file for each URL
+        temp_output = f"wget_output_{i}.txt"
+        
+        # Execute the wget command for this URL
+        run_wget(url, temp_output)
+        
+        # Parse wget output to extract endpoints and response codes
+        endpoints = parse_wget_output(temp_output)
+        all_endpoints.extend(endpoints)
+        
+        print(f"Processed {url}: found {len(endpoints)} endpoints")
+    
+    # Write all results to the CSV file
+    write_csv(all_endpoints, args.output)
+    
+    # Clean up temporary files
+    for i in range(len(urls)):
+        temp_file = f"wget_output_{i}.txt"
+        if os.path.exists(temp_file):
+            os.remove(temp_file)
+    
+    print(f"CSV file '{args.output}' generated with {len(all_endpoints)} endpoints (duplicates removed).")
 
 
 if __name__ == "__main__":

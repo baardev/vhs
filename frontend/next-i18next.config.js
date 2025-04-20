@@ -3,7 +3,7 @@ import path from 'path';
 const config = {
   i18n: {
     defaultLocale: 'en',
-    locales: ['en', 'es', 'ru', 'he'],
+    locales: ['en', 'es', 'ru', 'he', 'zh'],
   },
   defaultNS: 'common',
   localePath: typeof window === 'undefined' ? path.resolve('./public/locales') : '/locales',
