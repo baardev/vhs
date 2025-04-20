@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 #
 # REBUILD_TABLES - Database Table Creation and Restoration Script
 # ==============================================================

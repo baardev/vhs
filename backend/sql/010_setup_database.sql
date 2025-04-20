@@ -4,19 +4,27 @@ CREATE TABLE IF NOT EXISTS users (
   username VARCHAR(50) UNIQUE NOT NULL,
   email VARCHAR(100) UNIQUE NOT NULL,
   password VARCHAR(100) NOT NULL,
-  name VARCHAR(100),
+  first_name VARCHAR(100),
   family_name VARCHAR(100),
+  gender VARCHAR(20),
   matricula VARCHAR(50),
+  birthday DATE,
+  category VARCHAR(50),
   handicap DECIMAL(4,1),
   is_admin BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+-- Drop obsolete index on name if exists
+DROP INDEX IF EXISTS idx_users_name;
 
 -- Add indices for users table
 CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_matricula ON users(matricula);
 CREATE INDEX IF NOT EXISTS idx_users_is_admin ON users(is_admin);
+CREATE INDEX IF NOT EXISTS idx_users_category ON users(category);
+CREATE INDEX IF NOT EXISTS idx_users_first_name ON users(first_name);
 
 -- Create password_reset_tokens table
 CREATE TABLE IF NOT EXISTS password_reset_tokens (

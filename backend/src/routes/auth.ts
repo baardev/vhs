@@ -22,7 +22,13 @@ router.post(
       })
       .withMessage('Username must be at least 3 characters (or be "jw"'),
     body('email').isEmail().withMessage('Must provide a valid email'),
-    body('password').isLength({ min: 5 }).withMessage('Password must be at least 5 characters')
+    body('password').isLength({ min: 5 }).withMessage('Password must be at least 5 characters'),
+    body('first_name').optional().isLength({ min: 2 }).withMessage('First name too short'),
+    body('family_name').optional().isLength({ min: 2 }),
+    body('gender').optional().isIn(['male','female','other']),
+    body('matricula').optional(),
+    body('birthday').optional().isDate(),
+    body('category').optional(),
   ],
   async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -37,7 +43,7 @@ router.post(
         return;
       }
 
-      const { username, email, password } = req.body;
+      const { username, email, password, first_name, family_name, gender, matricula, birthday, category } = req.body;
 
       // Test database connection
       try {
@@ -82,8 +88,10 @@ router.post(
       try {
         console.log('Inserting user into database:', username, email);
         const result = await pool.query(
-          'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email',
-          [username, email, hashedPassword]
+          `INSERT INTO users (username, email, password, first_name, family_name, gender, matricula, birthday, category)
+           VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+           RETURNING id, username, email, first_name, family_name, gender, matricula, birthday, category`,
+          [username, email, hashedPassword, first_name, family_name, gender, matricula, birthday, category]
         );
 
         console.log('User successfully registered:', result.rows[0]);
@@ -192,9 +200,12 @@ router.put(
   [
     body('username').trim().optional().isLength({ min: 3 }).withMessage('Username must be at least 3 characters'),
     body('email').optional().isEmail().withMessage('Must provide a valid email'),
-    body('name').optional().isLength({ min: 2 }).withMessage('Name must be at least 2 characters'),
+    body('first_name').optional().isLength({ min: 2 }).withMessage('First name must be at least 2 characters'),
     body('family_name').optional().isLength({ min: 2 }).withMessage('Family name must be at least 2 characters'),
+    body('gender').optional().isIn(['male','female','other']),
     body('matricula').optional().isLength({ min: 5 }).withMessage('Matricula must be at least 5 characters'),
+    body('birthday').optional().isDate(),
+    body('category').optional(),
     body('handicap').optional().isLength({ min: 1 }).withMessage('Handicap must be at least 1 character')
   ],
   async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -206,7 +217,7 @@ router.put(
         return;
       }
 
-      const { username, email, name, family_name, matricula, handicap } = req.body;
+      const { username, email, first_name, family_name, gender, matricula, birthday, category, handicap } = req.body;
 
       // Build SET clause for SQL dynamically based on provided fields
       const updates: string[] = [];
@@ -223,9 +234,9 @@ router.put(
         values.push(email);
       }
 
-      if (name !== undefined) {
-        updates.push(`name = $${paramCount++}`);
-        values.push(name);
+      if (first_name !== undefined) {
+        updates.push(`first_name = $${paramCount++}`);
+        values.push(first_name);
       }
 
       if (family_name !== undefined) {
@@ -233,9 +244,24 @@ router.put(
         values.push(family_name);
       }
 
+      if (gender !== undefined) {
+        updates.push(`gender = $${paramCount++}`);
+        values.push(gender);
+      }
+
       if (matricula !== undefined) {
         updates.push(`matricula = $${paramCount++}`);
         values.push(matricula);
+      }
+
+      if (birthday !== undefined) {
+        updates.push(`birthday = $${paramCount++}`);
+        values.push(birthday);
+      }
+
+      if (category !== undefined) {
+        updates.push(`category = $${paramCount++}`);
+        values.push(category);
       }
 
       if (handicap !== undefined) {
@@ -253,7 +279,7 @@ router.put(
 
       // Update user
       const updatedUser = await pool.query(
-        `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING id, username, email, name, family_name, matricula, handicap`,
+        `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramCount} RETURNING id, username, email, first_name, family_name, gender, matricula, birthday, category, handicap`,
         values
       );
 
