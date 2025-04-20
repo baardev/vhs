@@ -1,4 +1,40 @@
 #!/bin/bash
+#
+# IMPEX - Database Import/Export Utility
+# =======================================
+#
+# DESCRIPTION:
+#   This script provides functionality to import and export PostgreSQL
+#   database dumps for the VHS application. It creates timestamped backups
+#   and can restore from the most recent backup.
+#
+# USAGE:
+#   utils/IMPEX [--export|--import] [--file filename]
+#
+# OPTIONS:
+#   --export       Export database to SQL dump files with timestamp
+#   --import       Import database from the most recent backup
+#   --file FILE    Specify custom filename for export/import
+#
+# DEPENDENCIES:
+#   - Docker with a running PostgreSQL container
+#   - PostgreSQL utilities (pg_dump, pg_restore)
+#   - bash utilities (date, mkdir, cp)
+#
+# NOTES:
+#   - Export creates multiple backup formats (plain SQL, custom, plain, tar)
+#   - Export creates a dated directory structure in backup/YYYYMMDD.HHMMSS/
+#   - Also maintains latest.sql and latest_c.dump symlinks to most recent backup
+#   - Import uses the custom format dump by default for best restore fidelity
+#
+# EXAMPLES:
+#   utils/IMPEX --export                   # Create backup with timestamp
+#   utils/IMPEX --import                   # Restore from latest backup
+#   utils/IMPEX --export --file mybackup   # Export with custom filename
+#
+# AUTHOR:
+#   VHS Development Team
+#
 
 cd /home/jw/sites/vhs 
 
@@ -60,6 +96,26 @@ if { [ "$EXPORT" = true ] && [ "$IMPORT" = true ]; } || { [ "$EXPORT" = false ] 
   usage
 fi
 
+# Initialize database schema function
+initialize_schema() {
+  echo "Initializing database schema..."
+  
+  # Execute REBUILD_TABLES without restore to create fresh schema
+  cd /home/jw/sites/vhs
+  utils/REBUILD_TABLES
+  
+  # Check if tables were created successfully
+  TABLE_COUNT=$(docker exec -i $DB_CONTAINER psql -U admin -d vhsdb -t -c "SELECT COUNT(*) FROM information_schema.tables WHERE table_schema = 'public';")
+  echo "Created $TABLE_COUNT tables."
+  
+  if [ "$TABLE_COUNT" -eq 0 ]; then
+    echo "WARNING: Failed to create tables automatically."
+    return 1
+  fi
+  
+  return 0
+}
+
 # Execute requested operation
 DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
 if [ "$EXPORT" = true ]; then
@@ -79,13 +135,73 @@ if [ "$EXPORT" = true ]; then
 
   echo "Export complete! Backup saved to ${BACKUP_DIR}"
 elif [ "$IMPORT" = true ]; then
-#   echo -e "\033[0;32mImporting database from backup/latest.sql...\033[0m"
-#   docker cp backup/latest.sql $DB_CONTAINER:/latest.sql
-#   docker exec -i $DB_CONTAINER psql -U admin -d vhsdb -f /latest.sql
-#   echo "Import complete!"
-
+  echo -e "\033[0;32mAttempting to import database...\033[0m"
+  
+  # Get PostgreSQL version in the container
+  PG_VERSION=$(docker exec -i $DB_CONTAINER psql -U admin -d postgres -t -c "SELECT version();" | grep -oP 'PostgreSQL \K[0-9]+\.[0-9]+')
+  echo "PostgreSQL version in container: $PG_VERSION"
+  
+  # Try custom format restore first
+  echo "Attempting restore from custom format dump (backup/latest_c.dump)..."
   docker cp backup/latest_c.dump $DB_CONTAINER:/latest_c.dump
-  docker exec -i $DB_CONTAINER pg_restore --clean -U admin -d vhsdb /latest_c.dump
+  RESTORE_RESULT=$(docker exec -i $DB_CONTAINER pg_restore --clean -U admin -d vhsdb /latest_c.dump 2>&1)
+  RESTORE_STATUS=$?
+  
+  # Check if restore failed due to version mismatch
+  if echo "$RESTORE_RESULT" | grep -q "unsupported version"; then
+    echo "Version mismatch detected. Custom format restore failed."
+    echo "Falling back to SQL format restore (backup/latest.sql)..."
+    
+    # Drop and recreate the database to ensure a clean state
+    docker exec -i $DB_CONTAINER psql -U admin -d postgres -c "DROP DATABASE IF EXISTS vhsdb;"
+    docker exec -i $DB_CONTAINER psql -U admin -d postgres -c "CREATE DATABASE vhsdb OWNER admin;"
+    
+    # Initialize the database schema first
+    initialize_schema
+    
+    # Try SQL format restore
+    echo "Applying data from SQL backup..."
+    docker cp backup/latest.sql $DB_CONTAINER:/latest.sql
+    docker exec -i $DB_CONTAINER psql -U admin -d vhsdb -f /latest.sql
+    
+    # Check if restore was successful by verifying the users table exists
+    USER_TABLE_EXISTS=$(docker exec -i $DB_CONTAINER psql -U admin -d vhsdb -t -c "SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'users');")
+    
+    if [[ $USER_TABLE_EXISTS == *"t"* ]]; then
+      echo "SQL format restore completed successfully."
+    else
+      echo "WARNING: SQL format restore may not have fully restored the database."
+      echo "Initializing a fresh database schema..."
+      initialize_schema
+    fi
+  elif [ $RESTORE_STATUS -ne 0 ]; then
+    echo "Custom format restore failed for unknown reasons."
+    echo "Error message: $RESTORE_RESULT"
+    echo "Falling back to SQL format restore..."
+    
+    # Drop and recreate the database to ensure a clean state
+    docker exec -i $DB_CONTAINER psql -U admin -d postgres -c "DROP DATABASE IF EXISTS vhsdb;"
+    docker exec -i $DB_CONTAINER psql -U admin -d postgres -c "CREATE DATABASE vhsdb OWNER admin;"
+    
+    # Initialize the database schema
+    initialize_schema
+    
+    # Try SQL format restore
+    echo "Applying data from SQL backup..."
+    docker cp backup/latest.sql $DB_CONTAINER:/latest.sql
+    docker exec -i $DB_CONTAINER psql -U admin -d vhsdb -f /latest.sql
+  else
+    echo "Custom format restore completed successfully."
+  fi
+
+  # Final verification - make sure users table exists
+  USER_TABLE_EXISTS=$(docker exec -i $DB_CONTAINER psql -U admin -d vhsdb -t -c "SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name = 'users');")
+  
+  if [[ $USER_TABLE_EXISTS != *"t"* ]]; then
+    echo "CRITICAL: Users table still doesn't exist after restore attempts."
+    echo "Initializing fresh database schema as last resort..."
+    initialize_schema
+  fi
 
   echo "Restore complete!"
 fi

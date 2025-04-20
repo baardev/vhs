@@ -1,4 +1,46 @@
 #!/bin/bash
+#
+# REBUILD - Container Management and Deployment Utility
+# ====================================================
+#
+# DESCRIPTION:
+#   This script manages the rebuilding of Docker containers for the VHS
+#   application. It can rebuild individual services or the entire stack,
+#   with options for wiping containers, volumes, and restoring from backups.
+#
+# USAGE:
+#   utils/REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe] [--restore]
+#
+# OPTIONS:
+#   --all               Full rebuild of all containers
+#   --frontend          Rebuild and restart only the frontend container
+#   --backend           Rebuild and restart only the backend container
+#   --nginx             Rebuild and restart only the nginx container
+#   --postgres          Rebuild and restart only the PostgreSQL database
+#   --wipe              Wipe all containers and volumes without rebuilding
+#   --restore           Restore database from the most recent backup
+#
+# DEPENDENCIES:
+#   - Docker and docker-compose
+#   - CLEARCACHE utility script
+#   - REBUILD_TABLES utility script
+#   - IMPEX utility script (for restore functionality)
+#
+# NOTES:
+#   - Without options, the script will display usage information
+#   - The --all option rebuilds all containers in the correct order
+#   - Each service option can be used independently to rebuild just that service
+#   - The --restore option affects how the database is initialized
+#
+# EXAMPLES:
+#   utils/REBUILD --all                # Full rebuild of all containers
+#   utils/REBUILD --frontend           # Rebuild only the frontend container
+#   utils/REBUILD --postgres --restore # Rebuild PostgreSQL and restore from backup
+#   utils/REBUILD --wipe               # Just clean containers without rebuilding
+#
+# AUTHOR:
+#   VHS Development Team
+#
 
 echo "REBUILD $1"
 echo "----------------------------------------------------"
@@ -12,6 +54,7 @@ REBUILD_BACKEND=false
 REBUILD_NGINX=false
 REBUILD_POSTGRES=false
 REBUILD_WIPE=false
+REBUILD_RESTORE=false
 LIVE=false
 COMPOSE_BAKE=true
 
@@ -98,7 +141,7 @@ rebuild_backend() {
     fi
     
     # Now rebuild tables using the container name
-    utils/REBUILD_TABLES
+    utils/REBUILD_TABLES ${RESTORE}
 }
 
 # Function to rebuild nginx
@@ -119,33 +162,74 @@ rebuild_nginx() {
 
 # Function to rebuild postgres
 rebuild_postgres() {
+
+# # Stop & remove the old container
+# docker compose stop db
+# docker compose rm -f db
+
+# # Delete the named volume (actual project‑prefixed name is shown by `docker volume ls`)
+# docker volume rm $(docker volume ls -q | grep vhsdb_data)
+
+# # Start a fresh 17.x container
+# docker compose up -d db
+
+
+
+
+
     echo "--------------------------------------------------------"
     echo "Completely wiping PostgreSQL database..."
     echo "--------------------------------------------------------"
+    
+    # Get the actual database container name for backup before wiping
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+    if [ ! -z "$DB_CONTAINER" ]; then
+        # Backup existing database before wiping
+        echo "Backing up existing database..."
+        utils/IMPEX --export
+    fi
+    
+    # Stop and remove the container
     /usr/bin/docker compose ${FILEARG} stop db
     /usr/bin/docker ps --format "{{.Names}}"|grep db|awk '{print "docker rm -f "$1}'|bash
-    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep postgres|awk '{print "docker rmi -f "$1}'|bash
     
     # Remove database volume to ensure clean start
     echo "Removing database volume..."
     docker volume rm $(docker volume ls -q | grep vhsdb_data) 2>/dev/null || true
+    docker volume prune -f
     
-    echo "Rebuilding PostgreSQL from scratch..."
-    /usr/bin/docker compose ${FILEARG} up -d db
+    echo "Rebuilding PostgreSQL from scratch (using latest image)..."
+    /usr/bin/docker compose ${FILEARG} pull db
+    /usr/bin/docker compose ${FILEARG} up -d --force-recreate db
     
     echo "Waiting for database to initialize..."
     sleep 15
     
     # Get the actual database container name
     DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+    # Ensure the database container is running; if not, attempt to start it
     if [ -z "$DB_CONTAINER" ]; then
-        echo "Database container not found"
-        docker ps
-        exit 1
+        echo "Database container is not running. Attempting to start it..."
+        /usr/bin/docker compose ${FILEARG} up -d db
+        echo "Waiting for database container to start..."
+        sleep 10
+        DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+        if [ -z "$DB_CONTAINER" ]; then
+            echo "Failed to start the database container. See docker ps output below:"
+            docker ps
+            exit 1
+        fi
+        echo "Database container started successfully: $DB_CONTAINER"
     fi
     
     echo "Rebuilding database tables..."
-    utils/REBUILD_TABLES
+    if [ -n "$RESTORE" ] && [ "$RESTORE" = "--restore" ]; then
+        echo "Restoring database from backup..."
+        utils/IMPEX --import
+    else
+        echo "Creating fresh database schema..."
+        utils/REBUILD_TABLES
+    fi
     
     echo "PostgreSQL database completely wiped and rebuilt successfully."
 }
@@ -176,14 +260,25 @@ while [[ $# -gt 0 ]]; do
             REBUILD_WIPE=true
             shift
             ;;
+        --restore)
+            REBUILD_RESTORE=true
+            shift
+            ;;
         *)
             # Unknown option
             echo "Unknown option: $1"
-            echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe]"
+            echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe] [--restore]"
             exit 1
             ;;
     esac
 done
+
+# Set RESTORE variable based on REBUILD_RESTORE flag
+if $REBUILD_RESTORE; then
+    RESTORE="--restore"
+else
+    RESTORE=""
+fi
 
 if $REBUILD_FRONTEND; then
     rebuild_frontend
@@ -207,6 +302,10 @@ fi
 
 if $REBUILD_WIPE; then
     wipe_all
+    exit 0
+fi
+if $REBUILD_RESTORE; then
+    utils/REBUILD_TABLES ${RESTORE}
     exit 0
 fi
 
@@ -242,6 +341,6 @@ else
     echo "  --postgres          Rebuild and restart only the PostgreSQL database"
     echo "  --wipe              Wipe all containers and volumes without rebuilding"
     echo ""
-    echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe]"
+    echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe] [--restore]"
     exit 1
 fi

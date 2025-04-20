@@ -1,0 +1,57 @@
+#!/bin/bash
+#
+# ADD_USER - Create a new user account
+# =====================================
+#
+# DESCRIPTION:
+#   Creates a new user account in the VHS application with optional admin privileges.
+#   Generates a random password and creates an email based on the username.
+#
+# USAGE:
+#   utils/ADD_USER username [--admin]
+#
+# OPTIONS:
+#   username     The username to create 
+#   --admin      Optional flag to create an admin user
+#
+# EXAMPLES:
+#   utils/ADD_USER john           # Creates regular user 'john'
+#   utils/ADD_USER mary --admin   # Creates admin user 'mary'
+#
+
+# Check if username is provided
+if [ $# -lt 1 ]; then
+    echo "Error: Username required"
+    echo "Usage: utils/ADD_USER username [--admin]"
+    exit 1
+fi
+
+USERNAME="$1"
+IS_ADMIN=false
+
+# Check for admin flag
+if [ "$2" = "--admin" ]; then
+    IS_ADMIN=true
+fi
+
+# Generate email from username
+EMAIL="${USERNAME}@example.com"
+
+# Generate random password (16 characters)
+PASSWORD=$(openssl rand -base64 12 | tr -d '/+=' | cut -c1-16)
+
+echo "Creating user: $USERNAME"
+echo "Email: $EMAIL"
+echo "Password: $PASSWORD"
+echo "Admin: $IS_ADMIN"
+
+# Create the user
+curl -X POST http://localhost:4000/api/auth/register \
+    -H "Content-Type: application/json" \
+    -d '{"username":"'${USERNAME}'","email":"'${EMAIL}'","password":"'${PASSWORD}'","is_admin":'${IS_ADMIN}'}'
+
+echo ""
+echo "User created successfully. Save these credentials:"
+echo "Username: $USERNAME"
+echo "Password: $PASSWORD"
+

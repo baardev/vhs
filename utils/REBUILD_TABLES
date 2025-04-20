@@ -1,3 +1,50 @@
+#!/bin/bash -x
+#
+# REBUILD_TABLES - Database Table Creation and Restoration Script
+# ==============================================================
+#
+# DESCRIPTION:
+#   This script rebuilds the database tables for the VHS application.
+#   It can either create fresh tables with default data or restore 
+#   from an existing backup using the IMPEX utility.
+#
+# USAGE:
+#   utils/REBUILD_TABLES [--restore]
+#
+# OPTIONS:
+#   --restore   Restore database from the most recent backup instead of
+#               creating fresh tables (uses IMPEX --import)
+#
+# DEPENDENCIES:
+#   - Docker with a running PostgreSQL container
+#   - Backend server must be running at localhost:4000
+#   - IMPEX utility script (for restore functionality)
+#   - SETADMIN utility script
+#
+# NOTES:
+#   - Without the --restore flag, this script will drop and recreate the
+#     database, run all SQL setup scripts, and create an admin user
+#   - With the --restore flag, this script will import the latest database
+#     backup using IMPEX
+#
+# EXAMPLES:
+#   utils/REBUILD_TABLES           # Create fresh database tables
+#   utils/REBUILD_TABLES --restore # Restore from latest backup
+#
+# AUTHOR:
+#   VHS Development Team
+#
+
+# Parse command line arguments
+RESTORE=false
+
+# Check for the --restore flag
+for arg in "$@"; do
+  if [ "$arg" = "--restore" ]; then
+    RESTORE=true
+  fi
+done
+
 rebuild_database() {
     local db_container=$1
     PW=`cat ~/sites/vhs/.adminpw`
@@ -61,7 +108,7 @@ rebuild_database() {
 # Check if restore flag is set
 if [ "$RESTORE" = true ]; then
     echo "Restoring database from backup using IMPEX..."
-    utils/IMPEX --import
+    bash utils/IMPEX --import
     echo "Database restore complete!"
     exit 0
 else

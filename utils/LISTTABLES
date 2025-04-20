@@ -1,3 +1,50 @@
 #!/bin/bash
-DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db)
-docker exec -it $DB_CONTAINER psql -U user -d vhsdb -c "\dt"
+#
+# LISTTABLES - List all tables in the VHS database
+# ==================================================
+#
+# DESCRIPTION:
+#   Lists all tables in the PostgreSQL database. If the database container
+#   is not running, it will attempt to start it automatically using docker
+#   compose in the project root.
+#
+# USAGE:
+#   utils/LISTTABLES
+#
+
+# Ensure we're in project root for docker compose commands
+cd ~/sites/vhs || {
+    echo "Error: Cannot change to project root ~/sites/vhs";
+    exit 1;
+}
+
+# Function to locate a running db container
+find_db_container() {
+    docker ps --format "{{.Names}}" | grep db | head -n 1
+}
+
+DB_CONTAINER=$(find_db_container)
+
+# If container not found, attempt to start it
+if [ -z "$DB_CONTAINER" ]; then
+    echo "Database container not running. Attempting to start it with docker compose..."
+    docker compose -f docker-compose.yml up -d db
+    echo "Waiting for database container to start..."
+    sleep 12
+    DB_CONTAINER=$(find_db_container)
+fi
+
+if [ -z "$DB_CONTAINER" ]; then
+    echo "Error: Failed to start the database container."
+    echo "Displaying last 50 lines of container logs for debugging:"
+    docker compose -f docker-compose.yml logs --tail=50 db || true
+    docker ps
+    exit 1
+fi
+
+echo "Using database container: $DB_CONTAINER"
+
+docker exec $DB_CONTAINER psql -U admin -d vhsdb -c "\\dt"
+
+echo -e "\nDetailed table information:"
+docker exec $DB_CONTAINER psql -U admin -d vhsdb -c "\\d+"
