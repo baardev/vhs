@@ -10,3 +10,8 @@ PUSH
 ssl*/
 nginx/ssl
 package-lock.json
+.~*
+~*
+*.txt
+*.csv
+!frontend/robots.txt
