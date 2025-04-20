@@ -1,0 +1,25 @@
+#!/bin/bash
+export DISPLAY=:0
+export PATH=/home/jw/sites/vhs/utils:$PATH 
+export DB_USER=admin
+export DB_PASSWORD=admin123
+export DB_NAME=vhsdb
+export DB_HOST=db
+export DB_PORT=5432
+export DATABASE_URL=postgres://admin:admin123@db:5432/vhsdb
+export PGUSER=admin
+export PGPASSWORD=admin123
+export PGDATABASE=vhsdb
+export PGHOST=db
+export PGPORT=5432
+
+# Check system information and set conda environment accordingly
+if uname -a | grep -q ":jwbox"; then
+    source /home/jw/miniforge3/etc/profile.d/conda.sh
+    echo "Setting conda environment to vhs"
+    conda activate vhs
+elif uname -a | grep -q "Ubuntu"; then
+    echo "Setting conda environment to OHS"
+    source /home/jw/miniforge3/etc/profile.d/conda.sh
+    conda activate OHS
+fi

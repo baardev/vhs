@@ -1,6 +1,8 @@
 import Link from 'next/link';
+import { useTranslation } from 'next-i18next';
 
 export default function HomeLink() {
+  const { t } = useTranslation('common');
   return (
     <div className="absolute top-4 left-4 flex items-center space-x-4">
       <Link
@@ -22,7 +24,7 @@ export default function HomeLink() {
           <path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
           <polyline points="9 22 9 12 15 12 15 22"></polyline>
         </svg>
-        Home
+        {t('home')}
       </Link>
       <Link
         href="/courses"
