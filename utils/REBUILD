@@ -56,7 +56,7 @@ REBUILD_POSTGRES=false
 REBUILD_WIPE=false
 REBUILD_RESTORE=false
 LIVE=false
-COMPOSE_BAKE=true
+# COMPOSE_BAKE=true
 
 # Use standard environment names
 NODE_ENV=production  
@@ -141,7 +141,7 @@ rebuild_backend() {
     fi
     
     # Now rebuild tables using the container name
-    utils/REBUILD_TABLES ${RESTORE}
+    # utils/REBUILD_TABLES ${RESTORE}
 }
 
 # Function to rebuild nginx
@@ -228,6 +228,7 @@ rebuild_postgres() {
         utils/IMPEX --import
     else
         echo "Creating fresh database schema..."
+        compose up -d backend
         utils/REBUILD_TABLES
     fi
     
