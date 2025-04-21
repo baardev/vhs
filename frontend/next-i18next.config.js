@@ -1,15 +1,24 @@
 import path from 'path';
 
-const config = {
+/** @type {import('next-i18next').UserConfig} */
+export const i18nConfig = {
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en', 'es', 'ru', 'he', 'zh'],
+    locales: ['en', 'es', 'zh', 'ru', 'he'],
+    defaultLocale: 'en'
   },
+
+  // use the files you really have
+  ns: ['common'],
   defaultNS: 'common',
-  localePath: typeof window === 'undefined' ? path.resolve('./public/locales') : '/locales',
-  debug: process.env.NODE_ENV === 'development',
-  reloadOnPrerender: process.env.NODE_ENV === 'development',
+
+  // don't look for en-US first
+  load: 'languageOnly',
+
+
+  localePath: './public/locales'
 };
 
-export default config;
-export const i18n = config.i18n;
+// Add this line so next.config.js can import { i18n }
+export const i18n = i18nConfig.i18n;
+
+export default i18nConfig;

@@ -20,3 +20,4 @@ backup/
 !backup/latest.sql
 !backup/latest_c.dump
 */archive/*
+bin/*html
