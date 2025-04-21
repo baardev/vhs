@@ -212,7 +212,7 @@ router.put(
       }
 
       if (name !== undefined) {
-        updates.push(`name = $${paramCount++}`);
+        updates.push(`first_name = $${paramCount++}`);
         values.push(name);
       }
 
@@ -244,7 +244,7 @@ router.put(
         `UPDATE users
          SET ${updates.join(', ')}
          WHERE id = $${paramCount}
-         RETURNING id, username, email, created_at, name, family_name, matricula, handicap, is_admin`,
+         RETURNING id, username, email, created_at, first_name AS name, family_name, matricula, handicap, is_admin`,
         values
       );
 

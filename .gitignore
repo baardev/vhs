@@ -18,3 +18,4 @@ package-lock.json
 backup/
 !backup/latest.sql
 !backup/latest_c.dump
+*/archive/*

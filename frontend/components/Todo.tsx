@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'next-i18next';
 
 interface TodoItem {
   id: number;
@@ -7,6 +8,7 @@ interface TodoItem {
 }
 
 const Todo: React.FC = () => {
+  const { t } = useTranslation('common');
   const [todos, setTodos] = useState<TodoItem[]>([]);
   const [newTodo, setNewTodo] = useState('');
 
@@ -37,7 +39,7 @@ const Todo: React.FC = () => {
 
   return (
     <div className="p-6 max-w-md mx-auto bg-white rounded-xl shadow-md dark:bg-gray-800">
-      <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">Todo List</h2>
+      <h2 className="text-xl font-bold mb-4 text-gray-800 dark:text-white">{t('todo.title')}</h2>
 
       <div className="flex mb-4">
         <input
@@ -45,14 +47,14 @@ const Todo: React.FC = () => {
           value={newTodo}
           onChange={(e) => setNewTodo(e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && addTodo()}
-          placeholder="Add a new task..."
+          placeholder={t('todo.placeholder')}
           className="flex-1 px-4 py-2 border border-gray-300 rounded-l focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
         />
         <button
           onClick={addTodo}
           className="px-4 py-2 bg-blue-500 text-white rounded-r hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
         >
-          Add
+          {t('todo.add')}
         </button>
       </div>
 
@@ -81,7 +83,7 @@ const Todo: React.FC = () => {
               onClick={() => deleteTodo(todo.id)}
               className="text-red-500 hover:text-red-700 focus:outline-none"
             >
-              Delete
+              {t('todo.delete')}
             </button>
           </li>
         ))}
@@ -89,13 +91,13 @@ const Todo: React.FC = () => {
 
       {todos.length === 0 && (
         <p className="text-center text-gray-500 dark:text-gray-400 py-4">
-          No tasks yet. Add one above!
+          {t('todo.noTasks')}
         </p>
       )}
 
       {todos.length > 0 && (
         <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
-          {todos.filter(t => t.completed).length} of {todos.length} tasks completed
+          {t('todo.progress', {completed: todos.filter(t => t.completed).length, total: todos.length})}
         </div>
       )}
     </div>

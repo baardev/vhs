@@ -125,5 +125,13 @@
     "userUpdated": "Usuario actualizado exitosamente",
     "userDeleted": "Usuario eliminado exitosamente",
     "adminStatusChanged": "Estado de administrador actualizado exitosamente"
+  },
+  "todo": {
+    "title": "Lista de tareas",
+    "placeholder": "Añadir una nueva tarea...",
+    "add": "Añadir",
+    "delete": "Eliminar",
+    "noTasks": "Aún no hay tareas. ¡Añade una arriba!",
+    "progress": "{{completed}} de {{total}} tareas completadas"
   }
 }

@@ -125,5 +125,13 @@
     "userUpdated": "המשתמש עודכן בהצלחה",
     "userDeleted": "המשתמש נמחק בהצלחה",
     "adminStatusChanged": "סטטוס המנהל עודכן בהצלחה"
+  },
+  "todo": {
+    "title": "רשימת משימות",
+    "placeholder": "הוסף משימה חדשה...",
+    "add": "הוסף",
+    "delete": "מחק",
+    "noTasks": "אין משימות עדיין. הוסף אחת למעלה!",
+    "progress": "{{completed}} מתוך {{total}} משימות הושלמו"
   }
 }

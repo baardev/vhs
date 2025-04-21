@@ -1,6 +1,6 @@
-/** @type {import('next').NextConfig} */
 import { i18n } from './next-i18next.config.js';
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   i18n: {
@@ -8,9 +8,10 @@ const nextConfig = {
     locales: ['en', 'es', 'zh', 'ru', 'he'],
     // Default language when no locale is specified in URL
     defaultLocale: 'en',
-    // Enable URL-based locale detection
-    localeDetection: true
+    // Explicitly disable automatic locale detection to satisfy Next.js schema
+    localeDetection: false
   },
+  allowedDevOrigins: ['https://libronico.com'],
   typescript: {
     // !! WARN !!
     // Dangerously allow production builds to successfully complete even if
@@ -32,6 +33,6 @@ const nextConfig = {
       },
     ];
   },
-}
+};
 
 export default nextConfig;

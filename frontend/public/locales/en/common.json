@@ -125,5 +125,13 @@
     "userUpdated": "User updated successfully",
     "userDeleted": "User deleted successfully",
     "adminStatusChanged": "Admin status updated successfully"
+  },
+  "todo": {
+    "title": "Todo List",
+    "placeholder": "Add a new task...",
+    "add": "Add",
+    "delete": "Delete",
+    "noTasks": "No tasks yet. Add one above!",
+    "progress": "{{completed}} of {{total}} tasks completed"
   }
 }

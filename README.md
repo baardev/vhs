@@ -115,3 +115,6 @@ frontend/eslint.config.mjs  (maybe works?)
 
 
 ```
+
+AI prompts
+i18n the todos @Todo.tsx .  Add to the @common.json first, then to @common.json @common.json @common.json @common.json  making sure you use the EXACT same json structure and the EXACT SAME KEYWORDS that are used in the english en/common.json.

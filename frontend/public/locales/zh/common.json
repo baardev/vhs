@@ -125,5 +125,13 @@
     "userUpdated": "用户已成功更新",
     "userDeleted": "用户已成功删除",
     "adminStatusChanged": "管理员状态已成功更新"
+  },
+  "todo": {
+    "title": "任务列表",
+    "placeholder": "添加新任务...",
+    "add": "添加",
+    "delete": "删除",
+    "noTasks": "暂无任务。请在上方添加！",
+    "progress": "已完成 {{completed}} / {{total}} 个任务"
   }
 }
