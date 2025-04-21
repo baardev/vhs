@@ -57,6 +57,8 @@ services:
       - "4000:4000"
     networks:
       - app-network
+    volumes:
+      - ./backend/blocked_news_words.txt:/app/blocked_news_words.txt:ro
 
   frontend:
     build: 

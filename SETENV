@@ -13,7 +13,7 @@ export PGDATABASE=vhsdb
 export PGHOST=db
 export PGPORT=5432
 # export NODE_ENV=development
-
+export COMPOSE_BAKE=true
 
 
 # Check system information and set conda environment accordingly

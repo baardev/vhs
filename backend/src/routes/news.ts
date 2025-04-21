@@ -1,8 +1,27 @@
 import express, { Request, Response } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config();
+
+// -------------------- Blocked words --------------------
+const DEFAULT_BLOCKED = [
+  'trump', 'obama', 'biden', 'political', 'politics',
+  'economy', 'economics', 'republican', 'republicans', 'president', 'wwe'
+];
+
+const BLOCKED_WORDS_PATH = process.env.BLOCKED_WORDS_FILE || path.join(__dirname, '../../blocked_news_words.txt');
+
+function getBlockedWords(): string[] {
+  try {
+    const txt = fs.readFileSync(BLOCKED_WORDS_PATH, 'utf-8');
+    return txt.split(/\r?\n/).map(w => w.trim().toLowerCase()).filter(Boolean);
+  } catch {
+    return DEFAULT_BLOCKED;
+  }
+}
 
 const router = express.Router();
 
@@ -89,8 +108,18 @@ router.get('/api/golf-news', async (req: Request, res: Response<NewsApiResponse[
             return;
         }
 
-        // Limit the results to the first 3 articles before sending the response
-        const limitedArticles = response.data.articles.slice(0, 3);
+        // ----------------------------------------------
+        // Filter out unwanted political/economic articles
+        // ----------------------------------------------
+        const blocked = getBlockedWords();
+
+        const filtered = response.data.articles.filter(article => {
+          const haystack = `${article.title} ${article.description ?? ''}`.toLowerCase();
+          return !blocked.some(word => haystack.includes(word));
+        });
+
+        // Limit the results to the first 3 articles after filtering
+        const limitedArticles = filtered.slice(0, 3);
         res.json(limitedArticles);
     } catch (error: unknown) {
         console.error('Detailed error:', error);
