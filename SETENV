@@ -19,10 +19,10 @@ export COMPOSE_BAKE=true
 # Check system information and set conda environment accordingly
 if uname -a | grep -q ":jwbox"; then
     source /home/jw/miniforge3/etc/profile.d/conda.sh
-    echo "Setting conda environment to vhs"
+    echo "Setting conda environment to 'vhs'"
     conda activate vhs
 elif uname -a | grep -q "Ubuntu"; then
-    echo "Setting conda environment to OHS"
+    echo "Setting conda environment to 'base'"
     source /home/jw/miniforge3/etc/profile.d/conda.sh
-    conda activate OHS
+    conda activate base
 fi
