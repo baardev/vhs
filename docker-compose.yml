@@ -64,7 +64,7 @@ services:
     build: 
       context: ./frontend
       args:
-        - NODE_ENV=dev
+        - NODE_ENV=development
     container_name: dev-vhs-frontend
     ports:
       - "3000:3000"
