@@ -25,7 +25,7 @@ clear_frontend() {
   rm -rf .next/* || true
 
   # Remove vite/webpack cache inside container (ignore error if container not running)
-  docker compose -f ~/sites/vhs/docker-compose.prod.yml exec frontend rm -rf node_modules/.cache || true
+  docker compose -f ~/sites/vhs/docker-compose.yml exec frontend rm -rf node_modules/.cache || true
 
   # Ensure correct ownership
   sudo chown -R 1000:1000 ~/sites/vhs/frontend/.next || true

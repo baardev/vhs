@@ -11,6 +11,12 @@ interface User {
   family_name?: string;
   matricula?: string;
   handicap?: number;
+  gender?: string;
+  /**
+   * ISO‑8601 date string, e.g. "1990-05-14T00:00:00.000Z". Only the date
+   * portion is relevant when editing, so we trim the time part below.
+   */
+  birthday?: string;
   [key: string]: string | number | boolean | undefined;
 }
 
@@ -30,8 +36,8 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave }) 
     family_name: user.family_name || '',
     matricula: user.matricula || '',
     handicap: user.handicap !== undefined && user.handicap !== null ? user.handicap.toString() : '',
-    gender: (user as any).gender || '',
-    birthday: (user as any).birthday ? (user as any).birthday.split('T')[0] : '',
+    gender: user.gender || '',
+    birthday: user.birthday ? user.birthday.split('T')[0] : '',
     is_admin: user.is_admin
   });
   const [loading, setLoading] = useState(false);

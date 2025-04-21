@@ -15,6 +15,12 @@ services:
       - frontend
     networks:
       - app-network
+    build:
+      context: ./nginx
+      args:
+        - NODE_ENV=production
+    environment:
+      - NODE_ENV=production  
 
   # certbot:
   #   image: certbot/certbot
@@ -26,18 +32,27 @@ services:
     image: postgres:latest
     container_name: dev-vhs-db
     environment:
-      POSTGRES_USER: admin
-      POSTGRES_PASSWORD: admin123
-      POSTGRES_DB: vhsdb
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+      - POSTGRES_DB=vhsdb
+      - NODE_ENV=production  
     ports:
       - "5432:5432"
     volumes:
       - vhsdb_data:/var/lib/postgresql/data
     networks:
       - app-network
+    build:
+      context: ./db
+      args:
+        - NODE_ENV=production
 
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      args:
+        - NODE_ENV=production
+
     container_name: dev-vhs-backend
     environment:
       DB_USER: admin
@@ -51,6 +66,7 @@ services:
       PGDATABASE: vhsdb
       PGHOST: db
       PGPORT: 5432
+      NODE_ENV: production
     depends_on:
       - db
     ports:
@@ -61,10 +77,10 @@ services:
       - ./backend/blocked_news_words.txt:/app/blocked_news_words.txt:ro
 
   frontend:
-    build: 
+    build:
       context: ./frontend
       args:
-        - NODE_ENV=development
+        - NODE_ENV=production
     container_name: dev-vhs-frontend
     ports:
       - "3000:3000"
@@ -72,11 +88,13 @@ services:
       - ./frontend:/app
       - /app/node_modules
       - frontend_next_cache:/app/.next
-    command: npm run dev
+    command: npm run start
     depends_on:
       - backend
     networks:
       - app-network
+    environment:
+      - NODE_ENV=production
 
 volumes:
   vhsdb_data:

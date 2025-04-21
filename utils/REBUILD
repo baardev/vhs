@@ -59,8 +59,8 @@ LIVE=false
 # COMPOSE_BAKE=true
 
 # Use standard environment names
-NODE_ENV=production  
 FILEARG="-f docker-compose.yml"
+export NODE_ENV=production
 
 # Function to wipe all containers and volumes
 wipe_all() {
@@ -147,17 +147,19 @@ rebuild_backend() {
 # Function to rebuild nginx
 rebuild_nginx() {
     echo "--------------------------------------------------------"
-    echo "Completely wiping nginx server..."
+    echo "Rebuilding nginx only..."
     echo "--------------------------------------------------------"
-    /usr/bin/docker compose ${FILEARG} stop nginx
-    /usr/bin/docker ps --format "{{.Names}}"|grep nginx|awk '{print "docker rm -f "$1}'|bash
-    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep nginx|awk '{print "docker rmi -f "$1}'|bash
 
-    echo "Rebuilding nginx from scratch..."
-    /usr/bin/docker compose ${FILEARG} build --no-cache nginx
-    /usr/bin/docker compose ${FILEARG} up -d nginx
-    
-    echo "Nginx server completely wiped and rebuilt successfully."
+    /usr/bin/docker compose ${FILEARG} stop nginx
+    /usr/bin/docker compose ${FILEARG} rm -f nginx
+
+    # Build JUST the nginx image (no other targets)
+    /usr/bin/docker compose ${FILEARG} build --no-cache --pull nginx
+
+    # Start nginx without starting any dependency chain
+    /usr/bin/docker compose ${FILEARG} up -d --no-deps nginx
+
+    echo "Nginx rebuilt and restarted."
 }
 
 # Function to rebuild postgres
@@ -228,7 +230,7 @@ rebuild_postgres() {
         utils/IMPEX --import
     else
         echo "Creating fresh database schema..."
-        compose up -d backend
+        /usr/bin/docker compose ${FILEARG} up -d backend
         utils/REBUILD_TABLES
     fi
     
