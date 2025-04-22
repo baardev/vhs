@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Initialize variables for services
+start_backend=false
+start_frontend=false
+start_nginx=false
+start_db=false
+
+# Process arguments
+if [ $# -eq 0 ]; then
+  # If no arguments provided, start all services
+  start_backend=true
+  start_frontend=true
+  start_nginx=true
+  start_db=true
+else
+  # Process the specified arguments
+  for arg in "$@"; do
+    case $arg in
+      --backend)
+        start_backend=true
+        ;;
+      --frontend)
+        start_frontend=true
+        ;;
+      --nginx)
+        start_nginx=true
+        ;;
+      --db)
+        start_db=true
+        ;;
+      *)
+        echo "Unknown argument: $arg"
+        echo "Usage: $0 [--backend] [--frontend] [--nginx] [--db]"
+        exit 1
+        ;;
+    esac
+  done
+fi
+
+# Stop the selected services
+if $start_backend; then
+  docker compose stop backend
+fi
+
+if $start_frontend; then
+  docker compose stop frontend
+fi
+
+if $start_nginx; then
+  docker compose stop nginx
+fi
+
+if $start_db; then
+  docker compose stop db
+fi
+
+# Start the selected services
+if $start_backend; then
+  docker compose start backend
+fi
+
+if $start_frontend; then
+  docker compose start frontend
+fi
+
+if $start_nginx; then
+  docker compose start nginx
+fi
+
+if $start_db; then
+  docker compose start db
+fi

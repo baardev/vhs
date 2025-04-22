@@ -1,6 +1,7 @@
 #!/bin/bash
 cd ~/sites/vhs/frontend
 docker compose -f ~/sites/vhs/docker-compose.yml  stop frontend
-sudo chown -R $(whoami) frontend/.next
+sudo rm -rf /home/jw/store/sites/vhs/frontend/.next
+#sudo chown -R $(whoami) frontend/.next
 npm run dev
 

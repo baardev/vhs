@@ -30,3 +30,16 @@ if [[ -n "$SERVICES" ]]; then
 else
   docker compose -f ~/sites/vhs/docker-compose.yml logs -f
 fi 
+
+
+# # Replace <container> with your container name or ID
+
+# # Method 1: find + truncate
+# docker exec <container> sh -c \
+#   "find /var/log -type f -name '*.log' -exec truncate -s 0 {} +"
+
+# # Method 2: shell redirection loop
+# docker exec <container> sh -c \
+#   'for f in /var/log/**/*.log /var/log/*.log; do
+#      [ -f "$f" ] && : > "$f"
+#    done'

@@ -9,7 +9,8 @@ const HandicapCalculator: React.FC = () => {
     const fetchHandicap = async () => {
       try {
         setLoading(true);
-        const response = await fetch('/api/handicap-calc');
+        const timestamp = new Date().getTime();
+        const response = await fetch(`/api/handicap-calc?t=${timestamp}`);
         if (!response.ok) {
           throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
         }

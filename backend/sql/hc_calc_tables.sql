@@ -1,6 +1,7 @@
-DROP TABLE IF EXISTS player_cards;
-DROP TABLE IF EXISTS course_data;
-DROP TABLE IF EXISTS course_names;
+DROP TABLE IF EXISTS player_cards CASCADE;
+DROP TABLE IF EXISTS course_data CASCADE;
+DROP TABLE IF EXISTS course_names CASCADE;
+DROP VIEW IF EXISTS handicap_calculations CASCADE;
 
 /* ──────────────────────────
    1.  master table: course_names

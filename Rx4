@@ -1,4 +1,7 @@
-REBUIND --wipe 
+#!/bin/bash
+
+REBUILD --wipe 
+
 REBUILD --nginx & 
 REBUILD --postgres &
 REBUILD --backend &
