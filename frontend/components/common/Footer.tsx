@@ -1,14 +1,31 @@
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
+import { useState, useEffect } from 'react';
 
 const Footer = () => {
-  const { t } = useTranslation('common');
+  const { t, ready } = useTranslation('common');
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const changeLanguage = (locale: string) => {
     router.push(router.pathname, router.asPath, { locale });
   };
+
+  // Return a simplified footer during initial client-side rendering
+  if (!mounted) {
+    return (
+      <footer className="w-full flex flex-col items-center gap-4 py-8 mt-auto bg-gray-100 dark:bg-gray-900">
+        <div className="flex gap-[24px] flex-wrap items-center justify-center">
+          {/* Placeholder content without translations */}
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer className="w-full flex flex-col items-center gap-4 py-8 mt-auto bg-gray-100 dark:bg-gray-900">

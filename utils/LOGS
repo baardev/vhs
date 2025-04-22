@@ -26,7 +26,7 @@ fi
 
 # Execute docker compose logs command
 if [[ -n "$SERVICES" ]]; then
-  docker compose -f ~/sites/vhs/docker-compose.prod.yml logs -f $SERVICES
+  docker compose -f ~/sites/vhs/docker-compose.yml logs -f $SERVICES
 else
-  docker compose -f ~/sites/vhs/docker-compose.prod.yml logs -f
+  docker compose -f ~/sites/vhs/docker-compose.yml logs -f
 fi 

@@ -1,0 +1,7 @@
+REBUIND --wipe 
+REBUILD --nginx & 
+REBUILD --postgres &
+REBUILD --backend &
+REBUILD --frontend &
+
+

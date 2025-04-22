@@ -14,6 +14,10 @@ export const i18nConfig = {
   // don't look for en-US first
   load: 'languageOnly',
 
+  // Disable suspense to ensure translations are available synchronously
+  react: {
+    useSuspense: false,
+  },
 
   localePath: './public/locales'
 };

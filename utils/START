@@ -1,0 +1,4 @@
+docker compose start backend
+docker compose start frontend
+docker compose start nginx
+docker compose start db

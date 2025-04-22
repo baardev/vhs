@@ -19,9 +19,11 @@ SET row_security = off;
 
 ALTER TABLE ONLY public.todos DROP CONSTRAINT todos_user_id_fkey;
 ALTER TABLE ONLY public.tee_boxes DROP CONSTRAINT tee_boxes_course_id_fkey;
+ALTER TABLE ONLY public.player_cards DROP CONSTRAINT player_cards_course_id_fkey;
 ALTER TABLE ONLY public.password_reset_tokens DROP CONSTRAINT password_reset_tokens_user_id_fkey;
 ALTER TABLE ONLY public.courses DROP CONSTRAINT courses_created_by_fkey;
 ALTER TABLE ONLY public.course_holes DROP CONSTRAINT course_holes_course_id_fkey;
+ALTER TABLE ONLY public.course_data DROP CONSTRAINT course_data_course_id_fkey;
 ALTER TABLE ONLY public.course_attachments DROP CONSTRAINT course_attachments_uploaded_by_fkey;
 ALTER TABLE ONLY public.course_attachments DROP CONSTRAINT course_attachments_course_id_fkey;
 DROP INDEX public.idx_users_username;
@@ -44,20 +46,27 @@ ALTER TABLE ONLY public.users DROP CONSTRAINT users_pkey;
 ALTER TABLE ONLY public.users DROP CONSTRAINT users_email_key;
 ALTER TABLE ONLY public.todos DROP CONSTRAINT todos_pkey;
 ALTER TABLE ONLY public.tee_boxes DROP CONSTRAINT tee_boxes_pkey;
+ALTER TABLE ONLY public.player_cards DROP CONSTRAINT player_cards_pkey;
 ALTER TABLE ONLY public.password_reset_tokens DROP CONSTRAINT password_reset_tokens_pkey;
 ALTER TABLE ONLY public.golf_quotes DROP CONSTRAINT golf_quotes_pkey;
 ALTER TABLE ONLY public.courses DROP CONSTRAINT courses_website_key;
 ALTER TABLE ONLY public.courses DROP CONSTRAINT courses_pkey;
+ALTER TABLE ONLY public.course_names DROP CONSTRAINT course_names_pkey;
+ALTER TABLE ONLY public.course_names DROP CONSTRAINT course_names_courseid_key;
 ALTER TABLE ONLY public.course_holes DROP CONSTRAINT course_holes_pkey;
 ALTER TABLE ONLY public.course_holes DROP CONSTRAINT course_holes_course_id_hole_number_key;
+ALTER TABLE ONLY public.course_data DROP CONSTRAINT course_data_pkey;
 ALTER TABLE ONLY public.course_attachments DROP CONSTRAINT course_attachments_pkey;
 ALTER TABLE public.users ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.todos ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.tee_boxes ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.player_cards ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.password_reset_tokens ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.golf_quotes ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.courses ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.course_names ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.course_holes ALTER COLUMN id DROP DEFAULT;
+ALTER TABLE public.course_data ALTER COLUMN id DROP DEFAULT;
 ALTER TABLE public.course_attachments ALTER COLUMN id DROP DEFAULT;
 DROP SEQUENCE public.users_id_seq;
 DROP TABLE public.users;
@@ -65,14 +74,20 @@ DROP SEQUENCE public.todos_id_seq;
 DROP TABLE public.todos;
 DROP SEQUENCE public.tee_boxes_id_seq;
 DROP TABLE public.tee_boxes;
+DROP SEQUENCE public.player_cards_id_seq;
+DROP TABLE public.player_cards;
 DROP SEQUENCE public.password_reset_tokens_id_seq;
 DROP TABLE public.password_reset_tokens;
 DROP SEQUENCE public.golf_quotes_id_seq;
 DROP TABLE public.golf_quotes;
 DROP SEQUENCE public.courses_id_seq;
 DROP TABLE public.courses;
+DROP SEQUENCE public.course_names_id_seq;
+DROP TABLE public.course_names;
 DROP SEQUENCE public.course_holes_id_seq;
 DROP TABLE public.course_holes;
+DROP SEQUENCE public.course_data_id_seq;
+DROP TABLE public.course_data;
 DROP SEQUENCE public.course_attachments_id_seq;
 DROP TABLE public.course_attachments;
 SET default_tablespace = '';
@@ -121,6 +136,57 @@ ALTER SEQUENCE public.course_attachments_id_seq OWNED BY public.course_attachmen
 
 
 --
+-- Name: course_data; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.course_data (
+    id integer NOT NULL,
+    course_id integer,
+    sel integer,
+    tee_name text,
+    gender character(1),
+    par smallint,
+    course_rating numeric(4,1),
+    bogey_rating numeric(4,1),
+    slope_rating smallint,
+    rating_f numeric(4,1),
+    rating_b numeric(4,1),
+    front character varying(50),
+    back character varying(50),
+    bogey_rating_f numeric(4,1),
+    bogey_rating_b numeric(4,1),
+    slope_f smallint,
+    slope_b smallint,
+    tee_id integer,
+    length integer
+);
+
+
+ALTER TABLE public.course_data OWNER TO admin;
+
+--
+-- Name: course_data_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.course_data_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.course_data_id_seq OWNER TO admin;
+
+--
+-- Name: course_data_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.course_data_id_seq OWNED BY public.course_data.id;
+
+
+--
 -- Name: course_holes; Type: TABLE; Schema: public; Owner: admin
 --
 
@@ -159,6 +225,61 @@ ALTER SEQUENCE public.course_holes_id_seq OWNER TO admin;
 --
 
 ALTER SEQUENCE public.course_holes_id_seq OWNED BY public.course_holes.id;
+
+
+--
+-- Name: course_names; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.course_names (
+    id integer NOT NULL,
+    sel integer,
+    courseid integer,
+    empty1 text,
+    coursename text,
+    facilityid integer,
+    empty2 text,
+    facilityname text,
+    empty3 text,
+    fullname text,
+    address1 text,
+    address2 text,
+    city text,
+    state character varying(15),
+    country character varying(5),
+    entcountrycode character varying(10),
+    entstatecode character varying(10),
+    legacycrpcourseid integer,
+    telephone character varying(50),
+    email text,
+    ratings jsonb,
+    statedisplay character varying(10),
+    extra_column text
+);
+
+
+ALTER TABLE public.course_names OWNER TO admin;
+
+--
+-- Name: course_names_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.course_names_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.course_names_id_seq OWNER TO admin;
+
+--
+-- Name: course_names_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.course_names_id_seq OWNED BY public.course_names.id;
 
 
 --
@@ -272,6 +393,62 @@ ALTER SEQUENCE public.password_reset_tokens_id_seq OWNER TO admin;
 --
 
 ALTER SEQUENCE public.password_reset_tokens_id_seq OWNED BY public.password_reset_tokens.id;
+
+
+--
+-- Name: player_cards; Type: TABLE; Schema: public; Owner: admin
+--
+
+CREATE TABLE public.player_cards (
+    id integer NOT NULL,
+    player_id character varying(20),
+    date date,
+    course_id integer,
+    clima character varying(50),
+    day smallint,
+    category character varying(50),
+    differential numeric(5,1),
+    post integer,
+    judges character varying(50),
+    hcpi numeric(5,1),
+    hcp numeric(5,1),
+    ida integer,
+    vta integer,
+    gross integer,
+    net integer,
+    tarj character varying(10),
+    bir integer,
+    par integer,
+    bog integer,
+    bg2 integer,
+    bg3g integer,
+    plus_bg3 integer,
+    putts integer
+);
+
+
+ALTER TABLE public.player_cards OWNER TO admin;
+
+--
+-- Name: player_cards_id_seq; Type: SEQUENCE; Schema: public; Owner: admin
+--
+
+CREATE SEQUENCE public.player_cards_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER SEQUENCE public.player_cards_id_seq OWNER TO admin;
+
+--
+-- Name: player_cards_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: admin
+--
+
+ALTER SEQUENCE public.player_cards_id_seq OWNED BY public.player_cards.id;
 
 
 --
@@ -406,10 +583,24 @@ ALTER TABLE ONLY public.course_attachments ALTER COLUMN id SET DEFAULT nextval('
 
 
 --
+-- Name: course_data id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.course_data ALTER COLUMN id SET DEFAULT nextval('public.course_data_id_seq'::regclass);
+
+
+--
 -- Name: course_holes id; Type: DEFAULT; Schema: public; Owner: admin
 --
 
 ALTER TABLE ONLY public.course_holes ALTER COLUMN id SET DEFAULT nextval('public.course_holes_id_seq'::regclass);
+
+
+--
+-- Name: course_names id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.course_names ALTER COLUMN id SET DEFAULT nextval('public.course_names_id_seq'::regclass);
 
 
 --
@@ -431,6 +622,13 @@ ALTER TABLE ONLY public.golf_quotes ALTER COLUMN id SET DEFAULT nextval('public.
 --
 
 ALTER TABLE ONLY public.password_reset_tokens ALTER COLUMN id SET DEFAULT nextval('public.password_reset_tokens_id_seq'::regclass);
+
+
+--
+-- Name: player_cards id; Type: DEFAULT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.player_cards ALTER COLUMN id SET DEFAULT nextval('public.player_cards_id_seq'::regclass);
 
 
 --
@@ -463,64 +661,142 @@ COPY public.course_attachments (id, course_id, attachment_type, file_path, origi
 
 
 --
+-- Data for Name: course_data; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.course_data (id, course_id, sel, tee_name, gender, par, course_rating, bogey_rating, slope_rating, rating_f, rating_b, front, back, bogey_rating_f, bogey_rating_b, slope_f, slope_b, tee_id, length) FROM stdin;
+1	26816	1	Amarillo Caballeros	M	72	67.2	89.8	122	33.7	33.5	33.7 / 119	33.5 / 124	44.8	45.0	119	119	369059	5742
+2	26816	1	Amarillo Damas	F	72	73.1	102.5	125	36.7	36.4	36.7 / 122	36.4 / 127	51.1	51.4	122	122	725336	5742
+3	26816	1	Azul	M	72	71.1	93.9	123	35.8	35.3	35.8 / 119	35.3 / 126	46.9	47.0	119	119	725321	6461
+4	26816	1	Blanco	M	72	69.7	92.6	123	35.1	34.6	35.1 / 117	34.6 / 129	46.0	46.6	117	117	369058	6203
+5	26816	1	Negro	M	72	72.5	95.6	124	36.2	36.3	36.2 / 118	36.3 / 130	47.2	48.4	118	118	369057	6714
+6	26816	1	Rojo Caballeros	M	72	65.5	86.5	113	33.0	32.5	33.0 / 113	32.5 / 113	43.5	43.0	113	113	725396	5389
+7	26816	1	Rojo Damas	F	72	70.8	99.3	121	35.8	35.0	35.8 / 119	35.0 / 123	49.8	49.5	119	119	395760	5389
+8	26821	1	Amarillo	M	72	69.8	91.8	119	34.7	35.1	34.7 / 115	35.1 / 122	45.4	46.4	115	115	369023	6343
+9	26821	1	Azul	M	72	72.3	94.3	119	36.1	36.2	36.1 / 115	36.2 / 122	46.8	47.5	115	115	369021	6887
+10	26821	1	Blanco	M	72	71.0	93.4	121	35.5	35.5	35.5 / 118	35.5 / 123	46.5	46.9	118	118	369022	6624
+11	26821	1	Rojo	F	72	73.4	102.0	122	36.9	36.5	36.9 / 125	36.5 / 118	51.6	50.4	125	125	382996	5875
+12	26821	1	Verde	F	72	70.5	98.3	118	35.1	35.4	35.1 / 118	35.4 / 118	49.0	49.3	118	118	382997	5396
+13	26832	1	Amarillo Caballeros	M	72	67.3	88.8	116	32.0	35.3	32.0 / 112	35.3 / 119	42.4	46.4	112	112	369043	5941
+14	26832	1	Amarillo Damas	F	73	73.5	102.7	124	34.9	38.6	34.9 / 118	38.6 / 130	48.8	53.9	118	118	695565	5952
+15	26832	1	Azul	M	72	71.1	93.8	122	34.2	36.9	34.2 / 116	36.9 / 128	45.0	48.8	116	116	648371	6618
+16	26832	1	Blanco	M	72	69.5	91.1	116	33.3	36.2	33.3 / 114	36.2 / 118	43.9	47.2	114	114	341976	6402
+17	26832	1	Negro	M	72	72.1	95.8	128	34.8	37.3	34.8 / 119	37.3 / 136	45.9	49.9	119	119	395902	6878
+18	26832	1	Rojo Caballeros	M	71	66.5	87.6	114	31.8	34.7	31.8 / 112	34.7 / 115	42.2	45.4	112	112	683508	5699
+19	26832	1	Rojo Damas	F	73	72.2	101.2	123	34.4	37.8	34.4 / 117	37.8 / 129	48.2	53.0	117	117	611983	5699
+20	26853	1	Azul	M	73	71.9	95.8	129	35.4	36.5	35.4 / 128	36.5 / 129	47.3	48.5	128	128	344726	6629
+21	26853	1	Blanco	M	73	70.9	94.3	126	34.9	36.0	34.9 / 124	36.0 / 128	46.4	47.9	124	124	344727	6433
+22	26853	1	Rojo - Caballeros	M	73	67.3	88.6	115	33.5	33.8	33.5 / 112	33.8 / 117	43.9	44.7	112	112	648697	5751
+23	26853	1	Rojo	F	74	73.1	103.4	129	36.2	36.9	36.2 / 127	36.9 / 130	51.2	52.2	127	127	343019	5751
+24	28287	1	Blanco	M	72	70.5	91.8	115	35.0	35.5	35.0 / 117	35.5 / 112	45.9	45.9	117	117	369068	6369
+25	28287	1	Rojo	F	72	73.3	102.2	123	36.3	37.0	36.3 / 120	37.0 / 125	50.5	51.7	120	120	369069	5787
+26	28749	1	Amarillo	M	72	66.6	87.5	113	33.4	33.2	33.4 / 115	33.2 / 110	44.1	43.4	115	115	657873	5709
+27	28749	1	Azul	M	72	73.0	94.9	118	36.9	36.1	36.9 / 119	36.1 / 116	48.0	46.9	119	119	399543	6956
+28	28749	1	Blanco	M	72	69.6	92.1	121	34.9	34.7	34.9 / 124	34.7 / 118	46.4	45.7	124	124	657951	6385
+29	28749	1	Negro	M	72	75.4	98.7	126	38.0	37.4	38.0 / 129	37.4 / 122	50.0	48.7	129	129	399541	7360
+30	28749	1	Rojo	F	72	70.7	97.3	113	35.1	35.6	35.1 / 111	35.6 / 114	48.2	49.1	111	111	399545	5451
+31	28759	1	Blanco	M	72	70.1	93.9	128	35.0	35.1	35.0 / 131	35.1 / 125	47.2	46.7	131	131	399824	6318
+32	28759	1	Campeonato	M	72	71.5	96.4	134	35.9	35.6	35.9 / 142	35.6 / 126	49.1	47.3	142	142	399823	6611
+33	28759	1	Rojo	F	73	73.2	103.6	129	36.2	37.0	36.2 / 127	37.0 / 131	51.2	52.4	127	127	399825	5698
+34	28759	1	Scratch	M	72	73.8	99.6	139	36.8	37.0	36.8 / 140	37.0 / 138	49.8	49.8	140	140	399822	7052
+35	29047	1	Amarillo	M	72	69.6	92.5	124	34.8	34.8	34.8 / 124	34.8 / 123	46.3	46.2	124	124	415966	6261
+36	29047	1	Azul	M	72	73.8	96.9	125	37.5	36.3	37.5 / 125	36.3 / 124	49.1	47.8	125	125	415963	7041
+37	29047	1	Blanco	M	72	71.4	94.7	126	36.0	35.4	36.0 / 126	35.4 / 125	47.7	47.0	126	126	415965	6608
+38	29047	1	Rojo - Caballeros	M	72	66.6	87.8	114	33.2	33.4	33.2 / 116	33.4 / 112	44.0	43.8	116	116	648695	5670
+39	29047	1	Rojo	F	72	72.2	101.7	126	36.1	36.1	36.1 / 126	36.1 / 125	50.9	50.8	126	126	415968	5670
+40	29052	1	Amarillo	M	72	69.8	92.5	123	35.0	34.8	35.0 / 121	34.8 / 124	46.2	46.3	121	121	416095	6283
+41	29052	1	Azul	M	72	74.1	97.3	125	36.6	37.5	36.6 / 126	37.5 / 124	48.3	49.0	126	126	416092	7070
+42	29052	1	Blanco	M	72	71.7	95.2	127	35.7	36.0	35.7 / 127	36.0 / 126	47.5	47.7	127	127	416094	6625
+43	29052	1	Rojo Caballeros	M	72	66.2	87.5	115	33.0	33.2	33.0 / 113	33.2 / 116	43.5	44.0	113	113	709801	5596
+44	29052	1	Rojo Damas	F	72	71.9	101.2	125	35.8	36.1	35.8 / 123	36.1 / 126	50.3	50.9	123	123	416096	5596
+45	29211	1	Amarillo	M	72	68.5	91.0	121	34.6	33.9	34.6 / 126	33.9 / 116	46.3	44.7	126	126	428115	5978
+46	29211	1	Azul	M	72	72.0	95.4	126	36.1	35.9	36.1 / 127	35.9 / 125	47.9	47.5	127	127	428118	6694
+47	29211	1	Blanco	M	72	71.0	94.3	126	35.7	35.3	35.7 / 126	35.3 / 125	47.4	46.9	126	126	428119	6493
+48	29211	1	Negro	M	72	73.7	97.6	129	36.3	37.4	36.3 / 131	37.4 / 126	48.5	49.1	131	131	428104	7001
+49	29211	1	Rojo	F	72	73.5	104.0	130	37.2	36.3	37.2 / 130	36.3 / 129	52.5	51.5	130	130	428116	5869
+\.
+
+
+--
 -- Data for Name: course_holes; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
 COPY public.course_holes (id, course_id, hole_number, par, stroke_index, created_at) FROM stdin;
-1	1	1	4	9	2025-04-21 04:58:29.655016+00
-2	1	2	5	11	2025-04-21 04:58:29.655016+00
-3	1	3	4	7	2025-04-21 04:58:29.655016+00
-4	1	4	3	17	2025-04-21 04:58:29.655016+00
-5	1	5	4	5	2025-04-21 04:58:29.655016+00
-6	1	6	3	15	2025-04-21 04:58:29.655016+00
-7	1	7	4	3	2025-04-21 04:58:29.655016+00
-8	1	8	5	13	2025-04-21 04:58:29.655016+00
-9	1	9	4	1	2025-04-21 04:58:29.655016+00
-10	1	10	4	2	2025-04-21 04:58:29.655016+00
-11	1	11	4	8	2025-04-21 04:58:29.655016+00
-12	1	12	3	16	2025-04-21 04:58:29.655016+00
-13	1	13	5	12	2025-04-21 04:58:29.655016+00
-14	1	14	4	10	2025-04-21 04:58:29.655016+00
-15	1	15	5	14	2025-04-21 04:58:29.655016+00
-16	1	16	3	18	2025-04-21 04:58:29.655016+00
-17	1	17	4	6	2025-04-21 04:58:29.655016+00
-18	1	18	4	4	2025-04-21 04:58:29.655016+00
-19	2	1	4	10	2025-04-21 04:58:29.661967+00
-20	2	2	4	14	2025-04-21 04:58:29.661967+00
-21	2	3	4	2	2025-04-21 04:58:29.661967+00
-22	2	4	4	8	2025-04-21 04:58:29.661967+00
-23	2	5	5	12	2025-04-21 04:58:29.661967+00
-24	2	6	4	4	2025-04-21 04:58:29.661967+00
-25	2	7	4	6	2025-04-21 04:58:29.661967+00
-26	2	8	3	16	2025-04-21 04:58:29.661967+00
-27	2	9	4	18	2025-04-21 04:58:29.661967+00
-28	2	10	4	9	2025-04-21 04:58:29.661967+00
-29	2	11	3	17	2025-04-21 04:58:29.661967+00
-30	2	12	4	5	2025-04-21 04:58:29.661967+00
-31	2	13	4	1	2025-04-21 04:58:29.661967+00
-32	2	14	5	11	2025-04-21 04:58:29.661967+00
-33	2	15	4	7	2025-04-21 04:58:29.661967+00
-34	2	16	4	15	2025-04-21 04:58:29.661967+00
-35	2	17	4	3	2025-04-21 04:58:29.661967+00
-36	2	18	4	13	2025-04-21 04:58:29.661967+00
-37	3	1	4	9	2025-04-21 04:58:29.667395+00
-38	3	2	4	7	2025-04-21 04:58:29.667395+00
-39	3	3	4	15	2025-04-21 04:58:29.667395+00
-40	3	4	4	3	2025-04-21 04:58:29.667395+00
-41	3	5	4	13	2025-04-21 04:58:29.667395+00
-42	3	6	3	17	2025-04-21 04:58:29.667395+00
-43	3	7	5	5	2025-04-21 04:58:29.667395+00
-44	3	8	4	11	2025-04-21 04:58:29.667395+00
-45	3	9	4	1	2025-04-21 04:58:29.667395+00
-46	3	10	4	2	2025-04-21 04:58:29.667395+00
-47	3	11	4	10	2025-04-21 04:58:29.667395+00
-48	3	12	4	4	2025-04-21 04:58:29.667395+00
-49	3	13	3	18	2025-04-21 04:58:29.667395+00
-50	3	14	5	12	2025-04-21 04:58:29.667395+00
-51	3	15	4	6	2025-04-21 04:58:29.667395+00
-52	3	16	4	14	2025-04-21 04:58:29.667395+00
-53	3	17	3	16	2025-04-21 04:58:29.667395+00
-54	3	18	5	8	2025-04-21 04:58:29.667395+00
+1	1	1	4	9	2025-04-21 05:03:55.102764+00
+2	1	2	5	11	2025-04-21 05:03:55.102764+00
+3	1	3	4	7	2025-04-21 05:03:55.102764+00
+4	1	4	3	17	2025-04-21 05:03:55.102764+00
+5	1	5	4	5	2025-04-21 05:03:55.102764+00
+6	1	6	3	15	2025-04-21 05:03:55.102764+00
+7	1	7	4	3	2025-04-21 05:03:55.102764+00
+8	1	8	5	13	2025-04-21 05:03:55.102764+00
+9	1	9	4	1	2025-04-21 05:03:55.102764+00
+10	1	10	4	2	2025-04-21 05:03:55.102764+00
+11	1	11	4	8	2025-04-21 05:03:55.102764+00
+12	1	12	3	16	2025-04-21 05:03:55.102764+00
+13	1	13	5	12	2025-04-21 05:03:55.102764+00
+14	1	14	4	10	2025-04-21 05:03:55.102764+00
+15	1	15	5	14	2025-04-21 05:03:55.102764+00
+16	1	16	3	18	2025-04-21 05:03:55.102764+00
+17	1	17	4	6	2025-04-21 05:03:55.102764+00
+18	1	18	4	4	2025-04-21 05:03:55.102764+00
+19	2	1	4	10	2025-04-21 05:03:55.12079+00
+20	2	2	4	14	2025-04-21 05:03:55.12079+00
+21	2	3	4	2	2025-04-21 05:03:55.12079+00
+22	2	4	4	8	2025-04-21 05:03:55.12079+00
+23	2	5	5	12	2025-04-21 05:03:55.12079+00
+24	2	6	4	4	2025-04-21 05:03:55.12079+00
+25	2	7	4	6	2025-04-21 05:03:55.12079+00
+26	2	8	3	16	2025-04-21 05:03:55.12079+00
+27	2	9	4	18	2025-04-21 05:03:55.12079+00
+28	2	10	4	9	2025-04-21 05:03:55.12079+00
+29	2	11	3	17	2025-04-21 05:03:55.12079+00
+30	2	12	4	5	2025-04-21 05:03:55.12079+00
+31	2	13	4	1	2025-04-21 05:03:55.12079+00
+32	2	14	5	11	2025-04-21 05:03:55.12079+00
+33	2	15	4	7	2025-04-21 05:03:55.12079+00
+34	2	16	4	15	2025-04-21 05:03:55.12079+00
+35	2	17	4	3	2025-04-21 05:03:55.12079+00
+36	2	18	4	13	2025-04-21 05:03:55.12079+00
+37	3	1	4	9	2025-04-21 05:03:55.125302+00
+38	3	2	4	7	2025-04-21 05:03:55.125302+00
+39	3	3	4	15	2025-04-21 05:03:55.125302+00
+40	3	4	4	3	2025-04-21 05:03:55.125302+00
+41	3	5	4	13	2025-04-21 05:03:55.125302+00
+42	3	6	3	17	2025-04-21 05:03:55.125302+00
+43	3	7	5	5	2025-04-21 05:03:55.125302+00
+44	3	8	4	11	2025-04-21 05:03:55.125302+00
+45	3	9	4	1	2025-04-21 05:03:55.125302+00
+46	3	10	4	2	2025-04-21 05:03:55.125302+00
+47	3	11	4	10	2025-04-21 05:03:55.125302+00
+48	3	12	4	4	2025-04-21 05:03:55.125302+00
+49	3	13	3	18	2025-04-21 05:03:55.125302+00
+50	3	14	5	12	2025-04-21 05:03:55.125302+00
+51	3	15	4	6	2025-04-21 05:03:55.125302+00
+52	3	16	4	14	2025-04-21 05:03:55.125302+00
+53	3	17	3	16	2025-04-21 05:03:55.125302+00
+54	3	18	5	8	2025-04-21 05:03:55.125302+00
+\.
+
+
+--
+-- Data for Name: course_names; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.course_names (id, sel, courseid, empty1, coursename, facilityid, empty2, facilityname, empty3, fullname, address1, address2, city, state, country, entcountrycode, entstatecode, legacycrpcourseid, telephone, email, ratings, statedisplay, extra_column) FROM stdin;
+1	1	28749	56	GOLF SAN SEBASTIAN	23595	56	GOLF SAN SEBASTIAN	56	GOLF SAN SEBASTIAN	AGUSTIN GARCIA 9501	\N	BENAVIDEZ	AR-B	ARG	11	200052	48544	\N	\N	[]	AR-B	
+2	1	26803	109	GOLF CLUB ARGENTINO	22169	109	GOLF CLUB ARGENTINO	109	GOLF CLUB ARGENTINO	RUTA 8 KM. 41,500	\N	JOSE C. PAZ	AR-B	ARG	11	200052	47399	\N	\N	[]	AR-B	
+3	1	26821	113	HIGHLAND PARK COUNTRY CLUB	22175	113	HIGHLAND PARK COUNTRY CLUB	113	HIGHLAND PARK COUNTRY CLUB	AV LOS JAZMINES Y LAS CAMPANILLAS	\N	DEL VISO	AR-B	ARG	11	200052	47418	\N	\N	[]	AR-B	
+4	1	26832	120	LOS LAGARTOS COUNTRY CLUB (Agua - Larga)	22177	120	LOS LAGARTOS COUNTRY CLUB	120	LOS LAGARTOS COUNTRY CLUB - 120	LOS LAGARTOS COUNTRY CLUB (Agua - Larga)	RUTA PANAM. KM 45,500 ACC. NORTE	\N	PILAR	AR-B	ARG	11	200052	47428	\N	\N	[]	AR-B
+5	1	26853	122	RANELAGH GOLF CLUB	22181	122	RANELAGH GOLF CLUB	122	RANELAGH GOLF CLUB	AV. ESTE 901 Y CALLE 359	\N	RANELAGH	AR-B	ARG	11	200052	47451	\N	\N	[]	AR-B	
+6	1	26816	127	TORTUGAS COUNTRY CLUB	22171	127	TORTUGAS COUNTRY CLUB	127	TORTUGAS COUNTRY CLUB	AU PANAM. KM 37,500 ACC. A PILAR	\N	TORTUGUITAS	AR-B	ARG	11	200052	47412	\N	\N	[]	AR-B	
+7	1	29047	132	CLUB C. DE G. LAS PRADERAS DE LUJAN (Betula - Lujan)	23719	132	CLUB C. DE G. LAS PRADERAS DE LUJAN	132	CLUB C. DE G. LAS PRADERAS DE LUJAN - 132	CLUB C. DE G. LAS PRADERAS DE LUJAN (Betula - Lujan)	RUTA 192 KM. 6,500	\N	LUJAN	AR-B	ARG	11	200052	48857	\N	\N	[]	AR-B
+8	1	29052	132	CLUB C. DE G. LAS PRADERAS DE LUJAN (Cañada - Betulas)	23719	132	CLUB C. DE G. LAS PRADERAS DE LUJAN	132	CLUB C. DE G. LAS PRADERAS DE LUJAN - 132	CLUB C. DE G. LAS PRADERAS DE LUJAN (Cañada - Betulas)	RUTA 192 KM. 6,500	\N	LUJAN	AR-B	ARG	11	200052	48862	\N	\N	[]	AR-B
+9	1	33846	135	CLUB NEWMAN	22204	135	CLUB NEWMAN	135	CLUB NEWMAN	AV DE LOS CONSTITUYENTES 7245	\N	BENAVIDEZ	AR-B	ARG	11	200052	\N	\N	\N	[]	AR-B	
+10	1	28287	136	LARENA COUNTRY CLUB	23378	136	LARENA COUNTRY CLUB	136	LARENA COUNTRY CLUB	RUTA PROV. 6 KM 176	\N	PILAR	AR-B	ARG	11	200052	47965	\N	\N	[]	AR-B	
+11	1	28759	158	CAMPO DE GOLF LA ORQUIDEA	23602	158	CAMPO DE GOLF LA ORQUIDEA	158	CAMPO DE GOLF LA ORQUIDEA	600	M. DE RUTA 6 CNO.CAP. DEL SENOR	\N	LOS CARDALES	AR-B	ARG	11	200052	48554	\N	\N	[]	AR-B
+12	1	29211	180	LA COLINA GOLF CLUB	23847	180	LA COLINA GOLF CLUB	180	LA COLINA GOLF CLUB	RUTA 6 RIO LUAN OPEN DOOR	\N	LUJAN	AR-B	ARG	11	200052	49019	\N	\N	[]	AR-B	
+13	1	29156	197	EVERLINKS CLUB DE GOLF	23815	197	EVERLINKS CLUB DE GOLF	197	EVERLINKS CLUB DE GOLF	BESCHEDT 4200	\N	LUJAN	AR-B	ARG	11	200052	48965	\N	\N	[]	AR-B	
 \.
 
 
@@ -529,9 +805,9 @@ COPY public.course_holes (id, course_id, hole_number, par, stroke_index, created
 --
 
 COPY public.courses (id, name, country, city_province, website, created_at, created_by, is_verified) FROM stdin;
-1	Augusta National Golf Club	US	Augusta, Georgia	https://www.augustanational.com	2025-04-21 04:58:29.615134+00	\N	f
-2	St Andrews Links (Old Course)	GB	St Andrews, Fife	https://www.standrews.com	2025-04-21 04:58:29.615134+00	\N	f
-3	Club de Golf Los Cedros	MX	Monterrey, Nuevo León	https://www.loscedros.mx	2025-04-21 04:58:29.615134+00	\N	f
+1	Augusta National Golf Club	US	Augusta, Georgia	https://www.augustanational.com	2025-04-21 05:03:55.07085+00	\N	f
+2	St Andrews Links (Old Course)	GB	St Andrews, Fife	https://www.standrews.com	2025-04-21 05:03:55.07085+00	\N	f
+3	Club de Golf Los Cedros	MX	Monterrey, Nuevo León	https://www.loscedros.mx	2025-04-21 05:03:55.07085+00	\N	f
 \.
 
 
@@ -627,22 +903,77 @@ COPY public.password_reset_tokens (id, user_id, token, expires_at, created_at, u
 
 
 --
+-- Data for Name: player_cards; Type: TABLE DATA; Schema: public; Owner: admin
+--
+
+COPY public.player_cards (id, player_id, date, course_id, clima, day, category, differential, post, judges, hcpi, hcp, ida, vta, gross, net, tarj, bir, par, bog, bg2, bg3g, plus_bg3, putts) FROM stdin;
+2	vns	2025-02-23	29156	\N	7	Unica	74.1	\N	\N	20.7	23.0	48	50	98	75	OK	\N	1	12	4	1	\N	\N
+3	vns	2024-11-24	28759	\N	7	Unica	73.2	\N	18 (17/1)	21.0	24.0	47	0	0	0	DES	1	\N	2	3	2	\N	\N
+4	vns	2024-10-30	26816	\N	3	Unica	70.8	\N	\N	20.9	21.0	51	49	100	79	OK	1	1	7	5	4	\N	\N
+5	vns	2024-10-17	26832	\N	4	-8.0-54.0	72.2	\N	\N	20.9	20.0	49	50	99	79	OK	\N	5	6	4	2	1	\N
+6	vns	2024-07-12	26853	\N	5	Unica	73.1	20	\N	20.4	22.0	54	57	111	89	OK	\N	2	6	5	2	3	\N
+7	vns	2024-06-12	26853	\N	3	Unica	73.1	5	\N	20.3	22.0	54	52	106	84	OK	\N	\N	7	8	3	\N	\N
+8	vns	2024-06-02	29211	\N	7	Unica	73.5	\N	\N	20.3	20.3	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+9	vns	2024-03-17	29156	\N	7	Unica	74.1	\N	\N	20.4	23.0	46	53	99	76	OK	\N	3	8	6	\N	1	\N
+10	vns	2023-11-12	29211	\N	7	Unica	73.5	\N	\N	20.4	20.4	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+11	vns	2023-08-27	28749	\N	7	Unica	70.7	34	\N	20.3	19.0	54	46	100	81	OK	\N	5	5	3	3	2	\N
+12	vns	2023-07-02	28287	\N	7	Unificada	73.9	4	\N	20.3	25.0	52	50	102	77	OK	\N	3	4	8	2	1	\N
+13	vns	2023-05-04	26803	\N	4	Unica	73.4	6	\N	20.3	22.0	51	48	99	77	OK	\N	2	10	3	3	\N	\N
+14	vns	2023-04-16	29211	\N	7	Unificada	73.5	\N	\N	20.1	20.1	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+15	vns	2023-03-19	29211	\N	7	Unificada	73.5	\N	\N	20.2	20.2	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+16	vns	2022-11-13	29211	\N	7	Unica	73.5	\N	\N	20.2	20.2	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+17	vns	2022-10-23	29211	\N	7	17.7-54.0	73.5	4	\N	21.4	26.0	47	48	95	69	OK	\N	3	8	6	1	\N	\N
+18	vns	2022-10-20	26821	\N	4	Unica	73.4	5	\N	21.4	25.0	50	46	96	71	OK	\N	4	7	5	1	1	\N
+19	vns	2022-09-08	33846	\N	4	Unificada	72.7	8	\N	21.4	23.0	55	46	101	78	OK	\N	3	6	7	1	1	\N
+20	vns	2022-08-28	29047	\N	7	Unica	72.2	\N	\N	20.4	23.0	55	50	105	82	OK	\N	2	7	3	4	2	\N
+21	vns	2022-08-18	26816	\N	4	Unica	71.3	2	\N	20.9	22.0	52	48	100	78	OK	\N	\N	11	5	1	1	\N
+22	vns	2022-08-03	28759	\N	3	Unica	73.2	\N	5 (4/1)	19.9	23.0	50	55	105	82	OK	1	2	5	3	6	1	\N
+25	vns	2022-03-20	26821	\N	7	Unica	73.4	\N	\N	27.0	31.0	50	47	97	66	OK	\N	\N	\N	\N	2	16	\N
+26	vns	2021-12-12	26821	\N	7	Unica	73.4	\N	\N	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+27	vns	2021-12-01	28759	\N	3	Unica	73.2	\N	14 (13/1)	27.0	31.0	53	52	105	74	OK	\N	\N	8	8	\N	2	\N
+28	vns	2021-05-09	29052	\N	7	Unica	71.9	\N	\N	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+29	vns	2021-04-11	29211	\N	7	17.0-54.0	73.5	\N	\N	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+30	vns	2021-03-21	26821	\N	7	Unica	73.4	\N	\N	27.0	25.0	51	46	97	72	OK	1	2	6	8	\N	1	\N
+31	vns	2016-10-30	28759	\N	7	Unica	74.0	\N	59 (52/7)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+32	vns	2016-09-11	28759	\N	7	Unica	74.0	\N	38 (36/2)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+33	vns	2016-08-15	28759	\N	1	Unica	74.0	\N	74 (60/14)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+34	vns	2016-04-24	28759	\N	7	Unica	74.4	\N	104 (99/5)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+35	vns	2016-03-26	28759	\N	6	Unica	74.4	\N	71 (63/8)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+36	vns	2016-02-20	28759	\N	6	Unica	74.4	\N	128 (121/7)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+37	vns	2016-02-09	28759	\N	2	Unica	74.4	\N	99 (88/11)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+38	vns	2016-02-07	28759	\N	7	Unica	74.4	\N	46 (39/7)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+39	vns	2016-01-31	28759	\N	7	Unica	74.4	\N	65 (59/6)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+40	vns	2016-01-27	28759	\N	3	Unificada	74.4	\N	31 (24/7)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+41	vns	2016-01-03	28759	\N	7	Unica	74.4	\N	40 (36/4)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+42	vns	2015-12-07	28759	\N	1	Unica	74.4	\N	112 (99/13)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+43	vns	2015-07-26	28759	\N	7	Unica	74.4	\N	51 (48/3)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+44	vns	2015-05-03	28759	\N	7	Unica	74.0	\N	58 (52/6)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+45	vns	2015-04-12	28759	\N	7	Unica	74.0	\N	65 (61/4)	27.0	27.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+46	vns	2015-03-17	28759	\N	2	Unificada	74.0	\N	0 (0/0)	28.0	28.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+47	vns	2015-03-14	28759	\N	6	Unica	74.0	\N	68 (66/2)	28.0	28.0	50	51	101	73	OK	\N	2	11	1	2	2	\N
+48	vns	2014-12-06	28759	\N	6	Unica	74.0	\N	106 (94/12)	28.0	28.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+49	vns	2014-02-23	28759	\N	7	19-36	74.4	\N	54 (47/7)	28.0	28.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+50	vns	2013-12-29	28759	\N	7	Unificada	74.4	\N	42 (38/4)	28.0	28.0	0	0	0	0	NPT	\N	\N	\N	\N	\N	\N	\N
+\.
+
+
+--
 -- Data for Name: tee_boxes; Type: TABLE DATA; Schema: public; Owner: admin
 --
 
 COPY public.tee_boxes (id, course_id, name, gender, course_rating, slope_rating, yardage, created_at) FROM stdin;
-1	1	Championship	male	78.1	137	7475	2025-04-21 04:58:29.621981+00
-2	1	Tournament	male	76.2	132	7270	2025-04-21 04:58:29.621981+00
-3	1	Member	male	73.5	128	6835	2025-04-21 04:58:29.621981+00
-4	1	Ladies	female	76.2	135	6365	2025-04-21 04:58:29.621981+00
-5	2	Championship	male	73.1	132	7305	2025-04-21 04:58:29.635539+00
-6	2	White	male	72.3	127	6721	2025-04-21 04:58:29.635539+00
-7	2	Green	other	70.8	125	6416	2025-04-21 04:58:29.635539+00
-8	2	Red	female	74.2	129	6095	2025-04-21 04:58:29.635539+00
-9	3	Azul	male	72.8	133	7105	2025-04-21 04:58:29.640152+00
-10	3	Blanco	male	71.4	129	6825	2025-04-21 04:58:29.640152+00
-11	3	Amarillo	other	69.5	122	6355	2025-04-21 04:58:29.640152+00
-12	3	Rojo	female	72.7	130	5901	2025-04-21 04:58:29.640152+00
+1	1	Championship	male	78.1	137	7475	2025-04-21 05:03:55.076351+00
+2	1	Tournament	male	76.2	132	7270	2025-04-21 05:03:55.076351+00
+3	1	Member	male	73.5	128	6835	2025-04-21 05:03:55.076351+00
+4	1	Ladies	female	76.2	135	6365	2025-04-21 05:03:55.076351+00
+5	2	Championship	male	73.1	132	7305	2025-04-21 05:03:55.093674+00
+6	2	White	male	72.3	127	6721	2025-04-21 05:03:55.093674+00
+7	2	Green	other	70.8	125	6416	2025-04-21 05:03:55.093674+00
+8	2	Red	female	74.2	129	6095	2025-04-21 05:03:55.093674+00
+9	3	Azul	male	72.8	133	7105	2025-04-21 05:03:55.098635+00
+10	3	Blanco	male	71.4	129	6825	2025-04-21 05:03:55.098635+00
+11	3	Amarillo	other	69.5	122	6355	2025-04-21 05:03:55.098635+00
+12	3	Rojo	female	72.7	130	5901	2025-04-21 05:03:55.098635+00
 \.
 
 
@@ -659,6 +990,7 @@ COPY public.todos (id, user_id, text, completed, category, created_at, updated_a
 --
 
 COPY public.users (id, username, email, password, first_name, family_name, gender, matricula, birthday, category, handicap, is_admin, created_at) FROM stdin;
+1	adminuser	admin@example.com	$2b$10$ek0C/j15HMAb2mOIBqasne0aeNlZIOVq8ubI10pXR4I8fIizezoai	\N	\N	\N	\N	\N	\N	\N	t	2025-04-21 05:03:55.31854
 \.
 
 
@@ -670,10 +1002,24 @@ SELECT pg_catalog.setval('public.course_attachments_id_seq', 1, false);
 
 
 --
+-- Name: course_data_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.course_data_id_seq', 1, false);
+
+
+--
 -- Name: course_holes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
 SELECT pg_catalog.setval('public.course_holes_id_seq', 54, true);
+
+
+--
+-- Name: course_names_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.course_names_id_seq', 1, false);
 
 
 --
@@ -698,6 +1044,13 @@ SELECT pg_catalog.setval('public.password_reset_tokens_id_seq', 1, false);
 
 
 --
+-- Name: player_cards_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
+--
+
+SELECT pg_catalog.setval('public.player_cards_id_seq', 1, false);
+
+
+--
 -- Name: tee_boxes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
@@ -715,7 +1068,7 @@ SELECT pg_catalog.setval('public.todos_id_seq', 1, false);
 -- Name: users_id_seq; Type: SEQUENCE SET; Schema: public; Owner: admin
 --
 
-SELECT pg_catalog.setval('public.users_id_seq', 1, false);
+SELECT pg_catalog.setval('public.users_id_seq', 1, true);
 
 
 --
@@ -724,6 +1077,14 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, false);
 
 ALTER TABLE ONLY public.course_attachments
     ADD CONSTRAINT course_attachments_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: course_data course_data_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.course_data
+    ADD CONSTRAINT course_data_pkey PRIMARY KEY (id);
 
 
 --
@@ -740,6 +1101,22 @@ ALTER TABLE ONLY public.course_holes
 
 ALTER TABLE ONLY public.course_holes
     ADD CONSTRAINT course_holes_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: course_names course_names_courseid_key; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.course_names
+    ADD CONSTRAINT course_names_courseid_key UNIQUE (courseid);
+
+
+--
+-- Name: course_names course_names_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.course_names
+    ADD CONSTRAINT course_names_pkey PRIMARY KEY (id);
 
 
 --
@@ -772,6 +1149,14 @@ ALTER TABLE ONLY public.golf_quotes
 
 ALTER TABLE ONLY public.password_reset_tokens
     ADD CONSTRAINT password_reset_tokens_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: player_cards player_cards_pkey; Type: CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.player_cards
+    ADD CONSTRAINT player_cards_pkey PRIMARY KEY (id);
 
 
 --
@@ -936,6 +1321,14 @@ ALTER TABLE ONLY public.course_attachments
 
 
 --
+-- Name: course_data course_data_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.course_data
+    ADD CONSTRAINT course_data_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.course_names(courseid) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
 -- Name: course_holes course_holes_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
 --
 
@@ -957,6 +1350,14 @@ ALTER TABLE ONLY public.courses
 
 ALTER TABLE ONLY public.password_reset_tokens
     ADD CONSTRAINT password_reset_tokens_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
+
+
+--
+-- Name: player_cards player_cards_course_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: admin
+--
+
+ALTER TABLE ONLY public.player_cards
+    ADD CONSTRAINT player_cards_course_id_fkey FOREIGN KEY (course_id) REFERENCES public.course_names(courseid) ON UPDATE CASCADE ON DELETE RESTRICT;
 
 
 --

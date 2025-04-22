@@ -18,13 +18,12 @@ const geistMono = Geist_Mono({
   variable: '--font-geist-mono',
 })
 
-function MyApp({ Component, pageProps }: AppProps) {
-  // console.log('MyApp pageProps:', pageProps); // Log pageProps - Removed
-
+// In _app.tsx
+function MyApp({ Component, pageProps }) {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar />
-      <main className={`${geistSans.variable} ${geistMono.variable}`}>
+      <main className="flex-grow">
         <Component {...pageProps} />
       </main>
       <Footer />

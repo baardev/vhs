@@ -35,6 +35,8 @@
 #   VHS Development Team
 #
 
+
+
 # Parse command line arguments
 RESTORE=false
 
@@ -64,6 +66,7 @@ rebuild_database() {
     /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/020_create_quotes_table.sql
     /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/030_course_tables.sql
     /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ~/sites/vhs/backend/sql/040_todo_table.sql
+    /home/jw/sites/vhs/backend/sql/make_hc_calc_tables.sh
 
     # Check if backend is running before proceeding
     echo "Checking if backend is running at http://localhost:4000..."
