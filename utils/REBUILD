@@ -59,7 +59,7 @@ LIVE=false
 # COMPOSE_BAKE=true
 
 # Use standard environment names
-FILEARG="-f docker-compose.yml"
+FILEARG="-f ${ROOT_DIR}/docker-compose.yml"
 export NODE_ENV=production
 
 # Function to wipe all containers and volumes
