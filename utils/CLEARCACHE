@@ -1,7 +1,27 @@
 #!/bin/bash
 
+# =============================================================================
+# CLEARCACHE - VHS Cache Clearing Utility
+# =============================================================================
+# 
+# DESCRIPTION:
+#   This script clears cache files for the VHS application's frontend 
+#   and/or backend components to resolve cache-related issues.
+#
+# USAGE:
+#   utils/CLEARCACHE [--all|--frontend|--backend]
+#
+# DEPENDENCIES:
+#   - npm
+#   - docker-compose
+#
+# =============================================================================
+
 # Exit on any error and print commands when they run (useful for debugging)
 set -e
+
+# Set project root directory
+PROJECT_ROOT="$HOME/sites/vhs"
 
 # ------------------------------
 # Helper functions
@@ -14,33 +34,64 @@ usage() {
   exit 1
 }
 
+log_success() {
+  echo -e "\033[0;32m$1\033[0m"
+}
+
+log_info() {
+  echo -e "\033[0;36m$1\033[0m"
+}
+
+log_error() {
+  echo -e "\033[0;31mERROR: $1\033[0m" >&2
+}
+
 clear_frontend() {
-  echo "\n=== Clearing FRONTEND caches ==="
-  cd ~/sites/vhs/frontend
+  log_info "\n=== Clearing FRONTEND caches ==="
+  cd "${PROJECT_ROOT}/frontend" || { log_error "Cannot cd to frontend directory"; return 1; }
 
   # npm cache
-  npm cache clean --force || true
+  log_info "Cleaning npm cache..."
+  npm cache clean --force || log_error "Failed to clean npm cache, continuing..."
 
   # Next.js build cache
-  rm -rf .next/* || true
+  log_info "Removing Next.js build files..."
+  rm -rf .next/* || log_error "Failed to remove Next.js build files, continuing..."
 
   # Remove vite/webpack cache inside container (ignore error if container not running)
-  docker compose -f ~/sites/vhs/docker-compose.yml exec frontend rm -rf node_modules/.cache || true
+  log_info "Clearing webpack/vite cache in container..."
+  docker compose -f "${PROJECT_ROOT}/docker-compose.yml" exec frontend rm -rf node_modules/.cache 2>/dev/null || 
+    log_error "Failed to clear container cache (container may not be running)"
 
   # Ensure correct ownership
-  sudo chown -R 1000:1000 ~/sites/vhs/frontend/.next || true
+  log_info "Setting correct file ownership..."
+  sudo chown -R 1000:1000 .next 2>/dev/null || 
+    log_error "Failed to set ownership on .next directory"
 
-  echo "Frontend cache cleared."
+  log_success "Frontend cache cleared."
+  return 0
 }
 
 clear_backend() {
-  echo "\n=== Clearing BACKEND caches ==="
-  cd ~/sites/vhs/backend
+  log_info "\n=== Clearing BACKEND caches ==="
+  cd "${PROJECT_ROOT}/backend" || { log_error "Cannot cd to backend directory"; return 1; }
 
   # npm cache
-  npm cache clean --force || true
+  log_info "Cleaning npm cache..."
+  npm cache clean --force || log_error "Failed to clean npm cache, continuing..."
 
-  echo "Backend cache cleared."
+  # Remove dist directory if it exists
+  log_info "Removing backend build artifacts..."
+  rm -rf dist/* 2>/dev/null || log_error "No dist directory or failed to remove"
+  
+  # Clear node_modules/.cache if it exists
+  if [ -d "node_modules/.cache" ]; then
+    log_info "Clearing node_modules cache..."
+    rm -rf node_modules/.cache/* || log_error "Failed to clear node_modules cache"
+  fi
+
+  log_success "Backend cache cleared."
+  return 0
 }
 
 # ------------------------------
@@ -64,16 +115,22 @@ fi
 # ------------------------------
 # Execute based on chosen mode
 # ------------------------------
+EXIT_CODE=0
+
 if [[ "$MODE" == "all" || "$MODE" == "frontend" ]]; then
-  clear_frontend
+  clear_frontend || EXIT_CODE=1
 fi
 
 if [[ "$MODE" == "all" || "$MODE" == "backend" ]]; then
-  clear_backend
+  clear_backend || EXIT_CODE=1
 fi
 
-#sudo chmod -R jw:jw  ~/sites/vhs/backend
-# rm ./backend/node_modules/.package-lock.json
-# rm ./frontend/package-lock.json
-# rm ./frontend/node_modules/.package-lock.json
+if [ $EXIT_CODE -eq 0 ]; then
+  log_success "\nCache clearing completed successfully."
+else
+  log_error "\nCache clearing encountered some issues, but completed."
+  # Still exit with success code (0) as requested
+fi
+
+exit 0
 

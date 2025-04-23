@@ -1,5 +1,5 @@
 #!/bin/bash
-cd ~/sites/vhs
+cd ${ROOT_DIR}
 clear
 
 SERVICES=""
@@ -26,9 +26,9 @@ fi
 
 # Execute docker compose logs command
 if [[ -n "$SERVICES" ]]; then
-  docker compose -f ~/sites/vhs/docker-compose.yml logs -f $SERVICES
+  docker compose -f ${ROOT_DIR}/docker-compose.yml logs -f $SERVICES
 else
-  docker compose -f ~/sites/vhs/docker-compose.yml logs -f
+  docker compose -f ${ROOT_DIR}/docker-compose.yml logs -f
 fi 
 
 

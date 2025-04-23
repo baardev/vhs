@@ -9,14 +9,14 @@
 #   with options for wiping containers, volumes, and restoring from backups.
 #
 # USAGE:
-#   utils/REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe] [--restore]
+#   utils/REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]
 #
 # OPTIONS:
 #   --all               Full rebuild of all containers
 #   --frontend          Rebuild and restart only the frontend container
 #   --backend           Rebuild and restart only the backend container
 #   --nginx             Rebuild and restart only the nginx container
-#   --postgres          Rebuild and restart only the PostgreSQL database
+#   --db                Rebuild and restart only the PostgreSQL database
 #   --wipe              Wipe all containers and volumes without rebuilding
 #   --restore           Restore database from the most recent backup
 #
@@ -35,7 +35,7 @@
 # EXAMPLES:
 #   utils/REBUILD --all                # Full rebuild of all containers
 #   utils/REBUILD --frontend           # Rebuild only the frontend container
-#   utils/REBUILD --postgres --restore # Rebuild PostgreSQL and restore from backup
+#   utils/REBUILD --db --restore # Rebuild dbQL and restore from backup
 #   utils/REBUILD --wipe               # Just clean containers without rebuilding
 #
 # AUTHOR:
@@ -45,14 +45,14 @@
 echo "REBUILD $1"
 echo "----------------------------------------------------"
 
-cd ~/sites/vhs
+cd ${ROOT_DIR}
 
 # Parse command line arguments
 ALL=false
 REBUILD_FRONTEND=false
 REBUILD_BACKEND=false
 REBUILD_NGINX=false
-REBUILD_POSTGRES=false
+REBUILD_DB=false
 REBUILD_WIPE=false
 REBUILD_RESTORE=false
 LIVE=false
@@ -68,7 +68,7 @@ wipe_all() {
     echo -e "\033[0;32mWiping all containers and volumes...\033[0m"
     echo "--------------------------------------------------------"
     
-    sudo chown -R 1000:1000 /home/jw/sites/vhs/frontend/.next
+    sudo chown -R 1000:1000 ${ROOT_DIR}/frontend/.next
     docker system prune -fa
     docker volume prune -fa
     
@@ -90,6 +90,13 @@ wipe_all() {
 
 # Function to rebuild frontend
 rebuild_frontend() {
+
+    if [ ! -f "${ROOT_DIR}/frontend/package-lock.json" ]; then
+        cd ${ROOT_DIR}/frontend
+        npm install
+    fi
+
+    
     echo "--------------------------------------------------------"
     echo "Clearing frontend cache..."
     echo "--------------------------------------------------------"
@@ -104,6 +111,12 @@ rebuild_frontend() {
 
 # Function to rebuild backend
 rebuild_backend() {
+
+    if [ ! -f "${ROOT_DIR}/backend/package-lock.json" ]; then
+        cd ${ROOT_DIR}/backend
+        npm install
+
+    fi
     echo "--------------------------------------------------------"
     echo "Clearing backend cache..."
     echo "--------------------------------------------------------"
@@ -141,7 +154,7 @@ rebuild_backend() {
     fi
     
     # Now rebuild tables using the container name
-    # utils/REBUILD_TABLES ${RESTORE}
+    utils/REBUILD_TABLES ${RESTORE}
 }
 
 # Function to rebuild nginx
@@ -162,8 +175,8 @@ rebuild_nginx() {
     echo "Nginx rebuilt and restarted."
 }
 
-# Function to rebuild postgres
-rebuild_postgres() {
+# Function to rebuild db
+rebuild_db() {
 
 # # Stop & remove the old container
 # docker compose stop db
@@ -204,8 +217,8 @@ rebuild_postgres() {
     /usr/bin/docker compose ${FILEARG} pull db
     /usr/bin/docker compose ${FILEARG} up -d --force-recreate db
     
-    echo "Waiting for database to initialize..."
-    sleep 15
+    echo "Waiting 5 seconds for database to initialize..."
+    sleep 5
     
     # Get the actual database container name
     DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
@@ -224,16 +237,14 @@ rebuild_postgres() {
         echo "Database container started successfully: $DB_CONTAINER"
     fi
     
-    echo "Rebuilding database tables..."
-    if [ -n "$RESTORE" ] && [ "$RESTORE" = "--restore" ]; then
+    echo "Creating fresh database schema and initial data..."
+    # /usr/bin/docker compose ${FILEARG} up -d backend
+    utils/REBUILD_TABLES
+
+    if [ "$RESTORE" = "--restore" ]; then
         echo "Restoring database from backup..."
         utils/IMPEX --import
-    else
-        echo "Creating fresh database schema..."
-        /usr/bin/docker compose ${FILEARG} up -d backend
-        utils/REBUILD_TABLES
     fi
-    
     echo "PostgreSQL database completely wiped and rebuilt successfully."
 }
 
@@ -255,8 +266,8 @@ while [[ $# -gt 0 ]]; do
             REBUILD_NGINX=true
             shift
             ;;
-        --postgres)
-            REBUILD_POSTGRES=true
+        --db)
+            REBUILD_DB=true
             shift
             ;;
         --wipe)
@@ -270,7 +281,7 @@ while [[ $# -gt 0 ]]; do
         *)
             # Unknown option
             echo "Unknown option: $1"
-            echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe] [--restore]"
+            echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]"
             exit 1
             ;;
     esac
@@ -298,8 +309,8 @@ if $REBUILD_NGINX; then
     exit 0
 fi
 
-if $REBUILD_POSTGRES; then
-    rebuild_postgres
+if $REBUILD_DB; then
+    rebuild_db
     exit 0
 fi
 
@@ -319,9 +330,9 @@ if $ALL; then
     echo -e "\033[0;32mConfiguring buildx...\033[0m"
     /usr/bin/docker buildx create --use
     
-    # Rebuild postgres first to ensure database is ready for other services
-    echo -e "\033[0;32mRebuilding PostgreSQL...\033[0m"
-    rebuild_postgres
+    # Rebuild db first to ensure database is ready for other services
+    echo -e "\033[0;32mRebuilding dbQL...\033[0m"
+    rebuild_db
     
     # Now rebuild the other services
     echo -e "\033[0;32mRebuilding Backend...\033[0m"
@@ -341,9 +352,9 @@ else
     echo "  --frontend          Rebuild and restart only the frontend container"
     echo "  --backend           Rebuild and restart only the backend container"
     echo "  --nginx             Rebuild and restart only the nginx container"
-    echo "  --postgres          Rebuild and restart only the PostgreSQL database"
+    echo "  --db          Rebuild and restart only the dbQL database"
     echo "  --wipe              Wipe all containers and volumes without rebuilding"
     echo ""
-    echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--postgres] [--wipe] [--restore]"
+    echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]"
     exit 1
 fi

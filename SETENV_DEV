@@ -1,6 +1,5 @@
 #!/bin/bash
 export DISPLAY=:0
-export PATH=/home/jw/sites/vhs/utils:$PATH
 export DB_USER=admin
 export DB_PASSWORD=$(cat .adminpw)
 export DB_NAME=vhsdb
@@ -14,7 +13,8 @@ export PGHOST=db
 export PGPORT=5432
 export NODE_ENV=
 export COMPOSE_BAKE=true
-
+export ROOT_DIR=/home/jw/sites/vhs
+export PATH=${ROOT_DIR}/utils:$PATH
 
 # Check system information and set conda environment accordingly
 if uname -a | grep -q ":jwbox"; then

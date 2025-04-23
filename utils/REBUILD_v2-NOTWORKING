@@ -1,0 +1,432 @@
+#!/bin/bash
+#
+# REBUILD - Container Management and Deployment Utility
+# ====================================================
+#
+# DESCRIPTION:
+#   This script manages the rebuilding of Docker containers for the VHS
+#   application. It can rebuild individual services or the entire stack,
+#   with options for wiping containers, volumes, and restoring from backups.
+#
+# USAGE:
+#   utils/REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]
+#
+# OPTIONS:
+#   --all               Full rebuild of all containers
+#   --frontend          Rebuild and restart only the frontend container
+#   --backend           Rebuild and restart only the backend container
+#   --nginx             Rebuild and restart only the nginx container
+#   --db                Rebuild and restart only the PostgreSQL database
+#   --wipe              Wipe all containers and volumes without rebuilding
+#   --restore           Restore database from the most recent backup
+#
+# DEPENDENCIES:
+#   - Docker and docker-compose
+#   - CLEARCACHE utility script
+#   - REBUILD_TABLES utility script
+#   - IMPEX utility script (for restore functionality)
+#
+# NOTES:
+#   - Without options, the script will display usage information
+#   - The --all option rebuilds all containers in the correct order
+#   - Each service option can be used independently to rebuild just that service
+#   - The --restore option affects how the database is initialized
+#
+# EXAMPLES:
+#   utils/REBUILD --all                # Full rebuild of all containers
+#   utils/REBUILD --frontend           # Rebuild only the frontend container
+#   utils/REBUILD --db --restore       # Rebuild database and restore from backup
+#   utils/REBUILD --wipe               # Just clean containers without rebuilding
+#
+# AUTHOR:
+#   VHS Development Team
+#
+
+# Exit on error and unset variables
+set -euo pipefail
+
+# Create a trap to show where script is exiting from
+trap 'echo "Script exited at line $LINENO"' ERR
+
+# Display banner for current operation
+log_header() {
+    echo "--------------------------------------------------------"
+    echo -e "\033[0;32m$1\033[0m"
+    echo "--------------------------------------------------------"
+}
+
+# Log a normal message
+log_info() {
+    echo -e "$1"
+}
+
+# Log an error message
+log_error() {
+    echo -e "\033[0;31mERROR: $1\033[0m"
+}
+
+# Display usage information
+show_usage() {
+    cat << EOF
+Usage: utils/REBUILD [OPTIONS]
+
+Options:
+  --all               Full rebuild of all containers
+  --frontend          Rebuild and restart only the frontend container
+  --backend           Rebuild and restart only the backend container
+  --nginx             Rebuild and restart only the nginx container
+  --db                Rebuild and restart only the PostgreSQL database
+  --wipe              Wipe all containers and volumes without rebuilding
+  --restore           Restore database from the most recent backup
+
+Examples:
+  utils/REBUILD --all                # Full rebuild of all containers
+  utils/REBUILD --frontend           # Rebuild only the frontend container
+  utils/REBUILD --db --restore       # Rebuild database and restore from backup
+EOF
+    exit 1
+}
+
+# Move to project root
+cd "${ROOT_DIR}" || { log_error "Cannot change to project root ${ROOT_DIR}"; exit 1; }
+
+# Print header with parameters
+log_header "REBUILD $*"
+
+# Parse command line arguments
+ALL=false
+REBUILD_FRONTEND=false
+REBUILD_BACKEND=false
+REBUILD_NGINX=false
+REBUILD_DB=false
+REBUILD_WIPE=false
+REBUILD_RESTORE=false
+
+# Use standard environment names
+FILEARG="-f docker-compose.yml"
+export NODE_ENV=production
+
+# Function to check if npm dependencies are installed
+ensure_dependencies() {
+    local dir=$1
+    local package_name=$2
+    
+    if [ ! -f "${ROOT_DIR}/${dir}/package-lock.json" ]; then
+        log_info "Installing ${package_name} dependencies..."
+        (cd "${ROOT_DIR}/${dir}" && npm install)
+    fi
+}
+
+# Function to wipe all containers and volumes
+wipe_all() {
+    log_header "Wiping all containers and volumes..."
+    
+    # Fix permissions
+    sudo chown -R 1000:1000 "${ROOT_DIR}/frontend/.next" || true
+    echo "---------------------------------------------------------------here1"    
+    
+    # Clean docker resources
+    docker system prune -fa
+    docker volume prune -fa
+    echo "---------------------------------------------------------------here2"    
+    log_info "Clearing all caches..."
+    CLEARCACHE --all
+    echo "---------------------------------------------------------------here3"    
+    # Function to stop, remove and delete containers with a specific pattern
+    cleanup_containers() {
+        local pattern=$1
+        log_info "Cleaning up [$pattern] containers..."
+        echo "---------------------------------------------------------------here4"    
+        
+        # Check if there are any containers matching the pattern before trying to stop them
+        if docker ps -a --format "{{.Names}}" | grep -q "$pattern"; then
+            docker ps -a --format "{{.Names}}" | grep "$pattern" | xargs docker stop || true
+            docker ps -a --format "{{.Names}}" | grep "$pattern" | xargs docker rm || true
+        else
+            log_info "No '$pattern' containers found to stop/remove"
+            echo "---------------------------------------------------------------here5"    
+            echo "---------------------------------------------------------------here6"    
+        fi
+        
+        # Check if there are any images matching the pattern before trying to remove them
+        if docker images --format "{{.Repository}}:{{.Tag}}" | grep -q "$pattern"; then
+            docker images --format "{{.Repository}}:{{.Tag}}" | grep "$pattern" | xargs docker rmi || true
+            echo "---------------------------------------------------------------here7"    
+        else
+            log_info "No '$pattern' images found to remove"
+            echo "---------------------------------------------------------------here7"    
+        fi
+    }
+
+    # Add a small pause for debugging
+    log_info "About to clean up containers..."
+    sleep 2
+
+    # Clean up different types of containers
+    cleanup_containers "dev" || true
+    cleanup_containers "buildx" || true
+    
+    log_info "All containers and volumes wiped successfully"
+}
+
+# Function to rebuild frontend
+rebuild_frontend() {
+    log_header "Rebuilding frontend container..."
+    
+    # Ensure dependencies are installed
+    ensure_dependencies "frontend" "frontend"
+    
+    log_info "Clearing frontend cache..."
+    CLEARCACHE --frontend
+
+    log_info "Rebuilding and restarting frontend container..."
+    docker compose ${FILEARG} stop frontend
+    docker compose ${FILEARG} build --build-arg NODE_ENV=${NODE_ENV} frontend
+    docker compose ${FILEARG} up -d frontend
+    
+    log_info "Frontend container rebuilt successfully."
+}
+
+# Function to rebuild backend
+rebuild_backend() {
+    log_header "Rebuilding backend container..."
+    
+    # Ensure dependencies are installed
+    ensure_dependencies "backend" "backend"
+    
+    log_info "Clearing backend cache..."
+    CLEARCACHE --backend
+
+    log_info "Removing existing backend containers and images..."
+    docker compose ${FILEARG} stop backend
+    docker ps -a --format "{{.Names}}" | grep backend | xargs -r docker rm -f
+    docker images --format "{{.Repository}}:{{.Tag}}" | grep backend | xargs -r docker rmi -f
+
+    # Make sure DB is running before rebuilding backend
+    log_info "Ensuring database container is running..."
+    docker compose ${FILEARG} up -d db
+    
+    # Add a wait for DB to be ready
+    log_info "Waiting for database to be ready..."
+    sleep 10  # Give DB time to initialize
+    
+    log_info "Rebuilding backend from scratch..."
+    docker compose ${FILEARG} build --no-cache --build-arg NODE_ENV=${NODE_ENV} backend
+    docker compose ${FILEARG} up -d backend
+    
+    log_info "Backend server completely rebuilt successfully."
+    
+    # Wait a bit longer for backend to connect to database
+    log_info "Waiting for services to stabilize..."
+    sleep 5
+    
+    # Get the actual database container name
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+    if [ -z "$DB_CONTAINER" ]; then
+        log_error "Database container not found"
+        docker ps
+        exit 1
+    fi
+}
+
+# Function to rebuild nginx
+rebuild_nginx() {
+    log_header "Rebuilding nginx container..."
+
+    docker compose ${FILEARG} stop nginx
+    docker compose ${FILEARG} rm -f nginx
+
+    # Build JUST the nginx image (no other targets)
+    docker compose ${FILEARG} build --no-cache --pull nginx
+
+    # Start nginx without starting any dependency chain
+    docker compose ${FILEARG} up -d --no-deps nginx
+
+    log_info "Nginx rebuilt and restarted."
+}
+
+# Function to rebuild db
+rebuild_db() {
+    log_header "Rebuilding PostgreSQL database..."
+    echo "DB REBUILD - STEP 1: Starting database rebuild process"
+    
+    # Get the actual database container name for backup before wiping
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+    echo "DB REBUILD - STEP 2: Database container: ${DB_CONTAINER:-none}"
+    
+    if [ -n "$DB_CONTAINER" ]; then
+        # Backup existing database before wiping
+        log_info "Backing up existing database..."
+        # Make IMPEX call optional - continue even if it fails
+        utils/IMPEX --export || log_error "Failed to export database, continuing anyway..."
+        echo "DB REBUILD - STEP 3: Database backup attempted"
+    fi
+    
+    echo "DB REBUILD - STEP 4: Stopping database container"
+    # Stop and remove the container
+    docker compose ${FILEARG} stop db || log_error "Failed to stop db container, continuing..."
+    
+    echo "DB REBUILD - STEP 5: Removing container and volumes"
+    if docker ps -a --format "{{.Names}}" | grep -q "db"; then
+        docker ps -a --format "{{.Names}}" | grep db | xargs -r docker rm -f || log_error "Failed to remove container, continuing..."
+        # Remove database volume to ensure clean start
+        log_info "Removing database volume..."
+        docker volume ls -q | grep vhsdb_data | xargs -r docker volume rm || log_error "Failed to remove volume, continuing..."
+    fi
+
+    echo "DB REBUILD - STEP 6: Pruning volumes"
+    docker volume prune -f || log_error "Failed to prune volumes, continuing..."
+    
+    echo "DB REBUILD - STEP 7: Pulling and starting new database container"
+    log_info "Rebuilding PostgreSQL from scratch (using latest image)..."
+    docker compose ${FILEARG} pull db || log_error "Failed to pull db image, continuing..."
+    docker compose ${FILEARG} up -d --force-recreate db || log_error "Failed to start db container, continuing..."
+    
+    echo "DB REBUILD - STEP 8: Waiting for database to initialize"
+    log_info "Waiting for database to initialize..."
+    sleep 15  # Increased wait time for database to initialize
+    
+    echo "DB REBUILD - STEP 9: Checking if database container is running"
+    # Get the actual database container name and verify it's running
+    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
+    if [ -z "$DB_CONTAINER" ]; then
+        log_error "Failed to start the database container. See docker ps output below:"
+        docker ps
+        log_error "Continuing with rebuild process anyway..."
+    else
+        echo "DB REBUILD - STEP 10: Database container is running: ${DB_CONTAINER}"
+    fi
+    
+    echo "DB REBUILD - STEP 11: Running REBUILD_TABLES script"
+    log_info "Creating fresh database schema and initial data..."
+    # Make REBUILD_TABLES execution more robust
+    if [ -n "${RESTORE}" ]; then
+        echo "DB REBUILD - With restore option: ${RESTORE}"
+    else
+        echo "DB REBUILD - Without restore option"
+    fi
+    
+    # Call REBUILD_TABLES with the appropriate restore flag
+    # Make the call continue even if it fails
+    utils/REBUILD_TABLES ${RESTORE:-""} || log_error "REBUILD_TABLES encountered an error, continuing..."
+    
+    echo "DB REBUILD - STEP 12: Database rebuild process complete"
+    log_info "PostgreSQL database completely rebuilt successfully."
+}
+
+# Function to rebuild all components in the correct order
+rebuild_all() {
+    log_header "Performing complete rebuild of all components..."
+    
+    # First wipe everything
+    wipe_all
+    
+    # Configure buildx
+    log_info "Configuring buildx..."
+    docker buildx create --use || log_info "Buildx already configured"
+    
+    # Rebuild components in the correct sequence
+    log_info "Starting PostgreSQL database rebuild..."
+    rebuild_db
+    
+    log_info "Starting Backend rebuild..."
+    rebuild_backend
+    
+    log_info "Starting Frontend rebuild..."
+    rebuild_frontend
+    
+    log_info "Starting Nginx rebuild..."
+    rebuild_nginx
+    
+    log_header "All containers rebuilt successfully"
+    docker compose ${FILEARG} ps
+}
+
+# Parse command line arguments
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --all)
+            ALL=true
+            ;;
+        --frontend)
+            REBUILD_FRONTEND=true
+            ;;
+        --backend)
+            REBUILD_BACKEND=true
+            ;;
+        --nginx)
+            REBUILD_NGINX=true
+            ;;
+        --db)
+            REBUILD_DB=true
+            ;;
+        --wipe)
+            REBUILD_WIPE=true
+            ;;
+        --restore)
+            REBUILD_RESTORE=true
+            ;;
+        --help|-h)
+            show_usage
+            ;;
+        *)
+            # Unknown option
+            log_error "Unknown option: $1"
+            show_usage
+            ;;
+    esac
+    shift
+done
+
+# Set RESTORE variable based on REBUILD_RESTORE flag
+RESTORE=""
+if $REBUILD_RESTORE; then
+    RESTORE="--restore"
+fi
+
+# Process wipe only option first
+if $REBUILD_WIPE && ! $ALL; then
+    wipe_all
+    exit 0
+fi
+
+# Process restore only option
+if $REBUILD_RESTORE && ! $ALL && ! $REBUILD_DB; then
+    utils/REBUILD_TABLES ${RESTORE}
+    exit 0
+fi
+
+# Handle individual service rebuilds when not running with --all
+if ! $ALL; then
+    if $REBUILD_FRONTEND; then
+        rebuild_frontend
+    fi
+
+    if $REBUILD_BACKEND; then
+        rebuild_backend
+    fi
+
+    if $REBUILD_NGINX; then
+        rebuild_nginx
+    fi
+
+    if $REBUILD_DB; then
+        rebuild_db
+    fi
+
+    # Exit if at least one component was rebuilt
+    if $REBUILD_FRONTEND || $REBUILD_BACKEND || $REBUILD_NGINX || $REBUILD_DB; then
+        log_info "Rebuild complete."
+        exit 0
+    fi
+fi
+
+# Handle --all flag or show usage if no options specified
+if $ALL; then
+    # Call the rebuild_all function
+    rebuild_all
+    exit 0
+else
+    # If no valid options specified, show usage
+    show_usage
+fi

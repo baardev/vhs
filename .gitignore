@@ -21,3 +21,5 @@ backup/
 !backup/latest_c.dump
 **/archive/
 bin/*html
+.vscode/
+x

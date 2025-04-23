@@ -9027,7 +9027,7 @@ CMD ["./start.sh"]
 echo "REBUILD $1"
 echo "----------------------------------------------------"
 
-cd ~/sites/vhs
+cd ${ROOT_DIR}
 
 # Parse command line arguments
 ALL=false
@@ -9050,7 +9050,7 @@ wipe_all() {
     echo -e "\033[0;32mWiping all containers and volumes...\033[0m"
     echo "--------------------------------------------------------"
     
-    sudo chown -R 1000:1000 /home/jw/sites/vhs/frontend/.next
+    sudo chown -R 1000:1000 ${ROOT_DIR}/frontend/.next
     docker system prune -fa
     docker volume prune -fa
     

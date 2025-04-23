@@ -85,11 +85,11 @@ vhsdb=# CREATE TABLE users (
 Clean cache
 Client-side:
 ```bash
-cd ~/sites/vhs && npm cache clean --force
-cd ~/sites/vhs/frontend && npm cache clean --force
-cd ~/sites/vhs/backend && npm cache clean --force
+cd ${ROOT_DIR} && npm cache clean --force
+cd ${ROOT_DIR}/frontend && npm cache clean --force
+cd ${ROOT_DIR}/backend && npm cache clean --force
 
-cd ~/sites/vhs/frontend &&  rm -rf frontend/.next
+cd ${ROOT_DIR}/frontend &&  rm -rf frontend/.next
 ```
 
 Server-side:

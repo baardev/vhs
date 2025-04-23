@@ -36,7 +36,7 @@
 #   VHS Development Team
 #
 
-cd /home/jw/sites/vhs 
+cd ${ROOT_DIR}
 
 # Create a dated directory name
 DATE=$(date "+%Y%m%d.%H%M%S")
@@ -101,7 +101,7 @@ initialize_schema() {
   echo "Initializing database schema..."
   
   # Execute REBUILD_TABLES without restore to create fresh schema
-  cd /home/jw/sites/vhs
+  cd ${ROOT_DIR}
   utils/REBUILD_TABLES
   
   # Check if tables were created successfully

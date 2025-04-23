@@ -1,0 +1,489 @@
+#!/usr/bin/env python
+"""
+REBUILD - Container Management and Deployment Utility
+====================================================
+
+DESCRIPTION:
+  This script manages the rebuilding of Docker containers for the VHS
+  application. It can rebuild individual services or the entire stack,
+  with options for wiping containers, volumes, and restoring from backups.
+
+USAGE:
+  python3 utils/REBUILD.py [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]
+
+OPTIONS:
+  --all               Full rebuild of all containers
+  --frontend          Rebuild and restart only the frontend container
+  --backend           Rebuild and restart only the backend container
+  --nginx             Rebuild and restart only the nginx container
+  --db                Rebuild and restart only the PostgreSQL database
+  --wipe              Wipe all containers and volumes without rebuilding
+  --restore           Restore database from the most recent backup
+"""
+
+import os
+import sys
+import time
+import argparse
+import subprocess
+from pathlib import Path
+
+try:
+    # Import colorama for cross-platform colored output
+    from colorama import init, Fore, Style
+    # Initialize colorama to convert ANSI escape sequences on Windows
+    init(autoreset=True)
+    COLORAMA_AVAILABLE = True
+except ImportError:
+    # Fall back to ANSI codes if colorama is not available
+    print("For colored output, please install colorama: pip install colorama")
+    COLORAMA_AVAILABLE = False
+
+# Set up color constants for terminal output
+class Colors:
+    if COLORAMA_AVAILABLE:
+        GREEN = Fore.GREEN
+        RED = Fore.RED
+        CYAN = Fore.CYAN
+        YELLOW = Fore.YELLOW
+        RESET = Style.RESET_ALL
+    else:
+        GREEN = "\033[0;32m"
+        RED = "\033[0;31m"
+        CYAN = "\033[0;36m"
+        YELLOW = "\033[0;33m"
+        RESET = "\033[0m"
+
+# Set project root directory
+ROOT_DIR = os.getenv("ROOT_DIR", str(Path.home() / "sites" / "vhs"))
+# Docker compose file argument
+FILEARG = "-f docker-compose.yml"
+# Set NODE_ENV
+os.environ["NODE_ENV"] = "production"
+
+def log_header(message):
+    """Display banner for current operation"""
+    print("--------------------------------------------------------")
+    print(f"{Colors.CYAN}{message}{Colors.RESET}")
+    print("--------------------------------------------------------")
+
+def log_info(message):
+    """Log a normal message with green color"""
+    print(f"{Colors.GREEN}{message}{Colors.RESET}")
+
+def log_error(message):
+    """Log an error message with red color"""
+    print(f"{Colors.RED}ERROR: {message}{Colors.RESET}")
+
+def colored_print(text, color=Colors.GREEN):
+    """Print text with specific color"""
+    print(f"{color}{text}{Colors.RESET}")
+
+def run_command(command, check=True, shell=True, exit_on_error=False):
+    """Run a shell command and show its output in real time"""
+    try:
+        # Command banner for better visibility
+        print(f"\n{Colors.CYAN}>>> EXECUTING: {command}{Colors.RESET}")
+        print(f"{Colors.CYAN}{'=' * 80}{Colors.RESET}")
+        
+        # Use Popen for real-time output
+        process = subprocess.Popen(
+            command,
+            shell=shell,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,  # Redirect stderr to stdout for unified output
+            universal_newlines=True,
+            bufsize=1  # Line buffered
+        )
+        
+        # Print output in real-time with green color for standard output
+        output_lines = []
+        for line in process.stdout:
+            line = line.rstrip()
+            # Check if line contains error indicators
+            if "error" in line.lower() or "exception" in line.lower() or "failed" in line.lower():
+                colored_print(line, Colors.RED)
+            else:
+                colored_print(line, Colors.GREEN)
+            output_lines.append(line)
+        
+        # Wait for process to complete
+        return_code = process.wait()
+        
+        # Command completion banner
+        if return_code == 0:
+            print(f"{Colors.CYAN}{'=' * 80}{Colors.RESET}")
+            print(f"{Colors.GREEN}>>> COMMAND COMPLETED SUCCESSFULLY{Colors.RESET}\n")
+        else:
+            print(f"{Colors.CYAN}{'=' * 80}{Colors.RESET}")
+            print(f"{Colors.RED}>>> COMMAND FAILED WITH CODE {return_code}{Colors.RESET}\n")
+        
+        # Create a result object with similar structure to CompletedProcess
+        class Result:
+            def __init__(self, returncode, stdout):
+                self.returncode = returncode
+                self.stdout = stdout
+                
+        result = Result(return_code, "\n".join(output_lines))
+        
+        # Check if command failed
+        if check and return_code != 0:
+            log_error(f"Command failed with return code {return_code}: {command}")
+            if exit_on_error:
+                sys.exit(1)
+            
+        return result
+    except Exception as e:
+        log_error(f"Error executing command: {command}")
+        log_error(f"Exception: {str(e)}")
+        if exit_on_error:
+            sys.exit(1)
+        
+        class ErrorResult:
+            def __init__(self):
+                self.returncode = -1
+                self.stdout = ""
+                
+        return ErrorResult()
+
+def ensure_dependencies(directory, package_name):
+    """Check if npm dependencies are installed"""
+    package_lock = os.path.join(ROOT_DIR, directory, "package-lock.json")
+    if not os.path.exists(package_lock):
+        log_info(f"Installing {package_name} dependencies...")
+        os.chdir(os.path.join(ROOT_DIR, directory))
+        run_command("npm install")
+        os.chdir(ROOT_DIR)
+
+def wipe_all():
+    """Wipe all containers and volumes"""
+    log_header("Wiping all containers and volumes...")
+    
+    # Fix permissions
+    print("DB REBUILD - STEP 1: Fixing permissions")
+    run_command(f"sudo chown -R 1000:1000 {ROOT_DIR}/frontend/.next", check=False)
+    
+    # Clean docker resources
+    print("DB REBUILD - STEP 2: Pruning Docker system")
+    run_command("docker system prune -fa", check=False)
+    run_command("docker volume prune -fa", check=False)
+    
+    print("DB REBUILD - STEP 3: Clearing caches")
+    run_command(f"{ROOT_DIR}/utils/CLEARCACHE --all", check=False)
+    
+    def cleanup_containers(pattern):
+        """Stop, remove, and delete containers with a specific pattern"""
+        log_info(f"Cleaning up [{pattern}] containers...")
+        
+        # Check if containers exist before stopping
+        container_check = run_command(f"docker ps -a --format '{{{{.Names}}}}' | grep {pattern} || echo 'None found'", check=False)
+        if 'None found' not in container_check.stdout:
+            log_info(f"Found containers matching '{pattern}', stopping and removing them...")
+            run_command(f"docker ps -a --format '{{{{.Names}}}}' | grep {pattern} | xargs -r docker stop", check=False)
+            run_command(f"docker ps -a --format '{{{{.Names}}}}' | grep {pattern} | xargs -r docker rm", check=False)
+        else:
+            log_info(f"No '{pattern}' containers found to stop/remove")
+        
+        # Check if images exist before removing
+        image_check = run_command(f"docker images --format '{{{{.Repository}}}}:{{{{.Tag}}}}' | grep {pattern} || echo 'None found'", check=False)
+        if 'None found' not in image_check.stdout:
+            log_info(f"Found images matching '{pattern}', removing them...")
+            run_command(f"docker images --format '{{{{.Repository}}}}:{{{{.Tag}}}}' | grep {pattern} | xargs -r docker rmi", check=False)
+        else:
+            log_info(f"No '{pattern}' images found to remove")
+    
+    # Add a small pause for debugging
+    log_info("About to clean up containers...")
+    time.sleep(2)
+    
+    # Clean up different types of containers
+    cleanup_containers("dev")
+    cleanup_containers("buildx")
+    
+    log_info("All containers and volumes wiped successfully")
+
+def rebuild_frontend():
+    """Rebuild the frontend container"""
+    log_header("Rebuilding frontend container...")
+    
+    # Ensure dependencies are installed
+    ensure_dependencies("frontend", "frontend")
+    
+    log_info("Clearing frontend cache...")
+    run_command(f"{ROOT_DIR}/utils/CLEARCACHE --frontend")
+    
+    log_info("Rebuilding and restarting frontend container...")
+    run_command(f"docker compose {FILEARG} stop frontend")
+    run_command(f"docker compose {FILEARG} build --build-arg NODE_ENV={os.environ['NODE_ENV']} frontend")
+    run_command(f"docker compose {FILEARG} up -d frontend")
+    
+    log_info("Frontend container rebuilt successfully.")
+
+def rebuild_backend():
+    """Rebuild the backend container"""
+    log_header("Rebuilding backend container...")
+    
+    # Ensure dependencies are installed
+    ensure_dependencies("backend", "backend")
+    
+    log_info("Clearing backend cache...")
+    run_command(f"{ROOT_DIR}/utils/CLEARCACHE --backend")
+    
+    log_info("Removing existing backend containers and images...")
+    run_command(f"docker compose {FILEARG} stop backend")
+    run_command("docker ps -a --format '{{.Names}}' | grep backend | xargs -r docker rm -f", check=False)
+    run_command("docker images --format '{{.Repository}}:{{.Tag}}' | grep backend | xargs -r docker rmi -f", check=False)
+    
+    # Make sure DB is running before rebuilding backend
+    log_info("Ensuring database container is running...")
+    run_command(f"docker compose {FILEARG} up -d db")
+    
+    # Add a wait for DB to be ready
+    log_info("Waiting for database to be ready...")
+    time.sleep(10)  # Give DB time to initialize
+    
+    log_info("Rebuilding backend from scratch...")
+    run_command(f"docker compose {FILEARG} build --no-cache --build-arg NODE_ENV={os.environ['NODE_ENV']} backend")
+    run_command(f"docker compose {FILEARG} up -d backend")
+    
+    log_info("Backend server completely rebuilt successfully.")
+    
+    # Wait a bit longer for backend to connect to database
+    log_info("Waiting for services to stabilize...")
+    time.sleep(5)
+    
+    # Get the actual database container name
+    db_container = run_command("docker ps --format '{{.Names}}' | grep db | head -n 1", check=False)
+    if db_container.returncode != 0 or not db_container.stdout.strip():
+        log_error("Database container not found")
+        run_command("docker ps")
+        log_error("Continuing with rebuild process anyway...")
+
+def rebuild_nginx():
+    """Rebuild the nginx container"""
+    log_header("Rebuilding nginx container...")
+    
+    run_command(f"docker compose {FILEARG} stop nginx")
+    run_command(f"docker compose {FILEARG} rm -f nginx")
+    
+    # Build JUST the nginx image (no other targets)
+    run_command(f"docker compose {FILEARG} build --no-cache --pull nginx")
+    
+    # Start nginx without starting any dependency chain
+    run_command(f"docker compose {FILEARG} up -d --no-deps nginx")
+    
+    log_info("Nginx rebuilt and restarted.")
+
+def rebuild_db(restore_flag=""):
+    """Rebuild the PostgreSQL database"""
+    log_header("Rebuilding PostgreSQL database...")
+    print("DB REBUILD - STEP 1: Starting database rebuild process")
+    
+    # Get the actual database container name for backup before wiping
+    db_container_check = run_command("docker ps --format '{{.Names}}' | grep db || echo 'none'", check=False)
+    db_container_name = 'none'
+    
+    # Extract actual container name if found
+    for line in db_container_check.stdout.splitlines():
+        if line != 'none' and 'db' in line:
+            db_container_name = line.strip()
+            break
+            
+    print(f"DB REBUILD - STEP 2: Database container: {db_container_name}")
+    
+    if db_container_name != 'none':
+        # Backup existing database before wiping
+        log_info("Backing up existing database...")
+        # Make IMPEX call optional - continue even if it fails
+        run_command(f"{ROOT_DIR}/utils/IMPEX --export", check=False)
+        print("DB REBUILD - STEP 3: Database backup attempted")
+    
+    print("DB REBUILD - STEP 4: Stopping database container")
+    run_command(f"docker compose {FILEARG} stop db", check=False)
+    
+    print("DB REBUILD - STEP 5: Removing container and volumes")
+    db_exists_check = run_command("docker ps -a --format '{{.Names}}' | grep db || echo 'none'", check=False)
+    if 'none' not in db_exists_check.stdout:
+        run_command("docker ps -a --format '{{.Names}}' | grep db | xargs -r docker rm -f", check=False)
+        # Remove database volume to ensure clean start
+        log_info("Removing database volume...")
+        run_command("docker volume ls -q | grep vhsdb_data | xargs -r docker volume rm || true", check=False)
+    
+    print("DB REBUILD - STEP 6: Pruning volumes")
+    run_command("docker volume prune -f", check=False)
+    
+    print("DB REBUILD - STEP 7: Pulling and starting new database container")
+    log_info("Rebuilding PostgreSQL from scratch (using latest image)...")
+    run_command(f"docker compose {FILEARG} pull db", check=False)
+    run_command(f"docker compose {FILEARG} up -d --force-recreate db", check=False)
+    
+    print("DB REBUILD - STEP 8: Waiting for database to initialize")
+    log_info("Waiting for database to initialize...")
+    time.sleep(15)  # Increased wait time for database to initialize
+    
+    print("DB REBUILD - STEP 9: Checking if database container is running")
+    db_running_check = run_command("docker ps --format '{{.Names}}' | grep db || echo 'none'", check=False)
+    db_running = 'none' not in db_running_check.stdout
+    
+    if not db_running:
+        log_error("Failed to start the database container. See docker ps output below:")
+        run_command("docker ps")
+        log_error("Continuing with rebuild process anyway...")
+    else:
+        new_db_container = next((line for line in db_running_check.stdout.splitlines() if line != 'none' and 'db' in line), 'unknown')
+        print(f"DB REBUILD - STEP 10: Database container is running: {new_db_container}")
+    
+    print("DB REBUILD - STEP 11: Running REBUILD_TABLES script")
+    log_info("Creating fresh database schema and initial data...")
+    # Make REBUILD_TABLES execution more robust
+    if restore_flag:
+        print(f"DB REBUILD - With restore option: {restore_flag}")
+    else:
+        print("DB REBUILD - Without restore option")
+    
+    # Call REBUILD_TABLES with the appropriate restore flag
+    run_command(f"{ROOT_DIR}/utils/REBUILD_TABLES {restore_flag}", check=False)
+    
+    print("DB REBUILD - STEP 12: Database rebuild process complete")
+    log_info("PostgreSQL database completely rebuilt successfully.")
+
+def rebuild_all(restore_flag=""):
+    """Rebuild all components in the correct order"""
+    log_header("Performing complete rebuild of all components...")
+    
+    # First wipe everything
+    wipe_all()
+    
+    # Configure buildx
+    log_info("Configuring buildx...")
+    result = run_command("docker buildx create --use", check=False)
+    if result.returncode != 0:
+        log_info("Buildx already configured")
+    
+    # Rebuild components in the correct sequence
+    log_info("Starting PostgreSQL database rebuild...")
+    rebuild_db(restore_flag)
+    
+    log_info("Starting Backend rebuild...")
+    rebuild_backend()
+    
+    log_info("Starting Frontend rebuild...")
+    rebuild_frontend()
+    
+    log_info("Starting Nginx rebuild...")
+    rebuild_nginx()
+    
+    log_header("All containers rebuilt successfully")
+    run_command(f"docker compose {FILEARG} ps")
+
+def show_usage():
+    """Display usage information with colored text"""
+    print(f"\n{Colors.CYAN}===== VHS CONTAINER REBUILD UTILITY ====={Colors.RESET}")
+    print(f"\n{Colors.GREEN}Usage: python3 utils/REBUILD.py [OPTIONS]{Colors.RESET}")
+    print(f"\n{Colors.CYAN}Options:{Colors.RESET}")
+    print(f"{Colors.GREEN}  --all               {Colors.YELLOW}Full rebuild of all containers{Colors.RESET}")
+    print(f"{Colors.GREEN}  --frontend          {Colors.YELLOW}Rebuild and restart only the frontend container{Colors.RESET}")
+    print(f"{Colors.GREEN}  --backend           {Colors.YELLOW}Rebuild and restart only the backend container{Colors.RESET}")
+    print(f"{Colors.GREEN}  --nginx             {Colors.YELLOW}Rebuild and restart only the nginx container{Colors.RESET}")
+    print(f"{Colors.GREEN}  --db                {Colors.YELLOW}Rebuild and restart only the PostgreSQL database{Colors.RESET}")
+    print(f"{Colors.GREEN}  --wipe              {Colors.YELLOW}Wipe all containers and volumes without rebuilding{Colors.RESET}")
+    print(f"{Colors.GREEN}  --restore           {Colors.YELLOW}Restore database from the most recent backup{Colors.RESET}")
+    print(f"\n{Colors.CYAN}Examples:{Colors.RESET}")
+    print(f"{Colors.GREEN}  python3 utils/REBUILD.py --all                {Colors.YELLOW}# Full rebuild of all containers{Colors.RESET}")
+    print(f"{Colors.GREEN}  python3 utils/REBUILD.py --frontend           {Colors.YELLOW}# Rebuild only the frontend container{Colors.RESET}")
+    print(f"{Colors.GREEN}  python3 utils/REBUILD.py --db --restore       {Colors.YELLOW}# Rebuild database and restore from backup{Colors.RESET}")
+    print()
+    sys.exit(1)
+
+def main():
+    """Main function to parse args and execute commands"""
+    # Check if colorama is available
+    if not COLORAMA_AVAILABLE:
+        try:
+            log_info("Installing colorama for better colored output...")
+            subprocess.check_call([sys.executable, "-m", "pip", "install", "colorama"])
+            log_info("Colorama installed successfully. Restarting script...")
+            # Re-run the script with the same arguments
+            os.execv(sys.executable, [sys.executable] + sys.argv)
+        except Exception as e:
+            log_info(f"Could not install colorama automatically: {str(e)}")
+            log_info("Continuing with basic ANSI colors...")
+            
+    # Change to project root
+    try:
+        os.chdir(ROOT_DIR)
+    except Exception as e:
+        log_error(f"Cannot change to project root {ROOT_DIR}: {e}")
+        sys.exit(1)
+    
+    # Parse command line arguments
+    parser = argparse.ArgumentParser(description="VHS container management and deployment utility")
+    parser.add_argument("--all", action="store_true", help="Full rebuild of all containers")
+    parser.add_argument("--frontend", action="store_true", help="Rebuild frontend container")
+    parser.add_argument("--backend", action="store_true", help="Rebuild backend container")
+    parser.add_argument("--nginx", action="store_true", help="Rebuild nginx container")
+    parser.add_argument("--db", action="store_true", help="Rebuild PostgreSQL database")
+    parser.add_argument("--wipe", action="store_true", help="Wipe all containers without rebuilding")
+    parser.add_argument("--restore", action="store_true", help="Restore database from backup")
+    
+    # If no arguments provided, show usage
+    if len(sys.argv) == 1:
+        show_usage()
+    
+    args = parser.parse_args()
+    
+    # Print header with parameters
+    log_header(f"REBUILD {' '.join(sys.argv[1:])}")
+    
+    # Set restore flag based on args
+    restore_flag = "--restore" if args.restore else ""
+    
+    # Process wipe only option first
+    if args.wipe and not args.all:
+        wipe_all()
+        colored_print("Wipe completed successfully!", Colors.GREEN)
+        sys.exit(0)
+    
+    # Process restore only option
+    if args.restore and not args.all and not args.db:
+        run_command(f"{ROOT_DIR}/utils/REBUILD_TABLES --restore")
+        colored_print("Restore completed successfully!", Colors.GREEN)
+        sys.exit(0)
+    
+    # Handle individual service rebuilds when not running with --all
+    if not args.all:
+        any_rebuilt = False
+        
+        if args.frontend:
+            rebuild_frontend()
+            any_rebuilt = True
+        
+        if args.backend:
+            rebuild_backend()
+            any_rebuilt = True
+        
+        if args.nginx:
+            rebuild_nginx()
+            any_rebuilt = True
+        
+        if args.db:
+            rebuild_db(restore_flag)
+            any_rebuilt = True
+        
+        # Exit if at least one component was rebuilt
+        if any_rebuilt:
+            colored_print("Rebuild completed successfully!", Colors.GREEN)
+            sys.exit(0)
+    
+    # Handle --all flag or show usage if no options specified
+    if args.all:
+        # Call the rebuild_all function
+        rebuild_all(restore_flag)
+        colored_print("Complete rebuild of all components finished successfully!", Colors.GREEN)
+        sys.exit(0)
+    else:
+        # If no valid options specified, show usage
+        show_usage()
+
+if __name__ == "__main__":
+    main() 

@@ -34,7 +34,9 @@ Last Updated: 2024
 import os
 from pathlib import Path
 
-VERSION_FILE = Path("/home/jw/sites/vhs/utils/VERSION")
+# Get ROOT_DIR from environment variables with a fallback
+ROOT_DIR = os.environ.get('ROOT_DIR', os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+VERSION_FILE = Path(f"{ROOT_DIR}/utils/VERSION")
 
 def read_version():
     """Read the current version from VERSION file."""

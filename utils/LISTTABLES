@@ -13,8 +13,8 @@
 #
 
 # Ensure we're in project root for docker compose commands
-cd ~/sites/vhs || {
-    echo "Error: Cannot change to project root ~/sites/vhs";
+cd ${ROOT_DIR} || {
+    echo "Error: Cannot change to project root ${ROOT_DIR}";
     exit 1;
 }
 

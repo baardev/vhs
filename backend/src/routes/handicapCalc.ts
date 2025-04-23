@@ -1,7 +1,6 @@
 import express from 'express';
 import { pool } from '../db';
-import { logToFile } from '../utils/logger';
-import fs from 'fs';
+import { logInfo, logError, logDebug } from '../utils/loggerClient';
 
 const router = express.Router();
 
@@ -18,7 +17,7 @@ router.use((req, res, next) => {
 
 // @ts-ignore - Bypass TypeScript errors temporarily
 router.get('/', async (req, res) => {
-  logToFile('handicapCalc processing request at ' + new Date().toISOString());
+  logInfo('handicapCalc processing request at ' + new Date().toISOString(), 'handicapCalc');
   
   // Even more aggressive cache prevention
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
@@ -28,7 +27,7 @@ router.get('/', async (req, res) => {
   
   try {
     // Fetch the player's rounds data from the database
-    logToFile('About to execute query');
+    logDebug('About to execute query', 'handicapCalc');
     const result = await pool.query(`
       SELECT 
           player_id,
@@ -43,8 +42,8 @@ router.get('/', async (req, res) => {
       LIMIT 20
     `);
     
-    logToFile(`Query executed, found ${result.rows.length} rounds for player`);
-    logToFile('Result first row: ' + JSON.stringify(result.rows[0] || 'No rows found'));
+    logInfo(`Query executed, found ${result.rows.length} rounds for player`, 'handicapCalc');
+    logDebug('Result first row: ' + JSON.stringify(result.rows[0] || 'No rows found'), 'handicapCalc');
     
     // Get rounds data
     const rounds: PlayerRound[] = result.rows;
@@ -52,7 +51,7 @@ router.get('/', async (req, res) => {
     // Calculate handicap in TypeScript
     const handicapData = calculateHandicap(rounds);
     
-    logToFile('Calculated handicap data: ' + JSON.stringify(handicapData));
+    logDebug('Calculated handicap data: ' + JSON.stringify(handicapData), 'handicapCalc');
     
     return res.json({ 
       avg_differential: handicapData.avgDifferential,
@@ -61,11 +60,11 @@ router.get('/', async (req, res) => {
       success: true 
     });
   } catch (error) {
-    logToFile('Error calculating handicap: ' + JSON.stringify(error));
+    logError('Error calculating handicap: ' + JSON.stringify(error), 'handicapCalc');
     
     // For development/testing, return mock data if there's any error
     // This helps during development until the database is fully set up
-    logToFile('Using mock data due to error');
+    logInfo('Using mock data due to error', 'handicapCalc');
     return res.json({ 
       avg_differential: 100.000, // Very distinctive value
       handicap_index: 100.000,    // Very distinctive value 
@@ -115,23 +114,8 @@ function calculateHandicap(rounds: PlayerRound[]) {
 }
 
 // @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/logs', (req, res) => {
-  try {
-    const logs = fs.readFileSync('/tmp/backend-debug.log', 'utf8');
-    res.set('Content-Type', 'text/plain');
-    return res.send(logs);
-  } catch (error) {
-    return res.json({ 
-      success: false,
-      error: 'No logs found or unable to read log file',
-      details: error instanceof Error ? error.message : 'Unknown error'
-    });
-  }
-});
-
-// @ts-ignore - Bypass TypeScript errors temporarily
 router.get('/test', (req, res) => {
-  logToFile('Test endpoint was called');
+  logInfo('Test endpoint was called', 'handicapCalc');
   return res.json({
     message: 'Test endpoint working',
     time: new Date().toISOString(),
@@ -143,7 +127,7 @@ router.get('/test', (req, res) => {
 router.get('/debug', async (req, res) => {
   try {
     // Check if the table exists
-    logToFile('Debug endpoint: checking if table exists');
+    logDebug('Debug endpoint: checking if table exists', 'handicapCalc');
     const tableCheck = await pool.query(`
       SELECT EXISTS (
         SELECT FROM information_schema.tables 
@@ -152,7 +136,7 @@ router.get('/debug', async (req, res) => {
     `);
     
     const tableExists = tableCheck.rows[0].exists;
-    logToFile(`Table check result: ${tableExists ? 'Table exists' : 'Table does not exist'}`);
+    logInfo(`Table check result: ${tableExists ? 'Table exists' : 'Table does not exist'}`, 'handicapCalc');
     
     // If table exists, check sample data
     let recordCount = 0;
@@ -162,7 +146,7 @@ router.get('/debug', async (req, res) => {
         WHERE player_id = 'vns' AND tarj = 'OK' AND differential IS NOT NULL
       `);
       recordCount = parseInt(countResult.rows[0].count);
-      logToFile(`Found ${recordCount} matching records`);
+      logInfo(`Found ${recordCount} matching records`, 'handicapCalc');
     }
     
     return res.json({
@@ -172,7 +156,7 @@ router.get('/debug', async (req, res) => {
       success: true
     });
   } catch (error) {
-    logToFile(`Debug endpoint error: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    logError(`Debug endpoint error: ${error instanceof Error ? error.message : 'Unknown error'}`, 'handicapCalc');
     return res.json({
       success: false,
       error: error instanceof Error ? error.message : 'Unknown error'

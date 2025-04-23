@@ -1,6 +1,22 @@
 #!/bin/bash
-cd ~/sites/vhs/backend
-docker compose -f ~/sites/vhs/docker-compose.yml  stop backend
+#
+# BACKEND_FOREGROUND - Run the backend server in foreground mode
+# ==============================================================
+#
+# DESCRIPTION:
+#   Stops the backend container and runs the backend server in foreground mode
+#   for development purposes. This allows direct console output and debugging.
+#
+# USAGE:
+#   utils/BACKEND_FOREGROUND
+#
+# DEPENDENCIES:
+#   - Docker and docker-compose for stopping container
+#   - NODE_ENV and other environment variables should be properly set
+#   - npm must be installed
+#
+cd ${ROOT_DIR}/backend
+docker compose -f ${ROOT_DIR}/docker-compose.yml  stop backend
 # sudo chown -R $(whoami) frontend/.next
 npm run dev
 

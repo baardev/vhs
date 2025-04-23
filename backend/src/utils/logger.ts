@@ -30,4 +30,4 @@ export function logToFile(message: any): void {
     console.error('Failed to write to log file:', error);
     console.log(formattedMessage);
   }
-}
+} 
