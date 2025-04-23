@@ -21,7 +21,7 @@
 set -e
 
 # Set project root directory
-PROJECT_ROOT="$HOME/sites/vhs"
+ROOT_DIR="/home/jw/sites/vhs"
 
 # ------------------------------
 # Helper functions
@@ -48,7 +48,7 @@ log_error() {
 
 clear_frontend() {
   log_info "\n=== Clearing FRONTEND caches ==="
-  cd "${PROJECT_ROOT}/frontend" || { log_error "Cannot cd to frontend directory"; return 1; }
+  cd "${ROOT_DIR}/frontend" || { log_error "Cannot cd to frontend directory"; return 1; }
 
   # npm cache
   log_info "Cleaning npm cache..."
@@ -60,7 +60,7 @@ clear_frontend() {
 
   # Remove vite/webpack cache inside container (ignore error if container not running)
   log_info "Clearing webpack/vite cache in container..."
-  docker compose -f "${PROJECT_ROOT}/docker-compose.yml" exec frontend rm -rf node_modules/.cache 2>/dev/null || 
+  docker compose -f "${ROOT_DIR}/docker-compose.yml" exec frontend rm -rf node_modules/.cache 2>/dev/null || 
     log_error "Failed to clear container cache (container may not be running)"
 
   # Ensure correct ownership
@@ -74,7 +74,7 @@ clear_frontend() {
 
 clear_backend() {
   log_info "\n=== Clearing BACKEND caches ==="
-  cd "${PROJECT_ROOT}/backend" || { log_error "Cannot cd to backend directory"; return 1; }
+  cd "${ROOT_DIR}/backend" || { log_error "Cannot cd to backend directory"; return 1; }
 
   # npm cache
   log_info "Cleaning npm cache..."
