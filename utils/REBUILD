@@ -61,7 +61,7 @@ LIVE=false
 # Use standard environment names
 FILEARG="-f ${ROOT_DIR}/docker-compose.yml"
 echo "Docker file: $FILEARG"
-exit
+
 
 export NODE_ENV=production
 
