@@ -12,6 +12,8 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [mounted, setMounted] = useState(false);
+  // Add state for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -105,7 +107,20 @@ const Navbar = () => {
             </Link>
           </div>
 
-          <div className="flex items-center space-x-6">
+          {/* Hamburger menu button - only visible on mobile */}
+          <div className="md:hidden">
+            <button 
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="text-gray-700 dark:text-gray-300 p-2"
+              aria-label="Toggle menu"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
+            </button>
+          </div>
+
+          <div className="hidden md:flex items-center space-x-6">
             {mounted && (
               <>
                 {/* ---------------------------- {t('home')} ---------------------------- */}
@@ -185,6 +200,58 @@ const Navbar = () => {
           </div>
         </div>
       </div>
+
+      {/* Mobile menu dropdown - only visible when hamburger clicked */}
+      {mobileMenuOpen && (
+        <div className="md:hidden mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 absolute right-4 left-4 z-50">
+          <div className="flex flex-col space-y-4">
+            <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+              {t('home')}
+            </Link>
+            <Link href="/courses" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+              {t('courses')}
+            </Link>
+
+
+            {isLoggedIn ? (
+              <>
+                <Link href="/admin" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+                  {t('admin.title')}
+                </Link>
+                <Link href="/todos" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+                  {t('todo.title')}
+                </Link>
+                <Link href="/upload-scorecard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center" onClick={() => setMobileMenuOpen(false)}>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    {/* SVG path */}
+                  </svg>
+                  {t('uploadScorecard')}
+                </Link>
+                <Link href="/profile" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 font-medium" onClick={() => setMobileMenuOpen(false)}>
+                  {username}
+                </Link>
+                <div className="py-2 px-3">
+                  <LogoutButton variant="text" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]" onClick={() => setMobileMenuOpen(false)} />
+                </div>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+                  {t('signIn')}
+                </Link>
+                <Link href="/register" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+                  {t('createAccount')}
+                </Link>
+              </>
+            )}
+            
+            {/* Close button */}
+            <button onClick={() => setMobileMenuOpen(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm mt-2">
+              Close Menu
+            </button>
+          </div>
+        </div>
+      )}
     </nav>
   );
 };

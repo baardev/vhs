@@ -54,9 +54,19 @@ clear_frontend() {
   log_info "Cleaning npm cache..."
   npm cache clean --force || log_error "Failed to clean npm cache, continuing..."
 
-  # Next.js build cache
+  # Next.js build cache (complete removal and recreation)
   log_info "Removing Next.js build files..."
-  rm -rf .next/* || log_error "Failed to remove Next.js build files, continuing..."
+  rm -rf .next
+  mkdir -p .next
+  chmod 777 .next || log_error "Failed to set permissions on .next directory"
+
+  # Remove source maps in frontend
+  log_info "Removing source maps..."
+  find . -name "*.map" -type f -delete || log_error "Failed to remove source maps"
+
+  # Remove node_modules cache
+  log_info "Cleaning node_modules cache..."
+  rm -rf node_modules/.cache || log_error "Failed to clear node_modules cache"
 
   # Remove vite/webpack cache inside container (ignore error if container not running)
   log_info "Clearing webpack/vite cache in container..."
@@ -84,11 +94,18 @@ clear_backend() {
   log_info "Removing backend build artifacts..."
   rm -rf dist/* 2>/dev/null || log_error "No dist directory or failed to remove"
   
+  # Remove source maps in backend
+  log_info "Removing source maps..."
+  find . -name "*.map" -type f -delete || log_error "Failed to remove source maps"
+  
   # Clear node_modules/.cache if it exists
-  if [ -d "node_modules/.cache" ]; then
-    log_info "Clearing node_modules cache..."
-    rm -rf node_modules/.cache/* || log_error "Failed to clear node_modules cache"
-  fi
+  log_info "Clearing node_modules cache..."
+  rm -rf node_modules/.cache || log_error "Failed to clear node_modules cache"
+
+  # Clear cache in container if running
+  log_info "Clearing cache in backend container..."
+  docker compose -f "${ROOT_DIR}/docker-compose.yml" exec backend rm -rf node_modules/.cache 2>/dev/null ||
+    log_error "Failed to clear container cache (container may not be running)"
 
   log_success "Backend cache cleared."
   return 0
@@ -113,6 +130,13 @@ if [[ $# -eq 1 ]]; then
 fi
 
 # ------------------------------
+# Stop all docker services first
+# ------------------------------
+log_info "Stopping all Docker services..."
+cd "${ROOT_DIR}" || { log_error "Cannot cd to root directory"; exit 1; }
+docker compose down -v || log_error "Failed to stop Docker services, continuing..."
+
+# ------------------------------
 # Execute based on chosen mode
 # ------------------------------
 EXIT_CODE=0
@@ -123,6 +147,26 @@ fi
 
 if [[ "$MODE" == "all" || "$MODE" == "backend" ]]; then
   clear_backend || EXIT_CODE=1
+fi
+
+# ------------------------------
+# Rebuild and restart services
+# ------------------------------
+log_info "\n=== Rebuilding and restarting services ==="
+cd "${ROOT_DIR}" || { log_error "Cannot cd to root directory"; exit 1; }
+
+# Rebuild all containers without cache
+log_info "Rebuilding Docker containers without cache..."
+docker compose build --no-cache || log_error "Failed to rebuild containers, continuing..."
+
+# Start backend (and db if needed)
+log_info "Starting backend services..."
+docker compose up -d backend db || log_error "Failed to start backend services, continuing..."
+
+if [[ "$MODE" == "all" || "$MODE" == "frontend" ]]; then
+  log_info "Starting frontend in development mode (better for full recompilation)..."
+  log_info "Press Ctrl+C when you're done testing the frontend"
+  cd "${ROOT_DIR}/frontend" && npm run dev
 fi
 
 if [ $EXIT_CODE -eq 0 ]; then

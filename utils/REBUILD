@@ -329,26 +329,29 @@ fi
 if $ALL; then
     # Call the wipe function first
     wipe_all
+
+    docker compose down && docker compose build --no-cache && docker compose up -d
+
+
+    # echo -e "\033[0;32mConfiguring buildx...\033[0m"
+    # /usr/bin/docker buildx create --use
     
-    echo -e "\033[0;32mConfiguring buildx...\033[0m"
-    /usr/bin/docker buildx create --use
+    # # Rebuild db first to ensure database is ready for other services
+    # echo -e "\033[0;32mRebuilding dbQL...\033[0m"
+    # rebuild_db
     
-    # Rebuild db first to ensure database is ready for other services
-    echo -e "\033[0;32mRebuilding dbQL...\033[0m"
-    rebuild_db
+    # # Now rebuild the other services
+    # echo -e "\033[0;32mRebuilding Backend...\033[0m"
+    # rebuild_backend
     
-    # Now rebuild the other services
-    echo -e "\033[0;32mRebuilding Backend...\033[0m"
-    rebuild_backend
+    # echo -e "\033[0;32mRebuilding Frontend...\033[0m"
+    # rebuild_frontend
     
-    echo -e "\033[0;32mRebuilding Frontend...\033[0m"
-    rebuild_frontend
+    # echo -e "\033[0;32mRebuilding Nginx...\033[0m"
+    # rebuild_nginx
     
-    echo -e "\033[0;32mRebuilding Nginx...\033[0m"
-    rebuild_nginx
-    
-    echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
-    /usr/bin/docker compose ${FILEARG} ps
+    # echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
+    # /usr/bin/docker compose ${FILEARG} ps
 else
     echo "No options specified. Use one of the following:"
     echo "  --all               Full rebuild of all containers"

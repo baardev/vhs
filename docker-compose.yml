@@ -42,10 +42,6 @@ services:
       - vhsdb_data:/var/lib/postgresql/data
     networks:
       - app-network
-    build:
-      context: ./db
-      args:
-        - NODE_ENV=production
 
   backend:
     build:

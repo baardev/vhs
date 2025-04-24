@@ -512,7 +512,7 @@ The VHS build system processes these files differently:
 Understanding these extensions is crucial for effective development in the VHS framework, as they determine how code is processed, compiled, and executed across the application's technology stack.
 
 
-# Locations:
+# Locations
 
 When adding a React component with a UI element, for example, a page that accepts uploaded images and will appear in the NavBar, three files will me affected:
 ```sh
@@ -569,6 +569,7 @@ export default MyComponent;
 **Option 2: Using the Utility Function**
 • Advantage: Importing the logging function explicitly (from utils/logger.js) makes its dependency clear in each module. This improves modularity and code clarity and is easier to test because you can mock or replace the function in isolated tests.
 • Disadvantage: This method requires you to add an import statement wherever you need functionality, which might feel slightly more verbose if you have many files that use logging.
+
 ```js
 // AnotherComponent.tsx
 import { logMessage } from '../utils/logger'; // Adjust the path if needed
@@ -587,5 +588,53 @@ function AnotherComponent() {
 }
 
 export default AnotherComponent;
+
+```
+
+# Deleting a stuborn cache
+
+
+
+Sometimes changes do not appear on the web page and even more frustrating is the web page will have content that doesn't appear anywhere in your code base. But does appear in the caches that are not being refreshed properly. This is a known Edge case with Next.js. Here is how you can ensure a clean cache.
+
+```sh
+#!/bin/bash
+
+# Define root directory
+ROOT_DIR="/home/jw/sites/vhs"  # Make sure this is defined
+
+cd "${ROOT_DIR}"
+
+# 1. Stop all services
+echo "Stopping all services..."
+docker compose down -v  # Added -v to remove volumes too
+
+# 2. Clean Next.js build artifacts
+echo "Cleaning frontend build artifacts..."
+rm -rf frontend/.next
+mkdir frontend/.next
+chmod 777 frontend/.next  # Ensure write permissions
+
+# 3. Clean source maps more precisely
+echo "Removing source maps..."
+find "${ROOT_DIR}/frontend" -name "*.map" -type f -delete
+find "${ROOT_DIR}/backend" -name "*.map" -type f -delete
+
+# 4. Clean node_modules caches
+echo "Cleaning node_modules caches..."
+rm -rf "${ROOT_DIR}/backend/node_modules/.cache"
+rm -rf "${ROOT_DIR}/frontend/node_modules/.cache"
+
+# 5. Clean Docker build cache
+echo "Rebuilding Docker containers..."
+docker compose build --no-cache  # Rebuild all services, not just backend
+
+# 6. Start backend in detached mode
+echo "Starting backend services..."
+docker compose up -d backend db  # Include db if needed
+
+# 7. Start frontend in development mode
+echo "Starting frontend in development mode..."
+cd "${ROOT_DIR}/frontend" && npm run dev
 
 ```

@@ -71,7 +71,7 @@ function MyApp({ Component, pageProps }) {
 
   // Always show logs button for testing (remove this line in production)
   // const showLogsButton = isAdmin || isDev;
-  const showLogsButton = true; // For testing
+  const displayLogButton = false;
 
   return (
     <div className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen`}>
@@ -79,7 +79,7 @@ function MyApp({ Component, pageProps }) {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
       </Head>
       {/* Log Viewer Toggle Button - always visible for testing */}
-      {showLogsButton && (
+      {displayLogButton && (
         <button
           onClick={() => setLogViewerVisible(!logViewerVisible)}
           className="fixed top-4 right-4 z-50 bg-red-600 text-white px-3 py-2 rounded shadow-lg hover:bg-red-700 flex items-center"
@@ -94,7 +94,7 @@ function MyApp({ Component, pageProps }) {
       )}
       
       {/* Log Viewer Component */}
-      <LogViewer visible={logViewerVisible} onClose={() => setLogViewerVisible(false)} />
+      {/* <LogViewer visible={logViewerVisible} onClose={() => setLogViewerVisible(false)} /> */}
       
       <Navbar />
       <main className="flex-grow">
