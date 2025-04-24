@@ -7,7 +7,7 @@ import AdminLink from './AdminLink';
 import TodosLink from './TodosLink';
 
 const Navbar = () => {
-  const { t, ready } = useTranslation('common');
+  const { t, ready, i18n } = useTranslation('common');
 //   const router = useRouter();
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -54,6 +54,17 @@ const Navbar = () => {
       window.removeEventListener('authChange', handleStorageChange);
     };
   }, []);
+
+  // Debug translations - TEMPORARY
+  useEffect(() => {
+    if (mounted && isLoggedIn) {
+      console.log('Current language:', i18n.language);
+      console.log('Upload Scorecard translation:', t('uploadScorecard', 'FALLBACK VALUE'));
+      console.log('Is translation ready:', ready);
+      console.log('Available languages:', i18n.languages);
+      console.log('Namespace loaded:', i18n.hasLoadedNamespace('common'));
+    }
+  }, [mounted, isLoggedIn, i18n, t, ready]);
 
   // Skip rendering fully until client-side and translations are ready
   if (!mounted) {
@@ -106,23 +117,18 @@ const Navbar = () => {
                   {t('courses')}
                 </Link>
 
-                {/* TEST BUTTON - REMOVE AFTER DEBUGGING */}
-                {/* ---------------------------- {t('debug')} ---------------------------- */}
-                <button
-                  onClick={() => {
-                    alert('Debug button clicked! Frontend code is working!');
-                  }}
-                  className="bg-purple-700 text-white px-4 py-2 rounded-full font-bold animate-pulse"
-                >
-                  DEBUG
-                </button>
-
                 {isLoggedIn ? (
                   <>
                     <AdminLink />
                     <TodosLink />
 
+
                     {/* ---------------------------- {t('uploadScorecard')} ---------------------------- */}
+                    {/* JWFIX: if "border border-red-500" is removed from the className below, the item does not appear in the navbar.  Intermittent, could be a cache related issue.  */}
+                    {/*<Link
+                      href="/upload-scorecard"
+                      className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] flex items-center border border-red-500"
+                    >*/}
                     <Link
                       href="/upload-scorecard"
                       className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] flex items-center"
