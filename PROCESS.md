@@ -512,4 +512,80 @@ The VHS build system processes these files differently:
 Understanding these extensions is crucial for effective development in the VHS framework, as they determine how code is processed, compiled, and executed across the application's technology stack.
 
 
+# Locations:
 
+When adding a React component with a UI element, for example, a page that accepts uploaded images and will appear in the NavBar, three files will me affected:
+```sh
+./frontend/pages/upload-scorecard.tsx  # new
+./frontend/components/GolfCardUploader.tsx # new
+./frontend/components/common/Navbar.tsx #updated
+```
+
+The files that are updates when i18n is applies are:
+```sh
+./frontend/public/locales/zh/common.json
+./frontend/public/locales/ru/common.json
+./frontend/public/locales/he/common.json
+./frontend/public/locales/es/common.json
+./frontend/public/locales/en/common.json
+./frontend/pages/upload-scorecard.tsx
+./frontend/components/GolfCardUploader.tsx
+./frontend/components/common/Navbar.tsx
+
+```
+
+Files that were affected when I made the logger a global:
+```sh
+./utils/logger.js
+./frontend/pages/_app.tsx
+```
+
+# Utilities
+## Global Logger
+The logger can be used in tewo ways:
+
+**Option 1: Using the Global Function**
+• Advantage: Since the function is attached to the window object via _app.tsx, it’s available everywhere without needing to import anything explicitly.
+• Disadvantage: Relying on a global function means it’s less obvious from reading a single file where the function comes from, which can make your code harder to maintain or test. It also "pollutes" the global namespace, potentially increasing the risk of name conflicts in larger projects.
+
+```js
+// In any React component file
+import { useEffect } from 'react';
+
+function MyComponent() {
+  useEffect(() => {
+    // Call the global logMessage function which was attached to window
+    if (typeof window !== 'undefined' && window.logMessage) {
+      window.logMessage('MyComponent has been mounted!');
+    }
+  }, []);
+
+  return <div>Component Content</div>;
+}
+
+export default MyComponent;
+```
+
+**Option 2: Using the Utility Function**
+• Advantage: Importing the logging function explicitly (from utils/logger.js) makes its dependency clear in each module. This improves modularity and code clarity and is easier to test because you can mock or replace the function in isolated tests.
+• Disadvantage: This method requires you to add an import statement wherever you need functionality, which might feel slightly more verbose if you have many files that use logging.
+```js
+// AnotherComponent.tsx
+import { logMessage } from '../utils/logger'; // Adjust the path if needed
+
+function AnotherComponent() {
+  const handleClick = () => {
+    // Use the utility function to log a message
+    logMessage('AnotherComponent button clicked!');
+  };
+
+  return (
+    <div>
+      <button onClick={handleClick}>Send Log</button>
+    </div>
+  );
+}
+
+export default AnotherComponent;
+
+```

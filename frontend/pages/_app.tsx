@@ -1,3 +1,9 @@
+declare global {
+  interface Window {
+    logMessage: (msg: string) => void;
+  }
+}
+
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import { appWithTranslation } from 'next-i18next';
@@ -52,6 +58,13 @@ function MyApp({ Component, pageProps }) {
     window.addEventListener('authChange', checkAdminStatus);
     return () => {
       window.removeEventListener('authChange', checkAdminStatus);
+    };
+  }, []);
+
+  // Attach global logMessage function
+  useEffect(() => {
+    window.logMessage = (msg) => {
+      console.log(`[LOG]: ${msg}`);
     };
   }, []);
 

@@ -97,14 +97,17 @@ const Navbar = () => {
           <div className="flex items-center space-x-6">
             {mounted && (
               <>
+                {/* ---------------------------- {t('home')} ---------------------------- */}
                 <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
                   {t('home')}
                 </Link>
+                {/* ---------------------------- {t('courses')} ---------------------------- */}
                 <Link href="/courses" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
                   {t('courses')}
                 </Link>
 
                 {/* TEST BUTTON - REMOVE AFTER DEBUGGING */}
+                {/* ---------------------------- {t('debug')} ---------------------------- */}
                 <button
                   onClick={() => {
                     alert('Debug button clicked! Frontend code is working!');
@@ -118,6 +121,28 @@ const Navbar = () => {
                   <>
                     <AdminLink />
                     <TodosLink />
+
+                    {/* ---------------------------- {t('uploadScorecard')} ---------------------------- */}
+                    <Link
+                      href="/upload-scorecard"
+                      className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] flex items-center"
+                    >
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-5 w-5 mr-1" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="currentColor"
+                      >
+                        <path 
+                          strokeLinecap="round" 
+                          strokeLinejoin="round" 
+                          strokeWidth={2} 
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" 
+                        />
+                      </svg>
+                      {t('uploadScorecard', 'Upload Scorecard')}
+                    </Link>
                     <div className="flex items-center ml-6">
                       <Link
                         href="/profile"
@@ -133,9 +158,11 @@ const Navbar = () => {
                   </>
                 ) : (
                   <>
+                    {/* ---------------------------- {t('signIn')} ---------------------------- */}
                     <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
                       {t('signIn')}
                     </Link>
+                    {/* ---------------------------- {t('createAccount')} ---------------------------- */}
                     <Link href="/register" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
                       {t('createAccount')}
                     </Link>
