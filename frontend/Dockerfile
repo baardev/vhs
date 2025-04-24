@@ -9,8 +9,8 @@ FROM node:lts AS builder
 WORKDIR /app
 
 # Set build arg for environment (defaulting to development for build time)
-ARG NODE_ENV=development
-ENV NODE_ENV=$NODE_ENV
+# ARG NODE_ENV=development
+# ENV NODE_ENV=$NODE_ENV
 
 # Update npm as part of the build process
 RUN npm install -g npm@latest

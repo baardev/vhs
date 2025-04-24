@@ -75,9 +75,7 @@ wipe_all() {
     docker system prune -fa
     docker volume prune -fa
     
-    echo -e "\033[0;32mClearing all caches...\033[0m"
-    CLEARCACHE --all
-    
+   
     # Stop, remove, and delete any dev containers
     /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
     /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
@@ -172,7 +170,7 @@ rebuild_nginx() {
     # Build JUST the nginx image (no other targets)
     /usr/bin/docker compose ${FILEARG} build --no-cache --pull nginx
 
-    # Start nginx without starting any dependency chain
+    # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
     /usr/bin/docker compose ${FILEARG} up -d --no-deps nginx
 
     echo "Nginx rebuilt and restarted."
@@ -327,31 +325,36 @@ if $REBUILD_RESTORE; then
 fi
 
 if $ALL; then
+
+    # ORDER IS IMPORTANT    
+
+
     # Call the wipe function first
     wipe_all
 
-    docker compose down && docker compose build --no-cache && docker compose up -d
+    # docker compose down && docker compose build --no-cache && docker compose up -d
 
+    echo -e "\033[0;32mConfiguring buildx...\033[0m"
+    /usr/bin/docker buildx create --use
 
-    # echo -e "\033[0;32mConfiguring buildx...\033[0m"
-    # /usr/bin/docker buildx create --use
+    echo -e "\033[0;32mRebuilding Backend...\033[0m"
+    rebuild_backend
     
-    # # Rebuild db first to ensure database is ready for other services
-    # echo -e "\033[0;32mRebuilding dbQL...\033[0m"
-    # rebuild_db
+    echo -e "\033[0;32mRebuilding Frontend...\033[0m"
+    rebuild_frontend
+
     
-    # # Now rebuild the other services
-    # echo -e "\033[0;32mRebuilding Backend...\033[0m"
-    # rebuild_backend
+    echo -e "\033[0;32mRebuilding Nginx...\033[0m"
+    rebuild_nginx
     
-    # echo -e "\033[0;32mRebuilding Frontend...\033[0m"
-    # rebuild_frontend
+    # Rebuild db first to ensure database is ready for other services
+    #echo -e "\033[0;32mRebuilding dbQL...\033[0m"
+    #rebuild_db
     
-    # echo -e "\033[0;32mRebuilding Nginx...\033[0m"
-    # rebuild_nginx
+    # Now rebuild the other services
     
-    # echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
-    # /usr/bin/docker compose ${FILEARG} ps
+    echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
+    /usr/bin/docker compose ${FILEARG} ps
 else
     echo "No options specified. Use one of the following:"
     echo "  --all               Full rebuild of all containers"

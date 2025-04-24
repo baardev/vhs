@@ -152,22 +152,22 @@ fi
 # ------------------------------
 # Rebuild and restart services
 # ------------------------------
-log_info "\n=== Rebuilding and restarting services ==="
-cd "${ROOT_DIR}" || { log_error "Cannot cd to root directory"; exit 1; }
+# log_info "\n=== Rebuilding and restarting services ==="
+# cd "${ROOT_DIR}" || { log_error "Cannot cd to root directory"; exit 1; }
 
-# Rebuild all containers without cache
-log_info "Rebuilding Docker containers without cache..."
-docker compose build --no-cache || log_error "Failed to rebuild containers, continuing..."
+# # Rebuild all containers without cache
+# log_info "Rebuilding Docker containers without cache..."
+# docker compose build --no-cache || log_error "Failed to rebuild containers, continuing..."
 
-# Start backend (and db if needed)
-log_info "Starting backend services..."
-docker compose up -d backend db || log_error "Failed to start backend services, continuing..."
+# # Start backend (and db if needed)
+# log_info "Starting backend services..."
+# docker compose up -d backend db || log_error "Failed to start backend services, continuing..."
 
-if [[ "$MODE" == "all" || "$MODE" == "frontend" ]]; then
-  log_info "Starting frontend in development mode (better for full recompilation)..."
-  log_info "Press Ctrl+C when you're done testing the frontend"
-  cd "${ROOT_DIR}/frontend" && npm run dev
-fi
+# if [[ "$MODE" == "all" || "$MODE" == "frontend" ]]; then
+#   log_info "Starting frontend in development mode (better for full recompilation)..."
+#   log_info "Press Ctrl+C when you're done testing the frontend"
+#   cd "${ROOT_DIR}/frontend" && npm run dev
+# fi
 
 if [ $EXIT_CODE -eq 0 ]; then
   log_success "\nCache clearing completed successfully."
