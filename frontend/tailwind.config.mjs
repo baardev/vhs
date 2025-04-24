@@ -7,9 +7,15 @@ const config = {
   ],
   theme: {
     extend: {
+      colors: {
+        primary: {
+          DEFAULT: '#2d6a4f',
+          dark: '#4fd1c5',
+        }
+      },
       fontFamily: {
-        sans: ['var(--font-geist-sans)'],
-        mono: ['var(--font-geist-mono)'],
+        sans: ['Geist', 'sans-serif'],
+        mono: ['Geist Mono', 'monospace'],
       },
     },
   },

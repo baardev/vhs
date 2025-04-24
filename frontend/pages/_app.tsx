@@ -15,6 +15,7 @@ import LogViewer from '../components/LogViewer';
 import '../i18n';
 import nextI18NextConfig from '../next-i18next.config.js';
 import { Geist, Geist_Mono } from "next/font/google"
+import Head from 'next/head';
 
 const geistSans = Geist({
   subsets: ['latin'],
@@ -73,7 +74,10 @@ function MyApp({ Component, pageProps }) {
   const showLogsButton = true; // For testing
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className={`${geistSans.variable} ${geistMono.variable} flex flex-col min-h-screen`}>
+      <Head>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </Head>
       {/* Log Viewer Toggle Button - always visible for testing */}
       {showLogsButton && (
         <button
