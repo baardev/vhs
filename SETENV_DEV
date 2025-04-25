@@ -12,10 +12,19 @@ export PGPORT=5432
 export NODE_ENV=
 export COMPOSE_BAKE=true
 export ROOT_DIR=$(git rev-parse --show-toplevel)
-export PATH=${ROOT_DIR}/utils:$PATH
+
+# Check if utils is already in PATH before adding it
+if is_in_path; then
+  echo "Utils directory already in PATH"
+else
+  echo "Adding utils directory to PATH"
+  export PATH=${ROOT_DIR}/utils:$PATH
+fi
 
 export PGPASSWORD=`cat ${ROOT_DIR}/.adminpw`
 export DB_PASSWORD=`cat ${ROOT_DIR}/.adminpw`
+
+export DB_CONTAINER=dev-vhs-db  # this is the default container name that is explicitly set in the docker-compose.yml
 
 # Check system information and set conda environment accordingly
 if uname -a | grep -q ":jwbox"; then
