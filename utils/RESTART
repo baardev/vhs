@@ -57,11 +57,11 @@ fi
 
 # Start the selected services
 if $start_backend; then
-  docker compose start backend
+  docker-compose build backend && docker-compose up -d backend
 fi
 
 if $start_frontend; then
-  docker compose start frontend
+  docker-compose build frontend && docker-compose up -d frontend
 fi
 
 if $start_nginx; then

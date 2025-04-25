@@ -1,12 +1,19 @@
 import { Router, Request, Response, NextFunction } from 'express';
-import { pool } from '../db';
+import { pool, safeQuery } from '../db';
 
 const router = Router();
+
+// Simple test endpoint with no DB access
+router.get('/player-cards-test', async (req: Request, res: Response): Promise<void> => {
+  console.log('GET /player-cards-test - Test endpoint hit');
+  res.json({ message: 'Player cards test endpoint is working!' });
+});
 
 // Get all player cards with course and user info
 router.get('/player-cards', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
-    const result = await pool.query(`
+    console.log('GET /player-cards - Fetching all player cards');
+    const result = await safeQuery(`
       SELECT 
         pc.id, 
         pc.player_id,
@@ -30,7 +37,7 @@ router.get('/player-cards', async (req: Request, res: Response, next: NextFuncti
       ORDER BY 
         pc.play_date DESC
       LIMIT 100
-    `);
+    `, []);
     
     res.json(result.rows);
   } catch (error) {
@@ -39,46 +46,12 @@ router.get('/player-cards', async (req: Request, res: Response, next: NextFuncti
   }
 });
 
-// Get a specific player card by ID
-router.get('/player-cards/:id', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const { id } = req.params;
-    
-    const result = await pool.query(`
-      SELECT 
-        pc.*,
-        cn.course_name,
-        u.username as player_name,
-        tt.color as tee_name
-      FROM 
-        player_cards pc
-      LEFT JOIN 
-        course_names cn ON pc.course_id = cn.course_id
-      LEFT JOIN 
-        users u ON pc.player_id::INTEGER = u.id
-      LEFT JOIN
-        tee_types tt ON pc.tee_id = tt.id
-      WHERE 
-        pc.id = $1
-    `, [id]);
-    
-    if (result.rows.length === 0) {
-      res.status(404).json({ error: 'Player card not found' });
-      return;
-    }
-    
-    res.json(result.rows[0]);
-  } catch (error) {
-    next(error);
-  }
-});
-
-// Get player cards for a specific player
+// Get player cards for a specific player - must come BEFORE the :id route
 router.get('/player-cards/player/:playerId', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { playerId } = req.params;
     
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         pc.id, 
         pc.player_id,
@@ -108,12 +81,12 @@ router.get('/player-cards/player/:playerId', async (req: Request, res: Response,
   }
 });
 
-// Get player cards for a specific course
+// Get player cards for a specific course - must come BEFORE the :id route
 router.get('/player-cards/course/:courseId', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { courseId } = req.params;
     
-    const result = await pool.query(`
+    const result = await safeQuery(`
       SELECT 
         pc.id, 
         pc.player_id,
@@ -137,6 +110,40 @@ router.get('/player-cards/course/:courseId', async (req: Request, res: Response,
     `, [courseId]);
     
     res.json(result.rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get a specific player card by ID - this route must come AFTER the more specific routes
+router.get('/player-cards/:id', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { id } = req.params;
+    
+    const result = await safeQuery(`
+      SELECT 
+        pc.*,
+        cn.course_name,
+        u.username as player_name,
+        tt.color as tee_name
+      FROM 
+        player_cards pc
+      LEFT JOIN 
+        course_names cn ON pc.course_id = cn.course_id
+      LEFT JOIN 
+        users u ON pc.player_id::INTEGER = u.id
+      LEFT JOIN
+        tee_types tt ON pc.tee_id = tt.id
+      WHERE 
+        pc.id = $1
+    `, [id]);
+    
+    if (result.rows.length === 0) {
+      res.status(404).json({ error: 'Player card not found' });
+      return;
+    }
+    
+    res.json(result.rows[0]);
   } catch (error) {
     next(error);
   }

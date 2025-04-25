@@ -9,6 +9,8 @@ import coursesRouter from './routes/courses';
 import adminRouter from './routes/admin';
 import handicapCalcRouter from './routes/handicapCalc';
 import logsRouter from './routes/logs';
+import playerCardsRouter from './routes/playerCards';
+import coursesDataRouter from './routes/coursesData';
 
 
 // Load environment variables
@@ -57,6 +59,8 @@ app.use('/api/admin', adminRouter);
 app.use('/api/handicap-calc', handicapCalcRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api', randomQuoteRouter);
+app.use('/api', playerCardsRouter);
+app.use('/api', coursesDataRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from VHS backend!');

@@ -26,11 +26,17 @@ const PlayerCardsList = () => {
     const fetchPlayerCards = async () => {
       try {
         setLoading(true);
+        console.log('Fetching player cards from /api/player-cards');
         const response = await axios.get('/api/player-cards');
+        console.log('Player cards response:', response.data);
         setPlayerCards(response.data);
       } catch (err) {
         console.error('Error fetching player cards:', err);
-        setError('Failed to load player cards');
+        if (axios.isAxiosError(err)) {
+          setError(`Failed to load player cards: ${err.message} (${err.response?.status || 'unknown'} ${err.response?.statusText || ''})`);
+        } else {
+          setError(`Failed to load player cards: ${err.toString()}`);
+        }
       } finally {
         setLoading(false);
       }
