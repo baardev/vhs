@@ -27,3 +27,22 @@ elif uname -a | grep -q "Ubuntu"; then
     source /home/jw/miniforge3/etc/profile.d/conda.sh
     conda activate base
 fi
+
+
+echo "DISPLAY: [$DISPLAY]"
+echo "DB_USER: [$DB_USER]"
+echo "DB_NAME: [$DB_NAME]"
+echo "DB_HOST: [$DB_HOST]"
+echo "DB_PORT: [$DB_PORT]"
+echo "DATABASE_URL: [$DATABASE_URL]"
+echo "PGUSER: [$PGUSER]"
+echo "PGDATABASE: [$PGDATABASE]"    
+echo "PGHOST: [$PGHOST]"
+echo "PGPORT: [$PGPORT]"
+echo "NODE_ENV: [$NODE_ENV]"
+echo "COMPOSE_BAKE: [$COMPOSE_BAKE]"
+echo "ROOT_DIR: [$ROOT_DIR]"
+echo "PATH: [$PATH]"
+
+echo "PGPASSWORD: [$PGPASSWORD]"
+echo "DB_PASSWORD: [$DB_PASSWORD]"
