@@ -132,9 +132,9 @@ fi
 # ------------------------------
 # Stop all docker services first
 # ------------------------------
-log_info "Stopping all Docker services..."
-cd "${ROOT_DIR}" || { log_error "Cannot cd to root directory"; exit 1; }
-docker compose down -v || log_error "Failed to stop Docker services, continuing..."
+# log_info "Stopping all Docker services..."
+# cd "${ROOT_DIR}" || { log_error "Cannot cd to root directory"; exit 1; }
+# docker compose down -v || log_error "Failed to stop Docker services, continuing..."
 
 # ------------------------------
 # Execute based on chosen mode

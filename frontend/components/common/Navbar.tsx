@@ -128,8 +128,12 @@ const Navbar = () => {
                   {t('home')}
                 </Link>
                 {/* ---------------------------- {t('courses')} ---------------------------- */}
-                <Link href="/courses" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
+                <Link href="/course-data" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
                   {t('courses')}
+                </Link>
+                {/* ---------------------------- Player Scorecards ---------------------------- */}
+                <Link href="/player-cards" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
+                  Player Scorecards
                 </Link>
 
                 {isLoggedIn ? (
@@ -210,6 +214,9 @@ const Navbar = () => {
             </Link>
             <Link href="/courses" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
               {t('courses')}
+            </Link>
+            <Link href="/player-cards" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+              Player Scorecards
             </Link>
 
 
