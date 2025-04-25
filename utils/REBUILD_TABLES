@@ -64,7 +64,7 @@ rebuild_database() {
     ${ROOT_DIR}/backend/db/030_create_course_tables_v1.sh
     ${ROOT_DIR}/backend/db/040_create_course_tables_v2.sh
     ${ROOT_DIR}/backend/db/120_create_quotes_table.sh 
-    ${ROOT_DIR}/backend/db/140_create_todo_table.sh
+    # ${ROOT_DIR}/backend/db/140_create_todo_table.sh
     ${ROOT_DIR}/backend/db/200_create_player_card_tables.sh
     
 

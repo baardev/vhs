@@ -5,9 +5,7 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth';
 import newsRouter from './routes/news';
 import randomQuoteRouter from './routes/randomQuote';
-import testDbRouter from './routes/testDb';
 import coursesRouter from './routes/courses';
-import todosRouter from './routes/todos';
 import adminRouter from './routes/admin';
 import handicapCalcRouter from './routes/handicapCalc';
 import logsRouter from './routes/logs';
@@ -59,8 +57,6 @@ app.use('/api/admin', adminRouter);
 app.use('/api/handicap-calc', handicapCalcRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api', randomQuoteRouter);
-app.use('/api', testDbRouter);
-app.use('/api', todosRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from VHS backend!');

@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next';
 import { useState, useEffect } from 'react';
 import LogoutButton from '../LogoutButton';
 import AdminLink from './AdminLink';
-import TodosLink from './TodosLink';
 
 const Navbar = () => {
   const { t, ready, i18n } = useTranslation('common');
@@ -139,35 +138,8 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <>
                     <AdminLink />
-                    <TodosLink />
 
 
-                    {/* ---------------------------- {t('uploadScorecard')} ---------------------------- */}
-                    {/* JWFIX: if "border border-red-500" is removed from the className below, the item does not appear in the navbar.  Intermittent, could be a cache related issue.  */}
-                    {/*<Link
-                      href="/upload-scorecard"
-                      className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] flex items-center border border-red-500"
-                    >*/}
-                    <Link
-                      href="/upload-scorecard"
-                      className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] flex items-center"
-                    >
-                      <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="h-5 w-5 mr-1" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                      >
-                        <path 
-                          strokeLinecap="round" 
-                          strokeLinejoin="round" 
-                          strokeWidth={2} 
-                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" 
-                        />
-                      </svg>
-                      {t('uploadScorecard', 'Upload Scorecard')}
-                    </Link>
                     <div className="flex items-center ml-6">
                       <Link
                         href="/profile"
@@ -225,15 +197,8 @@ const Navbar = () => {
                 <Link href="/admin" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
                   {t('admin.title')}
                 </Link>
-                <Link href="/todos" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
-                  {t('todo.title')}
-                </Link>
-                <Link href="/upload-scorecard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center" onClick={() => setMobileMenuOpen(false)}>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    {/* SVG path */}
-                  </svg>
-                  {t('uploadScorecard')}
-                </Link>
+
+
                 <Link href="/profile" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 font-medium" onClick={() => setMobileMenuOpen(false)}>
                   {username}
                 </Link>

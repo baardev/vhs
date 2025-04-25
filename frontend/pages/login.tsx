@@ -47,12 +47,8 @@ const Login = () => {
 
         window.dispatchEvent(new Event('authChange'));   //  <<< add this line
         
-        // Redirect based on admin status
-        if (data.user.is_admin) {
-          router.push('/admin');
-        } else {
-          router.push('/');
-        }
+        // Redirect user to dashboard regardless of admin status
+        router.push('/dashboard');
       } else {
         setError(data.message || t('login.invalidCredentials', 'Invalid credentials'));
       }
