@@ -123,7 +123,7 @@ const Navbar = () => {
             {mounted && (
               <>
                 {/* ---------------------------- {t('home')} ---------------------------- */}
-                <Link href="/Dashboard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
+                <Link href="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
                   {t('home')}
                 </Link>
                 {/* ---------------------------- {t('courses')} ---------------------------- */}
@@ -181,7 +181,7 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 absolute right-4 left-4 z-50">
           <div className="flex flex-col space-y-4">
-            <Link href="/Dashboard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
+            <Link href="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
               {t('home')}
             </Link>
             <Link href="/course-data" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>

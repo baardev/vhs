@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 # =============================================================================
 # CLEARCACHE - VHS Cache Clearing Utility

@@ -57,10 +57,12 @@ fi
 
 # Start the selected services
 if $start_backend; then
+  CLEARCACHE --backend
   docker-compose build backend && docker-compose up -d backend
 fi
 
 if $start_frontend; then
+  CLEARCACHE --frontend
   docker-compose build frontend && docker-compose up -d frontend
 fi
 
