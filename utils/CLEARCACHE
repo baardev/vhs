@@ -56,9 +56,11 @@ clear_frontend() {
 
   # Next.js build cache (complete removal and recreation)
   log_info "Removing Next.js build files..."
-  rm -rf .next
-  mkdir -p .next
-  chmod 777 .next || log_error "Failed to set permissions on .next directory"
+  sudo chown -R 1000:1000 $ROOT_DIR/frontend/.next 2>/dev/null || 
+    log_error "Failed to set ownership on .next directory"
+  rm -rf $ROOT_DIR/frontend/.next
+  mkdir -p $ROOT_DIR/frontend/.next
+  chmod 777 $ROOT_DIR/frontend/.next || log_error "Failed to set permissions on .next directory"
 
   # Remove source maps in frontend
   log_info "Removing source maps..."
@@ -66,7 +68,13 @@ clear_frontend() {
 
   # Remove node_modules cache
   log_info "Cleaning node_modules cache..."
-  rm -rf node_modules/.cache || log_error "Failed to clear node_modules cache"
+
+  sudo chown -R 1000:1000 $ROOT_DIR/frontend/node_modules/.cache 2>/dev/null || 
+    log_error "Failed to set ownership on node_modules/.cache directory"
+
+  sudo chown -R 1000:1000 $ROOT_DIR/frontend/node_modules/.cache 2>/dev/null || 
+    log_error "Failed to set ownership on node_modules/.cache directory"
+  rm -rf $ROOT_DIR/frontend/node_modules/.cache || log_error "Failed to clear node_modules cache"
 
   # Remove vite/webpack cache inside container (ignore error if container not running)
   log_info "Clearing webpack/vite cache in container..."
@@ -75,8 +83,9 @@ clear_frontend() {
 
   # Ensure correct ownership
   log_info "Setting correct file ownership..."
-  sudo chown -R 1000:1000 .next 2>/dev/null || 
-    log_error "Failed to set ownership on .next directory"
+
+  sudo chown -R 1000:1000 $ROOT_DIR/frontend/node_modules/.cache 2>/dev/null || 
+    log_error "Failed to set ownership on node_modules/.cache directory"
 
   log_success "Frontend cache cleared."
   return 0

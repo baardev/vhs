@@ -137,9 +137,10 @@ const Navbar = () => {
 
                 {isLoggedIn ? (
                   <>
+                    {/* ---------------------------- Admin Link ---------------------------- */}
                     <AdminLink />
 
-
+                    {/* ---------------------------- User Profile ---------------------------- */}
                     <div className="flex items-center ml-6">
                       <Link
                         href="/profile"
@@ -147,9 +148,10 @@ const Navbar = () => {
                       >
                         {username}
                       </Link>
+
                       <LogoutButton
                         variant="text"
-                        className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]"
+                          className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]"
                       />
                     </div>
                   </>
