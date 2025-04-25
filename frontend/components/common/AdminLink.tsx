@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 
 const AdminLink = () => {
-  const { t } = useTranslation('common');
+  const { t, ready, i18n } = useTranslation('common');
   const [isAdmin, setIsAdmin] = useState(false);
 
   useEffect(() => {
