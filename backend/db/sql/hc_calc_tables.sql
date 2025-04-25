@@ -1,3 +1,6 @@
+SET client_min_messages = 'warning';
+
+
 DROP TABLE IF EXISTS player_cards CASCADE;
 DROP TABLE IF EXISTS course_data CASCADE;
 DROP TABLE IF EXISTS course_names CASCADE;

@@ -1,20 +1,21 @@
 #!/bin/bash
 export DISPLAY=:0
 export DB_USER=admin
-export DB_PASSWORD=$(cat .adminpw)
 export DB_NAME=vhsdb
 export DB_HOST=db
 export DB_PORT=5432
 export DATABASE_URL=postgres://admin:admin123@db:5432/vhsdb
 export PGUSER=admin
-export PGPASSWORD=$(cat .adminpw)
 export PGDATABASE=vhsdb
 export PGHOST=db
 export PGPORT=5432
 export NODE_ENV=
 export COMPOSE_BAKE=true
-export ROOT_DIR=/home/jw/sites/vhs
+export ROOT_DIR=$(git rev-parse --show-toplevel)
 export PATH=${ROOT_DIR}/utils:$PATH
+
+export PGPASSWORD=`cat ${ROOT_DIR}/.adminpw`
+export DB_PASSWORD=`cat ${ROOT_DIR}/.adminpw`
 
 # Check system information and set conda environment accordingly
 if uname -a | grep -q ":jwbox"; then

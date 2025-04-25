@@ -1,4 +1,10 @@
+SET client_min_messages = 'warning';
+
+-- Enable pgcrypto extension for password hashing
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+
 -- Create users table with all necessary fields
+DROP TABLE IF EXISTS users CASCADE;
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
@@ -37,16 +43,14 @@ CREATE TABLE IF NOT EXISTS password_reset_tokens (
 );
 
 -- Add indices for password_reset_tokens table
+DROP INDEX IF EXISTS idx_password_reset_tokens_token;
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token);
+DROP INDEX IF EXISTS idx_password_reset_tokens_user_id;
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
 
--- -- Create initial admin user (password is 'admin123' - change this in production!)
--- INSERT INTO users (username, email, password, name, family_name, is_admin)
--- VALUES (
---   'adminuser',
---   'admin@example.com',
---   '$2b$10$wG0C2gUm4KMQxJdX3VJWmu.Nr7T5IW7SbxA4nE7mFsiZLdm1YzmG6',
---   'Admin',
---   'User',
---   TRUE
--- ) ON CONFLICT (email) DO NOTHING;
+-- Create initial admin user with bcrypt encrypted password
+INSERT INTO users (username, email, password, first_name, family_name, is_admin) VALUES 
+('victoria', 'ns.victoria@gmail.com', crypt(:db_pass, gen_salt('bf')), 'Victoria', 'Saravia', TRUE),
+('adminuser', 'admin@example.com', crypt(:db_pass, gen_salt('bf')), 'Admin', 'User', TRUE),
+('jwx', 'jeff.milton@gmail.com', crypt(:db_pass, gen_salt('bf')), 'Jeff', 'Milton', TRUE)
+ON CONFLICT (email) DO NOTHING;

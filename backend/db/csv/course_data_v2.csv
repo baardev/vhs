@@ -1,0 +1,50 @@
+id,course_id,sel,tee_name,gender,par,course_rating,bogey_rating,slope_rating,rating_f,rating_b,front,back,bogey_rating_f,bogey_rating_b,slope_f,slope_b,tee_id,length,hp01,hp02,hp03,hp04,hp05,hp06,hp07,hp08,hp09,hp10,hp11,hp12,hp13,hp14,hp15,hp16,hp17,hp18
+1,26816,1,Amarillo Caballeros,M,72,67.2,89.8,122,33.7,33.5,33.7 / 119,33.5 / 124,44.8,45,119,119,369059,5742,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+2,26816,1,Amarillo Damas,F,72,73.1,102.5,125,36.7,36.4,36.7 / 122,36.4 / 127,51.1,51.4,122,122,725336,5742,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+3,26816,1,Azul,M,72,71.1,93.9,123,35.8,35.3,35.8 / 119,35.3 / 126,46.9,47,119,119,725321,6461,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+4,26816,1,Blanco,M,72,69.7,92.6,123,35.1,34.6,35.1 / 117,34.6 / 129,46,46.6,117,117,369058,6203,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+5,26816,1,Negro,M,72,72.5,95.6,124,36.2,36.3,36.2 / 118,36.3 / 130,47.2,48.4,118,118,369057,6714,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+6,26816,1,Rojo Caballeros,M,72,65.5,86.5,113,33,32.5,33.0 / 113,32.5 / 113,43.5,43,113,113,725396,5389,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+7,26816,1,Rojo Damas,F,72,70.8,99.3,121,35.8,35,35.8 / 119,35.0 / 123,49.8,49.5,119,119,395760,5389,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+8,26821,1,Amarillo,M,72,69.8,91.8,119,34.7,35.1,34.7 / 115,35.1 / 122,45.4,46.4,115,115,369023,6343,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+9,26821,1,Azul,M,72,72.3,94.3,119,36.1,36.2,36.1 / 115,36.2 / 122,46.8,47.5,115,115,369021,6887,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+10,26821,1,Blanco,M,72,71,93.4,121,35.5,35.5,35.5 / 118,35.5 / 123,46.5,46.9,118,118,369022,6624,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+11,26821,1,Rojo,F,72,73.4,102,122,36.9,36.5,36.9 / 125,36.5 / 118,51.6,50.4,125,125,382996,5875,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+12,26821,1,Verde,F,72,70.5,98.3,118,35.1,35.4,35.1 / 118,35.4 / 118,49,49.3,118,118,382997,5396,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+13,26832,1,Amarillo Caballeros,M,72,67.3,88.8,116,32,35.3,32.0 / 112,35.3 / 119,42.4,46.4,112,112,369043,5941,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+14,26832,1,Amarillo Damas,F,73,73.5,102.7,124,34.9,38.6,34.9 / 118,38.6 / 130,48.8,53.9,118,118,695565,5952,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+15,26832,1,Azul,M,72,71.1,93.8,122,34.2,36.9,34.2 / 116,36.9 / 128,45,48.8,116,116,648371,6618,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+16,26832,1,Blanco,M,72,69.5,91.1,116,33.3,36.2,33.3 / 114,36.2 / 118,43.9,47.2,114,114,341976,6402,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+17,26832,1,Negro,M,72,72.1,95.8,128,34.8,37.3,34.8 / 119,37.3 / 136,45.9,49.9,119,119,395902,6878,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+18,26832,1,Rojo Caballeros,M,71,66.5,87.6,114,31.8,34.7,31.8 / 112,34.7 / 115,42.2,45.4,112,112,683508,5699,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+19,26832,1,Rojo Damas,F,73,72.2,101.2,123,34.4,37.8,34.4 / 117,37.8 / 129,48.2,53,117,117,611983,5699,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+20,26853,1,Azul,M,73,71.9,95.8,129,35.4,36.5,35.4 / 128,36.5 / 129,47.3,48.5,128,128,344726,6629,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+21,26853,1,Blanco,M,73,70.9,94.3,126,34.9,36,34.9 / 124,36.0 / 128,46.4,47.9,124,124,344727,6433,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+22,26853,1,Rojo - Caballeros,M,73,67.3,88.6,115,33.5,33.8,33.5 / 112,33.8 / 117,43.9,44.7,112,112,648697,5751,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+23,26853,1,Rojo,F,74,73.1,103.4,129,36.2,36.9,36.2 / 127,36.9 / 130,51.2,52.2,127,127,343019,5751,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+24,28287,1,Blanco,M,72,70.5,91.8,115,35,35.5,35.0 / 117,35.5 / 112,45.9,45.9,117,117,369068,6369,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+25,28287,1,Rojo,F,72,73.3,102.2,123,36.3,37,36.3 / 120,37.0 / 125,50.5,51.7,120,120,369069,5787,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+26,28749,1,Amarillo,M,72,66.6,87.5,113,33.4,33.2,33.4 / 115,33.2 / 110,44.1,43.4,115,115,657873,5709,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+27,28749,1,Azul,M,72,73,94.9,118,36.9,36.1,36.9 / 119,36.1 / 116,48,46.9,119,119,399543,6956,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+28,28749,1,Blanco,M,72,69.6,92.1,121,34.9,34.7,34.9 / 124,34.7 / 118,46.4,45.7,124,124,657951,6385,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+29,28749,1,Negro,M,72,75.4,98.7,126,38,37.4,38.0 / 129,37.4 / 122,50,48.7,129,129,399541,7360,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+30,28749,1,Rojo,F,72,70.7,97.3,113,35.1,35.6,35.1 / 111,35.6 / 114,48.2,49.1,111,111,399545,5451,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+31,28759,1,Blanco,M,72,70.1,93.9,128,35,35.1,35.0 / 131,35.1 / 125,47.2,46.7,131,131,399824,6318,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+32,28759,1,Campeonato,M,72,71.5,96.4,134,35.9,35.6,35.9 / 142,35.6 / 126,49.1,47.3,142,142,399823,6611,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+33,28759,1,Rojo,F,73,73.2,103.6,129,36.2,37,36.2 / 127,37.0 / 131,51.2,52.4,127,127,399825,5698,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+34,28759,1,Scratch,M,72,73.8,99.6,139,36.8,37,36.8 / 140,37.0 / 138,49.8,49.8,140,140,399822,7052,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+35,29047,1,Amarillo,M,72,69.6,92.5,124,34.8,34.8,34.8 / 124,34.8 / 123,46.3,46.2,124,124,415966,6261,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+36,29047,1,Azul,M,72,73.8,96.9,125,37.5,36.3,37.5 / 125,36.3 / 124,49.1,47.8,125,125,415963,7041,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+37,29047,1,Blanco,M,72,71.4,94.7,126,36,35.4,36.0 / 126,35.4 / 125,47.7,47,126,126,415965,6608,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+38,29047,1,Rojo - Caballeros,M,72,66.6,87.8,114,33.2,33.4,33.2 / 116,33.4 / 112,44,43.8,116,116,648695,5670,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+39,29047,1,Rojo,F,72,72.2,101.7,126,36.1,36.1,36.1 / 126,36.1 / 125,50.9,50.8,126,126,415968,5670,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+40,29052,1,Amarillo,M,72,69.8,92.5,123,35,34.8,35.0 / 121,34.8 / 124,46.2,46.3,121,121,416095,6283,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+41,29052,1,Azul,M,72,74.1,97.3,125,36.6,37.5,36.6 / 126,37.5 / 124,48.3,49,126,126,416092,7070,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+42,29052,1,Blanco,M,72,71.7,95.2,127,35.7,36,35.7 / 127,36.0 / 126,47.5,47.7,127,127,416094,6625,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+43,29052,1,Rojo Caballeros,M,72,66.2,87.5,115,33,33.2,33.0 / 113,33.2 / 116,43.5,44,113,113,709801,5596,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+44,29052,1,Rojo Damas,F,72,71.9,101.2,125,35.8,36.1,35.8 / 123,36.1 / 126,50.3,50.9,123,123,416096,5596,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+45,29211,1,Amarillo,M,72,68.5,91,121,34.6,33.9,34.6 / 126,33.9 / 116,46.3,44.7,126,126,428115,5978,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+46,29211,1,Azul,M,72,72,95.4,126,36.1,35.9,36.1 / 127,35.9 / 125,47.9,47.5,127,127,428118,6694,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+47,29211,1,Blanco,M,72,71,94.3,126,35.7,35.3,35.7 / 126,35.3 / 125,47.4,46.9,126,126,428119,6493,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+48,29211,1,Negro,M,72,73.7,97.6,129,36.3,37.4,36.3 / 131,37.4 / 126,48.5,49.1,131,131,428104,7001,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None
+49,29211,1,Rojo,F,72,73.5,104,130,37.2,36.3,37.2 / 130,36.3 / 129,52.5,51.5,130,130,428116,5869,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None,None

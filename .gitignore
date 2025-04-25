@@ -13,7 +13,6 @@ package-lock.json
 .~*
 ~*
 *.txt
-*.csv
 !frontend/robots.txt
 !backend/blocked_news_words.txt
 backup/

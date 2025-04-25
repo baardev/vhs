@@ -1,3 +1,4 @@
+SET client_min_messages = 'warning';
 -- Create admin user with superuser privileges
 DO
 $do$
