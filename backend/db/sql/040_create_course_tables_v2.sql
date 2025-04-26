@@ -85,6 +85,27 @@ CREATE INDEX IF NOT EXISTS idx_tee_types_course_id ON tee_types(course_id);
 DROP INDEX IF EXISTS idx_tee_types_tee_type CASCADE;
 CREATE INDEX IF NOT EXISTS idx_tee_types_tee_type ON tee_types(tee_type);
 
+-- Create the course_hole_data table to match course_hole_data.csv
+DROP TABLE IF EXISTS course_hole_data CASCADE;
+CREATE TABLE IF NOT EXISTS course_hole_data (
+    id SERIAL PRIMARY KEY,
+    course_id INTEGER NOT NULL,
+    category VARCHAR(10) NOT NULL, -- 'PAR' or 'HCP'
+    gender CHAR(1) NOT NULL,       -- 'M' or 'F'
+    h01 INTEGER, h02 INTEGER, h03 INTEGER, h04 INTEGER, h05 INTEGER, 
+    h06 INTEGER, h07 INTEGER, h08 INTEGER, h09 INTEGER,
+    h10 INTEGER, h11 INTEGER, h12 INTEGER, h13 INTEGER, h14 INTEGER, 
+    h15 INTEGER, h16 INTEGER, h17 INTEGER, h18 INTEGER
+);
+
+-- Create indexes for course_hole_data
+DROP INDEX IF EXISTS idx_course_hole_data_course_id CASCADE;
+CREATE INDEX IF NOT EXISTS idx_course_hole_data_course_id ON course_hole_data(course_id);
+DROP INDEX IF EXISTS idx_course_hole_data_category CASCADE;
+CREATE INDEX IF NOT EXISTS idx_course_hole_data_category ON course_hole_data(category);
+DROP INDEX IF EXISTS idx_course_hole_data_gender CASCADE;
+CREATE INDEX IF NOT EXISTS idx_course_hole_data_gender ON course_hole_data(gender);
+
 -- Add foreign key constraints after all tables are created
 ALTER TABLE course_data 
     ADD CONSTRAINT course_data_course_id_fkey 
@@ -94,10 +115,15 @@ ALTER TABLE tee_types
     ADD CONSTRAINT tee_types_course_id_fkey 
     FOREIGN KEY (course_id) REFERENCES course_names(id);
 
+ALTER TABLE course_hole_data 
+    ADD CONSTRAINT course_hole_data_course_id_fkey 
+    FOREIGN KEY (course_id) REFERENCES course_names(course_id);
+
 -- Import data directly from CSV files
 \copy course_names(id, course_id, col_empty1, course_name, facility_id, col_empty2, facility_name, col_empty3, full_name, address1, address2, city, state, country, ent_country_code, ent_state_code, legacy_crp_course_id, telephone, email, ratings, state_display) FROM '/tmp/course_names_v2.csv' WITH (FORMAT csv, HEADER true, NULL 'None');
 \copy course_data(id, course_id, sel, tee_name, gender, par, course_rating, bogey_rating, slope_rating, rating_f, rating_b, front, back, bogey_rating_f, bogey_rating_b, slope_f, slope_b, tee_id, length, par_h01, par_h02, par_h03, par_h04, par_h05, par_h06, par_h07, par_h08, par_h09, par_h10, par_h11, par_h12, par_h13, par_h14, par_h15, par_h16, par_h17, par_h18) FROM '/tmp/course_data_v2.csv' WITH (FORMAT csv, HEADER true, NULL 'None');
 \copy tee_types FROM '/tmp/tee_types_v2.csv' WITH (FORMAT csv, HEADER true, NULL 'None');
+\copy course_hole_data(course_id, category, gender, h01, h02, h03, h04, h05, h06, h07, h08, h09, h10, h11, h12, h13, h14, h15, h16, h17, h18) FROM '/tmp/course_hole_data.csv' WITH (FORMAT csv, HEADER true, NULL 'None');
 
 
 
