@@ -67,34 +67,33 @@ echo "Docker file: $FILEARG"
 export NODE_ENV=production
 
 
-isCACHE=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "CACHE="`
-if [ -z "$isCACHE" ]; then
+isDOCKER_CACHE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "DOCKER_CACHE"`
+if [ -z "$isDOCKER_CACHE" ]; then
     NOCACHE=
 else
-   NOCACHE="--${isCACHE}"
+   NOCACHE="--no-cache"
 fi
 
-isPULL=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "PULL="`
+isPULL=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "PULL"`
 if [ -z "$isPULL" ]; then
     PULL=
 else
-   PULL="--${isPULL}"
+   PULL="--pull"
 fi
 
-isWIPE=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "WIPE="`
+isWIPE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "WIPE"`
 if [ -z "$isWIPE" ]; then
     WIPE=
 else
-   WIPE="--${isWIPE}"
+   WIPE="YES"
 fi
 
-isCLEARCACHE=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "CLEARCACHE="`
+isCLEARCACHE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "CLEARCACHE"`
 if [ -z "$isCLEARCACHE" ]; then
     CLEARCACHE=
 else
-   CLEARCACHE="--${isCLEARCACHE}"
+   CLEARCACHE="YES"
 fi
-
 
 echo "┌───────────────────────────────────────────────────────┐"
 echo "│ NOCACHE: $NOCACHE"
@@ -105,6 +104,7 @@ echo "│ FILEARG: $FILEARG"
 echo "│ ROOT_DIR: $ROOT_DIR"
 echo "└───────────────────────────────────────────────────────┘"
 
+# exit
 
 # Function to wipe all containers and volumes
 wipe_all() {

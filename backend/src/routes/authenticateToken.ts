@@ -3,7 +3,10 @@ import jwt from 'jsonwebtoken';
 
 // Define a custom interface for the request with user property
 interface AuthRequest extends Request {
-  user?: { id: number };
+  user?: { 
+    id: number;
+    is_editor?: boolean;
+  };
 }
 
 // Middleware to verify JWT token
@@ -20,8 +23,11 @@ const authenticateToken = async (req: AuthRequest, res: Response, next: NextFunc
     // Use a default secret if environment variable is not set
     const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret_for_development';
 
-    const decoded = jwt.verify(token, jwtSecret) as { userId: number };
-    req.user = { id: decoded.userId };
+    const decoded = jwt.verify(token, jwtSecret) as { userId: number; is_editor?: boolean };
+    req.user = { 
+      id: decoded.userId,
+      is_editor: decoded.is_editor
+    };
     next();
   } catch (error) {
     res.status(401).json({ error: 'Invalid token' });

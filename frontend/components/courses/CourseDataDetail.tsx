@@ -44,22 +44,31 @@ interface CourseDataDetailProps {
   courseId: number;
 }
 
+// Get the base URL for API requests
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return '';
+};
+
 const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
   const [courseData, setCourseData] = useState<CourseData[]>([]);
   const [courseName, setCourseName] = useState<CourseName | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const baseUrl = getBaseUrl();
 
   useEffect(() => {
     const fetchCourseData = async () => {
       try {
         setLoading(true);
-        // Fetch course name
-        const nameResponse = await axios.get(`/api/course-names/${courseId}`);
+        // Fetch course name - updated endpoint
+        const nameResponse = await axios.get(`${baseUrl}/api/coursesData/course-names/${courseId}`);
         setCourseName(nameResponse.data);
         
-        // Fetch course data
-        const dataResponse = await axios.get(`/api/course-data/${courseId}`);
+        // Fetch course data - updated endpoint
+        const dataResponse = await axios.get(`${baseUrl}/api/coursesData/course-data/${courseId}`);
         setCourseData(dataResponse.data);
       } catch (err) {
         console.error('Error fetching course data:', err);
@@ -104,7 +113,7 @@ const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
       {/* Course Header */}
       <div className="bg-green-700 dark:bg-green-800 p-6 text-white">
         <div className="mb-4">
-          <Link href="/courses" className="text-white hover:underline">
+          <Link href="/course-data" className="text-white hover:underline">
             &larr; Back to Courses
           </Link>
         </div>

@@ -60,7 +60,7 @@ app.use('/api/handicap-calc', handicapCalcRouter);
 app.use('/api/logs', logsRouter);
 app.use('/api', randomQuoteRouter);
 app.use('/api', playerCardsRouter);
-app.use('/api', coursesDataRouter);
+app.use('/api/coursesData', coursesDataRouter);
 
 app.get('/', (req: Request, res: Response) => {
   res.send('Hello from VHS backend!');

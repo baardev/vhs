@@ -4,6 +4,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { getI18nProps } from '../../utils/i18n-helpers';
+import Link from 'next/link';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -87,14 +88,16 @@ const EditorDashboard = () => {
             </p>
             
             <div className="mt-6 grid gap-5 grid-cols-1 sm:grid-cols-2">
-              <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
-                <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
-                  {t('editor.courseManagement', 'Course Management')}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-400 mb-4">
-                  {t('editor.courseManagementDesc', 'Add, edit, or remove golf courses and their details.')}
-                </p>
-              </div>
+              <Link href="/editor/courses" className="block">
+                <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                  <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">
+                    {t('editor.courseManagement', 'Course Management')}
+                  </h3>
+                  <p className="text-gray-600 dark:text-gray-400 mb-4">
+                    {t('editor.courseManagementDesc', 'Add, edit, or remove golf courses and their details.')}
+                  </p>
+                </div>
+              </Link>
               
               <div className="bg-gray-50 dark:bg-gray-800 p-6 rounded-lg shadow-sm">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">

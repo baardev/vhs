@@ -11,18 +11,27 @@ interface CourseName {
   country: string;
 }
 
+// Get the base URL for API requests
+const getBaseUrl = () => {
+  if (typeof window !== 'undefined') {
+    return window.location.origin;
+  }
+  return '';
+};
+
 const CourseCardGrid = () => {
   const router = useRouter();
   const [courses, setCourses] = useState<CourseName[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const baseUrl = getBaseUrl();
 
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        // This will need to be updated to use the new API endpoint
-        const response = await axios.get('/api/course-names');
+        // Updated to use the correct API endpoint
+        const response = await axios.get(`${baseUrl}/api/coursesData/course-names`);
         setCourses(response.data);
       } catch (err) {
         console.error('Error fetching courses:', err);
