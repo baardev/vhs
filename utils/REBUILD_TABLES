@@ -71,7 +71,7 @@ rebuild_database() {
     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"
 
     # Show users table
-    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT * FROM users;"
+    /usr/bin/docker exec -it -e PAGER='' $db_container psql -U admin -d vhsdb -c "SELECT * FROM users;"
 }
 
 # Check if restore flag is set

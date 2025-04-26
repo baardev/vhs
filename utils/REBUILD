@@ -46,6 +46,7 @@ echo "REBUILD $1"
 echo "----------------------------------------------------"
 
 cd ${ROOT_DIR}
+REBUILD_CONF=${ROOT_DIR}/utils/REBUILD.conf
 
 # Parse command line arguments
 ALL=false
@@ -65,28 +66,74 @@ echo "Docker file: $FILEARG"
 
 export NODE_ENV=production
 
+
+isCACHE=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "CACHE="`
+if [ -z "$isCACHE" ]; then
+    NOCACHE=
+else
+   NOCACHE="--${isCACHE}"
+fi
+
+isPULL=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "PULL="`
+if [ -z "$isPULL" ]; then
+    PULL=
+else
+   PULL="--${isPULL}"
+fi
+
+isWIPE=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "WIPE="`
+if [ -z "$isWIPE" ]; then
+    WIPE=
+else
+   WIPE="--${isWIPE}"
+fi
+
+isCLEARCACHE=`cat $ROOT_DIR/${REBUILD_CONF}|grep -v -F "#"|grep -F "CLEARCACHE="`
+if [ -z "$isCLEARCACHE" ]; then
+    CLEARCACHE=
+else
+   CLEARCACHE="--${isCLEARCACHE}"
+fi
+
+
+echo "┌───────────────────────────────────────────────────────┐"
+echo "│ NOCACHE: $NOCACHE"
+echo "│ PULL: $PULL"  
+echo "│ WIPE: $WIPE"
+echo "│ CLEARCACHE: $CLEARCACHE"
+echo "│ FILEARG: $FILEARG"
+echo "│ ROOT_DIR: $ROOT_DIR"
+echo "└───────────────────────────────────────────────────────┘"
+
+
 # Function to wipe all containers and volumes
 wipe_all() {
-    echo "┌───────────────────────────────────────────────────────┐"
-    echo "│ Wiping all containers and volumes...                   "
-    echo "└───────────────────────────────────────────────────────┘"
+
+    if [ -z "$WIPE"]; then
+        echo "Wiping is disabled"
+    else
+        echo "┌───────────────────────────────────────────────────────┐"
+        echo "│ Wiping all containers and volumes...                   "
+        echo "└───────────────────────────────────────────────────────┘"
+        
+        sudo chmod -R 777 ${ROOT_DIR}/frontend/.next
+        docker system prune -fa
+        docker volume prune -fa
+        
     
-    sudo chown -R 1000:1000 ${ROOT_DIR}/frontend/.next
-    docker system prune -fa
-    docker volume prune -fa
-    
-   
-    # Stop, remove, and delete any dev containers
-    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
-    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
-    /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
-    
-    # Stop, remove, and delete any buildx containers
-    /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker stop "$1}'|bash
-    /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rm "$1}'|bash
-    /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rmi "$1}'|bash
-    
-    echo -e "\033[0;32mAll containers and volumes wiped successfully\033[0m"
+        # Stop, remove, and delete any dev containers
+        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
+        
+        # Stop, remove, and delete any buildx containers
+        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker stop "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rm "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rmi "$1}'|bash
+        
+        echo -e "\033[0;32mAll containers and volumes wiped successfully\033[0m"
+
+    fi
 }
 
 # Function to rebuild frontend
@@ -101,11 +148,14 @@ rebuild_frontend() {
     echo "┌───────────────────────────────────────────────────────┐"
     echo "│ Clearing frontend cache...                              "
     echo "└───────────────────────────────────────────────────────┘"
-    CLEARCACHE --frontend
+    if [ -n "$CLEARCACHE" ]; then
+        echo "Clearing frontend cache..."
+        CLEARCACHE --frontend
+    fi
 
     echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop frontend
-    /usr/bin/docker compose ${FILEARG} build --no-cache --pull  frontend 
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL}  frontend 
     /usr/bin/docker compose ${FILEARG} up -d frontend
     echo "Frontend container restarted successfully."
 }
@@ -121,11 +171,14 @@ rebuild_backend() {
     echo "┌───────────────────────────────────────────────────────┐"
     echo "│ Clearing backend cache...                              "
     echo "└───────────────────────────────────────────────────────┘"
-    CLEARCACHE --backend
+    if [ -n "$CLEARCACHE" ]; then
+        echo "Clearing backend cache..."
+        CLEARCACHE --backend
+    fi
 
     echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop backend
-    /usr/bin/docker compose ${FILEARG} build --no-cache --pull  backend 
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL}  backend 
     /usr/bin/docker compose ${FILEARG} up -d backend
     echo "Backend container restarted successfully."
 }
@@ -142,7 +195,7 @@ rebuild_nginx() {
     /usr/bin/docker compose ${FILEARG} rm -f nginx
 
     # Build JUST the nginx image (no other targets)
-    /usr/bin/docker compose ${FILEARG} build --no-cache --pull nginx
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} nginx
 
     # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
     /usr/bin/docker compose ${FILEARG} up -d nginx
@@ -162,7 +215,7 @@ rebuild_db() {
     /usr/bin/docker compose ${FILEARG} rm -f db
 
     # Build JUST the nginx image (no other targets)
-    /usr/bin/docker compose ${FILEARG} build --no-cache --pull db
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} db
 
     # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
     /usr/bin/docker compose ${FILEARG} up -d db
@@ -255,31 +308,19 @@ fi
 if $ALL; then
 
     # ORDER IS IMPORTANT    
-
-
     # Call the wipe function first
     wipe_all
 
-    # docker compose down && docker compose build --no-cache && docker compose up -d
-
-    # Rebuild db first to ensure database is ready for other services
-    echo -e "\033[0;32mRebuilding db...\033[0m"
-    rebuild_db
-    
+    # docker compose down && docker compose build ${CACHE} && docker compose up -d
 
     echo -e "\033[0;32mConfiguring buildx...\033[0m"
+
     /usr/bin/docker buildx create --use
 
-    echo -e "\033[0;32mRebuilding Backend...\033[0m"
+    rebuild_db
     rebuild_backend
-    
-    echo -e "\033[0;32mRebuilding Frontend...\033[0m"
-    rebuild_frontend
-    
-    echo -e "\033[0;32mRebuilding Nginx...\033[0m"
+    rebuild_frontend    
     rebuild_nginx
-    
-    # Now rebuild the other services
     
     echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
     /usr/bin/docker compose ${FILEARG} ps
