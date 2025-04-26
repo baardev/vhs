@@ -67,9 +67,9 @@ export NODE_ENV=production
 
 # Function to wipe all containers and volumes
 wipe_all() {
-    echo "--------------------------------------------------------"
-    echo -e "\033[0;32mWiping all containers and volumes...\033[0m"
-    echo "--------------------------------------------------------"
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Wiping all containers and volumes...                   "
+    echo "└───────────────────────────────────────────────────────┘"
     
     sudo chown -R 1000:1000 ${ROOT_DIR}/frontend/.next
     docker system prune -fa
@@ -98,15 +98,15 @@ rebuild_frontend() {
     fi
 
     
-    echo "--------------------------------------------------------"
-    echo "Clearing frontend cache..."
-    echo "--------------------------------------------------------"
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Clearing frontend cache...                              "
+    echo "└───────────────────────────────────────────────────────┘"
     CLEARCACHE --frontend
 
     echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop frontend
-    /usr/bin/docker compose ${FILEARG} build --build-arg NODE_ENV=${NODE_ENV} frontend
-    /usr/bin/docker compose ${FILEARG} up -d frontend
+    /usr/bin/docker compose ${FILEARG} build --no-cache --pull  frontend 
+    /usr/bin/docker compose ${FILEARG} up -d  --no-deps frontend
     echo "Frontend container restarted successfully."
 }
 
@@ -118,51 +118,25 @@ rebuild_backend() {
         npm install
 
     fi
-    echo "--------------------------------------------------------"
-    echo "Clearing backend cache..."
-    echo "--------------------------------------------------------"
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Clearing backend cache...                              "
+    echo "└───────────────────────────────────────────────────────┘"
     CLEARCACHE --backend
 
-    echo "Completely wiping backend server..."
+    echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop backend
-    /usr/bin/docker ps --format "{{.Names}}"|grep backend|awk '{print "docker rm -f "$1}'|bash
-    /usr/bin/docker images --format "{{.Repository}}:{{.Tag}}"|grep backend|awk '{print "docker rmi -f "$1}'|bash
-
-    # Make sure DB is running before rebuilding backend
-    echo "Ensuring database container is running..."
-    /usr/bin/docker compose ${FILEARG} up -d db
-    
-    # Add a wait for DB to be ready
-    echo "Waiting for database to be ready..."
-    sleep 10  # Give DB time to initialize
-    
-    echo "Rebuilding backend from scratch..."
-    /usr/bin/docker compose ${FILEARG} build --no-cache --build-arg NODE_ENV=${NODE_ENV} backend
-    /usr/bin/docker compose ${FILEARG} up -d backend
-    
-    echo "Backend server completely wiped and rebuilt successfully."
-    
-    # Wait a bit longer for backend to connect to database
-    echo "Waiting for services to stabilize..."
-    sleep 5
-    
-    # Get the actual database container name
-    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
-    if [ -z "$DB_CONTAINER" ]; then
-        echo "Database container not found"
-        docker ps
-        exit 1
-    fi
-    
-    # Now rebuild tables using the container name
-    utils/REBUILD_TABLES ${RESTORE}
+    /usr/bin/docker compose ${FILEARG} build --no-cache --pull  backend 
+    /usr/bin/docker compose ${FILEARG} up -d  --no-deps backend
+    echo "Backend container restarted successfully."
 }
 
 # Function to rebuild nginx
 rebuild_nginx() {
-    echo "--------------------------------------------------------"
-    echo "Rebuilding nginx only..."
-    echo "--------------------------------------------------------"
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Rebuilding nginx only...                                "
+    echo "└───────────────────────────────────────────────────────┘"
+
+    echo "Restarting frontend container..."
 
     /usr/bin/docker compose ${FILEARG} stop nginx
     /usr/bin/docker compose ${FILEARG} rm -f nginx
@@ -178,68 +152,22 @@ rebuild_nginx() {
 
 # Function to rebuild db
 rebuild_db() {
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Rebuilding db only...                                  "
+    echo "└───────────────────────────────────────────────────────┘"
 
-# # Stop & remove the old container
-# docker compose stop db
-# docker compose rm -f db
+    echo "Restarting db container..."
 
-# # Delete the named volume (actual project‑prefixed name is shown by `docker volume ls`)
-# docker volume rm $(docker volume ls -q | grep vhsdb_data)
-
-# # Start a fresh 17.x container
-# docker compose up -d db
-
-
-
-
-
-    echo "--------------------------------------------------------"
-    echo "Completely wiping PostgreSQL database..."
-    echo "--------------------------------------------------------"
-    
-    # Get the actual database container name for backup before wiping
-    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
-    if [ ! -z "$DB_CONTAINER" ]; then
-        # Backup existing database before wiping
-        echo "Backing up existing database..."
-        utils/IMPEX --export
-    fi
-    
-    # Stop and remove the container
     /usr/bin/docker compose ${FILEARG} stop db
-    /usr/bin/docker ps --format "{{.Names}}"|grep db|awk '{print "docker rm -f "$1}'|bash
-    
-    # Remove database volume to ensure clean start
-    echo "Removing database volume..."
-    docker volume rm $(docker volume ls -q | grep vhsdb_data) 2>/dev/null || true
-    docker volume prune -f
-    
-    echo "Rebuilding PostgreSQL from scratch (using latest image)..."
-    /usr/bin/docker compose ${FILEARG} pull db
-    /usr/bin/docker compose ${FILEARG} up -d --force-recreate db
-    
-    echo "Waiting 5 seconds for database to initialize..."
-    sleep 5
-    
-    # Get the actual database container name
-    DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
-    # Ensure the database container is running; if not, attempt to start it
-    if [ -z "$DB_CONTAINER" ]; then
-        echo "Database container is not running. Attempting to start it..."
-        /usr/bin/docker compose ${FILEARG} up -d db
-        echo "Waiting for database container to start..."
-        sleep 10
-        DB_CONTAINER=$(docker ps --format "{{.Names}}" | grep db | head -n 1)
-        if [ -z "$DB_CONTAINER" ]; then
-            echo "Failed to start the database container. See docker ps output below:"
-            docker ps
-            exit 1
-        fi
-        echo "Database container started successfully: $DB_CONTAINER"
-    fi
-    
-    echo "Creating fresh database schema and initial data..."
-    # /usr/bin/docker compose ${FILEARG} up -d backend
+    /usr/bin/docker compose ${FILEARG} rm -f db
+
+    # Build JUST the nginx image (no other targets)
+    /usr/bin/docker compose ${FILEARG} build --no-cache --pull db
+
+    # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
+    /usr/bin/docker compose ${FILEARG} up -d --no-deps db
+
+    echo "db rebuilt and restarted."
     utils/REBUILD_TABLES
 
     if [ "$RESTORE" = "--restore" ]; then

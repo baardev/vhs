@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS users (
   category VARCHAR(50),
   handicap DECIMAL(4,1),
   is_admin BOOLEAN DEFAULT FALSE,
+  is_editor BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -29,6 +30,7 @@ CREATE INDEX IF NOT EXISTS idx_users_username ON users(username);
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_users_matricula ON users(matricula);
 CREATE INDEX IF NOT EXISTS idx_users_is_admin ON users(is_admin);
+CREATE INDEX IF NOT EXISTS idx_users_is_editor ON users(is_editor);
 CREATE INDEX IF NOT EXISTS idx_users_category ON users(category);
 CREATE INDEX IF NOT EXISTS idx_users_first_name ON users(first_name);
 
@@ -49,8 +51,9 @@ DROP INDEX IF EXISTS idx_password_reset_tokens_user_id;
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
 
 -- Create initial admin user with bcrypt encrypted password
-INSERT INTO users (username, email, password, first_name, family_name, is_admin) VALUES 
-('victoria', 'ns.victoria@gmail.com', crypt(:db_pass, gen_salt('bf')), 'Victoria', 'Saravia', TRUE),
-('adminuser', 'admin@example.com', crypt(:db_pass, gen_salt('bf')), 'Admin', 'User', TRUE),
-('jwx', 'jeff.milton@gmail.com', crypt(:db_pass, gen_salt('bf')), 'Jeff', 'Milton', TRUE)
+INSERT INTO users (username, email, password, first_name, family_name, is_admin, is_editor) VALUES 
+('victoria', 'ns.victoria@gmail.com', crypt('admin123', gen_salt('bf')), 'Victoria', 'Saravia', TRUE, TRUE),
+('adminuser', 'admin@example.com', crypt('admin123', gen_salt('bf')), 'Admin', 'User', TRUE, TRUE),
+('jwx', 'jeff.milton@gmail.com', crypt('admin123', gen_salt('bf')), 'Jeff', 'Milton', TRUE, TRUE),
+('editor', 'editor@example.com', crypt('admin123', gen_salt('bf')), 'Editor', 'User', FALSE, TRUE)
 ON CONFLICT (email) DO NOTHING;

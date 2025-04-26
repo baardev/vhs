@@ -64,58 +64,14 @@ rebuild_database() {
     ${ROOT_DIR}/backend/db/030_create_course_tables_v1.sh
     ${ROOT_DIR}/backend/db/040_create_course_tables_v2.sh
     ${ROOT_DIR}/backend/db/120_create_quotes_table.sh 
-    # ${ROOT_DIR}/backend/db/140_create_todo_table.sh
     ${ROOT_DIR}/backend/db/200_create_player_card_tables.sh
-    
 
-    # /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'DROP DATABASE IF EXISTS vhsdb;'
-    # /usr/bin/docker exec -it $db_container psql -U admin -d postgres -c 'CREATE DATABASE vhsdb;'
-
-    # /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ${ROOT_DIR}/backend/sql/000_create_admin_user.sql
-    # /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ${ROOT_DIR}/backend/sql/010_setup_database.sql
-    # /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ${ROOT_DIR}/backend/sql/020_create_quotes_table.sql
-    # /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ${ROOT_DIR}/backend/sql/030_course_tables.sql
-    # /usr/bin/docker exec -i $db_container psql -U admin -d vhsdb < ${ROOT_DIR}/backend/sql/040_todo_table.sql
-    # ${ROOT_DIR}/backend/sql/make_hc_calc_tables.sh
-
-    # Check if backend is running before proceeding
-    # echo "Checking if backend is running at http://localhost:4000..."
-    # max_attempts=30
-    # attempts=0
-    # backend_ready=false
-
-    # while [ $attempts -lt $max_attempts ]; do
-    #     if curl -s -f http://localhost:4000/health 2>/dev/null || curl -s -f http://localhost:4000/api/health 2>/dev/null; then
-    #         backend_ready=true
-    #         echo "Backend is running and ready!"
-    #         break
-    #     fi
-        
-    #     attempts=$((attempts+1))
-    #     echo "Backend not ready yet (attempt $attempts/$max_attempts). Waiting..."
-    #     sleep 2
-    # done
-
-    # if [ "$backend_ready" = false ]; then
-    #     echo "ERROR: Backend server at http://localhost:4000 is not responding."
-    #     echo "Please ensure the backend container is running before executing REBUILD_TABLES."
-    #     echo "You can start it with: docker compose up -d backend"
-    #     exit 1
-    # fi
-
-    # # Create admin user first
-    # echo "Creating admin user..."
-    # curl -X POST http://localhost:4000/api/auth/register \
-    #  -H "Content-Type: application/json" \
-    #  -d '{"username":"adminuser","email":"admin@example.com","password":"'${PW}'","is_admin":true}'
-
-    # SETADMIN adminuser
     # Verify database structure
     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\dt"
     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"
 
     # Show users table
-    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT id, username, email, password FROM users;"
+    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "SELECT * FROM users;"
 }
 
 # Check if restore flag is set
@@ -127,5 +83,4 @@ if [ "$RESTORE" = true ]; then
 else
     # Only run the normal rebuild process if not restoring
     rebuild_database $(docker ps --format "{{.Names}}" | grep db)
-    utils/SETADMIN adminuser
 fi
