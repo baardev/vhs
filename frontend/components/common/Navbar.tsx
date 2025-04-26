@@ -3,7 +3,6 @@ import { useTranslation } from 'next-i18next';
 // import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 import LogoutButton from '../LogoutButton';
-import AdminLink from './AdminLink';
 
 const Navbar = () => {
   const { t, ready, i18n } = useTranslation('common');
@@ -11,6 +10,7 @@ const Navbar = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [mounted, setMounted] = useState(false);
+  const [isEditor, setIsEditor] = useState(false);
   // Add state for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -25,6 +25,7 @@ const Navbar = () => {
       try {
         const user = JSON.parse(userData);
         setUsername(user.username || '');
+        setIsEditor(user.is_editor || false);
       } catch (error) {
         console.error('Error parsing user data:', error);
       }
@@ -39,11 +40,13 @@ const Navbar = () => {
         try {
           const user = JSON.parse(userData);
           setUsername(user.username || '');
+          setIsEditor(user.is_editor || false);
         } catch (error) {
           console.error('Error parsing user data:', error);
         }
       } else {
         setUsername('');
+        setIsEditor(false);
       }
     };
 
@@ -138,7 +141,34 @@ const Navbar = () => {
                 {isLoggedIn ? (
                   <>
                     {/* ---------------------------- Admin Link ---------------------------- */}
-                    <AdminLink />
+                    {(() => {
+                      try {
+                        const userData = localStorage.getItem('userData');
+                        if (userData) {
+                          const parsedData = JSON.parse(userData);
+                          if (parsedData.is_admin) {
+                            return (
+                              <Link
+                                href="/admin"
+                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md shadow-sm"
+                              >
+                                {t('admin.title')}
+                              </Link>
+                            );
+                          }
+                        }
+                      } catch (error) {
+                        console.error('Error checking admin status:', error);
+                      }
+                      return null;
+                    })()}
+
+                    {/* ---------------------------- Editor Link ---------------------------- */}
+                    {isEditor && (
+                      <Link href="/editor" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm ml-3">
+                        {t('update', 'Update')}
+                      </Link>
+                    )}
 
                     {/* ---------------------------- User Profile ---------------------------- */}
                     <div className="flex items-center ml-6">
@@ -196,10 +226,40 @@ const Navbar = () => {
 
             {isLoggedIn ? (
               <>
-                <Link href="/admin" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
-                  {t('admin.title')}
-                </Link>
+                {/* Mobile Admin Link */}
+                {(() => {
+                  try {
+                    const userData = localStorage.getItem('userData');
+                    if (userData) {
+                      const parsedData = JSON.parse(userData);
+                      if (parsedData.is_admin) {
+                        return (
+                          <Link
+                            href="/admin"
+                            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-md"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {t('admin.title')}
+                          </Link>
+                        );
+                      }
+                    }
+                  } catch (error) {
+                    console.error('Error checking admin status:', error);
+                  }
+                  return null;
+                })()}
 
+                {/* Mobile Editor Link */}
+                {isEditor && (
+                  <Link
+                    href="/editor"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-md"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {t('update', 'Update')}
+                  </Link>
+                )}
 
                 <Link href="/profile" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 font-medium" onClick={() => setMobileMenuOpen(false)}>
                   {username}

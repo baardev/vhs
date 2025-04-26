@@ -7,6 +7,7 @@ interface User {
   username: string;
   email: string;
   is_admin: boolean;
+  is_editor: boolean;
   name?: string;
   family_name?: string;
   matricula?: string;
@@ -38,7 +39,8 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave }) 
     handicap: user.handicap !== undefined && user.handicap !== null ? user.handicap.toString() : '',
     gender: user.gender || '',
     birthday: user.birthday ? user.birthday.split('T')[0] : '',
-    is_admin: user.is_admin
+    is_admin: user.is_admin,
+    is_editor: user.is_editor
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | { message: string } | unknown>('');
@@ -266,6 +268,20 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave }) 
                 />
                 <label htmlFor="is_admin" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
                   {t('admin.isAdmin')}
+                </label>
+              </div>
+
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="is_editor"
+                  name="is_editor"
+                  checked={formData.is_editor}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label htmlFor="is_editor" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                  {t('admin.isEditor')}
                 </label>
               </div>
             </div>

@@ -84,13 +84,13 @@ services:
       - ./frontend:/app
       - /app/node_modules
       - frontend_next_cache:/app/.next
-    command: npm run start
+    command: npm run dev
     depends_on:
       - backend
     networks:
       - app-network
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=development
 
 volumes:
   vhsdb_data:

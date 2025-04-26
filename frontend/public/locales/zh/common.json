@@ -145,5 +145,6 @@
     "delete": "删除",
     "noTasks": "暂无任务。请在上方添加！",
     "progress": "已完成 {{completed}} / {{total}} 个任务"
-  }
+  },
+  "isEditor": "编辑"
 }

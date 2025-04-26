@@ -106,7 +106,7 @@ rebuild_frontend() {
     echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop frontend
     /usr/bin/docker compose ${FILEARG} build --no-cache --pull  frontend 
-    /usr/bin/docker compose ${FILEARG} up -d  --no-deps frontend
+    /usr/bin/docker compose ${FILEARG} up -d frontend
     echo "Frontend container restarted successfully."
 }
 
@@ -126,7 +126,7 @@ rebuild_backend() {
     echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop backend
     /usr/bin/docker compose ${FILEARG} build --no-cache --pull  backend 
-    /usr/bin/docker compose ${FILEARG} up -d  --no-deps backend
+    /usr/bin/docker compose ${FILEARG} up -d backend
     echo "Backend container restarted successfully."
 }
 
@@ -145,7 +145,7 @@ rebuild_nginx() {
     /usr/bin/docker compose ${FILEARG} build --no-cache --pull nginx
 
     # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
-    /usr/bin/docker compose ${FILEARG} up -d --no-deps nginx
+    /usr/bin/docker compose ${FILEARG} up -d nginx
 
     echo "Nginx rebuilt and restarted."
 }
@@ -165,7 +165,7 @@ rebuild_db() {
     /usr/bin/docker compose ${FILEARG} build --no-cache --pull db
 
     # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
-    /usr/bin/docker compose ${FILEARG} up -d --no-deps db
+    /usr/bin/docker compose ${FILEARG} up -d db
 
     echo "db rebuilt and restarted."
     utils/REBUILD_TABLES
@@ -262,6 +262,11 @@ if $ALL; then
 
     # docker compose down && docker compose build --no-cache && docker compose up -d
 
+    # Rebuild db first to ensure database is ready for other services
+    echo -e "\033[0;32mRebuilding db...\033[0m"
+    rebuild_db
+    
+
     echo -e "\033[0;32mConfiguring buildx...\033[0m"
     /usr/bin/docker buildx create --use
 
@@ -270,14 +275,9 @@ if $ALL; then
     
     echo -e "\033[0;32mRebuilding Frontend...\033[0m"
     rebuild_frontend
-
     
     echo -e "\033[0;32mRebuilding Nginx...\033[0m"
     rebuild_nginx
-    
-    # Rebuild db first to ensure database is ready for other services
-    #echo -e "\033[0;32mRebuilding dbQL...\033[0m"
-    #rebuild_db
     
     # Now rebuild the other services
     

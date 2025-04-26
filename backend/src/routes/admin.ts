@@ -20,14 +20,14 @@ router.get('/users', async (req: AuthRequest, res: Response, next: NextFunction)
     const sortOrder = (req.query.sortOrder as string) || 'ASC';
 
     // Valid column names to prevent SQL injection
-    const validColumns = ['id', 'username', 'email', 'created_at', 'is_admin'];
+    const validColumns = ['id', 'username', 'email', 'created_at', 'is_admin', 'is_editor'];
     const validSortOrders = ['ASC', 'DESC'];
 
     const column = validColumns.includes(sortBy) ? sortBy : 'id';
     const order = validSortOrders.includes(sortOrder) ? sortOrder : 'ASC';
 
     const usersResult = await pool.query(
-      `SELECT id, username, email, created_at, is_admin
+      `SELECT id, username, email, created_at, is_admin, is_editor
        FROM users
        ORDER BY ${column} ${order}
        LIMIT $1 OFFSET $2`,
@@ -59,7 +59,7 @@ router.get('/users/:id', async (req: AuthRequest, res: Response, next: NextFunct
     }
 
     const userResult = await pool.query(
-      `SELECT id, username, email, created_at, name, family_name, matricula, handicap, is_admin
+      `SELECT id, username, email, created_at, name, family_name, matricula, handicap, is_admin, is_editor
        FROM users
        WHERE id = $1`,
       [userId]

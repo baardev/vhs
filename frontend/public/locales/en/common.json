@@ -145,5 +145,6 @@
     "delete": "Delete",
     "noTasks": "No tasks yet. Add one above!",
     "progress": "{{completed}} of {{total}} tasks completed"
-  }
+  },
+  "isEditor": "Is Editor"
 }

@@ -10,6 +10,7 @@ interface User {
   email: string;
   created_at: string;
   is_admin: boolean;
+  is_editor: boolean;
   name?: string;
   family_name?: string;
   matricula?: string;
@@ -143,6 +144,28 @@ const UserTable = () => {
     }
   };
 
+  // Toggle editor status
+  const toggleEditorStatus = async (user: User) => {
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('No authentication token found');
+      }
+
+      await axios.patch(`/api/admin/users/${user.id}/editor`,
+        { is_editor: !user.is_editor },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      setSuccessMessage(t('admin.editorStatusChanged'));
+      setTimeout(() => setSuccessMessage(''), 3000);
+      fetchUsers();
+    } catch (error) {
+      console.error('Error updating editor status:', error);
+      setError(t('admin.errorUpdatingEditor'));
+    }
+  };
+
   // Render loading state
   if (loading && users.length === 0) {
     return (
@@ -218,6 +241,13 @@ const UserTable = () => {
               >
                 {t('admin.isAdmin')} {sortBy === 'is_admin' && (sortOrder === 'ASC' ? '↑' : '↓')}
               </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
+                onClick={() => handleSort('is_editor')}
+              >
+                {t('admin.isEditor')} {sortBy === 'is_editor' && (sortOrder === 'ASC' ? '↑' : '↓')}
+              </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 {t('admin.actions')}
               </th>
@@ -248,6 +278,18 @@ const UserTable = () => {
                     }`}
                   >
                     {user.is_admin ? t('admin.yes') : t('admin.no')}
+                  </button>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <button
+                    onClick={() => toggleEditorStatus(user)}
+                    className={`px-2 py-1 rounded text-xs font-semibold ${
+                      user.is_editor
+                        ? 'bg-green-100 text-green-800 dark:bg-green-800 dark:text-green-100'
+                        : 'bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300'
+                    }`}
+                  >
+                    {user.is_editor ? t('admin.yes') : t('admin.no')}
                   </button>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

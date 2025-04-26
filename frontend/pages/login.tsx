@@ -26,6 +26,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('handleSubmit called!');
     e.preventDefault();
     setError('');
     setIsLoading(true);
@@ -41,10 +42,16 @@ const Login = () => {
 
       const data = await response.json();
 
+      console.log('Form submitted');
+      console.log('Response received:', response);
+      console.log('Data received:', data);
+      console.log('COMPLETE DATA RECEIVED:', data);
+
       if (response.ok) {
         localStorage.setItem('token', data.token);
         localStorage.setItem('userData', JSON.stringify(data.user));
-
+        console.log('SAVED USER DATA:', JSON.stringify(data.user));
+        
         window.dispatchEvent(new Event('authChange'));   //  <<< add this line
         
         // Redirect user to dashboard regardless of admin status
