@@ -330,7 +330,7 @@ else
     echo "  --frontend          Rebuild and restart only the frontend container"
     echo "  --backend           Rebuild and restart only the backend container"
     echo "  --nginx             Rebuild and restart only the nginx container"
-    echo "  --db          Rebuild and restart only the dbQL database"
+    echo "  --db                Rebuild and restart only the PostgreSQL database"
     echo "  --wipe              Wipe all containers and volumes without rebuilding"
     echo ""
     echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]"
