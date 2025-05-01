@@ -1,7 +1,15 @@
 #!/bin/bash
 set -e
 
-SQL_FILE="${ROOT_DIR}/backend/db/sql/120_create_quotes_table.sql"
+# Container and path variables
+#DB_CONTAINER=${DB_CONTAINER:-vhs-postgres}
+#ROOT_DIR=${ROOT_DIR:-$(git rev-parse --show-toplevel)}
+SQL_FILE="${ROOT_DIR}/backend/db/sql/500_create_handicap_views.sql"
+
+
+# Copy CSV files to container
+docker cp ${ROOT_DIR}/backend/db/sql/500_create_handicap_views.sql $DB_CONTAINER:/tmp/500_create_handicap_views.sql
+echo "500_create_handicap_views created successfully"
 
 # Check if SQL file exists
 if [ ! -f "$SQL_FILE" ]; then
@@ -9,22 +17,22 @@ if [ ! -f "$SQL_FILE" ]; then
     exit 1
 fi
 
+
 # Check if container is running
 if ! docker ps | grep -q $DB_CONTAINER; then
     echo "Error: Database container '$DB_CONTAINER' is not running"
     exit 1
 fi
 
-echo "Creating quotes table..."
 
 echo "┌───────────────────────────────────────────────────────┐"
-echo "│ ${ROOT_DIR}/backend/db/120_create_quotes_table.sh..."
+echo "│ ${ROOT_DIR}/backend/db/500_create_handicap_views.sh..."
 echo "└───────────────────────────────────────────────────────┘"
 
 if docker exec -i $DB_CONTAINER psql -U admin -d vhsdb < "$SQL_FILE"; then
-    echo "Quotes table created successfully"
+
+    echo "Handicap views created successfully"
 else
-    echo "Error: Failed to create quotes table"
+    echo "Error: Failed to create handicap views"
     exit 1
 fi
-

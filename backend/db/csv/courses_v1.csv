@@ -1,4 +1,0 @@
-id,name,country,city_province,website,created_at,created_by,is_verified
-1,Augusta National Golf Club,US,"Augusta, Georgia",https://www.augustanational.com,2023-06-01 10:00:00+00,None,false
-2,St Andrews Links (Old Course),GB,"St Andrews, Fife",https://www.standrews.com,2023-06-01 10:00:00+00,None,false
-3,Club de Golf Los Cedros,MX,"Monterrey, Nuevo León",https://www.loscedros.mx,2023-06-01 10:00:00+00,None,false

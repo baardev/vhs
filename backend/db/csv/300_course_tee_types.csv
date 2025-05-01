@@ -1,0 +1,7 @@
+id,course_id,tee_id,tee_color,tee_name,tee_desc
+1,11,professional,black,Negro,tournaments (hardest) | Longest (Championship)
+2,11,skilled,blue,Azul,"Men (regular, strong amateurs) | Long"
+3,11,senior,gold,Amarillo,Senior men / Low‑handicap amateurs | Slightly shorter
+4,11,regular,white,Blanco,Men (standard amateur play) | Medium
+5,11,beginner,green,Verde,"Beginners / Very seniors | Short (optional, not always present)"
+6,11,ladies,red,Rojo,Women | Shortest

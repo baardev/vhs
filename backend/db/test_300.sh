@@ -1,13 +1,10 @@
 #!/bin/bash
 set -e
 
-SQL_FILE="${ROOT_DIR}/backend/db/sql/120_create_quotes_table.sql"
-
-# Check if SQL file exists
-if [ ! -f "$SQL_FILE" ]; then
-    echo "Error: SQL file not found at $SQL_FILE"
-    exit 1
-fi
+# Container and path variables
+#DB_CONTAINER=${DB_CONTAINER:-vhs-postgres}
+#ROOT_DIR=${ROOT_DIR:-$(git rev-parse --show-toplevel)}
+SQL_FILE="${ROOT_DIR}/backend/db/sql/test_300.sql"
 
 # Check if container is running
 if ! docker ps | grep -q $DB_CONTAINER; then
@@ -15,16 +12,9 @@ if ! docker ps | grep -q $DB_CONTAINER; then
     exit 1
 fi
 
-echo "Creating quotes table..."
 
 echo "┌───────────────────────────────────────────────────────┐"
-echo "│ ${ROOT_DIR}/backend/db/120_create_quotes_table.sh..."
+echo "│ ${ROOT_DIR}/backend/db/test_300.sh..."
 echo "└───────────────────────────────────────────────────────┘"
 
-if docker exec -i $DB_CONTAINER psql -U admin -d vhsdb < "$SQL_FILE"; then
-    echo "Quotes table created successfully"
-else
-    echo "Error: Failed to create quotes table"
-    exit 1
-fi
-
+docker exec -i $DB_CONTAINER psql -U admin -d vhsdb < "$SQL_FILE"
