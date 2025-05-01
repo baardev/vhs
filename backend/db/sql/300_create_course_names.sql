@@ -13,8 +13,9 @@ CREATE TABLE IF NOT EXISTS x_course_names (
     address2 TEXT,
     city TEXT,
     province VARCHAR(15),
-    country_code VARCHAR(5),
+    country_code VARCHAR(2),
     telephone VARCHAR(50),
+    website TEXT,
     email TEXT
 );
 
@@ -24,3 +25,5 @@ CREATE INDEX IF NOT EXISTS idx_x_course_names_name ON x_course_names(course_name
 
 \copy x_course_names FROM '/tmp/300_course_names.csv' WITH (FORMAT csv, HEADER true, NULL 'None');
 
+ALTER TABLE x_course_names
+ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;

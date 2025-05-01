@@ -51,6 +51,8 @@ rebuild_database() {
     local db_container=$1
     PW=`cat ${ROOT_DIR}/.adminpw`
 
+    #!  Create the basic tables
+
     echo "----------------------------------------------------"
     echo "DB Container: ${db_container}"
     echo "PW: ${PW}"
@@ -72,73 +74,50 @@ rebuild_database() {
     echo "└───────────────────────────────────────────────────────┘"
     ${ROOT_DIR}/backend/db/010_create_users_tables.sh
     
-    # ${ROOT_DIR}/backend/db/030_create_course_tables_v1.sh
-    
-    # echo "┌───────────────────────────────────────────────────────┐"
-    # echo "│ ${ROOT_DIR}/backend/db/040_create_course_tables_v2.sh..."
-    # echo "└───────────────────────────────────────────────────────┘"
-    # ${ROOT_DIR}/backend/db/040_create_course_tables_v2.sh
 
-
-
+    #!  Create the support tables
     ${ROOT_DIR}/backend/db/120_create_quotes_table.sh 
+    ${ROOT_DIR}/backend/db/create_country_codes.sh 
+    ${ROOT_DIR}/backend/db/create_province_codes.sh 
 
 
 
-
-    # echo "┌───────────────────────────────────────────────────────┐"
-    # echo "│ ${ROOT_DIR}/backend/db/300_create_course_names.sh..."
-    # echo "└───────────────────────────────────────────────────────┘"
+    #! create the course tables
     ${ROOT_DIR}/backend/db/300_create_course_names.sh
-
-    # echo "┌───────────────────────────────────────────────────────┐"
-    # echo "│ ${ROOT_DIR}/backend/db/300_create_course_holes.sh..."
-    # echo "└───────────────────────────────────────────────────────┘"
     ${ROOT_DIR}/backend/db/300_create_course_holes.sh
-
-    # echo "┌───────────────────────────────────────────────────────┐"
-    # echo "│ ${ROOT_DIR}/backend/db/300_create_course_data_updated.sh..."
-    # echo "└───────────────────────────────────────────────────────┘"
-    # ${ROOT_DIR}/backend/db/300_create_course_data_updated.sh
-
-    # echo "┌───────────────────────────────────────────────────────┐"
-    # echo "│ ${ROOT_DIR}/backend/db/300_create_course_data_by_tee.sh..."
-    # echo "└───────────────────────────────────────────────────────┘"
     ${ROOT_DIR}/backend/db/300_create_course_data_by_tee.sh
-
-    # echo "┌───────────────────────────────────────────────────────┐"
-    # echo "│ ${ROOT_DIR}/backend/db/300_create_course_tee_types.sh..."
-    # echo "└───────────────────────────────────────────────────────┘"
     ${ROOT_DIR}/backend/db/300_create_course_tee_types.sh
     
 
 
+    #! create the player card tables
     ${ROOT_DIR}/backend/db/200_create_player_card_tables.sh
 
 
 
-   #! create handicap views
-   ${ROOT_DIR}/backend/db/500_create_handicap_views.sh
-
-
-
+   #! create views
+   ${ROOT_DIR}/backend/db/500_create_handicap_VIEW.sh
+   ${ROOT_DIR}/backend/db/300_create_course_names_VIEW.sh
+   ${ROOT_DIR}/backend/db/300_create_course_data_by_tee_VIEW.sh
+   ${ROOT_DIR}/backend/db/300_create_course_holes_VIEW.sh
+   
     echo -e "\033[0;36mVerifying..."
-# Verify database structure
-    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\dt"
-    /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"
+# # Verify database structure
+#     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\dt"
+#     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"
 
-    # Show users table
-    /usr/bin/docker exec -it -e PAGER='' $db_container psql -U admin -d vhsdb -c "SELECT id,username,email,first_name,family_name,gender,matricula,category,handicap,created_at,is_admin,is_editor,created_at FROM users;"
+#     # Show users table
+#     /usr/bin/docker exec -it -e PAGER='' $db_container psql -U admin -d vhsdb -c "SELECT id,username,email,first_name,family_name,gender,matricula,category,handicap,created_at,is_admin,is_editor,created_at FROM users;"
 
 
-    # noe test the tables for valid relationships
-    echo -e "\033[0;32mRunning tests for table relationships..."
-    ${ROOT_DIR}/backend/db/test_200.sh
-    echo -e "\033[0;33mRunning tests for table relationships..."
-    ${ROOT_DIR}/backend/db/test_300.sh
-    echo -e "\033[0m"  # Reset ANSI color codes to normal
+
+#     # noe test the tables for valid relationships
+#     echo -e "\033[0;32mRunning tests for table relationships..."
+#     ${ROOT_DIR}/backend/db/test_200.sh
+#     echo -e "\033[0;33mRunning tests for table relationships..."
+#     ${ROOT_DIR}/backend/db/test_300.sh
+#     echo -e "\033[0m"  # Reset ANSI color codes to normal
 }
-
 
 # Check if restore flag is set
 if [ "$RESTORE" = true ]; then

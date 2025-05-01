@@ -1,15 +1,12 @@
 #!/bin/bash
 set -e
 
-# Container and path variables
-#DB_CONTAINER=${DB_CONTAINER:-vhs-postgres}
-#ROOT_DIR=${ROOT_DIR:-$(git rev-parse --show-toplevel)}
-SQL_FILE="${ROOT_DIR}/backend/db/sql/500_create_handicap_views.sql"
+SQL_FILE="${ROOT_DIR}/backend/db/sql/300_create_course_names_VIEW.sql"
 
 
 # Copy CSV files to container
-docker cp ${ROOT_DIR}/backend/db/sql/500_create_handicap_views.sql $DB_CONTAINER:/tmp/500_create_handicap_views.sql
-echo "500_create_handicap_views created successfully"
+docker cp ${ROOT_DIR}/backend/db/sql/300_create_course_names_VIEW.sql $DB_CONTAINER:/tmp/300_create_course_names_VIEW.sql
+echo "300_create_course_names_VIEW created successfully"
 
 # Check if SQL file exists
 if [ ! -f "$SQL_FILE" ]; then
@@ -26,13 +23,13 @@ fi
 
 
 echo "┌───────────────────────────────────────────────────────┐"
-echo "│ ${ROOT_DIR}/backend/db/500_create_handicap_views.sh..."
+echo "│ ${ROOT_DIR}/backend/db/300_create_course_names_VIEW.sh..."
 echo "└───────────────────────────────────────────────────────┘"
 
 if docker exec -i $DB_CONTAINER psql -U admin -d vhsdb < "$SQL_FILE"; then
 
-    echo "Handicap views created successfully"
+    echo "Course names view created successfully"
 else
-    echo "Error: Failed to create handicap views"
+    echo "Error: Failed to create course names view"
     exit 1
 fi

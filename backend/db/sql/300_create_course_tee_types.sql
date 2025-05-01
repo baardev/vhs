@@ -19,5 +19,5 @@ CREATE TABLE IF NOT EXISTS x_course_tee_types (
 -- Create indexes for tee types
 CREATE INDEX IF NOT EXISTS idx_x_course_tee_types_course_id ON x_course_tee_types(course_id);
 CREATE INDEX IF NOT EXISTS idx_x_course_tee_types_tee_id ON x_course_tee_types(tee_id);
-\copy x_course_tee_types FROM '/tmp/300_tee_types_v.csv' WITH (FORMAT csv, HEADER true, NULL 'None');
+\copy x_course_tee_types FROM '/tmp/300_course_tee_types.csv' WITH (FORMAT csv, HEADER true, NULL 'None');
 

@@ -118,7 +118,7 @@ SELECT
     cd.slope_rating,
     u.username AS player_name
 FROM player_cards pc
-JOIN x_course_data cd ON pc.course_id = cd.course_id
+JOIN x_course_data_by_tee cd ON pc.course_id = cd.course_id
 JOIN x_course_names cn ON pc.course_id = cn.course_id
 JOIN x_course_tee_types ct ON pc.tee_id = ct.tee_id
 JOIN x_course_holes ch ON pc.course_id = ch.course_id

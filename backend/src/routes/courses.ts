@@ -44,11 +44,12 @@ const upload = multer({
 
 // Get all courses
 router.get('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-  try {
-    const coursesResult = await pool.query(
-      'SELECT id, name, country, city_province, website, created_at FROM courses ORDER BY name'
-    );
 
+  const q = 'SELECT course_id, name, city, country, province_state FROM course_names ORDER BY name ASC';
+  console.log('Query running with new SELECT:', q);
+
+  try {
+    const coursesResult = await pool.query(q);    
     res.json(coursesResult.rows);
   } catch (error) {
     next(error);
@@ -61,10 +62,11 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
     const { id } = req.params;
 
     // Get course details
-    const courseResult = await pool.query(
-      'SELECT id, name, country, city_province, website, created_at FROM courses WHERE id = $1',
-      [id]
-    );
+
+    const q = 'SELECT course_id, name, country, province_state, website, created_at FROM course_names WHERE course_id = $1';
+    console.log('Query running with new SELECT:', q);
+
+    const courseResult = await pool.query(q, [id]);
 
     if (courseResult.rows.length === 0) {
       res.status(404).json({ error: 'Course not found' });
@@ -75,28 +77,28 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
 
     // Get tee boxes for this course
     const teeBoxesResult = await pool.query(
-      'SELECT id, name, gender, course_rating, slope_rating, yardage FROM tee_boxes WHERE course_id = $1 ORDER BY name',
+      'SELECT course_id, name, course_rating, slope_rating, yardage FROM data_by_tee WHERE course_id = $1 ORDER BY name',
       [id]
     );
 
     // Get holes for this course
     const holesResult = await pool.query(
-      'SELECT hole_number, par, stroke_index FROM course_holes WHERE course_id = $1 ORDER BY hole_number',
+      'SELECT hole_number, par, men_stroke_index, women_stroke_index FROM course_holes WHERE course_id = $1 ORDER BY hole_number',
       [id]
     );
 
-    // Get attachments for this course
-    const attachmentsResult = await pool.query(
-      'SELECT id, attachment_type, file_path, original_filename FROM course_attachments WHERE course_id = $1',
-      [id]
-    );
+    // // Get attachments for this course
+    // const attachmentsResult = await pool.query(
+    //   'SELECT id, attachment_type, file_path, original_filename FROM course_attachments WHERE course_id = $1',
+    //   [id]
+    // );
 
     // Return complete course data
     res.json({
       ...course,
       tee_boxes: teeBoxesResult.rows,
-      holes: holesResult.rows,
-      attachments: attachmentsResult.rows
+      holes: holesResult.rows
+      // attachments: attachmentsResult.rows
     });
   } catch (error) {
     next(error);
@@ -142,7 +144,7 @@ router.post(
 
         // Create the course
         const courseResult = await client.query(
-          'INSERT INTO courses (name, country, city_province, website, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id',
+          'INSERT INTO courses (name, country, province_state, website, created_by) VALUES ($1, $2, $3, $4, $5) RETURNING id',
           [name, country, cityProvince, website || null, req.user?.id]
         );
 

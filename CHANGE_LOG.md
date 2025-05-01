@@ -12,3 +12,7 @@
 
 # 0.0.55
 - Update to CLEARCACHE to delete extremely stubborn caches
+
+# 0.0.63 
+- Major DB rewrite, all teh DB create sql,csv,and sh scripts
+

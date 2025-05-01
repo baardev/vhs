@@ -6,20 +6,11 @@ const router = Router();
 
 // Get all course names
 router.get('/course-names', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+
+  const q = 'SELECT course_id, name, country, province_state, website, created_at FROM course_names ORDER BY name ASC';
+  console.log('Query running with new SELECT:', q);
   try {
-    const result = await pool.query(`
-      SELECT 
-        id, 
-        course_id, 
-        course_name, 
-        city, 
-        state, 
-        country
-      FROM 
-        course_names
-      ORDER BY 
-        course_name ASC
-    `);
+    const result = await pool.query(q);
     
     res.json(result.rows);
   } catch (error) {

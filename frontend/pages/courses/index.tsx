@@ -15,12 +15,11 @@ const geistMono = Geist_Mono({
 });
 
 interface Course {
-  id: number;
+  course_id: number;
   name: string;
+  city: string;
   country: string;
-  city_province: string;
-  website: string | null;
-  created_at: string;
+  province_state: string;
 }
 
 const countryMap: Record<string, string> = {
@@ -29,6 +28,7 @@ const countryMap: Record<string, string> = {
   CA: '🇨🇦 Canada',
   GB: '🇬🇧 United Kingdom',
   ES: '🇪🇸 Spain',
+  Argentina: '🇦🇷 Argentina',
   other: '🌍 Other'
 };
 
@@ -62,7 +62,7 @@ export default function CoursesPage() {
     <div className={`${geistSans.className} ${geistMono.className} min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative`}>
       <div className="max-w-7xl mx-auto">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-[#2d6a4f] dark:text-[#4fd1c5]">Golf Courses</h1>
+          <h1 className="text-3xl font-bold text-[#2d6a4f] dark:text-[#4fd1c5]">Golf Course Database</h1>
           {isAuthenticated ? (
             <Link
               href="/courses/new"
@@ -80,6 +80,12 @@ export default function CoursesPage() {
           )}
         </div>
 
+        <div className="bg-white dark:bg-[#1a2b41] p-6 rounded-lg mb-8">
+          <p className="text-gray-700 dark:text-[#b5ceff] text-lg">
+            Browse our comprehensive database of golf courses. Click on a card to view detailed information including tee options, course ratings, and hole-by-hole data.
+          </p>
+        </div>
+
         {error && (
           <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md mb-6">
             <p className="text-sm text-red-800 dark:text-red-400">{error}</p>
@@ -91,7 +97,7 @@ export default function CoursesPage() {
             <div className="text-xl font-medium">Loading courses...</div>
           </div>
         ) : courses.length === 0 ? (
-          <div className="bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md p-6 text-center">
+          <div className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md p-6 text-center">
             <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">No courses found.</p>
             {isAuthenticated ? (
               <p>
@@ -118,40 +124,29 @@ export default function CoursesPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {courses.map((course) => (
               <div
-                key={course.id}
-                className="bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
-                onClick={() => router.push(`/courses/${course.id}`)}
+                key={course.course_id}
+                className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
               >
-                <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
-                    {course.name}
-                  </h2>
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
-                    {course.city_province}
-                  </p>
-                </div>
                 <div className="px-6 py-4">
-                  <div className="flex justify-between items-center">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      {countryMap[course.country] || countryMap.other}
-                    </div>
-                    <div className="text-xs text-gray-500 dark:text-gray-400">
-                      Added {new Date(course.created_at).toLocaleDateString()}
-                    </div>
+                  <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
+                    {course.name || "Unknown Course"}
+                  </h2>
+                  <div className="flex items-center mt-2 text-gray-500 dark:text-[#b5ceff]">
+                    <span>{course.city || "Unknown City"}, {course.province_state || "Unknown Province"}, {course.country || "Unknown Country"}</span>
                   </div>
-                  {course.website && (
-                    <div className="mt-3 truncate">
-                      <a
-                        href={course.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="text-sm text-[#40916c] dark:text-[#4fd1c5] hover:underline"
-                      >
-                        {course.website.replace(/^https?:\/\//, '')}
-                      </a>
+                  
+                  <div className="flex justify-between items-center mt-4">
+                    <div className="text-sm text-gray-500 dark:text-gray-400">
+                      Course ID: {course.course_id}
                     </div>
-                  )}
+                    <Link 
+                      href={`/courses/${course.course_id}`}
+                      className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#2d6a4f] hover:bg-[#1b4332] dark:bg-[#00cc7e] dark:hover:bg-[#00aa69] rounded-md"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      View Details
+                    </Link>
+                  </div>
                 </div>
               </div>
             ))}
