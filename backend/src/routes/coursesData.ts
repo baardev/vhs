@@ -6,12 +6,24 @@ const router = Router();
 
 // Get all course names
 router.get('/course-names', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-
-  const q = 'SELECT course_id, name, country, province_state, website, created_at FROM course_names ORDER BY name ASC';
-  console.log('Query running with new SELECT:', q);
+  // Use data_by_tee view to get unique course information
+  const q = `
+    SELECT DISTINCT 
+      id AS course_id, 
+      name AS course_name, 
+      SPLIT_PART(name, ' - ', 1) AS city,
+      'Argentina' AS country,
+      'Buenos Aires Province' AS state  
+    FROM 
+      data_by_tee 
+    ORDER BY 
+      name ASC
+  `;
+  
+  console.log('Query running with data_by_tee view:', q);
+  
   try {
     const result = await pool.query(q);
-    
     res.json(result.rows);
   } catch (error) {
     next(error);
@@ -26,17 +38,18 @@ router.get('/course-names/:id', async (req: Request, res: Response, next: NextFu
     const result = await pool.query(`
       SELECT 
         id, 
-        course_id, 
-        course_name, 
-        city, 
-        state, 
-        country,
-        address1,
-        facility_name
+        id AS course_id, 
+        name AS course_name, 
+        SPLIT_PART(name, ' - ', 1) AS city,
+        'Buenos Aires Province' AS state,
+        'Argentina' AS country,
+        NULL AS address1,
+        NULL AS facility_name
       FROM 
-        course_names
+        data_by_tee
       WHERE 
-        course_id = $1
+        id = $1
+      LIMIT 1
     `, [id]);
     
     if (result.rows.length === 0) {
@@ -55,23 +68,22 @@ router.get('/course-data/:id', async (req: Request, res: Response, next: NextFun
   try {
     const { id } = req.params;
     
+    // Use data_by_tee view that already joins all required tables
     const result = await pool.query(`
       SELECT 
         id, 
-        course_id, 
+        id AS course_id, 
         tee_name,
-        gender,
+        'M' AS gender, -- Assuming default, modify if gender info is available
         par,
         course_rating,
         slope_rating,
-        length,
-        par_h01, par_h02, par_h03, par_h04, par_h05, par_h06, 
-        par_h07, par_h08, par_h09, par_h10, par_h11, par_h12, 
-        par_h13, par_h14, par_h15, par_h16, par_h17, par_h18
+        yardage AS length
+        -- Hole par information is not directly available in the view
       FROM 
-        course_data
+        data_by_tee
       WHERE 
-        course_id = $1
+        id = $1
       ORDER BY
         tee_name ASC
     `, [id]);
@@ -87,24 +99,121 @@ router.get('/course-hole-data/:id', async (req: Request, res: Response, next: Ne
   try {
     const { id } = req.params;
     
+    // We need to keep using x_course_holes for hole-specific data
     const result = await pool.query(`
       SELECT 
-        id, 
-        course_id, 
-        category,
-        gender,
-        h01, h02, h03, h04, h05, h06, 
-        h07, h08, h09, h10, h11, h12, 
-        h13, h14, h15, h16, h17, h18
+        ch.id, 
+        ch.course_id, 
+        'par' AS category,
+        'M' AS gender,
+        MIN(CASE WHEN ch.hole_number = 1 THEN ch.par END) AS h01,
+        MIN(CASE WHEN ch.hole_number = 2 THEN ch.par END) AS h02,
+        MIN(CASE WHEN ch.hole_number = 3 THEN ch.par END) AS h03,
+        MIN(CASE WHEN ch.hole_number = 4 THEN ch.par END) AS h04,
+        MIN(CASE WHEN ch.hole_number = 5 THEN ch.par END) AS h05,
+        MIN(CASE WHEN ch.hole_number = 6 THEN ch.par END) AS h06,
+        MIN(CASE WHEN ch.hole_number = 7 THEN ch.par END) AS h07,
+        MIN(CASE WHEN ch.hole_number = 8 THEN ch.par END) AS h08,
+        MIN(CASE WHEN ch.hole_number = 9 THEN ch.par END) AS h09,
+        MIN(CASE WHEN ch.hole_number = 10 THEN ch.par END) AS h10,
+        MIN(CASE WHEN ch.hole_number = 11 THEN ch.par END) AS h11,
+        MIN(CASE WHEN ch.hole_number = 12 THEN ch.par END) AS h12,
+        MIN(CASE WHEN ch.hole_number = 13 THEN ch.par END) AS h13,
+        MIN(CASE WHEN ch.hole_number = 14 THEN ch.par END) AS h14,
+        MIN(CASE WHEN ch.hole_number = 15 THEN ch.par END) AS h15,
+        MIN(CASE WHEN ch.hole_number = 16 THEN ch.par END) AS h16,
+        MIN(CASE WHEN ch.hole_number = 17 THEN ch.par END) AS h17,
+        MIN(CASE WHEN ch.hole_number = 18 THEN ch.par END) AS h18
       FROM 
-        course_hole_data
+        x_course_holes ch
       WHERE 
-        course_id = $1
+        ch.course_id = $1
+      GROUP BY
+        ch.id, ch.course_id
       ORDER BY
         category, gender
     `, [id]);
     
     res.json(result.rows);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Get course hole data by course_id in the format expected by the frontend
+router.get('/normalized-holes/:id', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { id } = req.params;
+    
+    // First get the data from x_course_holes
+    const holeResult = await pool.query(`
+      SELECT 
+        course_id,
+        hole_number,
+        par,
+        men_stroke_index,
+        women_stroke_index
+      FROM 
+        x_course_holes
+      WHERE 
+        course_id = $1
+      ORDER BY
+        hole_number
+    `, [id]);
+    
+    // Get tee info to attach hole data to
+    const teeResult = await pool.query(`
+      SELECT 
+        id,
+        tee_name,
+        par
+      FROM 
+        data_by_tee
+      WHERE 
+        id = $1
+    `, [id]);
+    
+    if (teeResult.rows.length === 0) {
+      res.status(404).json({ error: 'Course tee data not found' });
+      return;
+    }
+    
+    // Define type to fix TypeScript error
+    interface TeeWithHoles {
+      id: any;
+      course_id: number;
+      tee_name: string;
+      gender: string;
+      par: number;
+      [key: string]: any; // Index signature for dynamic par_h* properties
+    }
+    
+    // Build response objects that match the expected format for the frontend
+    const responseData = teeResult.rows.map(tee => {
+      // Create base object
+      const teeWithHoles: TeeWithHoles = {
+        id: tee.id,
+        course_id: parseInt(id, 10),
+        tee_name: tee.tee_name,
+        gender: 'M', // Default
+        par: tee.par,
+        par_h01: null, par_h02: null, par_h03: null, par_h04: null, par_h05: null, 
+        par_h06: null, par_h07: null, par_h08: null, par_h09: null, par_h10: null, 
+        par_h11: null, par_h12: null, par_h13: null, par_h14: null, par_h15: null, 
+        par_h16: null, par_h17: null, par_h18: null
+      };
+      
+      // Fill in hole data
+      holeResult.rows.forEach(hole => {
+        const holeNum = hole.hole_number;
+        const holeProp = `par_h${holeNum.toString().padStart(2, '0')}`;
+        teeWithHoles[holeProp] = hole.par;
+      });
+      
+      return teeWithHoles;
+    });
+    
+    res.json(responseData);
   } catch (error) {
     next(error);
   }
@@ -122,19 +231,15 @@ router.put('/course-names/:id', authenticateToken, async (req: AuthRequest, res:
       return;
     }
     
+    // We need to update the x_course_names table directly as that's the source table for the view
     const result = await pool.query(`
-      UPDATE course_names 
+      UPDATE x_course_names 
       SET 
-        course_name = $1,
-        facility_name = $2,
-        address1 = $3,
-        city = $4,
-        state = $5,
-        country = $6
+        course_name = $1
       WHERE 
         course_id = $7
       RETURNING *
-    `, [course_name, facility_name, address1, city, state, country, id]);
+    `, [course_name, id]);
     
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Course not found' });

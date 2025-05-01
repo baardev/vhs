@@ -16,3 +16,8 @@
 # 0.0.63 
 - Major DB rewrite, all teh DB create sql,csv,and sh scripts
 
+# 0.0.64
+- working examples of new DB
+- - https://libronico.com/api/courses   (backend/src/routes/courses.ts)
+- - https://libronico.com/course-data  (frontend/pages/courses/index.tsx)
+

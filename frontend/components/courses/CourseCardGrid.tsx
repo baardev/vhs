@@ -3,9 +3,9 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 
 interface CourseName {
-  id: number;
   course_id: number;
-  course_name: string;
+  course_name?: string;
+  name?: string; // Allow either name or course_name
   city: string;
   state: string;
   country: string;
@@ -32,6 +32,7 @@ const CourseCardGrid = () => {
         setLoading(true);
         // Updated to use the correct API endpoint
         const response = await axios.get(`${baseUrl}/api/coursesData/course-names`);
+        console.log('API response:', response.data);
         setCourses(response.data);
       } catch (err) {
         console.error('Error fetching courses:', err);
@@ -62,7 +63,7 @@ const CourseCardGrid = () => {
         >
           <div className="p-6">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
-              {course.course_name}
+              {course.course_name || course.name || "Unknown Course"}
             </h2>
             <p className="text-gray-600 dark:text-gray-300 mb-4">
               {course.city}, {course.state}, {course.country}

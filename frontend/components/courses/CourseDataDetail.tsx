@@ -10,7 +10,7 @@ interface CourseData {
   par: number;
   course_rating: number;
   slope_rating: number;
-  length: number;
+  length: number | null;
   par_h01?: number;
   par_h02?: number;
   par_h03?: number;
@@ -32,12 +32,14 @@ interface CourseData {
 }
 
 interface CourseName {
-  id: number;
+  id?: number;
   course_id: number;
-  course_name: string;
-  city: string;
-  state: string;
-  country: string;
+  course_name?: string;
+  name?: string;
+  city?: string;
+  state?: string;
+  country?: string;
+  province_state?: string;
 }
 
 interface CourseDataDetailProps {
@@ -63,12 +65,14 @@ const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
     const fetchCourseData = async () => {
       try {
         setLoading(true);
-        // Fetch course name - updated endpoint
+        // Fetch course name
         const nameResponse = await axios.get(`${baseUrl}/api/coursesData/course-names/${courseId}`);
+        console.log('Course name response:', nameResponse.data);
         setCourseName(nameResponse.data);
         
-        // Fetch course data - updated endpoint
-        const dataResponse = await axios.get(`${baseUrl}/api/coursesData/course-data/${courseId}`);
+        // Use normalized-holes endpoint which provides both tee and hole data
+        const dataResponse = await axios.get(`${baseUrl}/api/coursesData/normalized-holes/${courseId}`);
+        console.log('Normalized hole data response:', dataResponse.data);
         setCourseData(dataResponse.data);
       } catch (err) {
         console.error('Error fetching course data:', err);
@@ -89,6 +93,15 @@ const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
 
   // Calculate total front nine, back nine, and overall pars
   const calculateTotalPar = (teeData: CourseData) => {
+    // If the hole-by-hole data is not available, use the total par from the tee data
+    if (!teeData.par_h01) {
+      return {
+        frontNine: Math.floor(teeData.par / 2),
+        backNine: Math.ceil(teeData.par / 2),
+        total: teeData.par
+      };
+    }
+
     const frontNine = [
       teeData.par_h01, teeData.par_h02, teeData.par_h03, 
       teeData.par_h04, teeData.par_h05, teeData.par_h06, 
@@ -117,8 +130,8 @@ const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
             &larr; Back to Courses
           </Link>
         </div>
-        <h1 className="text-2xl font-bold mb-2">{courseName.course_name}</h1>
-        <p>{courseName.city}, {courseName.state}, {courseName.country}</p>
+        <h1 className="text-2xl font-bold mb-2">{courseName.course_name || courseName.name}</h1>
+        <p>{courseName.city || courseName.province_state?.split(' - ')[0]}, {courseName.state || 'Buenos Aires Province'}, {courseName.country}</p>
       </div>
 
       {/* Tee Data Section */}
