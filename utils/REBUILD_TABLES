@@ -91,7 +91,7 @@ rebuild_database() {
 
 
     #! create the player card tables
-    ${ROOT_DIR}/backend/db/200_create_player_card_tables.sh
+    ${ROOT_DIR}/backend/db/200_create_player_cards_table.sh
 
 
 

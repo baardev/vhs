@@ -8,6 +8,7 @@ interface User {
   email: string;
   is_admin: boolean;
   is_editor: boolean;
+  first_name?: string;
   name?: string;
   family_name?: string;
   matricula?: string;
@@ -33,7 +34,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave }) 
     username: user.username,
     email: user.email,
     password: '',
-    name: user.name || '',
+    name: user.first_name || user.name || '',
     family_name: user.family_name || '',
     matricula: user.matricula || '',
     handicap: user.handicap !== undefined && user.handicap !== null ? user.handicap.toString() : '',
@@ -176,7 +177,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave }) 
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  {t('admin.name')}
+                  {t('admin.name') || 'First Name'}
                 </label>
                 <input
                   type="text"

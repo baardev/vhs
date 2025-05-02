@@ -172,7 +172,7 @@ CREATE TABLE public.player_cards (
     player_id integer NOT NULL,
     play_date date NOT NULL,
     course_id integer NOT NULL,
-    ext_id integer NOT NULL,
+    ext_id integer DEFAULT 0 NOT NULL,
     clima character varying(255),
     week_day character varying(20),
     category character varying(50),
@@ -186,13 +186,13 @@ CREATE TABLE public.player_cards (
     gross integer,
     net integer,
     tarj character varying(10),
-    bir character varying(50),
+    bir text,
     par character varying(50),
     bog integer,
     bg2 integer,
     bg3g integer,
-    plus_bg3 character varying(50),
-    putts character varying(50),
+    plus_bg3 text,
+    putts text,
     tee_id character varying(50),
     h01 integer,
     h02 integer,
@@ -481,39 +481,6 @@ ALTER SEQUENCE public.golf_quotes_id_seq OWNER TO admin;
 
 ALTER SEQUENCE public.golf_quotes_id_seq OWNED BY public.golf_quotes.id;
 
-
---
--- Name: handicap_calculations; Type: VIEW; Schema: public; Owner: admin
---
-
-CREATE VIEW public.handicap_calculations AS
- SELECT pc.id,
-    pc.player_id,
-    pc.play_date,
-    pc.course_id,
-    pc.g_differential,
-    pc.hcpi,
-    pc.hcp,
-    pc.gross,
-    pc.net,
-    pc.verified,
-    pc.tarj,
-    cn.course_name,
-    ct.tee_name,
-    cd.course_rating,
-    cd.slope_rating,
-    u.username AS player_name
-   FROM (((((public.player_cards pc
-     JOIN public.x_course_data_by_tee cd ON ((pc.course_id = cd.course_id)))
-     JOIN public.x_course_names cn ON ((pc.course_id = cn.course_id)))
-     JOIN public.x_course_tee_types ct ON (((pc.tee_id)::text = (ct.tee_id)::text)))
-     JOIN public.x_course_holes ch ON ((pc.course_id = ch.course_id)))
-     LEFT JOIN public.users u ON ((pc.player_id = u.id)))
-  WHERE ((pc.tarj)::text = 'OK'::text)
-  ORDER BY pc.play_date DESC;
-
-
-ALTER VIEW public.handicap_calculations OWNER TO admin;
 
 --
 -- Name: password_reset_tokens; Type: TABLE; Schema: public; Owner: admin

@@ -20,6 +20,7 @@ interface User {
   username: string;
   email: string;
   created_at?: string;
+  first_name?: string;
   name?: string;
   family_name?: string;
   matricula?: string;
@@ -49,7 +50,7 @@ export default function Profile() {
       setUser(response.data);
       setUsername(response.data.username);
       setEmail(response.data.email);
-      setName(response.data.name || '');
+      setName(response.data.first_name || response.data.name || '');
       setFamilyName(response.data.family_name || '');
       setMatricula(response.data.matricula || '');
       setHandicap(response.data.handicap !== null && response.data.handicap !== undefined ? response.data.handicap.toString() : '');
@@ -90,7 +91,7 @@ export default function Profile() {
         {
           username,
           email,
-          name: name || null,
+          first_name: name || null,
           family_name: familyName || null,
           matricula: matricula || null,
           handicap: handicapValue
@@ -303,7 +304,7 @@ export default function Profile() {
                   <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
                     Name
                   </h3>
-                  <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.name || '—'}</p>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.first_name || user?.name || '—'}</p>
                 </div>
 
                 <div>

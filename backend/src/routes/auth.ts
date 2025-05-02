@@ -179,7 +179,7 @@ router.post(
 router.get('/profile', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userResult = await pool.query(
-      'SELECT id, username, email, created_at, name, family_name, matricula, handicap, is_admin, is_editor FROM users WHERE id = $1',
+      'SELECT id, username, email, created_at, first_name, family_name, matricula, handicap, is_admin, is_editor FROM users WHERE id = $1',
       [req.user?.id]
     );
 

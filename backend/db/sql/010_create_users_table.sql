@@ -1,3 +1,4 @@
+
 SET client_min_messages = 'warning';
 
 -- Enable pgcrypto extension for password hashing
@@ -56,4 +57,47 @@ INSERT INTO users (username, email, password, first_name, family_name, is_admin,
 ('adminuser', 'admin@example.com', crypt('admin123', gen_salt('bf')), 'Admin', 'User', TRUE, TRUE),
 ('jwx', 'jeff.milton@gmail.com', crypt('admin123', gen_salt('bf')), 'Jeff', 'Milton', TRUE, TRUE),
 ('editor', 'editor@example.com', crypt('admin123', gen_salt('bf')), 'Editor', 'User', FALSE, TRUE)
+
 ON CONFLICT (email) DO NOTHING;
+
+-- UPDATE users
+--   SET gender = 'M',
+--       birthday = DATE '1990-01-01',
+--       category = '???',
+--       handicap = 20.1,
+--       matricula = '12345'
+--   WHERE username = 'victoria';
+
+-- UPDATE users
+--   SET (gender, birthday, category, handicap, matricula) = (NULL, NULL, NULL, NULL, NULL)
+--   WHERE username = 'adminuser';
+
+-- UPDATE users
+--   SET (gender, birthday, category, handicap, matricula) = (NULL, NULL, NULL, NULL, NULL)
+--   WHERE username = 'editor';
+
+-- UPDATE users
+--   SET (gender, birthday, category, handicap, matricula) = ('M', DATE '1956-06-17', '???', 100, NULL)
+--   WHERE username = 'jwx';
+
+-- UPDATE users
+--   SET (gender, birthday, category, handicap, matricula) = ('F', DATE '1990-01-01', '???', 20.1, '12345')
+--   WHERE username = 'victoria';
+
+-- COMMIT;  
+update users set 
+gender = 'F', 
+birthday='1990-1-1',
+category ='???',
+handicap = 20.1,
+matricula = '123454'
+where username = 'victoria';
+
+update users set 
+gender = 'M', 
+birthday='1956-6-17',
+category =NULL,
+handicap = NULL,
+matricula = NULL
+where username = 'jwx';
+

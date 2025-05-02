@@ -11,6 +11,7 @@ interface User {
   created_at: string;
   is_admin: boolean;
   is_editor: boolean;
+  first_name?: string;
   name?: string;
   family_name?: string;
   matricula?: string;
