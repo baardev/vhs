@@ -13,8 +13,8 @@ SELECT
 	x_course_data_by_tee."length" AS yardage, 
 	x_course_data_by_tee.par, 
 	x_course_tee_types.tee_name, 
-	x_course_names.course_name as name, 
-	x_course_data_by_tee.course_id as id
+	x_course_names.course_name, 
+	x_course_data_by_tee.course_id as course_id
 FROM
 	x_course_tee_types
 	INNER JOIN

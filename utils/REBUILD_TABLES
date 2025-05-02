@@ -100,8 +100,14 @@ rebuild_database() {
    ${ROOT_DIR}/backend/db/300_create_course_names_VIEW.sh
    ${ROOT_DIR}/backend/db/300_create_course_data_by_tee_VIEW.sh
    ${ROOT_DIR}/backend/db/300_create_course_holes_VIEW.sh
-   
-    echo -e "\033[0;36mVerifying..."
+
+
+  #! save latest schema
+  echo -e "\033[0;36mSaving latest schema to ${ROOT_DIR}/backend/db/sql/latest_schema.sql"
+  docker exec -i $DB_CONTAINER pg_dump -U admin --schema-only -d vhsdb  > ${ROOT_DIR}/backend/db/sql/latest_schema.sql
+
+
+  echo -e "\033[0;36mVerifying..."
 # # Verify database structure
 #     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\dt"
 #     /usr/bin/docker exec -it $db_container psql -U admin -d vhsdb -c "\q"

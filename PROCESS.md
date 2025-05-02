@@ -638,3 +638,13 @@ echo "Starting frontend in development mode..."
 cd "${ROOT_DIR}/frontend" && npm run dev
 
 ```
+
+
+# Direct SQL queries:
+
+```sh
+backend/src/routes/coursesData.ts
+backend/src/routes/courses.ts
+
+frontend/components/courses/CourseDataDetail.tsx
+```

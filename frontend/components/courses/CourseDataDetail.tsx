@@ -40,6 +40,8 @@ interface CourseName {
   state?: string;
   country?: string;
   province_state?: string;
+  province_name?: string;
+  country_name?: string;
 }
 
 interface CourseDataDetailProps {
@@ -131,7 +133,11 @@ const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
           </Link>
         </div>
         <h1 className="text-2xl font-bold mb-2">{courseName.course_name || courseName.name}</h1>
-        <p>{courseName.city || courseName.province_state?.split(' - ')[0]}, {courseName.state || 'Buenos Aires Province'}, {courseName.country}</p>
+        <p>
+          {courseName.city || (courseName.course_name && courseName.course_name.split(' - ')[0]) || 'Unknown City'}, 
+          {courseName.state || courseName.province_name || 'Buenos Aires Province'}, 
+          {courseName.country || courseName.country_name || 'Argentina'}
+        </p>
       </div>
 
       {/* Tee Data Section */}

@@ -48,15 +48,15 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
   // Using data_by_tee view to get unique courses
   const q = `
     SELECT DISTINCT 
-      id AS course_id, 
-      name, 
-      SPLIT_PART(name, ' - ', 1) AS city, 
+      course_id, 
+      course_name AS name, 
+      SPLIT_PART(course_name, ' - ', 1) AS city, 
       'Argentina' AS country, 
       'Buenos Aires Province' AS province_state 
     FROM 
       data_by_tee 
     ORDER BY 
-      name ASC
+      course_name ASC
   `;
   
   console.log('Query running with data_by_tee view:', q);
@@ -77,16 +77,16 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
     // Get course details from the view
     const q = `
       SELECT 
-        id AS course_id, 
-        name, 
+        course_id, 
+        course_name AS name, 
         'Argentina' AS country, 
-        SPLIT_PART(name, ' - ', 1) AS city_province, 
+        SPLIT_PART(course_name, ' - ', 1) AS city_province, 
         NULL AS website, 
         NOW() AS created_at
       FROM 
         data_by_tee 
       WHERE 
-        id = $1
+        course_id = $1
       LIMIT 1
     `;
     
@@ -104,7 +104,7 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
     // Get tee boxes for this course from the view
     const teeBoxesResult = await pool.query(`
       SELECT 
-        id AS course_id, 
+        course_id, 
         tee_name AS name, 
         course_rating, 
         slope_rating, 
@@ -112,12 +112,12 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
       FROM 
         data_by_tee 
       WHERE 
-        id = $1
+        course_id = $1
     `, [id]);
 
-    // Get holes for this course - still need x_course_holes table
+    // Get holes for this course - use course_holes view now instead of direct x_course_holes table
     const holesResult = await pool.query(
-      'SELECT hole_number, par, men_stroke_index, women_stroke_index FROM x_course_holes WHERE course_id = $1 ORDER BY hole_number',
+      'SELECT hole_number, par, men_stroke_index, women_stroke_index FROM course_holes WHERE course_id = $1 ORDER BY hole_number',
       [id]
     );
 

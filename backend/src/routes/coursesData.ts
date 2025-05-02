@@ -9,15 +9,15 @@ router.get('/course-names', async (req: Request, res: Response, next: NextFuncti
   // Use data_by_tee view to get unique course information
   const q = `
     SELECT DISTINCT 
-      id AS course_id, 
-      name AS course_name, 
-      SPLIT_PART(name, ' - ', 1) AS city,
+      course_id, 
+      course_name, 
+      SPLIT_PART(course_name, ' - ', 1) AS city,
       'Argentina' AS country,
       'Buenos Aires Province' AS state  
     FROM 
       data_by_tee 
     ORDER BY 
-      name ASC
+      course_name ASC
   `;
   
   console.log('Query running with data_by_tee view:', q);
@@ -37,10 +37,10 @@ router.get('/course-names/:id', async (req: Request, res: Response, next: NextFu
     
     const result = await pool.query(`
       SELECT 
-        id, 
-        id AS course_id, 
-        name AS course_name, 
-        SPLIT_PART(name, ' - ', 1) AS city,
+        course_id, 
+        course_id, 
+        course_name, 
+        SPLIT_PART(course_name, ' - ', 1) AS city,
         'Buenos Aires Province' AS state,
         'Argentina' AS country,
         NULL AS address1,
@@ -48,7 +48,7 @@ router.get('/course-names/:id', async (req: Request, res: Response, next: NextFu
       FROM 
         data_by_tee
       WHERE 
-        id = $1
+        course_id = $1
       LIMIT 1
     `, [id]);
     
@@ -71,8 +71,8 @@ router.get('/course-data/:id', async (req: Request, res: Response, next: NextFun
     // Use data_by_tee view that already joins all required tables
     const result = await pool.query(`
       SELECT 
-        id, 
-        id AS course_id, 
+        course_id, 
+        course_id, 
         tee_name,
         'M' AS gender, -- Assuming default, modify if gender info is available
         par,
@@ -83,7 +83,7 @@ router.get('/course-data/:id', async (req: Request, res: Response, next: NextFun
       FROM 
         data_by_tee
       WHERE 
-        id = $1
+        course_id = $1
       ORDER BY
         tee_name ASC
     `, [id]);
@@ -100,36 +100,36 @@ router.get('/course-hole-data/:id', async (req: Request, res: Response, next: Ne
     const { id } = req.params;
     
     // We need to keep using x_course_holes for hole-specific data
+    // But we can use the course_holes view instead for cleaner access
     const result = await pool.query(`
       SELECT 
-        ch.id, 
-        ch.course_id, 
+        course_id, 
         'par' AS category,
         'M' AS gender,
-        MIN(CASE WHEN ch.hole_number = 1 THEN ch.par END) AS h01,
-        MIN(CASE WHEN ch.hole_number = 2 THEN ch.par END) AS h02,
-        MIN(CASE WHEN ch.hole_number = 3 THEN ch.par END) AS h03,
-        MIN(CASE WHEN ch.hole_number = 4 THEN ch.par END) AS h04,
-        MIN(CASE WHEN ch.hole_number = 5 THEN ch.par END) AS h05,
-        MIN(CASE WHEN ch.hole_number = 6 THEN ch.par END) AS h06,
-        MIN(CASE WHEN ch.hole_number = 7 THEN ch.par END) AS h07,
-        MIN(CASE WHEN ch.hole_number = 8 THEN ch.par END) AS h08,
-        MIN(CASE WHEN ch.hole_number = 9 THEN ch.par END) AS h09,
-        MIN(CASE WHEN ch.hole_number = 10 THEN ch.par END) AS h10,
-        MIN(CASE WHEN ch.hole_number = 11 THEN ch.par END) AS h11,
-        MIN(CASE WHEN ch.hole_number = 12 THEN ch.par END) AS h12,
-        MIN(CASE WHEN ch.hole_number = 13 THEN ch.par END) AS h13,
-        MIN(CASE WHEN ch.hole_number = 14 THEN ch.par END) AS h14,
-        MIN(CASE WHEN ch.hole_number = 15 THEN ch.par END) AS h15,
-        MIN(CASE WHEN ch.hole_number = 16 THEN ch.par END) AS h16,
-        MIN(CASE WHEN ch.hole_number = 17 THEN ch.par END) AS h17,
-        MIN(CASE WHEN ch.hole_number = 18 THEN ch.par END) AS h18
+        MIN(CASE WHEN hole_number = 1 THEN par END) AS h01,
+        MIN(CASE WHEN hole_number = 2 THEN par END) AS h02,
+        MIN(CASE WHEN hole_number = 3 THEN par END) AS h03,
+        MIN(CASE WHEN hole_number = 4 THEN par END) AS h04,
+        MIN(CASE WHEN hole_number = 5 THEN par END) AS h05,
+        MIN(CASE WHEN hole_number = 6 THEN par END) AS h06,
+        MIN(CASE WHEN hole_number = 7 THEN par END) AS h07,
+        MIN(CASE WHEN hole_number = 8 THEN par END) AS h08,
+        MIN(CASE WHEN hole_number = 9 THEN par END) AS h09,
+        MIN(CASE WHEN hole_number = 10 THEN par END) AS h10,
+        MIN(CASE WHEN hole_number = 11 THEN par END) AS h11,
+        MIN(CASE WHEN hole_number = 12 THEN par END) AS h12,
+        MIN(CASE WHEN hole_number = 13 THEN par END) AS h13,
+        MIN(CASE WHEN hole_number = 14 THEN par END) AS h14,
+        MIN(CASE WHEN hole_number = 15 THEN par END) AS h15,
+        MIN(CASE WHEN hole_number = 16 THEN par END) AS h16,
+        MIN(CASE WHEN hole_number = 17 THEN par END) AS h17,
+        MIN(CASE WHEN hole_number = 18 THEN par END) AS h18
       FROM 
-        x_course_holes ch
+        course_holes
       WHERE 
-        ch.course_id = $1
+        course_id = $1
       GROUP BY
-        ch.id, ch.course_id
+        course_id
       ORDER BY
         category, gender
     `, [id]);
@@ -145,7 +145,7 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
   try {
     const { id } = req.params;
     
-    // First get the data from x_course_holes
+    // First get the data from course_holes view
     const holeResult = await pool.query(`
       SELECT 
         course_id,
@@ -154,7 +154,7 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
         men_stroke_index,
         women_stroke_index
       FROM 
-        x_course_holes
+        course_holes
       WHERE 
         course_id = $1
       ORDER BY
@@ -164,13 +164,16 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
     // Get tee info to attach hole data to
     const teeResult = await pool.query(`
       SELECT 
-        id,
+        course_id,
         tee_name,
-        par
+        par,
+        course_rating,
+        slope_rating,
+        yardage as length
       FROM 
         data_by_tee
       WHERE 
-        id = $1
+        course_id = $1
     `, [id]);
     
     if (teeResult.rows.length === 0) {
@@ -185,6 +188,9 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
       tee_name: string;
       gender: string;
       par: number;
+      course_rating: number;
+      slope_rating: number;
+      length: number;
       [key: string]: any; // Index signature for dynamic par_h* properties
     }
     
@@ -192,11 +198,14 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
     const responseData = teeResult.rows.map(tee => {
       // Create base object
       const teeWithHoles: TeeWithHoles = {
-        id: tee.id,
+        id: tee.course_id,
         course_id: parseInt(id, 10),
         tee_name: tee.tee_name,
         gender: 'M', // Default
         par: tee.par,
+        course_rating: tee.course_rating,
+        slope_rating: tee.slope_rating,
+        length: tee.length,
         par_h01: null, par_h02: null, par_h03: null, par_h04: null, par_h05: null, 
         par_h06: null, par_h07: null, par_h08: null, par_h09: null, par_h10: null, 
         par_h11: null, par_h12: null, par_h13: null, par_h14: null, par_h15: null, 
@@ -223,7 +232,7 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
 router.put('/course-names/:id', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
-    const { course_name, facility_name, address1, city, state, country } = req.body;
+    const { course_name } = req.body;
 
     // Check if editor
     if (!req.user?.is_editor) {
@@ -237,7 +246,7 @@ router.put('/course-names/:id', authenticateToken, async (req: AuthRequest, res:
       SET 
         course_name = $1
       WHERE 
-        course_id = $7
+        course_id = $2
       RETURNING *
     `, [course_name, id]);
     
@@ -257,10 +266,12 @@ router.put('/course-data/:id', authenticateToken, async (req: AuthRequest, res: 
   try {
     const { id } = req.params;
     const { 
-      tee_name, gender, par, course_rating, slope_rating, length,
-      par_h01, par_h02, par_h03, par_h04, par_h05, par_h06, 
-      par_h07, par_h08, par_h09, par_h10, par_h11, par_h12, 
-      par_h13, par_h14, par_h15, par_h16, par_h17, par_h18
+      tee_id,
+      tee_name, 
+      par, 
+      course_rating, 
+      slope_rating, 
+      length
     } = req.body;
 
     // Check if editor
@@ -269,33 +280,42 @@ router.put('/course-data/:id', authenticateToken, async (req: AuthRequest, res: 
       return;
     }
     
+    // We need to update the x_course_data_by_tee table directly as it's the source
     const result = await pool.query(`
-      UPDATE course_data 
+      UPDATE x_course_data_by_tee 
       SET 
-        tee_name = $1,
-        gender = $2,
-        par = $3,
-        course_rating = $4,
-        slope_rating = $5,
-        length = $6,
-        par_h01 = $7, par_h02 = $8, par_h03 = $9, par_h04 = $10, par_h05 = $11, 
-        par_h06 = $12, par_h07 = $13, par_h08 = $14, par_h09 = $15,
-        par_h10 = $16, par_h11 = $17, par_h12 = $18, par_h13 = $19, par_h14 = $20, 
-        par_h15 = $21, par_h16 = $22, par_h17 = $23, par_h18 = $24
+        par = $1,
+        course_rating = $2,
+        slope_rating = $3,
+        length = $4
       WHERE 
-        id = $25
+        course_id = $5 AND
+        tee_id = $6
       RETURNING *
     `, [
-      tee_name, gender, par, course_rating, slope_rating, length,
-      par_h01, par_h02, par_h03, par_h04, par_h05, par_h06, 
-      par_h07, par_h08, par_h09, par_h10, par_h11, par_h12, 
-      par_h13, par_h14, par_h15, par_h16, par_h17, par_h18,
-      id
+      par, 
+      course_rating, 
+      slope_rating, 
+      length,
+      id,
+      tee_id
     ]);
     
     if (result.rows.length === 0) {
       res.status(404).json({ error: 'Course data not found' });
       return;
+    }
+    
+    // Also update tee name if provided
+    if (tee_name) {
+      await pool.query(`
+        UPDATE x_course_tee_types
+        SET
+          tee_name = $1
+        WHERE
+          course_id = $2 AND
+          tee_id = $3
+      `, [tee_name, id, tee_id]);
     }
     
     res.json({ message: 'Course data updated successfully', course_data: result.rows[0] });
@@ -308,12 +328,7 @@ router.put('/course-data/:id', authenticateToken, async (req: AuthRequest, res: 
 router.put('/course-hole-data/:id', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const { id } = req.params;
-    const { 
-      category, gender,
-      h01, h02, h03, h04, h05, h06, 
-      h07, h08, h09, h10, h11, h12, 
-      h13, h14, h15, h16, h17, h18
-    } = req.body;
+    const { hole_number, par, men_stroke_index, women_stroke_index } = req.body;
 
     // Check if editor
     if (!req.user?.is_editor) {
@@ -321,24 +336,23 @@ router.put('/course-hole-data/:id', authenticateToken, async (req: AuthRequest, 
       return;
     }
     
+    // Update the x_course_holes directly since the view is read-only
     const result = await pool.query(`
-      UPDATE course_hole_data 
+      UPDATE x_course_holes 
       SET 
-        category = $1,
-        gender = $2,
-        h01 = $3, h02 = $4, h03 = $5, h04 = $6, h05 = $7, 
-        h06 = $8, h07 = $9, h08 = $10, h09 = $11,
-        h10 = $12, h11 = $13, h12 = $14, h13 = $15, h14 = $16, 
-        h15 = $17, h16 = $18, h17 = $19, h18 = $20
+        par = $1,
+        men_stroke_index = $2,
+        women_stroke_index = $3
       WHERE 
-        id = $21
+        course_id = $4 AND
+        hole_number = $5
       RETURNING *
     `, [
-      category, gender,
-      h01, h02, h03, h04, h05, h06, 
-      h07, h08, h09, h10, h11, h12, 
-      h13, h14, h15, h16, h17, h18,
-      id
+      par,
+      men_stroke_index,
+      women_stroke_index,
+      id,
+      hole_number
     ]);
     
     if (result.rows.length === 0) {
