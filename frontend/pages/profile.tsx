@@ -25,6 +25,9 @@ interface User {
   family_name?: string;
   matricula?: string;
   handicap?: number;
+  gender?: string;
+  birthday?: string;
+  category?: string;
 }
 
 export default function Profile() {
@@ -37,6 +40,9 @@ export default function Profile() {
   const [familyName, setFamilyName] = useState('');
   const [matricula, setMatricula] = useState('');
   const [handicap, setHandicap] = useState<string>('');
+  const [gender, setGender] = useState('');
+  const [birthday, setBirthday] = useState('');
+  const [category, setCategory] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -54,6 +60,9 @@ export default function Profile() {
       setFamilyName(response.data.family_name || '');
       setMatricula(response.data.matricula || '');
       setHandicap(response.data.handicap !== null && response.data.handicap !== undefined ? response.data.handicap.toString() : '');
+      setGender(response.data.gender || '');
+      setBirthday(response.data.birthday ? response.data.birthday.split('T')[0] : '');
+      setCategory(response.data.category || '');
       setIsLoading(false);
     } catch (err) {
       console.error('Error fetching profile:', err);
@@ -94,7 +103,10 @@ export default function Profile() {
           first_name: name || null,
           family_name: familyName || null,
           matricula: matricula || null,
-          handicap: handicapValue
+          handicap: handicapValue,
+          gender: gender || null,
+          birthday: birthday || null,
+          category: category || null
         },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -259,6 +271,49 @@ export default function Profile() {
                     />
                   </div>
 
+                  <div>
+                    <label htmlFor="gender" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Gender
+                    </label>
+                    <select
+                      id="gender"
+                      value={gender}
+                      onChange={(e) => setGender(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    >
+                      <option value="">--Select Gender--</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label htmlFor="birthday" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Birthday
+                    </label>
+                    <input
+                      id="birthday"
+                      type="date"
+                      value={birthday}
+                      onChange={(e) => setBirthday(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      Category
+                    </label>
+                    <input
+                      id="category"
+                      type="text"
+                      value={category}
+                      onChange={(e) => setCategory(e.target.value)}
+                      className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    />
+                  </div>
+
                   <div className="flex justify-end space-x-3">
                     <button
                       type="button"
@@ -270,6 +325,9 @@ export default function Profile() {
                         setFamilyName(user?.family_name || '');
                         setMatricula(user?.matricula || '');
                         setHandicap(user?.handicap !== undefined && user?.handicap !== null ? user.handicap.toString() : '');
+                        setGender(user?.gender || '');
+                        setBirthday(user?.birthday ? user.birthday.split('T')[0] : '');
+                        setCategory(user?.category || '');
                       }}
                       className="px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                     >
@@ -328,6 +386,31 @@ export default function Profile() {
                   <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.handicap !== undefined && user?.handicap !== null ? user.handicap.toString() : '—'}</p>
                 </div>
 
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Gender
+                  </h3>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">
+                    {user?.gender ? (user.gender === 'male' ? 'Male' : user.gender === 'female' ? 'Female' : user.gender) : '—'}
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Birthday
+                  </h3>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">
+                    {user?.birthday ? new Date(user.birthday).toLocaleDateString() : '—'}
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
+                    Category
+                  </h3>
+                  <p className="mt-1 text-lg text-gray-900 dark:text-white">{user?.category || '—'}</p>
+                </div>
+
                 {user?.created_at && (
                   <div>
                     <h3 className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
@@ -356,12 +439,20 @@ export default function Profile() {
               <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
                 Account Actions
               </h3>
-              <button
-                onClick={handleDeleteAccount}
-                className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-full text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/20 hover:bg-red-50 dark:hover:bg-red-900/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-              >
-                Delete Account
-              </button>
+              <div className="space-x-3">
+                <button
+                  onClick={() => router.push('/change-password')}
+                  className="inline-flex items-center px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                >
+                  Change Password
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  className="inline-flex items-center px-3 py-1 border border-transparent text-sm leading-5 font-medium rounded-full text-red-700 dark:text-red-400 bg-red-100 dark:bg-red-900/20 hover:bg-red-50 dark:hover:bg-red-900/40 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                >
+                  Delete Account
+                </button>
+              </div>
             </div>
           </div>
         </div>

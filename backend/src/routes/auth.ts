@@ -179,7 +179,7 @@ router.post(
 router.get('/profile', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   try {
     const userResult = await pool.query(
-      'SELECT id, username, email, created_at, first_name, family_name, matricula, handicap, is_admin, is_editor FROM users WHERE id = $1',
+      'SELECT id, username, email, created_at, first_name, family_name, matricula, handicap, gender, birthday, category, is_admin, is_editor FROM users WHERE id = $1',
       [req.user?.id]
     );
 
@@ -412,6 +412,57 @@ router.post(
       res.status(200).json({ message: 'Password has been reset successfully' });
     } catch (error: any) {
       console.error('Error in reset-password:', error);
+      next(error);
+    }
+  }
+);
+
+// Change password for authenticated user
+router.post(
+  '/change-password',
+  authenticateToken,
+  [
+    body('currentPassword').notEmpty().withMessage('Current password is required'),
+    body('newPassword').isLength({ min: 5 }).withMessage('New password must be at least 5 characters')
+  ],
+  async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      // Validate input
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        res.status(400).json({ errors: errors.array() });
+        return;
+      }
+
+      const { currentPassword, newPassword } = req.body;
+
+      // Get user from database
+      const userResult = await pool.query('SELECT * FROM users WHERE id = $1', [req.user?.id]);
+      
+      if (userResult.rows.length === 0) {
+        res.status(404).json({ error: 'User not found' });
+        return;
+      }
+
+      const user = userResult.rows[0];
+
+      // Verify current password
+      if (!(await bcrypt.compare(currentPassword, user.password))) {
+        res.status(401).json({ error: 'Current password is incorrect' });
+        return;
+      }
+
+      // Hash new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update password in database
+      await pool.query(
+        'UPDATE users SET password = $1 WHERE id = $2',
+        [hashedPassword, req.user?.id]
+      );
+
+      res.status(200).json({ message: 'Password changed successfully' });
+    } catch (error) {
       next(error);
     }
   }
