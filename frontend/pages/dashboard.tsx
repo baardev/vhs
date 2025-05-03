@@ -118,9 +118,11 @@ const Dashboard: React.FC = () => {
                     {profileData?.handicap || 'N/A'}
                   </span>
                   <p className="text-gray-500 dark:text-gray-400 mt-2">Current Handicap Index</p>
-                  <Link href="/handicap" className="mt-4 inline-block text-sm text-blue-600 dark:text-blue-400 hover:underline">
-                    View Handicap History →
-                  </Link>
+                  <p className="mt-4 text-sm text-gray-500 dark:text-gray-400">
+                    {recentCards && recentCards.length > 0 
+                      ? `Last played: ${new Date(recentCards[0].play_date).toLocaleDateString()} at ${recentCards[0].course_name || `Course #${recentCards[0].course_id}`}`
+                      : "No recent games"}
+                  </p>
                 </div>
               )}
             </div>
