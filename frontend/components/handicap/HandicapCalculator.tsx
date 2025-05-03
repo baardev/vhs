@@ -1,31 +1,54 @@
 import React, { useEffect, useState } from 'react';
+import Link from 'next/link';
 
 const HandicapCalculator: React.FC = () => {
   const [handicapData, setHandicapData] = useState<{ avg_differential: number | null; is_mock?: boolean } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchHandicap = async () => {
-      try {
-        setLoading(true);
-        const timestamp = new Date().getTime();
-        const response = await fetch(`/api/handicap-calc?t=${timestamp}`);
-        if (!response.ok) {
-          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+    // Check if the user is logged in
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+    
+    // Only fetch handicap data if the user is logged in
+    if (token) {
+      const fetchHandicap = async () => {
+        try {
+          setLoading(true);
+          const timestamp = new Date().getTime();
+          const response = await fetch(`/api/handicap-calc?t=${timestamp}`);
+          if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+          }
+          const data = await response.json();
+          setHandicapData(data);
+          setError(null);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch handicap data');
+          console.error('Error fetching handicap:', err);
+        } finally {
+          setLoading(false);
         }
-        const data = await response.json();
-        setHandicapData(data);
-        setError(null);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch handicap data');
-        console.error('Error fetching handicap:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchHandicap();
+      fetchHandicap();
+    } else {
+      setLoading(false);
+    }
+    
+    // Listen for auth changes
+    const handleAuthChange = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    };
+    
+    window.addEventListener('authChange', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange);
+    };
   }, []);
 
   // Calculate the golf handicap (typically 0.96 * avg_differential)
@@ -44,7 +67,21 @@ const HandicapCalculator: React.FC = () => {
         </h2>
       </div>
       <div className="p-6">
-        {loading ? (
+        {!isLoggedIn ? (
+          <div className="text-center py-4">
+            <p className="text-gray-600 dark:text-gray-300 mb-4">
+              You need to be logged in to view your handicap.
+            </p>
+            <div className="flex justify-center space-x-4">
+              <Link href="/login" className="px-4 py-2 bg-[#2d6a4f] text-white rounded-md hover:bg-[#1e4835] transition-colors">
+                Login
+              </Link>
+              <Link href="/createAccount" className="px-4 py-2 border border-[#2d6a4f] text-[#2d6a4f] dark:text-[#4fd1c5] rounded-md hover:bg-[#e6f7ee] dark:hover:bg-[#1e3a8a] transition-colors">
+                Create Account
+              </Link>
+            </div>
+          </div>
+        ) : loading ? (
           <div className="text-center py-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2d6a4f] mx-auto"></div>
             <p className="mt-2 text-gray-600 dark:text-gray-300">Calculating handicap...</p>
@@ -53,7 +90,7 @@ const HandicapCalculator: React.FC = () => {
           <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4">
             <p className="text-red-700 dark:text-red-400">{error}</p>
           </div>
-        ) : (
+        ) :
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <span className="text-gray-700 dark:text-gray-300">Average Differential:</span>
@@ -81,7 +118,7 @@ const HandicapCalculator: React.FC = () => {
               * Calculated based on the average of your 8 best differentials
             </div>
           </div>
-        )}
+        }
       </div>
     </div>
   );

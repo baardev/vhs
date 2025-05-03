@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { NextPage } from 'next';
 import Head from 'next/head';
+import Navbar from '../components/common/Navbar';
+import Footer from '../components/common/Footer';
 import Link from 'next/link';
 import { Geist } from "next/font/google";
 
@@ -13,25 +15,47 @@ const SimpleHandicapPage: NextPage = () => {
   const [handicapData, setHandicapData] = useState<{ avg_differential: number | null; is_mock?: boolean } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
   useEffect(() => {
-    const fetchHandicap = async () => {
-      try {
-        const response = await fetch('/api/handicap-calc');
-        if (!response.ok) {
-          throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+    // Check if the user is logged in
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+    
+    // Only fetch handicap data if the user is logged in
+    if (token) {
+      const fetchHandicap = async () => {
+        try {
+          const response = await fetch('/api/handicap-calc');
+          if (!response.ok) {
+            throw new Error(`Server responded with ${response.status}: ${response.statusText}`);
+          }
+          const data = await response.json();
+          setHandicapData(data);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'Failed to fetch handicap data');
+          console.error('Error fetching handicap:', err);
+        } finally {
+          setLoading(false);
         }
-        const data = await response.json();
-        setHandicapData(data);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to fetch handicap data');
-        console.error('Error fetching handicap:', err);
-      } finally {
-        setLoading(false);
-      }
-    };
+      };
 
-    fetchHandicap();
+      fetchHandicap();
+    } else {
+      setLoading(false);
+    }
+    
+    // Listen for auth changes
+    const handleAuthChange = () => {
+      const token = localStorage.getItem('token');
+      setIsLoggedIn(!!token);
+    };
+    
+    window.addEventListener('authChange', handleAuthChange);
+    
+    return () => {
+      window.removeEventListener('authChange', handleAuthChange);
+    };
   }, []);
 
   // Calculate the golf handicap (typically 0.96 * avg_differential)
@@ -47,35 +71,7 @@ const SimpleHandicapPage: NextPage = () => {
         <title>Golf Handicap Calculator</title>
       </Head>
       
-      {/* Simple header instead of Navbar */}
-      <header className="w-full bg-white dark:bg-gray-900 shadow-sm py-4">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <Link href="/" className="flex items-center text-[#2d6a4f] dark:text-[#4fd1c5]">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="mr-2"
-            >
-              <path d="M19.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.743-.95l.337-2.698a.99.99 0 0 0-.278-.83l-1.566-1.566a.997.997 0 0 1 0-1.414L18.285 6.3a.997.997 0 0 1 1.414 0l.707.707a.997.997 0 0 1 .289.707l-1.046 2.175"></path>
-              <path d="M11.439 7.85c-.049.322.059.648.289.878l1.568 1.568c.47.47.706 1.087.706 1.704s-.235 1.233-.706 1.704l-1.611 1.611a.98.98 0 0 1-.837.276c-.47-.07-.802-.48-.743-.95l.337-2.698a.99.99 0 0 0-.278-.83l-1.566-1.566a.997.997 0 0 1 0-1.414L10.285 6.3a.997.997 0 0 1 1.414 0l.707.707a.997.997 0 0 1 .289.707l-1.046 2.175"></path>
-              <circle cx="3.5" cy="12" r="2.5"></circle>
-            </svg>
-            <span className="text-xl font-bold">VHS</span>
-          </Link>
-          <div className="flex gap-6">
-            <Link href="/" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
-              Back to Home
-            </Link>
-          </div>
-        </div>
-      </header>
+      <Navbar />
       
       <main className="flex-grow flex items-center justify-center p-6">
         <div className="max-w-lg w-full">
@@ -88,12 +84,29 @@ const SimpleHandicapPage: NextPage = () => {
             </div>
             
             <div className="p-6">
-              {loading ? (
+              {!isLoggedIn ? (
+                <div className="p-8 text-center">
+                  <h2 className="text-xl font-bold text-gray-800 dark:text-white mb-4">
+                    Login Required
+                  </h2>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">
+                    You need to be logged in to view your handicap.
+                  </p>
+                  <div className="flex justify-center space-x-4">
+                    <Link href="/login" className="px-5 py-2 bg-[#2d6a4f] text-white rounded-md hover:bg-[#1e4835] transition-colors">
+                      Login
+                    </Link>
+                    <Link href="/createAccount" className="px-5 py-2 border border-[#2d6a4f] text-[#2d6a4f] dark:text-[#4fd1c5] rounded-md hover:bg-[#e6f7ee] dark:hover:bg-[#1e3a8a] transition-colors">
+                      Create Account
+                    </Link>
+                  </div>
+                </div>
+              ) : loading ? (
                 <div className="flex justify-center items-center h-40">
-                  <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-[#2d6a4f]"></div>
+                  <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#2d6a4f]"></div>
                 </div>
               ) : error ? (
-                <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4 h-40 flex items-center">
+                <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4">
                   <p className="text-red-700 dark:text-red-400">{error}</p>
                 </div>
               ) : (
@@ -144,12 +157,7 @@ const SimpleHandicapPage: NextPage = () => {
         </div>
       </main>
       
-      {/* Simple footer */}
-      <footer className="w-full py-6 bg-gray-100 dark:bg-gray-900 mt-auto">
-        <div className="max-w-7xl mx-auto px-4 text-center text-gray-500 dark:text-gray-400 text-sm">
-          &copy; {new Date().getFullYear()} VHS Handicap System
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
