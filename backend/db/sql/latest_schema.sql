@@ -184,6 +184,7 @@ CREATE TABLE public.player_cards (
     ida integer,
     vta integer,
     gross integer,
+    adj_gross integer,
     net integer,
     tarj character varying(10),
     bir text,

@@ -1,47 +1,47 @@
-id,player_id,play_date,course_id,ext_id,clima,week_day,category,g_differential,post,judges,hcpi,hcp,ida,vta,gross,net,tarj,bir,par,bog,bg2,bg3g,plus_bg3,putts,tee_id,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,verified,created_at
-13,1,04/05/23,2,26803,None,4,Unica,73.4,6,None,20.3,22,51,48,99,77,OK,None,2,10,3,3,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-4,1,30/10/24,6,26816,None,lad,Unica,70.8,None,None,20.9,21,51,49,100,79,OK,1,1,7,5,4,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-21,1,18/08/22,6,26816,None,4,Unica,71.3,2,None,20.9,22,52,48,100,78,OK,None,None,11,5,1,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-18,1,20/10/22,3,26821,None,4,Unica,73.4,5,None,21.4,25,50,46,96,71,OK,None,4,7,5,1,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-25,1,20/03/22,3,26821,None,7,Unica,73.4,None,None,27,31,50,47,97,66,OK,None,None,None,None,2,16,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-26,1,12/12/21,3,26821,None,7,Unica,73.4,None,None,27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-30,1,21/03/21,3,26821,None,7,Unica,73.4,None,None,27,25,51,46,97,72,OK,1,2,6,8,None,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-5,1,17/10/24,4,26832,None,4,-8.0-54.0,72.2,None,None,20.9,20,49,50,99,79,OK,None,5,6,4,2,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-6,1,12/07/24,5,26853,None,5,Unica,73.1,20,None,20.4,22,54,57,111,89,OK,None,2,6,5,2,3,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-12,1,02/07/23,10,28287,None,7,Unificada,73.9,4,None,20.3,25,52,50,102,77,OK,None,lad,4,8,2,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-11,1,27/08/23,10,28749,None,7,Unica,70.7,34,None,20.3,19,54,46,100,81,OK,None,5,5,3,3,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-3,1,24/11/24,11,28759,None,7,Unica,73.2,None,18 (17/1),21,24,47,0,0,0,DES,1,None,2,3,2,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-22,1,03/08/22,11,28759,None,lad,Unica,73.2,None,5 (4/1),19.9,23,50,55,105,82,OK,1,2,5,3,6,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-27,1,01/12/21,11,28759,None,lad,Unica,73.2,None,14 (13/1),27,31,53,52,105,74,OK,None,None,8,8,None,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-31,1,30/10/16,11,28759,None,7,Unica,74,None,59 (52/7),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-32,1,11/09/16,11,28759,None,7,Unica,74,None,lad8 (36/2),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-33,1,15/08/16,11,28759,None,1,Unica,74,None,74 (60/14),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-34,1,24/04/16,11,28759,None,7,Unica,74.4,None,104 (99/5),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-35,1,26/03/16,11,28759,None,6,Unica,74.4,None,71 (63/8),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-36,1,20/02/16,11,28759,None,6,Unica,74.4,None,128 (121/7),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-37,1,09/02/16,11,28759,None,2,Unica,74.4,None,99 (88/11),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-38,1,07/02/16,11,28759,None,7,Unica,74.4,None,46 (39/7),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-39,1,31/01/16,11,28759,None,7,Unica,74.4,None,65 (59/6),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-40,1,27/01/16,11,28759,None,lad,Unificada,74.4,None,lad1 (24/7),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-41,1,03/01/16,11,28759,None,7,Unica,74.4,None,40 (36/4),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-42,1,07/12/15,11,28759,None,1,Unica,74.4,None,112 (99/13),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-43,1,26/07/15,11,28759,None,7,Unica,74.4,None,51 (48/3),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-44,1,03/05/15,11,28759,None,7,Unica,74,None,58 (52/6),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-45,1,12/04/15,11,28759,None,7,Unica,74,None,65 (61/4),27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-46,1,17/03/15,11,28759,None,2,Unificada,74,None,0 (0/0),28,28,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-47,1,14/03/15,11,28759,None,6,Unica,74,None,68 (66/2),28,28,50,51,101,73,OK,None,2,11,1,2,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-48,1,06/12/14,11,28759,None,6,Unica,74,None,106 (94/12),28,28,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-49,1,23/02/14,11,28759,None,7,19-36,74.4,None,54 (47/7),28,28,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-50,1,29/12/13,11,28759,None,7,Unificada,74.4,None,42 (38/4),28,28,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-20,1,28/08/22,7,29047,None,7,Unica,72.2,None,None,20.4,23,55,50,105,82,OK,None,2,7,3,4,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-28,1,09/05/21,8,29052,None,7,Unica,71.9,None,None,27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-2,1,23/02/25,13,29156,None,7,Unica,74.1,None,None,20.7,23,48,50,98,75,OK,None,1,12,4,1,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-8,1,17/03/24,13,29156,None,7,Unica,74.1,None,None,20.4,23,46,53,99,76,OK,None,lad,8,6,None,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-7,1,02/06/24,12,29211,None,7,Unica,73.5,None,None,20.3,20.3,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-10,1,12/11/23,12,29211,None,7,Unica,73.5,None,None,20.4,20.4,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-14,1,16/04/23,12,29211,None,7,Unificada,73.5,None,None,20.1,20.1,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-15,1,19/03/23,12,29211,None,7,Unificada,73.5,None,None,20.2,20.2,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-16,1,13/11/22,12,29211,None,7,Unica,73.5,None,None,20.2,20.2,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-17,1,23/10/22,12,29211,None,7,17.7-54.0,73.5,4,None,21.4,26,47,48,95,69,OK,None,lad,8,6,1,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-29,1,11/04/21,12,29211,None,7,17.0-54.0,73.5,None,None,27,27,0,0,0,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
-19,1,08/09/22,9,33846,None,4,Unificada,72.7,8,None,21.4,23,55,46,101,78,OK,None,lad,6,7,1,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+id,player_id,play_date,course_id,ext_id,clima,week_day,category,g_differential,post,judges,hcpi,hcp,ida,vta,gross,adj_gross,net,tarj,bir,par,bog,bg2,bg3g,plus_bg3,putts,tee_id,h01,h02,h03,h04,h05,h06,h07,h08,h09,h10,h11,h12,h13,h14,h15,h16,h17,h18,verified,created_at
+13,1,04/05/23,2,26803,None,4,Unica,73.4,6,None,20.3,22,51,48,99,87,77,OK,None,2,10,3,3,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+4,1,30/10/24,6,26816,None,lad,Unica,70.8,None,None,20.9,21,51,49,100,88,79,OK,1,1,7,5,4,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+21,1,18/08/22,6,26816,None,4,Unica,71.3,2,None,20.9,22,52,48,100,88,78,OK,None,None,11,5,1,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+18,1,20/10/22,3,26821,None,4,Unica,73.4,5,None,21.4,25,50,46,96,84,71,OK,None,4,7,5,1,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+25,1,20/03/22,3,26821,None,7,Unica,73.4,None,None,27,31,50,47,97,85,66,OK,None,None,None,None,2,16,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+26,1,12/12/21,3,26821,None,7,Unica,73.4,None,None,27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+30,1,21/03/21,3,26821,None,7,Unica,73.4,None,None,27,25,51,46,97,85,72,OK,1,2,6,8,None,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+5,1,17/10/24,4,26832,None,4,-8.0-54.0,72.2,None,None,20.9,20,49,50,99,87,79,OK,None,5,6,4,2,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+6,1,12/07/24,5,26853,None,5,Unica,73.1,20,None,20.4,22,54,57,111,99,89,OK,None,2,6,5,2,3,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+12,1,02/07/23,10,28287,None,7,Unificada,73.9,4,None,20.3,25,52,50,102,90,77,OK,None,lad,4,8,2,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+11,1,27/08/23,10,28749,None,7,Unica,70.7,34,None,20.3,19,54,46,100,88,81,OK,None,5,5,3,3,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+3,1,24/11/24,11,28759,None,7,Unica,73.2,None,18 (17/1),21,24,47,0,0,-12,0,DES,1,None,2,3,2,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+22,1,03/08/22,11,28759,None,lad,Unica,73.2,None,5 (4/1),19.9,23,50,55,105,93,82,OK,1,2,5,3,6,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+27,1,01/12/21,11,28759,None,lad,Unica,73.2,None,14 (13/1),27,31,53,52,105,93,74,OK,None,None,8,8,None,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+31,1,30/10/16,11,28759,None,7,Unica,74,None,59 (52/7),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+32,1,11/09/16,11,28759,None,7,Unica,74,None,lad8 (36/2),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+33,1,15/08/16,11,28759,None,1,Unica,74,None,74 (60/14),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+34,1,24/04/16,11,28759,None,7,Unica,74.4,None,104 (99/5),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+35,1,26/03/16,11,28759,None,6,Unica,74.4,None,71 (63/8),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+36,1,20/02/16,11,28759,None,6,Unica,74.4,None,128 (121/7),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+37,1,09/02/16,11,28759,None,2,Unica,74.4,None,99 (88/11),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+38,1,07/02/16,11,28759,None,7,Unica,74.4,None,46 (39/7),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+39,1,31/01/16,11,28759,None,7,Unica,74.4,None,65 (59/6),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+40,1,27/01/16,11,28759,None,lad,Unificada,74.4,None,lad1 (24/7),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+41,1,03/01/16,11,28759,None,7,Unica,74.4,None,40 (36/4),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+42,1,07/12/15,11,28759,None,1,Unica,74.4,None,112 (99/13),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+43,1,26/07/15,11,28759,None,7,Unica,74.4,None,51 (48/3),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+44,1,03/05/15,11,28759,None,7,Unica,74,None,58 (52/6),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+45,1,12/04/15,11,28759,None,7,Unica,74,None,65 (61/4),27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+46,1,17/03/15,11,28759,None,2,Unificada,74,None,0 (0/0),28,28,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+47,1,14/03/15,11,28759,None,6,Unica,74,None,68 (66/2),28,28,50,51,101,89,73,OK,None,2,11,1,2,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+48,1,06/12/14,11,28759,None,6,Unica,74,None,106 (94/12),28,28,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+49,1,23/02/14,11,28759,None,7,19-36,74.4,None,54 (47/7),28,28,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+50,1,29/12/13,11,28759,None,7,Unificada,74.4,None,42 (38/4),28,28,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+20,1,28/08/22,7,29047,None,7,Unica,72.2,None,None,20.4,23,55,50,105,93,82,OK,None,2,7,3,4,2,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+28,1,09/05/21,8,29052,None,7,Unica,71.9,None,None,27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+2,1,23/02/25,13,29156,None,7,Unica,74.1,None,None,20.7,23,48,50,98,86,75,OK,None,1,12,4,1,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+8,1,17/03/24,13,29156,None,7,Unica,74.1,None,None,20.4,23,46,53,99,87,76,OK,None,lad,8,6,None,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+7,1,02/06/24,12,29211,None,7,Unica,73.5,None,None,20.3,20.3,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+10,1,12/11/23,12,29211,None,7,Unica,73.5,None,None,20.4,20.4,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+14,1,16/04/23,12,29211,None,7,Unificada,73.5,None,None,20.1,20.1,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+15,1,19/03/23,12,29211,None,7,Unificada,73.5,None,None,20.2,20.2,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+16,1,13/11/22,12,29211,None,7,Unica,73.5,None,None,20.2,20.2,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+17,1,23/10/22,12,29211,None,7,17.7-54.0,73.5,4,None,21.4,26,47,48,95,83,69,OK,None,lad,8,6,1,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+29,1,11/04/21,12,29211,None,7,17.0-54.0,73.5,None,None,27,27,0,0,0,-12,0,NPT,None,None,None,None,None,None,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None
+19,1,08/09/22,9,33846,None,4,Unificada,72.7,8,None,21.4,23,55,46,101,89,78,OK,None,lad,6,7,1,1,None,ladies,4,5,3,4,5,3,4,5,4,5,4,3,5,4,5,3,4,4,true,None

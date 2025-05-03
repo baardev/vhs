@@ -1,4 +1,6 @@
 -- 210_create_player_cards_table.sql
+SET client_min_messages = 'warning';
+
 SET datestyle = 'DMY';
 -- Drop the table if it already exists
 DROP TABLE IF EXISTS player_cards CASCADE;
@@ -21,6 +23,7 @@ CREATE TABLE player_cards (
     ida INTEGER,
     vta INTEGER,
     gross INTEGER,
+    adj_gross INTEGER,
     net INTEGER,
     tarj VARCHAR(10),
     bir TEXT,

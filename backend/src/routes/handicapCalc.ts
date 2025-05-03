@@ -8,6 +8,9 @@ interface PlayerRound {
   player_id: number;
   play_date: Date;
   g_differential: number;
+  adj_gross?: number;
+  course_rating?: number;
+  slope_rating?: number;
 }
 
 router.use((req, res, next) => {
@@ -31,21 +34,37 @@ router.get('/', async (req, res) => {
     const defaultPlayerId = 1; // Using ID 1 as default
     
     // Fetch the player's rounds data from the database
-    logDebug(`About to execute query for default player ${defaultPlayerId}`, 'handicapCalc');
+
+    //!  IMPORTANT: The 'adj_gross' value in this table is mock data.  Needs to be calculated from the database
     const result = await pool.query(`
-      SELECT 
-          player_id,
-          play_date,
-          g_differential
-      FROM player_cards
-      WHERE 
-          player_id = $1
-          AND tarj = 'OK'
-          AND g_differential IS NOT NULL
-      ORDER BY play_date DESC
+      SELECT
+        player_cards.adj_gross, 
+        player_cards.play_date, 
+        x_course_data_by_tee.course_rating, 
+        x_course_data_by_tee.slope_rating, 
+        x_course_tee_types.tee_name
+      FROM
+        player_cards
+        INNER JOIN
+        x_course_data_by_tee
+        ON 
+          player_cards.course_id = x_course_data_by_tee.course_id AND
+          player_cards.tee_id = x_course_data_by_tee.tee_id
+        INNER JOIN
+        x_course_tee_types
+        ON 
+          x_course_data_by_tee.tee_id = x_course_tee_types.tee_id
+      WHERE
+        player_id = $1 AND
+        tarj = 'OK' AND
+        g_differential IS NOT NULL
+      ORDER BY
+        play_date DESC
       LIMIT 20
     `, [defaultPlayerId]);
     
+
+
     logInfo(`Query executed, found ${result.rows.length} rounds for default player`, 'handicapCalc');
     logDebug('Result first row: ' + JSON.stringify(result.rows[0] || 'No rows found'), 'handicapCalc');
     
@@ -53,7 +72,8 @@ router.get('/', async (req, res) => {
     const rounds: PlayerRound[] = result.rows;
     
     // Calculate handicap in TypeScript
-    const handicapData = calculateHandicap(rounds);
+    // const handicapData = calculateHandicap(rounds);
+    const handicapData = calculateHandicap_v2(rounds);
     
     logDebug('Calculated handicap data: ' + JSON.stringify(handicapData), 'handicapCalc');
     
@@ -74,7 +94,7 @@ router.get('/', async (req, res) => {
       handicap_index: 100.000,    // Very distinctive value 
       rounds_used: 8,
       success: true,
-      is_mock: true,
+      is_mock: false,  // tset to truie to use the aboive data and not usinbg the database data
       error_occurred: true,      // Clear flag
       error_message: error instanceof Error ? error.message : 'Unknown error'
     });
@@ -211,7 +231,8 @@ router.get('/:player_id', async (req, res) => {
     const rounds: PlayerRound[] = result.rows;
     
     // Calculate handicap in TypeScript
-    const handicapData = calculateHandicap(rounds);
+    // const handicapData = calculateHandicap(rounds);
+    const handicapData = calculateHandicap_v2(rounds);
     
     logDebug('Calculated handicap data: ' + JSON.stringify(handicapData), 'handicapCalc');
     
@@ -244,6 +265,8 @@ router.get('/:player_id', async (req, res) => {
  * Takes differentials from the 20 most recent rounds
  * Uses the best 8 differentials to calculate the handicap
  */
+
+//! this shoud never be called, it is for backward compatibility
 function calculateHandicap(rounds: PlayerRound[]) {
   // Convert differentials to numbers
   const roundsWithNumericDifferentials = rounds.map(round => ({
@@ -253,8 +276,54 @@ function calculateHandicap(rounds: PlayerRound[]) {
       : round.g_differential
   }));
   
+    // Sort by differential (ascending - best scores first)
+    const sortedRounds = [...roundsWithNumericDifferentials].sort(
+      (a, b) => a.g_differential - b.g_differential
+    );
+    
+    // Get the best 8 differentials
+    const bestDifferentials = sortedRounds.slice(0, 8);
+    
+    // Calculate average differential
+    const sum = bestDifferentials.reduce((acc, round) => acc + round.g_differential, 0);
+    const avgDifferential = bestDifferentials.length > 0 ? sum / bestDifferentials.length : 0;
+    
+    // Calculate handicap index (average differential * 0.96, rounded to 1 decimal place)
+    const handicapIndex = Math.round((avgDifferential * 0.96) * 10) / 10;
+    
+    return {
+      avgDifferential,
+      handicapIndex,
+      roundsUsed: bestDifferentials.length
+    };
+  }
+function calculateHandicap_v2(rounds: PlayerRound[]) {
+  // First calculate proper differentials using the WHS formula
+  const roundsWithCalculatedDifferentials = rounds.map(round => {
+    // Convert string values to numbers if needed and handle undefined values
+    const adjGross = typeof round.adj_gross === 'string' 
+      ? parseFloat(round.adj_gross) 
+      : (round.adj_gross || round.g_differential); // Fallback to g_differential
+    
+    const courseRating = typeof round.course_rating === 'string' 
+      ? parseFloat(round.course_rating) 
+      : (round.course_rating || 72); // Default course rating of 72
+    
+    const slopeRating = typeof round.slope_rating === 'string' 
+      ? parseFloat(round.slope_rating) 
+      : (round.slope_rating || 113); // Default slope rating of 113
+    
+    // Apply the correct differential formula with safe values
+    const differential = (adjGross - courseRating) * 113 / slopeRating;
+    
+    return {
+      ...round,
+      g_differential: differential
+    };
+  });
+  
   // Sort by differential (ascending - best scores first)
-  const sortedRounds = [...roundsWithNumericDifferentials].sort(
+  const sortedRounds = [...roundsWithCalculatedDifferentials].sort(
     (a, b) => a.g_differential - b.g_differential
   );
   
@@ -274,5 +343,6 @@ function calculateHandicap(rounds: PlayerRound[]) {
     roundsUsed: bestDifferentials.length
   };
 }
+
 
 export default router; 
