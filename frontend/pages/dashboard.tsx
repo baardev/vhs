@@ -26,15 +26,29 @@ const Dashboard: React.FC = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        // Fetch user profile data
-        const profileResponse = await fetch('/api/user/profile');
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setLoading(false);
+          return;
+        }
+
+        // Fetch user profile data with authentication
+        const profileResponse = await fetch('/api/auth/profile', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         if (profileResponse.ok) {
           const profileData = await profileResponse.json();
           setProfileData(profileData);
         }
 
         // Fetch recent player cards
-        const cardsResponse = await fetch('/api/player-cards?limit=3');
+        const cardsResponse = await fetch('/api/player-cards?limit=3', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
         if (cardsResponse.ok) {
           const cardsData = await cardsResponse.json();
           setRecentCards(cardsData.slice(0, 3)); // Take only first 3 cards
