@@ -14,12 +14,12 @@ export COMPOSE_BAKE=true
 export ROOT_DIR=$(git rev-parse --show-toplevel)
 
 # Check if utils is already in PATH before adding it
-if is_in_path; then
-  echo "Utils directory already in PATH"
-else
-  echo "Adding utils directory to PATH"
-  export PATH=${ROOT_DIR}/utils:$PATH
-fi
+#if is_in_path; then
+#  echo "Utils directory already in PATH"
+#else
+#  echo "Adding utils directory to PATH"
+#  export PATH=${ROOT_DIR}/utils:$PATH
+#fi
 
 export PGPASSWORD=`cat ${ROOT_DIR}/.adminpw`
 export DB_PASSWORD=`cat ${ROOT_DIR}/.adminpw`
