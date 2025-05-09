@@ -21,3 +21,6 @@
 - - https://libronico.com/api/courses   (backend/src/routes/courses.ts)
 - - https://libronico.com/course-data  (frontend/pages/courses/index.tsx)
 
+# 0.0.74 
+- major revamp of handicap calc and display.  
+

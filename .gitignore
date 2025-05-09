@@ -22,3 +22,7 @@ backup/
 bin/*html
 .vscode/
 x
+.directory
+.megaignore
+MSYNC
+XSYNC

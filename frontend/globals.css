@@ -4,21 +4,22 @@
 
 :root {
   --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 248, 249, 250;
-  --background-end-rgb: 255, 255, 255;
+  --background-start-rgb: 46, 204, 113;
+  --background-end-rgb: 243, 156, 18;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
     --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 17, 17, 17;
-    --background-end-rgb: 26, 26, 26;
+    --background-start-rgb: 46, 204, 113;
+    --background-end-rgb: 243, 156, 18;
   }
 }
 
 body {
   color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-start-rgb));
+  background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb)));
+  min-height: 100vh;
 }
 
 /* Custom font variables */
