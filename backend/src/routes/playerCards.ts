@@ -4,10 +4,10 @@ import { pool, safeQuery } from '../db';
 const router = Router();
 
 // Simple test endpoint with no DB access
-router.get('/player-cards-test', async (req: Request, res: Response): Promise<void> => {
-  console.log('GET /player-cards-test - Test endpoint hit');
-  res.json({ message: 'Player cards test endpoint is working!' });
-});
+// router.get('/player-cards-test', async (req: Request, res: Response): Promise<void> => {
+//   console.log('GET /player-cards-test - Test endpoint hit');
+//   res.json({ message: 'Player cards test endpoint is working!' });
+// });
 
 // Get all player cards with course and user info
 router.get('/player-cards', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -125,7 +125,7 @@ router.get('/player-cards/:id', async (req: Request, res: Response, next: NextFu
         pc.*,
         cn.course_name,
         u.username as player_name,
-        tt.color as tee_name
+        tt.tee_color as tee_name
       FROM 
         player_cards pc
       LEFT JOIN 
@@ -133,7 +133,7 @@ router.get('/player-cards/:id', async (req: Request, res: Response, next: NextFu
       LEFT JOIN 
         users u ON pc.player_id::INTEGER = u.id
       LEFT JOIN
-        tee_types tt ON pc.tee_id = tt.id
+        x_course_tee_types tt ON pc.tee_id = tt.tee_id
       WHERE 
         pc.id = $1
     `, [id]);

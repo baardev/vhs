@@ -42,10 +42,17 @@
 #   VHS Development Team
 #
 
+# Get the directory where the script is located
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+# Assume the script is in a subdirectory (like 'utils'), so ROOT_DIR is one level up
+ROOT_DIR=$(dirname "$SCRIPT_DIR")
+
+# Change to the project root directory
+cd "${ROOT_DIR}" || exit 1
+
 echo "REBUILD $1"
 echo "----------------------------------------------------"
 
-cd ${ROOT_DIR}
 REBUILD_CONF=${ROOT_DIR}/utils/REBUILD.conf
 
 # Parse command line arguments
