@@ -69,6 +69,19 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
   }
 });
 
+// Get a simplified list of all course names and IDs
+router.get('/list-names', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    // Assuming your table is x_course_names with course_id and course_name
+    const query = 'SELECT course_id, course_name FROM x_course_names ORDER BY course_name ASC';
+    const result = await pool.query(query);
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Error fetching course names list:', error);
+    next(error);
+  }
+});
+
 // Get a specific course with its tee boxes and holes
 router.get('/:id', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   try {

@@ -104,19 +104,14 @@ const NewPlayerCardPage = () => {
   useEffect(() => {
     const fetchCourses = async () => {
       setFetchingCourses(true);
+      setError(''); // Clear previous errors
       try {
-        // Replace with your actual API endpoint for course names
-        // const response = await axios.get('/api/courses/names'); 
-        // setCoursesList(response.data);
-        // STUBBED DATA for now:
-        setCoursesList([
-          { course_id: 1, course_name: 'Sample Course Alpha' },
-          { course_id: 2, course_name: 'Sample Course Beta' },
-          { course_id: 'C3', course_name: 'Sample Course Charlie (ID as string)' },
-        ]);
+        const response = await axios.get('/api/courses/list-names'); 
+        setCoursesList(response.data);
       } catch (err) {
         console.error('Error fetching courses:', err);
-        setError('Failed to load courses list.');
+        setError('Failed to load courses list. Please check API and database.');
+        setCoursesList([]); // Clear list on error
       } finally {
         setFetchingCourses(false);
       }
@@ -445,13 +440,23 @@ const NewPlayerCardPage = () => {
         .dark .input-field {
           background-color: #374151; /* gray-700 */
           border-color: #4b5563; /* gray-600 */
-          color: white;
+          /* color: white; */ /* Removed to let browser potentially handle select text color */
         }
         .input-field:focus {
           outline: none;
           --tw-ring-color: #6366f1; /* indigo-500 */
           border-color: #6366f1; /* indigo-500 */
           box-shadow: 0 0 0 3px var(--tw-ring-color);
+        }
+        /* Attempt to style options directly for dark mode */
+        /* This might have limited browser support */
+        select.input-field option { /* Apply to all modes initially */
+          color: black;
+          background: white;
+        }
+        .dark select.input-field option {
+           color: black; /* Explicitly black for dark mode options */
+           background: white; /* Explicitly white background for dark mode options */
         }
       `}</style>
     </div>
