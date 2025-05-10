@@ -71,7 +71,7 @@ FILEARG="-f ${ROOT_DIR}/docker-compose.yml"
 echo "Docker file: $FILEARG"
 
 
-export NODE_ENV=production
+# export NODE_ENV=production
 
 
 isDOCKER_CACHE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "DOCKER_CACHE"`
@@ -102,6 +102,12 @@ else
    CLEARCACHE="YES"
 fi
 
+if [ "$NODE_ENV" = "production" ]; then
+    NODE_ENV_ARG="--build-arg NODE_ENV=${NODE_ENV}"
+else
+    NODE_ENV_ARG=""
+fi
+
 echo "┌───────────────────────────────────────────────────────┐"
 echo "│ NOCACHE: $NOCACHE"
 echo "│ PULL: $PULL"  
@@ -109,6 +115,7 @@ echo "│ WIPE: $WIPE"
 echo "│ CLEARCACHE: $CLEARCACHE"
 echo "│ FILEARG: $FILEARG"
 echo "│ ROOT_DIR: $ROOT_DIR"
+echo "│ NODE_ENV_ARG: $NODE_ENV_ARG"
 echo "└───────────────────────────────────────────────────────┘"
 
 # exit
@@ -162,7 +169,7 @@ rebuild_frontend() {
 
     echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop frontend
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL}  frontend 
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} frontend 
     /usr/bin/docker compose ${FILEARG} up -d frontend
     echo "Frontend container restarted successfully."
 }
@@ -185,7 +192,7 @@ rebuild_backend() {
 
     echo "Restarting frontend container..."
     /usr/bin/docker compose ${FILEARG} stop backend
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL}  backend 
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} backend 
     /usr/bin/docker compose ${FILEARG} up -d backend
     echo "Backend container restarted successfully."
 }
@@ -202,7 +209,7 @@ rebuild_nginx() {
     /usr/bin/docker compose ${FILEARG} rm -f nginx
 
     # Build JUST the nginx image (no other targets)
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} nginx
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} nginx
 
     # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
     /usr/bin/docker compose ${FILEARG} up -d nginx
@@ -222,7 +229,7 @@ rebuild_db() {
     /usr/bin/docker compose ${FILEARG} rm -f db
 
     # Build JUST the nginx image (no other targets)
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} db
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} db
 
     # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
     /usr/bin/docker compose ${FILEARG} up -d db

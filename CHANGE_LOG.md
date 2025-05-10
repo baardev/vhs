@@ -24,3 +24,5 @@
 # 0.0.74 
 - major revamp of handicap calc and display.  
 
+# 0.0.76
+- New Score Card added with dropdown coursename and keys trr_names 
