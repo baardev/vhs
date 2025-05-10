@@ -128,28 +128,22 @@ const NewPlayerCardPage = () => {
         return;
       }
       setFetchingTees(true);
+      setError(''); // Clear previous errors related to tees
       try {
-        // Replace with your actual API endpoint for tees by courseId
-        // const response = await axios.get(`/api/courses/${formData.course_id}/tees`);
-        // setTeesList(response.data);
-        // STUBBED DATA for now:
-        if (formData.course_id === '1') {
-            setTeesList([
-                { tee_id: 'T1A', tee_name: 'Blue Tees (Course 1)' }, 
-                { tee_id: 'T1B', tee_name: 'Red Tees (Course 1)' }
-            ]);
-        } else if (formData.course_id === '2') {
-            setTeesList([
-                { tee_id: 'T2X', tee_name: 'Championship (Course 2)' }, 
-                { tee_id: 'T2Y', tee_name: 'Forward (Course 2)' }
-            ]);
-        } else {
-             setTeesList([{tee_id: 'DEFAULT', tee_name: 'Default Tee'}]); // Fallback or for other courses
+        const response = await axios.get(`/api/courses/${formData.course_id}/tees`);
+        setTeesList(response.data);
+        // If tees are loaded, and current formData.tee_id is not among them (or is empty),
+        // you might want to reset tee_id or select the first available tee.
+        // For now, we'll let the user select.
+        if (response.data.length > 0 && !response.data.find((tee: TeeType) => tee.tee_id === formData.tee_id)) {
+            // Optionally, auto-select the first tee or clear current selection
+            // setFormData(prev => ({ ...prev, tee_id: response.data[0].tee_id })); // Auto-select first
+            // setFormData(prev => ({ ...prev, tee_id: '' })); // Or clear selection if old one invalid
         }
       } catch (err) {
-        console.error('Error fetching tees:', err);
+        console.error('Error fetching tees for course:', formData.course_id, err);
         setError('Failed to load tees list for the selected course.');
-        setTeesList([]);
+        setTeesList([]); // Clear list on error
       } finally {
         setFetchingTees(false);
       }

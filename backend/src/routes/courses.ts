@@ -145,6 +145,34 @@ router.get('/:id', async (req: Request, res: Response, next: NextFunction): Prom
   }
 });
 
+// Get all tee types for a specific course
+router.get('/:courseId/tees', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const { courseId } = req.params;
+    const query = `
+      SELECT
+        tt.tee_id, 
+        tt.tee_name
+      FROM
+        x_course_tee_types tt
+      WHERE
+        tt.course_id = $1
+      ORDER BY
+        tt.tee_name ASC;
+    `;
+    // The original query joined with x_course_names, but if x_course_tee_types.course_id is reliable,
+    // a direct query on x_course_tee_types might be simpler if x_course_names.course_id isn't needed for filtering beyond tt.course_id.
+    // If the join is important (e.g. to ensure the course_id exists in x_course_names), then revert to the more complex join.
+    // For this implementation, using the direct tt.course_id assuming it's the foreign key to x_course_names.course_id.
+    
+    const result = await pool.query(query, [courseId]);
+    res.json(result.rows);
+  } catch (error) {
+    console.error(`Error fetching tee types for course ${req.params.courseId}:`, error);
+    next(error);
+  }
+});
+
 // Create a new course - requires authentication
 router.post(
   '/',
