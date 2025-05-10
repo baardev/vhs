@@ -152,7 +152,7 @@ const Navbar = () => {
                                 href="/admin"
                                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md shadow-sm"
                               >
-                                {t('admin.title')}
+                                {t('admin.title', 'Admin')}
                               </Link>
                             );
                           }
@@ -239,7 +239,7 @@ const Navbar = () => {
                             className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-md"
                             onClick={() => setMobileMenuOpen(false)}
                           >
-                            {t('admin.title')}
+                            {t('admin.title', 'Admin')}
                           </Link>
                         );
                       }

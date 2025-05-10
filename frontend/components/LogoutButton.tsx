@@ -68,7 +68,7 @@ const LogoutButton: React.FC<LogoutButtonProps> = ({
       disabled={isLoggingOut}
       className={`${buttonClasses} font-medium transition-colors ${className}`}
     >
-      {isLoggingOut ? t('logout.loggingOut') : t('logout.signOut')}
+      {isLoggingOut ? t('logout.loggingOut', 'Logging Out...') : t('logout.signOut', 'Sign Out')}
     </button>
   );
 };
