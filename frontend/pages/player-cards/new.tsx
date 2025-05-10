@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -34,6 +34,16 @@ interface NewPlayerCardData {
   h10?: number | string; h11?: number | string; h12?: number | string; h13?: number | string; h14?: number | string;
   h15?: number | string; h16?: number | string; h17?: number | string; h18?: number | string;
   verified: boolean;
+}
+
+interface CourseName {
+  course_id: number | string; // Match the type from your backend
+  course_name: string;
+}
+
+interface TeeType {
+  tee_id: string; // Match the type from your backend (e.g., VARCHAR or an ID)
+  tee_name: string; // Or tee_color, based on what you want to display
 }
 
 const initialFormData: NewPlayerCardData = {
@@ -74,6 +84,83 @@ const NewPlayerCardPage = () => {
   const [error, setError] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const router = useRouter();
+
+  const [coursesList, setCoursesList] = useState<CourseName[]>([]);
+  const [teesList, setTeesList] = useState<TeeType[]>([]);
+  const [fetchingCourses, setFetchingCourses] = useState(false);
+  const [fetchingTees, setFetchingTees] = useState(false);
+
+  // TODO: Fetch current logged-in player_id and set it
+  useEffect(() => {
+    // const currentUserId = getCurrentUserId(); // Replace with actual auth logic
+    // For now, let's assume a placeholder or that it will be handled by backend if not sent
+    // setFormData(prev => ({ ...prev, player_id: currentUserId })); 
+    // If player_id is determined by the backend based on session, no need to set it here.
+    // For this example, let's assume it might be sent, or the backend handles it.
+    // If removing from form, ensure your backend can get it or it's not strictly needed from client.
+  }, []);
+
+  // Fetch courses list on component mount
+  useEffect(() => {
+    const fetchCourses = async () => {
+      setFetchingCourses(true);
+      try {
+        // Replace with your actual API endpoint for course names
+        // const response = await axios.get('/api/courses/names'); 
+        // setCoursesList(response.data);
+        // STUBBED DATA for now:
+        setCoursesList([
+          { course_id: 1, course_name: 'Sample Course Alpha' },
+          { course_id: 2, course_name: 'Sample Course Beta' },
+          { course_id: 'C3', course_name: 'Sample Course Charlie (ID as string)' },
+        ]);
+      } catch (err) {
+        console.error('Error fetching courses:', err);
+        setError('Failed to load courses list.');
+      } finally {
+        setFetchingCourses(false);
+      }
+    };
+    fetchCourses();
+  }, []);
+
+  // Fetch tees list when course_id changes
+  useEffect(() => {
+    const fetchTees = async () => {
+      if (!formData.course_id) {
+        setTeesList([]); // Clear tees if no course is selected
+        setFormData(prev => ({ ...prev, tee_id: '' })); // Reset tee_id in form
+        return;
+      }
+      setFetchingTees(true);
+      try {
+        // Replace with your actual API endpoint for tees by courseId
+        // const response = await axios.get(`/api/courses/${formData.course_id}/tees`);
+        // setTeesList(response.data);
+        // STUBBED DATA for now:
+        if (formData.course_id === '1') {
+            setTeesList([
+                { tee_id: 'T1A', tee_name: 'Blue Tees (Course 1)' }, 
+                { tee_id: 'T1B', tee_name: 'Red Tees (Course 1)' }
+            ]);
+        } else if (formData.course_id === '2') {
+            setTeesList([
+                { tee_id: 'T2X', tee_name: 'Championship (Course 2)' }, 
+                { tee_id: 'T2Y', tee_name: 'Forward (Course 2)' }
+            ]);
+        } else {
+             setTeesList([{tee_id: 'DEFAULT', tee_name: 'Default Tee'}]); // Fallback or for other courses
+        }
+      } catch (err) {
+        console.error('Error fetching tees:', err);
+        setError('Failed to load tees list for the selected course.');
+        setTeesList([]);
+      } finally {
+        setFetchingTees(false);
+      }
+    };
+    fetchTees();
+  }, [formData.course_id]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, type } = e.target;
@@ -188,20 +275,51 @@ const NewPlayerCardPage = () => {
           {/* Main Details Section */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label htmlFor="player_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Player ID*</label>
-              <input type="text" name="player_id" id="player_id" value={formData.player_id} onChange={handleChange} required className="mt-1 input-field" />
-            </div>
-            <div>
-              <label htmlFor="course_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Course ID*</label>
-              <input type="text" name="course_id" id="course_id" value={formData.course_id} onChange={handleChange} required className="mt-1 input-field" />
+              <label htmlFor="course_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Course*</label>
+              <select 
+                name="course_id" 
+                id="course_id" 
+                value={formData.course_id} 
+                onChange={handleChange} 
+                required 
+                className="mt-1 input-field"
+                disabled={fetchingCourses}
+              >
+                <option value="">{fetchingCourses ? 'Loading courses...' : 'Select a Course'}</option>
+                {coursesList.map(course => (
+                  <option key={course.course_id} value={course.course_id}>
+                    {course.course_name}
+                  </option>
+                ))}
+              </select>
             </div>
             <div>
               <label htmlFor="play_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Play Date*</label>
               <input type="date" name="play_date" id="play_date" value={formData.play_date} onChange={handleChange} required className="mt-1 input-field" />
             </div>
              <div>
-              <label htmlFor="tee_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tee ID*</label>
-              <input type="text" name="tee_id" id="tee_id" value={formData.tee_id} onChange={handleChange} required className="mt-1 input-field" />
+              <label htmlFor="tee_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tee*</label>
+              <select 
+                name="tee_id" 
+                id="tee_id" 
+                value={formData.tee_id} 
+                onChange={handleChange} 
+                required 
+                className="mt-1 input-field"
+                disabled={fetchingTees || !formData.course_id || teesList.length === 0}
+              >
+                <option value="">
+                  {fetchingTees ? 'Loading tees...' : 
+                   !formData.course_id ? 'Select a course first' : 
+                   teesList.length === 0 ? 'No tees available' :
+                   'Select a Tee'}
+                </option>
+                {teesList.map(tee => (
+                  <option key={tee.tee_id} value={tee.tee_id}>
+                    {tee.tee_name}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
 
