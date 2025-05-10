@@ -351,7 +351,7 @@ const CourseEditor = () => {
   // Render hole data row
   const renderHoleDataRow = (data: { h01: number, h02: number, h03: number, h04: number, h05: number, h06: number, h07: number, h08: number, h09: number, h10: number, h11: number, h12: number, h13: number, h14: number, h15: number, h16: number, h17: number, h18: number }) => {
     return (
-      <tr>
+      <>
         <td className="border px-2 py-1">{data.h01}</td>
         <td className="border px-2 py-1">{data.h02}</td>
         <td className="border px-2 py-1">{data.h03}</td>
@@ -370,7 +370,7 @@ const CourseEditor = () => {
         <td className="border px-2 py-1">{data.h16}</td>
         <td className="border px-2 py-1">{data.h17}</td>
         <td className="border px-2 py-1">{data.h18}</td>
-      </tr>
+      </>
     );
   };
 
