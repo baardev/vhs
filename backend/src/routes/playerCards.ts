@@ -1,5 +1,6 @@
 import { Router, Request, Response, NextFunction } from 'express';
 import { pool, safeQuery } from '../db';
+import authenticateToken, { AuthRequest } from './authenticateToken'; // Ensure AuthRequest is imported if needed
 
 const router = Router();
 
@@ -111,6 +112,43 @@ router.get('/player-cards/course/:courseId', async (req: Request, res: Response,
     
     res.json(result.rows);
   } catch (error) {
+    next(error);
+  }
+});
+
+// Get chart data for the current logged-in user's last 50 'OK' scorecards
+router.get('/user/chart-data', authenticateToken, async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  try {
+    const userId = req.user?.id; // Get user ID from authenticated request
+    if (!userId) {
+      res.status(401).json({ error: 'User not authenticated' });
+      return;
+    }
+
+    const query = `
+      SELECT
+        play_date,
+        gross,
+        net,
+        g_differential AS differential
+      FROM
+        player_cards
+      WHERE
+        player_id = $1 AND
+        tarj = 'OK'
+      ORDER BY
+        play_date DESC
+      LIMIT 50;
+    `;
+    
+    const result = await pool.query(query, [userId]);
+    // The data is fetched DESC by date (most recent first). 
+    // For charting, it's often better to have it ASC (oldest first).
+    // So, we reverse it here before sending.
+    res.json(result.rows.reverse()); 
+
+  } catch (error) {
+    console.error('Error fetching user chart data:', error);
     next(error);
   }
 });

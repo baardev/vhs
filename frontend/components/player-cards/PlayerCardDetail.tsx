@@ -423,16 +423,16 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
       <div className="bg-green-700 dark:bg-green-800 p-6 text-white flex justify-between items-center">
         <div>
-          <div className="mb-4">
-            <Link href="/player-cards" className="text-white hover:underline">
-              &larr; Back to Player Cards
-            </Link>
-          </div>
-          <h1 className="text-2xl font-bold mb-2">
-            {playerCard.player_name || `Player #${playerCard.player_id}`} - {new Date(playerCard.play_date).toLocaleDateString()}
-          </h1>
-          <p className="text-lg">{playerCard.course_name || `Course #${playerCard.course_id}`}</p>
+        <div className="mb-4">
+          <Link href="/player-cards" className="text-white hover:underline">
+            &larr; Back to Player Cards
+          </Link>
         </div>
+        <h1 className="text-2xl font-bold mb-2">
+          {playerCard.player_name || `Player #${playerCard.player_id}`} - {new Date(playerCard.play_date).toLocaleDateString()}
+        </h1>
+        <p className="text-lg">{playerCard.course_name || `Course #${playerCard.course_id}`}</p>
+          </div>
         <div>
           <button type="button" onClick={handleEdit} className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded">
             Edit
