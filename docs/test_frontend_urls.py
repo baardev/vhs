@@ -125,9 +125,6 @@ def main():
         "/debug-logs",
         "/clear-cache",
         "/handicap",
-        
-        # Health check
-        "/health",
     ]
     
     # Additional dynamic URLs to test

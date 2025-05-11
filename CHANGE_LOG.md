@@ -26,3 +26,7 @@
 
 # 0.0.76
 - New Score Card added with dropdown coursename and keys trr_names 
+
+# 0.0.80
+- Added api docs in ./doc and api/url tests
+ 

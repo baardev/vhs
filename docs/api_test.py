@@ -3,7 +3,9 @@ import requests
 import json
 import sys
 import argparse
+import os.path
 from colorama import Fore, Style, init
+from datetime import datetime
 
 # Initialize colorama
 init(autoreset=True)
@@ -14,15 +16,27 @@ requests.packages.urllib3.disable_warnings()
 def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description='Test API endpoints')
-    parser.add_argument('username', nargs='?', default='victoria', help='Username for authentication')
+    parser.add_argument('username', nargs='?', default='adminuser', help='Username for authentication')
     parser.add_argument('password', nargs='?', default='admin123', help='Password for authentication')
+    parser.add_argument('--parallel', '-p', action='store_true', help='Run tests in parallel')
+    parser.add_argument('--timeout', '-t', type=int, default=10, help='Request timeout in seconds')
     args = parser.parse_args()
 
     username = args.username
     password = args.password
     
-    print(f"{Fore.YELLOW}Using credentials: username={username}, password={password}")
+    # Try to read password from password file
+    try:
+        with open(os.path.expanduser("~/sites/vhs/.adminpw"), "r") as pw_file:
+            password = pw_file.read().strip()
+    except Exception as e:
+        print(f"{Fore.RED}Error reading password file: {e}")
+        # Keep using the password from command line args
     
+    #print(f"{Fore.YELLOW}Using credentials: username={username}, password={password}")
+       #print(f"{Fore.YELLOW}Using credentials: username={username}, password={password}")
+    now = datetime.now()
+    print(now.strftime("%Y-%m-%d %H:%M:%S"))
     # Base URL for all API requests
     base_url = "https://libronico.com"
     
@@ -170,7 +184,6 @@ def main():
     
     # Miscellaneous APIs
     test_endpoint('GET', '/api/random-quote')
-    test_endpoint('GET', '/api/health')
     
     print(f"\n{Fore.YELLOW}API testing completed!")
 

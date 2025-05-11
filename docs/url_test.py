@@ -3,10 +3,11 @@ import requests
 import json
 import sys
 import argparse
+import os.path
 from colorama import Fore, Style, init
 import concurrent.futures
 import time
-
+from datetime import datetime
 # Initialize colorama
 init(autoreset=True)
 
@@ -25,8 +26,17 @@ def main():
     username = args.username
     password = args.password
     
-    print(f"{Fore.YELLOW}Using credentials: username={username}, password={password}")
+    # Try to read password from password file
+    try:
+        with open(os.path.expanduser("~/sites/vhs/.adminpw"), "r") as pw_file:
+            password = pw_file.read().strip()
+    except Exception as e:
+        print(f"{Fore.RED}Error reading password file: {e}")
+        # Keep using the password from command line args
     
+   #print(f"{Fore.YELLOW}Using credentials: username={username}, password={password}")
+    now = datetime.now()
+    print(now.strftime("%Y-%m-%d %H:%M:%S"))
     # Base URL for all requests
     base_url = "https://libronico.com"
     
@@ -125,9 +135,6 @@ def main():
         "/debug-logs",
         "/clear-cache",
         "/handicap",
-        
-        # Health check
-        "/health",
     ]
     
     # Additional dynamic URLs to test

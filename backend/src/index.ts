@@ -41,8 +41,6 @@ app.get('/robots.txt', (req: Request, res: Response) => {
   res.send(`
 # robots.txt for VHS website API
 User-agent: *
-Allow: /health
-Allow: /api/health
 Disallow: /api/
 Disallow: /
 `);
@@ -68,10 +66,6 @@ app.get('/', (req: Request, res: Response) => {
 
 app.get('/api', (req: Request, res: Response) => {
   res.send('API is working');
-});
-
-app.get('/health', (req: Request, res: Response) => {
-  res.status(200).json({ status: 'Backend is healthy!' });
 });
 
 // Serve uploaded files
