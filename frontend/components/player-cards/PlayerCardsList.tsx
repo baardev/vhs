@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 // @ts-ignore: next/link module is missing its type declarations in the current setup
 import Link from 'next/link';
@@ -15,6 +15,8 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns'; // Import adapter for date handling
+import { AuthContext } from '../../src/contexts/AuthContext'; // Import AuthContext
+import { useRouter } from 'next/router'; // Import useRouter for redirection
 
 ChartJS.register(
   CategoryScale,
@@ -57,12 +59,12 @@ const PlayerCardsList = () => {
   const [chartData, setChartData] = useState<any>(null); // Can be more specific with Chart.js types
   const [chartLoading, setChartLoading] = useState(true);
   const [chartError, setChartError] = useState('');
-  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false);
+  
+  const { user, logout } = useContext(AuthContext); // Use AuthContext
+  const router = useRouter(); // Initialize router
 
+  // Fetch general player cards (public data)
   useEffect(() => {
-    const token = localStorage.getItem('token');
-    setIsUserLoggedIn(!!token);
-    // Initial fetch for the table data
     const fetchPlayerCards = async () => {
       try {
         setLoading(true);
@@ -85,15 +87,28 @@ const PlayerCardsList = () => {
     fetchPlayerCards();
   }, []);
 
+  // Fetch chart data (requires authentication)
   useEffect(() => {
     const fetchChartData = async () => {
+      if (!user) { // Check if user is authenticated via AuthContext
+        setChartLoading(false);
+        setChartError('Please log in to view your chart data.'); // Or set to null if chart shouldn't show
+        setChartData(null);
+        return;
+      }
+
       setChartLoading(true);
       setChartError('');
       try {
-        // Get the auth token from localStorage
         const token = localStorage.getItem('token');
+        if (!token) {
+          // This case should ideally be handled by AuthContext state, but as a fallback:
+          setChartError('Authentication token not found.');
+          setChartLoading(false);
+          setChartData(null);
+          return;
+        }
         
-        // Add the token to the request headers
         const response = await axios.get<ChartCardData[]>('/api/user/chart-data', {
           headers: {
             'Authorization': `Bearer ${token}`
@@ -135,7 +150,13 @@ const PlayerCardsList = () => {
         }
       } catch (err) {
         console.error('Error fetching chart data:', err);
-        setChartError('Failed to load chart data.');
+        if (axios.isAxiosError(err) && err.response?.status === 401) {
+          setChartError('Session expired or invalid. Please log in again.');
+          logout(); // Call logout from AuthContext to clear user state and token
+          router.push('/login'); // Redirect to login page
+        } else {
+          setChartError('Failed to load chart data.');
+        }
         setChartData(null);
       } finally {
         setChartLoading(false);
@@ -143,7 +164,7 @@ const PlayerCardsList = () => {
     };
 
     fetchChartData();
-  }, [isUserLoggedIn]);
+  }, [user, logout, router]); // Depend on user from AuthContext, logout, and router
 
   const chartOptions = {
     responsive: true,
@@ -189,13 +210,15 @@ const PlayerCardsList = () => {
   return (
     <div>
       <div className="mb-4 flex justify-end">
-        <Link href="/player-cards/new" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-          <span>Add New Card</span>
-        </Link>
+        {user && ( // Only show Add New Card if user is logged in
+          <Link href="/player-cards/new" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+            <span>Add New Card</span>
+          </Link>
+        )}
       </div>
 
-      {/* Chart Section - Only show if user is logged in */}
-      {isUserLoggedIn && (
+      {/* Chart Section - Only show if user is logged in (implicitly handled by useEffect dependency) */}
+      {user && (
         <div className="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
           {chartLoading && <div className="text-center py-4">Loading chart data...</div>}
           {chartError && <div className="text-center py-4 text-red-600">{chartError}</div>}
@@ -205,7 +228,7 @@ const PlayerCardsList = () => {
             </div>
           )}
           {!chartLoading && !chartError && !chartData && (
-            <div className="text-center py-4">No chart data available (no recent 'OK' scorecards found).</div>
+            <div className="text-center py-4">No chart data available (no recent 'OK' scorecards found or not logged in).</div>
           )}
         </div>
       )}

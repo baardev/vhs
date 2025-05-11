@@ -88,7 +88,7 @@ const Dashboard: React.FC = () => {
   }
 
   return (
-    <div className={`${geistSans.className} ${geistMono.className} min-h-screen bg-[#fafafa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8`}>
+    <div className={`${geistSans.className} ${geistMono.className} dashboard-page-background min-h-screen bg-[#fafafa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8`}>
       <div className="max-w-7xl mx-auto">
         {/* Welcome Banner */}
         <div className="bg-gradient-to-r from-green-500 to-teal-500 dark:from-green-600 dark:to-teal-600 rounded-lg shadow-lg p-8 mb-8">

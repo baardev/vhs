@@ -4,21 +4,28 @@
 # ====================================================
 #
 # DESCRIPTION:
-#   This script manages the rebuilding of Docker containers for the VHS
+#   This script manages the rebuilding of Docker Docker containers for the VHS
 #   application. It can rebuild individual services or the entire stack,
 #   with options for wiping containers, volumes, and restoring from backups.
 #
 # USAGE:
-#   utils/REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]
+#   utils/REBUILD [service] [options]
+#   utils/REBUILD all [options]
+#
+# SERVICES:
+#   all                 Rebuild all services
+#   frontend            Rebuild only the frontend service
+#   backend             Rebuild only the backend service
+#   nginx               Rebuild only the nginx service
+#   db                  Rebuild only the database service
+#   wipe                Wipe all containers and volumes without rebuilding
 #
 # OPTIONS:
-#   --all               Full rebuild of all containers
-#   --frontend          Rebuild and restart only the frontend container
-#   --backend           Rebuild and restart only the backend container
-#   --nginx             Rebuild and restart only the nginx container
-#   --db                Rebuild and restart only the PostgreSQL database
-#   --wipe              Wipe all containers and volumes without rebuilding
-#   --restore           Restore database from the most recent backup
+#   --no-cache          Build images without using cache
+#   --pull              Always attempt to pull a newer version of the image
+#   --restore           Restore database from the most recent backup (used with 'db' or 'all')
+#   --skip-wipe         Skip the wipe step during 'all' rebuild
+#   --skip-clearcache   Skip the CLEARCACHE step
 #
 # DEPENDENCIES:
 #   - Docker and docker-compose
@@ -26,327 +33,323 @@
 #   - REBUILD_TABLES utility script
 #   - IMPEX utility script (for restore functionality)
 #
-# NOTES:
-#   - Without options, the script will display usage information
-#   - The --all option rebuilds all containers in the correct order
-#   - Each service option can be used independently to rebuild just that service
-#   - The --restore option affects how the database is initialized
-#
 # EXAMPLES:
-#   utils/REBUILD --all                # Full rebuild of all containers
-#   utils/REBUILD --frontend           # Rebuild only the frontend container
-#   utils/REBUILD --db --restore # Rebuild dbQL and restore from backup
-#   utils/REBUILD --wipe               # Just clean containers without rebuilding
+#   utils/REBUILD all
+#   utils/REBUILD frontend --no-cache
+#   utils/REBUILD db --restore
+#   utils/REBUILD wipe
 #
 # AUTHOR:
 #   VHS Development Team
 #
 
-# Get the directory where the script is located
+# --- Configuration ---
+set -e # Exit immediately if a command exits with a non-zero status.
+# set -u # Treat unset variables as an error when substituting.
+# set -o pipefail # Causes a pipeline to return the exit status of the last command in the pipe that failed.
+
 SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-# Assume the script is in a subdirectory (like 'utils'), so ROOT_DIR is one level up
 ROOT_DIR=$(dirname "$SCRIPT_DIR")
+REBUILD_CONF="${ROOT_DIR}/utils/REBUILD.conf"
+COMPOSE_FILE="${ROOT_DIR}/docker-compose.yml"
+COMPOSE_CMD="docker compose -f ${COMPOSE_FILE}"
 
-# Change to the project root directory
-cd "${ROOT_DIR}" || exit 1
+# Default build options
+BUILD_NO_CACHE=""
+BUILD_PULL=""
+DO_WIPE="YES"
+DO_CLEARCACHE="YES"
+DO_RESTORE="NO"
+SKIP_WIPE_ALL="NO"
+NODE_ENV_ARG=""
 
-echo "REBUILD $1"
-echo "----------------------------------------------------"
+# --- Helper Functions ---
+log_info() {
+    echo -e "\033[0;32m[INFO] $1\033[0m"
+}
 
-REBUILD_CONF=${ROOT_DIR}/utils/REBUILD.conf
+log_warn() {
+    echo -e "\033[0;33m[WARN] $1\033[0m"
+}
 
-# Parse command line arguments
-ALL=false
-REBUILD_FRONTEND=false
-REBUILD_BACKEND=false
-REBUILD_NGINX=false
-REBUILD_DB=false
-REBUILD_WIPE=false
-REBUILD_RESTORE=false
-LIVE=false
-# COMPOSE_BAKE=true
+log_error() {
+    echo -e "\033[0;31m[ERROR] $1\033[0m" >&2
+}
 
-# Use standard environment names
-FILEARG="-f ${ROOT_DIR}/docker-compose.yml"
-echo "Docker file: $FILEARG"
+load_config() {
+    log_info "Loading configuration from ${REBUILD_CONF}..."
+    if [ -f "${REBUILD_CONF}" ]; then
+        # Read DOCKER_CACHE setting
+        if grep -q -v -F "#" "${REBUILD_CONF}" | grep -q -F "DOCKER_CACHE"; then
+            BUILD_NO_CACHE=""
+            log_info "  DOCKER_CACHE enabled (builds will use cache)."
+        else
+            BUILD_NO_CACHE="--no-cache"
+            log_info "  DOCKER_CACHE disabled (builds will NOT use cache)."
+        fi
 
+        # Read PULL setting
+        if grep -q -v -F "#" "${REBUILD_CONF}" | grep -q -F "PULL"; then
+            BUILD_PULL="--pull"
+            log_info "  PULL enabled (will attempt to pull newer images)."
+        else
+            BUILD_PULL=""
+            log_info "  PULL disabled."
+        fi
 
-# export NODE_ENV=production
-
-
-isDOCKER_CACHE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "DOCKER_CACHE"`
-if [ -z "$isDOCKER_CACHE" ]; then
-    NOCACHE=
-else
-   NOCACHE="--no-cache"
-fi
-
-isPULL=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "PULL"`
-if [ -z "$isPULL" ]; then
-    PULL=
-else
-   PULL="--pull"
-fi
-
-isWIPE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "WIPE"`
-if [ -z "$isWIPE" ]; then
-    WIPE=
-else
-   WIPE="YES"
-fi
-
-isCLEARCACHE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "CLEARCACHE"`
-if [ -z "$isCLEARCACHE" ]; then
-    CLEARCACHE=
-else
-   CLEARCACHE="YES"
-fi
-
-if [ "$NODE_ENV" = "production" ]; then
-    NODE_ENV_ARG="--build-arg NODE_ENV=${NODE_ENV}"
-else
-    NODE_ENV_ARG=""
-fi
-
-echo "┌───────────────────────────────────────────────────────┐"
-echo "│ NOCACHE: $NOCACHE"
-echo "│ PULL: $PULL"  
-echo "│ WIPE: $WIPE"
-echo "│ CLEARCACHE: $CLEARCACHE"
-echo "│ FILEARG: $FILEARG"
-echo "│ ROOT_DIR: $ROOT_DIR"
-echo "│ NODE_ENV_ARG: $NODE_ENV_ARG"
-echo "└───────────────────────────────────────────────────────┘"
-
-# exit
-
-# Function to wipe all containers and volumes
-wipe_all() {
-
-    if [ -z "$WIPE" ]; then
-        echo "Wiping is disabled"
-    else 
-        echo "┌───────────────────────────────────────────────────────┐"
-        echo "│ Wiping all containers and volumes...                   "
-        echo "└───────────────────────────────────────────────────────┘"
+        # Read WIPE setting
+        if grep -q -v -F "#" "${REBUILD_CONF}" | grep -q -F "WIPE_ENABLED"; then
+            DO_WIPE="YES"
+            log_info "  WIPE_ENABLED: YES (wipe will be performed by default for 'all')."
+        else
+            DO_WIPE="NO"
+            log_warn "  WIPE_ENABLED: NO (wipe will NOT be performed by default for 'all')."
+        fi
         
-        sudo chmod -R 777 ${ROOT_DIR}/frontend/.next
-        docker system prune -fa
-        docker volume prune -fa
+        # Read CLEARCACHE setting
+        if grep -q -v -F "#" "${REBUILD_CONF}" | grep -q -F "CLEARCACHE_ENABLED"; then
+            DO_CLEARCACHE="YES"
+            log_info "  CLEARCACHE_ENABLED: YES (CLEARCACHE will be run)."
+        else
+            DO_CLEARCACHE="NO"
+            log_warn "  CLEARCACHE_ENABLED: NO (CLEARCACHE will be skipped)."
+        fi
+    else
+        log_warn "Configuration file ${REBUILD_CONF} not found. Using default build options."
+        BUILD_NO_CACHE="--no-cache" # Default to no cache if conf missing
+    fi
+
+    if [ "${NODE_ENV}" = "production" ]; then
+        NODE_ENV_ARG="--build-arg NODE_ENV=${NODE_ENV}"
+        log_info "  NODE_ENV=production detected."
+    else
+        log_info "  NODE_ENV is not set to production."
+    fi
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ NOCACHE: ${BUILD_NO_CACHE}"
+    echo "│ PULL: ${BUILD_PULL}"
+    echo "│ WIPE DEFAULT: ${DO_WIPE}"
+    echo "│ CLEARCACHE DEFAULT: ${DO_CLEARCACHE}"
+    echo "│ NODE_ENV_ARG: ${NODE_ENV_ARG}"
+    echo "└───────────────────────────────────────────────────────┘"
+}
+
+ensure_npm_install() {
+    local service_dir="$1"
+    local service_name="$2"
+    if [ ! -d "${service_dir}/node_modules" ] || [ -z "$(ls -A "${service_dir}/node_modules")" ]; then
+        log_info "node_modules not found or empty for ${service_name}. Running npm install in ${service_dir}..."
+        (cd "${service_dir}" && npm install) || { log_error "npm install failed for ${service_name}"; exit 1; }
+    else
+        log_info "node_modules already exist for ${service_name}."
+    fi
+}
+
+run_clear_cache() {
+    local service_opt="$1" # e.g., --frontend
+    if [ "${DO_CLEARCACHE}" = "YES" ]; then
+        log_info "Clearing cache for ${service_opt}..."
+        if [ -x "${SCRIPT_DIR}/CLEARCACHE" ]; then
+            "${SCRIPT_DIR}/CLEARCACHE" "${service_opt}"
+        else
+            log_warn "CLEARCACHE script not found or not executable at ${SCRIPT_DIR}/CLEARCACHE."
+        fi
+    else
+        log_info "Skipping CLEARCACHE for ${service_opt}."
+    fi
+}
+
+wipe_all_data() {
+    if [ "${DO_WIPE}" = "YES" ]; then
+        log_info "Wiping all Docker containers, volumes, and build cache..."
         
+        # Stop all running project containers (safer than blanket dev)
+        containers_to_stop=$(${COMPOSE_CMD} ps -q)
+        if [ -n "$containers_to_stop" ]; then
+            log_info "Stopping project containers..."
+            ${COMPOSE_CMD} down
+        fi
+
+        log_info "Pruning Docker system (containers, networks, images not associated with a container)..."
+        docker system prune -af
+        log_info "Pruning Docker volumes..."
+        docker volume prune -af
+        log_info "Pruning Docker build cache..."
+        docker builder prune -af
+
+        # Clean specific local directories if needed
+        if [ -d "${ROOT_DIR}/frontend/.next" ]; then
+            log_info "Cleaning ${ROOT_DIR}/frontend/.next..."
+            sudo chmod -R 777 "${ROOT_DIR}/frontend/.next"
+            rm -rf "${ROOT_DIR}/frontend/.next"
+        fi
+        # Add other specific directory cleanups here if necessary
+
+        log_info "All data wiped successfully."
+    else
+        log_warn "Wipe operation skipped as per configuration or command-line flag."
+    fi
+}
+
+rebuild_service() {
+    local service_name="$1"
+    local service_pretty_name="${2:-$1}" # Use second arg for pretty name if provided
+    local service_dir_name="${3:-$1}" # Use third arg for directory if different from service_name
+
+    log_info "Rebuilding ${service_pretty_name}..."
+
+    if [ "${service_name}" = "frontend" ] || [ "${service_name}" = "backend" ]; then
+        ensure_npm_install "${ROOT_DIR}/${service_dir_name}" "${service_pretty_name}"
+        run_clear_cache "--${service_name}"
+    fi
+
+    log_info "Stopping ${service_pretty_name} container..."
+    ${COMPOSE_CMD} stop "${service_name}" || log_warn "Could not stop ${service_name}, perhaps it was not running."
+    # docker compose rm -f "${service_name}" is often included in 'build' or 'up --build' implicitly.
+    # If explicit removal is needed: ${COMPOSE_CMD} rm -f "${service_name}"
+
+    log_info "Building ${service_pretty_name} image..."
+    ${COMPOSE_CMD} build ${BUILD_NO_CACHE} ${BUILD_PULL} ${NODE_ENV_ARG} "${service_name}"
+
+    log_info "Starting ${service_pretty_name} container..."
+    ${COMPOSE_CMD} up -d "${service_name}"
+
+    log_info "${service_pretty_name} rebuilt and restarted successfully."
+}
+
+rebuild_db_action() {
+    rebuild_service "db" "PostgreSQL Database"
     
-        # Stop, remove, and delete any dev containers
-        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
-        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
-        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
-        
-        # Stop, remove, and delete any buildx containers
-        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker stop "$1}'|bash
-        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rm "$1}'|bash
-        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rmi "$1}'|bash
-        
-        echo -e "\033[0;32mAll containers and volumes wiped successfully\033[0m"
-
+    log_info "Running REBUILD_TABLES..."
+    if [ -x "${SCRIPT_DIR}/REBUILD_TABLES" ]; then
+        "${SCRIPT_DIR}/REBUILD_TABLES"
+    else
+        log_error "REBUILD_TABLES script not found or not executable."
+        exit 1
     fi
+
+    if [ "${DO_RESTORE}" = "YES" ]; then
+        log_info "Restoring database from backup..."
+        if [ -x "${SCRIPT_DIR}/IMPEX" ]; then
+            "${SCRIPT_DIR}/IMPEX" --import
+        else
+            log_error "IMPEX script not found or not executable."
+            exit 1
+        fi
+    fi
+    log_info "PostgreSQL database actions completed."
 }
 
-# Function to rebuild frontend
-rebuild_frontend() {
+# --- Main Script ---
+cd "${ROOT_DIR}" || { log_error "Failed to change to project root directory: ${ROOT_DIR}"; exit 1; }
 
-    if [ ! -f "${ROOT_DIR}/frontend/package-lock.json" ]; then
-        cd ${ROOT_DIR}/frontend
-        npm install
-    fi
+load_config
 
-    
-    echo "┌───────────────────────────────────────────────────────┐"
-    echo "│ Clearing frontend cache...                              "
-    echo "└───────────────────────────────────────────────────────┘"
-    if [ -n "$CLEARCACHE" ]; then
-        echo "Clearing frontend cache..."
-        CLEARCACHE --frontend
-    fi
+# Initialize action flags
+ACTION=""
 
-    echo "Restarting frontend container..."
-    /usr/bin/docker compose ${FILEARG} stop frontend
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} frontend 
-    /usr/bin/docker compose ${FILEARG} up -d frontend
-    echo "Frontend container restarted successfully."
-}
+# Parse primary action and options
+if [ $# -eq 0 ]; then
+    log_error "No action specified."
+    echo "Usage: $0 <service|all|wipe> [options]"
+    echo "Services: frontend, backend, nginx, db"
+    echo "Options: --no-cache, --pull, --restore, --skip-wipe, --skip-clearcache"
+    exit 1
+fi
 
-# Function to rebuild backend
-rebuild_backend() {
+ACTION="$1"
+shift # Remove action from arguments, leave options
 
-    if [ ! -f "${ROOT_DIR}/backend/package-lock.json" ]; then
-        cd ${ROOT_DIR}/backend
-        npm install
-
-    fi
-    echo "┌───────────────────────────────────────────────────────┐"
-    echo "│ Clearing backend cache...                              "
-    echo "└───────────────────────────────────────────────────────┘"
-    if [ -n "$CLEARCACHE" ]; then
-        echo "Clearing backend cache..."
-        CLEARCACHE --backend
-    fi
-
-    echo "Restarting frontend container..."
-    /usr/bin/docker compose ${FILEARG} stop backend
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} backend 
-    /usr/bin/docker compose ${FILEARG} up -d backend
-    echo "Backend container restarted successfully."
-}
-
-# Function to rebuild nginx
-rebuild_nginx() {
-    echo "┌───────────────────────────────────────────────────────┐"
-    echo "│ Rebuilding nginx only...                                "
-    echo "└───────────────────────────────────────────────────────┘"
-
-    echo "Restarting frontend container..."
-
-    /usr/bin/docker compose ${FILEARG} stop nginx
-    /usr/bin/docker compose ${FILEARG} rm -f nginx
-
-    # Build JUST the nginx image (no other targets)
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} nginx
-
-    # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
-    /usr/bin/docker compose ${FILEARG} up -d nginx
-
-    echo "Nginx rebuilt and restarted."
-}
-
-# Function to rebuild db
-rebuild_db() {
-    echo "┌───────────────────────────────────────────────────────┐"
-    echo "│ Rebuilding db only...                                  "
-    echo "└───────────────────────────────────────────────────────┘"
-
-    echo "Restarting db container..."
-
-    /usr/bin/docker compose ${FILEARG} stop db
-    /usr/bin/docker compose ${FILEARG} rm -f db
-
-    # Build JUST the nginx image (no other targets)
-    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} db
-
-    # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
-    /usr/bin/docker compose ${FILEARG} up -d db
-
-    echo "db rebuilt and restarted."
-    utils/REBUILD_TABLES
-
-    if [ "$RESTORE" = "--restore" ]; then
-        echo "Restoring database from backup..."
-        utils/IMPEX --import
-    fi
-    echo "PostgreSQL database completely wiped and rebuilt successfully."
-}
-
+# Parse options
 while [[ $# -gt 0 ]]; do
     case "$1" in
-        --all)
-            ALL=true
+        --no-cache)
+            BUILD_NO_CACHE="--no-cache"
+            log_info "Option: Build without cache enabled."
             shift
             ;;
-        --frontend)
-            REBUILD_FRONTEND=true
-            shift
-            ;;
-        --backend)
-            REBUILD_BACKEND=true
-            shift
-            ;;
-        --nginx)
-            REBUILD_NGINX=true
-            shift
-            ;;
-        --db)
-            REBUILD_DB=true
-            shift
-            ;;
-        --wipe)
-            REBUILD_WIPE=true
+        --pull)
+            BUILD_PULL="--pull"
+            log_info "Option: Pull newer image enabled."
             shift
             ;;
         --restore)
-            REBUILD_RESTORE=true
+            DO_RESTORE="YES"
+            log_info "Option: Database restore enabled."
+            shift
+            ;;
+        --skip-wipe)
+            if [ "${ACTION}" = "all" ]; then
+                SKIP_WIPE_ALL="YES" # This flag is specifically for 'all' action
+                log_info "Option: Wipe will be skipped for 'all' rebuild."
+            else
+                log_warn "Option --skip-wipe is only applicable with 'all' action."
+            fi
+            shift
+            ;;
+        --skip-clearcache)
+            DO_CLEARCACHE="NO"
+            log_info "Option: CLEARCACHE will be skipped."
             shift
             ;;
         *)
-            # Unknown option
-            echo "Unknown option: $1"
-            echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]"
+            log_error "Unknown option: $1"
             exit 1
             ;;
     esac
 done
 
-# Set RESTORE variable based on REBUILD_RESTORE flag
-if $REBUILD_RESTORE; then
-    RESTORE="--restore"
-else
-    RESTORE=""
-fi
+log_info "Executing action: ${ACTION}"
+case "${ACTION}" in
+    all)
+        log_info "Starting full rebuild of all services..."
+        if [ "${SKIP_WIPE_ALL}" = "YES" ]; then
+            log_info "Skipping wipe step for 'all' due to --skip-wipe flag."
+        elif [ "${DO_WIPE}" = "YES" ]; then
+            wipe_all_data
+        else
+            log_warn "Wipe step skipped for 'all' as DO_WIPE is NO and --skip-wipe was not needed."
+        fi
+        
+        log_info "Initializing Docker Buildx if not already set up..."
+        if ! docker buildx ls | grep -q "default * docker"; then
+             docker buildx create --use --name default_builder || log_warn "Could not create or use default_builder for buildx. Continuing..."
+        fi
 
-if $REBUILD_FRONTEND; then
-    rebuild_frontend
-    exit 0
-fi
+        rebuild_db_action
+        rebuild_service "backend" "Backend Service"
+        rebuild_service "frontend" "Frontend Service"
+        rebuild_service "nginx" "Nginx Service"
+        
+        log_info "All services rebuilt successfully."
+        ${COMPOSE_CMD} ps
+        ;;
+    frontend)
+        rebuild_service "frontend" "Frontend Service"
+        ;;
+    backend)
+        rebuild_service "backend" "Backend Service"
+        ;;
+    nginx)
+        rebuild_service "nginx" "Nginx Service"
+        ;;
+    db)
+        rebuild_db_action
+        ;;
+    wipe)
+        log_info "Performing wipe only..."
+        # Override DO_WIPE to ensure wipe happens if 'wipe' action is called
+        # regardless of REBUILD.conf or --skip-wipe (which is for 'all')
+        DO_WIPE_ORIGINAL=$DO_WIPE 
+        DO_WIPE="YES" 
+        wipe_all_data
+        DO_WIPE=$DO_WIPE_ORIGINAL # Reset to original value
+        ;;
+    *)
+        log_error "Invalid action: ${ACTION}"
+        echo "Valid actions are: all, frontend, backend, nginx, db, wipe"
+        exit 1
+        ;;
+esac
 
-if $REBUILD_BACKEND; then
-    rebuild_backend
-    exit 0
-fi
-
-if $REBUILD_NGINX; then
-    rebuild_nginx
-    exit 0
-fi
-
-if $REBUILD_DB; then
-    rebuild_db
-    exit 0
-fi
-
-if $REBUILD_WIPE; then
-    wipe_all
-    exit 0
-fi
-if $REBUILD_RESTORE; then
-    utils/REBUILD_TABLES ${RESTORE}
-    exit 0
-fi
-
-if $ALL; then
-
-    # ORDER IS IMPORTANT    
-    # Call the wipe function first
-    wipe_all
-
-    # docker compose down && docker compose build ${CACHE} && docker compose up -d
-
-    echo -e "\033[0;32mConfiguring buildx...\033[0m"
-
-    /usr/bin/docker buildx create --use
-
-    rebuild_db
-    rebuild_backend
-    rebuild_frontend    
-    rebuild_nginx
-    
-    echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
-    /usr/bin/docker compose ${FILEARG} ps
-else
-    echo "No options specified. Use one of the following:"
-    echo "  --all               Full rebuild of all containers"
-    echo "  --frontend          Rebuild and restart only the frontend container"
-    echo "  --backend           Rebuild and restart only the backend container"
-    echo "  --nginx             Rebuild and restart only the nginx container"
-    echo "  --db                Rebuild and restart only the PostgreSQL database"
-    echo "  --wipe              Wipe all containers and volumes without rebuilding"
-    echo ""
-    echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]"
-    exit 1
-fi
+log_info "REBUILD script finished."

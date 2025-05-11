@@ -8,44 +8,76 @@ export interface User {
 interface AuthContextType {
   user: User | null;
   setUser: (user: User | null) => void;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType>({
   user: null,
   setUser: () => {},
+  logout: () => {},
 });
 
 export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUserState] = useState<User | null>(null);
   const [initialized, setInitialized] = useState(false);
+
+  // Function to update user state and localStorage
+  const setUser = (newUser: User | null) => {
+    setUserState(newUser);
+    if (newUser) {
+      localStorage.setItem('userData', JSON.stringify(newUser));
+    } else {
+      localStorage.removeItem('userData');
+      localStorage.removeItem('token'); // Ensure token is also removed on explicit setUser(null)
+    }
+    // Dispatch custom event for auth changes
+    window.dispatchEvent(new CustomEvent('authChange'));
+  };
+
+  // Logout function
+  const logout = () => {
+    setUserState(null);
+    localStorage.removeItem('userData');
+    localStorage.removeItem('token');
+    console.log("User logged out, token and userData removed.");
+    // Dispatch custom event for auth changes
+    window.dispatchEvent(new CustomEvent('authChange'));
+  };
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const userData = localStorage.getItem('userData');
-      if (userData) {
+      const storedUserData = localStorage.getItem('userData');
+      if (storedUserData) {
         try {
-          setUser(JSON.parse(userData));
+          setUserState(JSON.parse(storedUserData));
         } catch (error) {
-          console.error('Error parsing userData from localStorage:', error);
+          console.error('Error parsing userData from localStorage on init:', error);
+          logout(); // Clear invalid stored data
         }
       }
       setInitialized(true);
     }
   }, []);
 
-  // New useEffect: Listen for authChange events to update the user state
+  // Listen for authChange events from other tabs/windows or manual calls
   useEffect(() => {
     const handleAuthChange = () => {
-      const userData = localStorage.getItem('userData');
-      if (userData) {
+      console.log("AuthContext: Detected authChange event.");
+      const storedUserData = localStorage.getItem('userData');
+      const token = localStorage.getItem('token');
+      if (storedUserData && token) { // Ensure token also exists for a valid session
         try {
-          setUser(JSON.parse(userData));
+          setUserState(JSON.parse(storedUserData));
         } catch (error) {
-          console.error('Error parsing userData from localStorage:', error);
-          setUser(null);
+          console.error('Error parsing userData from localStorage on authChange:', error);
+          // If parsing fails or token is missing, treat as logged out
+          setUserState(null); 
+          localStorage.removeItem('userData');
+          localStorage.removeItem('token');
         }
       } else {
-        setUser(null);
+        // If no userData or no token, ensure user is set to null
+        setUserState(null);
       }
     };
 
@@ -56,11 +88,11 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
   }, []);
 
   if (!initialized) {
-    return <p>Loading...</p>;
+    return <p>Loading...</p>; // Or a proper loading spinner/component
   }
 
   return (
-    <AuthContext.Provider value={{ user, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   );

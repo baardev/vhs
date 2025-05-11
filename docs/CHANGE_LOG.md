@@ -30,3 +30,7 @@
 # 0.0.80
 - Added api docs in ./doc and api/url tests
  
+* 0.0.81
+- added docs/make_reports.sh, generates txt for 
+- - https://libronico.com/reports/api.txt
+- - https://libronico.com/reports/url.txt

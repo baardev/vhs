@@ -1,4 +1,7 @@
 @import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 :root {
   --foreground-rgb: 0, 0, 0;
@@ -18,6 +21,32 @@ body {
   color: rgb(var(--foreground-rgb));
   background: linear-gradient(to bottom, rgb(var(--background-start-rgb)), rgb(var(--background-end-rgb)));
   min-height: 100vh;
+  background-image: url('/wp-golf-4.webp');
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* Optional: for a fixed background effect */
+  /* Add a fallback background color in case the image fails to load or while it loads */
+  background-color: #f0f0f0; /* Example fallback color */
+}
+
+.dashboard-page-background {
+  background-image: url('/wp-golf-3.webp') !important; /* Use !important to override global body background */
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important; /* Optional: for a fixed background effect */
+  /* Add a fallback background color specific to the dashboard if needed */
+  background-color: #e0e0e0 !important; /* Example fallback color for dashboard */
+}
+
+.course-data-page-background {
+  background-image: url('/wp-golf-2.webp') !important;
+  background-size: cover !important;
+  background-position: center center !important;
+  background-repeat: no-repeat !important;
+  background-attachment: fixed !important;
+  background-color: #d0d0d0 !important; /* Example fallback color for course data page */
 }
 
 /* Custom font variables */
@@ -25,3 +54,5 @@ body {
   --font-geist-sans: var(--font-geist-sans), system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
   --font-geist-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
 }
+
+/* You can add other global styles here */

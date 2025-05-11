@@ -14,9 +14,13 @@ const geistMono = Geist_Mono({
 
 const PlayerCardsPage: NextPage = () => {
   return (
-    <div className={`${geistSans.className} ${geistMono.className} min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative`}>
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl font-bold text-[#2d6a4f] dark:text-[#4fd1c5] mb-8">
+    <div 
+      className={`${geistSans.className} ${geistMono.className} min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative`}
+      style={{ backgroundImage: "url('/wp-golf-1.webp')" }}
+    >
+      <div className="absolute inset-0 bg-black opacity-50"></div>
+      <div className="max-w-7xl mx-auto relative z-10">
+        <h1 className="text-3xl font-bold text-white mb-8">
           Player Scorecards
         </h1>
         

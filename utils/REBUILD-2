@@ -1,0 +1,352 @@
+#!/bin/bash
+#
+# REBUILD - Container Management and Deployment Utility
+# ====================================================
+#
+# DESCRIPTION:
+#   This script manages the rebuilding of Docker containers for the VHS
+#   application. It can rebuild individual services or the entire stack,
+#   with options for wiping containers, volumes, and restoring from backups.
+#
+# USAGE:
+#   utils/REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]
+#
+# OPTIONS:
+#   --all               Full rebuild of all containers
+#   --frontend          Rebuild and restart only the frontend container
+#   --backend           Rebuild and restart only the backend container
+#   --nginx             Rebuild and restart only the nginx container
+#   --db                Rebuild and restart only the PostgreSQL database
+#   --wipe              Wipe all containers and volumes without rebuilding
+#   --restore           Restore database from the most recent backup
+#
+# DEPENDENCIES:
+#   - Docker and docker-compose
+#   - CLEARCACHE utility script
+#   - REBUILD_TABLES utility script
+#   - IMPEX utility script (for restore functionality)
+#
+# NOTES:
+#   - Without options, the script will display usage information
+#   - The --all option rebuilds all containers in the correct order
+#   - Each service option can be used independently to rebuild just that service
+#   - The --restore option affects how the database is initialized
+#
+# EXAMPLES:
+#   utils/REBUILD --all                # Full rebuild of all containers
+#   utils/REBUILD --frontend           # Rebuild only the frontend container
+#   utils/REBUILD --db --restore # Rebuild dbQL and restore from backup
+#   utils/REBUILD --wipe               # Just clean containers without rebuilding
+#
+# AUTHOR:
+#   VHS Development Team
+#
+
+# Get the directory where the script is located
+SCRIPT_DIR=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+# Assume the script is in a subdirectory (like 'utils'), so ROOT_DIR is one level up
+ROOT_DIR=$(dirname "$SCRIPT_DIR")
+
+# Change to the project root directory
+cd "${ROOT_DIR}" || exit 1
+
+echo "REBUILD $1"
+echo "----------------------------------------------------"
+
+REBUILD_CONF=${ROOT_DIR}/utils/REBUILD.conf
+
+# Parse command line arguments
+ALL=false
+REBUILD_FRONTEND=false
+REBUILD_BACKEND=false
+REBUILD_NGINX=false
+REBUILD_DB=false
+REBUILD_WIPE=false
+REBUILD_RESTORE=false
+LIVE=false
+# COMPOSE_BAKE=true
+
+# Use standard environment names
+FILEARG="-f ${ROOT_DIR}/docker-compose.yml"
+echo "Docker file: $FILEARG"
+
+
+# export NODE_ENV=production
+
+
+isDOCKER_CACHE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "DOCKER_CACHE"`
+if [ -z "$isDOCKER_CACHE" ]; then
+    NOCACHE=
+else
+   NOCACHE="--no-cache"
+fi
+
+isPULL=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "PULL"`
+if [ -z "$isPULL" ]; then
+    PULL=
+else
+   PULL="--pull"
+fi
+
+isWIPE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "WIPE"`
+if [ -z "$isWIPE" ]; then
+    WIPE=
+else
+   WIPE="YES"
+fi
+
+isCLEARCACHE=`cat ${REBUILD_CONF}|grep -v -F "#"|grep -F "CLEARCACHE"`
+if [ -z "$isCLEARCACHE" ]; then
+    CLEARCACHE=
+else
+   CLEARCACHE="YES"
+fi
+
+if [ "$NODE_ENV" = "production" ]; then
+    NODE_ENV_ARG="--build-arg NODE_ENV=${NODE_ENV}"
+else
+    NODE_ENV_ARG=""
+fi
+
+echo "┌───────────────────────────────────────────────────────┐"
+echo "│ NOCACHE: $NOCACHE"
+echo "│ PULL: $PULL"  
+echo "│ WIPE: $WIPE"
+echo "│ CLEARCACHE: $CLEARCACHE"
+echo "│ FILEARG: $FILEARG"
+echo "│ ROOT_DIR: $ROOT_DIR"
+echo "│ NODE_ENV_ARG: $NODE_ENV_ARG"
+echo "└───────────────────────────────────────────────────────┘"
+
+# exit
+
+# Function to wipe all containers and volumes
+wipe_all() {
+
+    if [ -z "$WIPE" ]; then
+        echo "Wiping is disabled"
+    else 
+        echo "┌───────────────────────────────────────────────────────┐"
+        echo "│ Wiping all containers and volumes...                   "
+        echo "└───────────────────────────────────────────────────────┘"
+        
+        sudo chmod -R 777 ${ROOT_DIR}/frontend/.next
+        docker system prune -fa
+        docker volume prune -fa
+        
+    
+        # Stop, remove, and delete any dev containers
+        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker stop "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rm "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep dev|awk '{print "docker rmi "$1}'|bash
+        
+        # Stop, remove, and delete any buildx containers
+        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker stop "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rm "$1}'|bash
+        /usr/bin/docker ps --format "{{.Names}}"|grep buildx|awk '{print "docker rmi "$1}'|bash
+        
+        echo -e "\033[0;32mAll containers and volumes wiped successfully\033[0m"
+
+    fi
+}
+
+# Function to rebuild frontend
+rebuild_frontend() {
+
+    if [ ! -f "${ROOT_DIR}/frontend/package-lock.json" ]; then
+        cd ${ROOT_DIR}/frontend
+        npm install
+    fi
+
+    
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Clearing frontend cache...                              "
+    echo "└───────────────────────────────────────────────────────┘"
+    if [ -n "$CLEARCACHE" ]; then
+        echo "Clearing frontend cache..."
+        CLEARCACHE --frontend
+    fi
+
+    echo "Restarting frontend container..."
+    /usr/bin/docker compose ${FILEARG} stop frontend
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} frontend 
+    /usr/bin/docker compose ${FILEARG} up -d frontend
+    echo "Frontend container restarted successfully."
+}
+
+# Function to rebuild backend
+rebuild_backend() {
+
+    if [ ! -f "${ROOT_DIR}/backend/package-lock.json" ]; then
+        cd ${ROOT_DIR}/backend
+        npm install
+
+    fi
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Clearing backend cache...                              "
+    echo "└───────────────────────────────────────────────────────┘"
+    if [ -n "$CLEARCACHE" ]; then
+        echo "Clearing backend cache..."
+        CLEARCACHE --backend
+    fi
+
+    echo "Restarting frontend container..."
+    /usr/bin/docker compose ${FILEARG} stop backend
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} backend 
+    /usr/bin/docker compose ${FILEARG} up -d backend
+    echo "Backend container restarted successfully."
+}
+
+# Function to rebuild nginx
+rebuild_nginx() {
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Rebuilding nginx only...                                "
+    echo "└───────────────────────────────────────────────────────┘"
+
+    echo "Restarting frontend container..."
+
+    /usr/bin/docker compose ${FILEARG} stop nginx
+    /usr/bin/docker compose ${FILEARG} rm -f nginx
+
+    # Build JUST the nginx image (no other targets)
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} nginx
+
+    # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
+    /usr/bin/docker compose ${FILEARG} up -d nginx
+
+    echo "Nginx rebuilt and restarted."
+}
+
+# Function to rebuild db
+rebuild_db() {
+    echo "┌───────────────────────────────────────────────────────┐"
+    echo "│ Rebuilding db only...                                  "
+    echo "└───────────────────────────────────────────────────────┘"
+
+    echo "Restarting db container..."
+
+    /usr/bin/docker compose ${FILEARG} stop db
+    /usr/bin/docker compose ${FILEARG} rm -f db
+
+    # Build JUST the nginx image (no other targets)
+    /usr/bin/docker compose ${FILEARG} build ${NOCACHE} ${PULL} ${NODE_ENV_ARG} db
+
+    # Start nginx without starting any dependency chain, this will build frontend and backend is they do not exist
+    /usr/bin/docker compose ${FILEARG} up -d db
+
+    echo "db rebuilt and restarted."
+    utils/REBUILD_TABLES
+
+    if [ "$RESTORE" = "--restore" ]; then
+        echo "Restoring database from backup..."
+        utils/IMPEX --import
+    fi
+    echo "PostgreSQL database completely wiped and rebuilt successfully."
+}
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --all)
+            ALL=true
+            shift
+            ;;
+        --frontend)
+            REBUILD_FRONTEND=true
+            shift
+            ;;
+        --backend)
+            REBUILD_BACKEND=true
+            shift
+            ;;
+        --nginx)
+            REBUILD_NGINX=true
+            shift
+            ;;
+        --db)
+            REBUILD_DB=true
+            shift
+            ;;
+        --wipe)
+            REBUILD_WIPE=true
+            shift
+            ;;
+        --restore)
+            REBUILD_RESTORE=true
+            shift
+            ;;
+        *)
+            # Unknown option
+            echo "Unknown option: $1"
+            echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]"
+            exit 1
+            ;;
+    esac
+done
+
+# Set RESTORE variable based on REBUILD_RESTORE flag
+if $REBUILD_RESTORE; then
+    RESTORE="--restore"
+else
+    RESTORE=""
+fi
+
+if $REBUILD_FRONTEND; then
+    rebuild_frontend
+    exit 0
+fi
+
+if $REBUILD_BACKEND; then
+    rebuild_backend
+    exit 0
+fi
+
+if $REBUILD_NGINX; then
+    rebuild_nginx
+    exit 0
+fi
+
+if $REBUILD_DB; then
+    rebuild_db
+    exit 0
+fi
+
+if $REBUILD_WIPE; then
+    wipe_all
+    exit 0
+fi
+if $REBUILD_RESTORE; then
+    utils/REBUILD_TABLES ${RESTORE}
+    exit 0
+fi
+
+if $ALL; then
+
+    # ORDER IS IMPORTANT    
+    # Call the wipe function first
+    wipe_all
+
+    # docker compose down && docker compose build ${CACHE} && docker compose up -d
+
+    echo -e "\033[0;32mConfiguring buildx...\033[0m"
+
+    /usr/bin/docker buildx create --use
+
+    rebuild_db
+    rebuild_backend
+    rebuild_frontend    
+    rebuild_nginx
+    
+    echo -e "\033[0;32mAll containers rebuilt successfully\033[0m"
+    /usr/bin/docker compose ${FILEARG} ps
+else
+    echo "No options specified. Use one of the following:"
+    echo "  --all               Full rebuild of all containers"
+    echo "  --frontend          Rebuild and restart only the frontend container"
+    echo "  --backend           Rebuild and restart only the backend container"
+    echo "  --nginx             Rebuild and restart only the nginx container"
+    echo "  --db                Rebuild and restart only the PostgreSQL database"
+    echo "  --wipe              Wipe all containers and volumes without rebuilding"
+    echo ""
+    echo "Usage: ./REBUILD [--all] [--frontend] [--backend] [--nginx] [--db] [--wipe] [--restore]"
+    exit 1
+fi
