@@ -140,6 +140,16 @@ scp -P 2213 /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/.env
 scp -P 2213 /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/backend/.env
 rsync -avz -e "ssh -p 2213" /home/jw/sites/vhs/nginx/certbot jw@24.199.78.109:/home/jw/sites/vhs/nginx
 
+
+# Finishing up...
+
+rm ~/sites/vhs/docs/.env
+ln -fs ~/sites/vhs/.env ~/sites/vhs/docs/.env
+
+rm  ~/sites/vhs/backend/.env
+ln -fs ~/sites/vhs/.env ~/sites/vhs/backend/.env
+
+
 # ────────────────────────────────────────────────────────
 
 
