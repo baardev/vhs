@@ -134,10 +134,12 @@ mkdir -p /home/jw/sites/vhs/nginx/ssl
 	chmod 600 .env         
 	chmod 600 backend/.env
 
-scp /home/jw/sites/vhs/nginx/ssl/* jw@24.199.78.109:sites/vhs/nginx/ssl 
-scp /home/jw/sites/vhs/.adminpw jw@24.199.78.109:sites/vhs/.adminpw
-scp /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/.env
-scp /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/backend/.env
+scp -P 2213 /home/jw/sites/vhs/nginx/ssl/* jw@24.199.78.109:sites/vhs/nginx/ssl 
+scp -P 2213 /home/jw/sites/vhs/.adminpw jw@24.199.78.109:sites/vhs/.adminpw
+scp -P 2213 /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/.env
+scp -P 2213 /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/backend/.env
+rsync -avz -e "ssh -p 2213" /home/jw/sites/vhs/nginx/certbot jw@24.199.78.109:/home/jw/sites/vhs/nginx
+
 # ────────────────────────────────────────────────────────
 
 

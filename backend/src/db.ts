@@ -48,11 +48,11 @@ const dummyPlayerCards = [
 // });
 
 const pool = new Pool({
-  user: required('DB_USER'),
-  host: required('DB_HOST'),
-  database: required('DB_NAME'),
-  password: required('DB_PASSWORD'),
-  port: Number(required('DB_PORT')),
+  user: require('DB_USER'),
+  host: require('DB_HOST'),
+  database: require('DB_NAME'),
+  password: require('DB_PASSWORD'),
+  port: Number(require('DB_PORT')),
 });
 
 // Check if we can connect to the database

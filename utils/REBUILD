@@ -125,13 +125,6 @@ load_config() {
     else
         log_info "  NODE_ENV is not set to production."
     fi
-    echo "┌───────────────────────────────────────────────────────┐"
-    echo "│ NOCACHE: ${BUILD_NO_CACHE}"
-    echo "│ PULL: ${BUILD_PULL}"
-    echo "│ WIPE DEFAULT: ${DO_WIPE}"
-    echo "│ CLEARCACHE DEFAULT: ${DO_CLEARCACHE}"
-    echo "│ NODE_ENV_ARG: ${NODE_ENV_ARG}"
-    echo "└───────────────────────────────────────────────────────┘"
 }
 
 ensure_npm_install() {
@@ -245,9 +238,6 @@ cd "${ROOT_DIR}" || { log_error "Failed to change to project root directory: ${R
 
 load_config
 
-# Initialize action flags
-ACTION=""
-
 # Parse primary action and options
 if [ $# -eq 0 ]; then
     log_error "No action specified."
@@ -298,6 +288,15 @@ while [[ $# -gt 0 ]]; do
             ;;
     esac
 done
+
+# Print summary box here, after options are parsed
+echo "┌───────────────────────────────────────────────────────┐"
+echo "│ NOCACHE: ${BUILD_NO_CACHE}"
+echo "│ PULL: ${BUILD_PULL}"
+echo "│ WIPE DEFAULT: ${DO_WIPE}"
+echo "│ CLEARCACHE DEFAULT: ${DO_CLEARCACHE}"
+echo "│ NODE_ENV_ARG: ${NODE_ENV_ARG}"
+echo "└───────────────────────────────────────────────────────┘"
 
 log_info "Executing action: ${ACTION}"
 case "${ACTION}" in

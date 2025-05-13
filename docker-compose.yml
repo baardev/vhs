@@ -19,6 +19,7 @@ services:
       context: ./nginx
       args:
         - NODE_ENV=production
+      dockerfile: Dockerfile  
     environment:
       - NODE_ENV=production  
 
