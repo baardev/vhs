@@ -39,12 +39,20 @@ const dummyPlayerCards = [
 ];
 
 // Try to connect to the real database
+// const pool = new Pool({
+//   user:     process.env.DB_USER     || process.env.PGUSER     || 'admin',
+//   host:     process.env.DB_HOST     || process.env.PGHOST     || 'localhost', // Changed from 'db' to 'localhost'
+//   database: process.env.DB_NAME     || process.env.PGDATABASE || 'vhsdb',
+//   password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'admin123',
+//   port:     Number(process.env.DB_PORT || process.env.PGPORT || 5432),
+// });
+
 const pool = new Pool({
-  user:     process.env.DB_USER     || process.env.PGUSER     || 'admin',
-  host:     process.env.DB_HOST     || process.env.PGHOST     || 'localhost', // Changed from 'db' to 'localhost'
-  database: process.env.DB_NAME     || process.env.PGDATABASE || 'vhsdb',
-  password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'admin123',
-  port:     Number(process.env.DB_PORT || process.env.PGPORT || 5432),
+  user: required('DB_USER'),
+  host: required('DB_HOST'),
+  database: required('DB_NAME'),
+  password: required('DB_PASSWORD'),
+  port: Number(required('DB_PORT')),
 });
 
 // Check if we can connect to the database

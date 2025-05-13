@@ -1,3 +1,376 @@
+# Digital Ocean
+
+curl -X POST -H 'Content-Type: application/json' \
+    -H 'Authorization: Bearer 'dop_v1_ef72acaaa98165e54f408d87b509b3ff9c5efc8bf31a09a1c96d7ea5318fe1e5' \
+    -d '{"name":"ubuntu-s-2vcpu-4gb-amd-sfo3-01",
+        "size":"s-2vcpu-4gb-amd",
+        "region":"sfo3",
+        "image":"ubuntu-24-10-x64",
+        "vpc_uuid":"a0ad32f7-5ad6-4f63-88a4-d36268ae0cdd"}' \
+    "https://api.digitalocean.com/v2/droplets"
+
+```sh
+# ┌───────────────────────────────────────────────────────┐
+# │ as ROOT
+# └───────────────────────────────────────────────────────┘
+
+# install common utils
+apt install joe
+mv /usr/bin/nano /usr/bin/nanox
+ln -fs /usr/bin/joe /usr/bin/nano
+apt install python3-pip -y
+apt install plocate
+# install zsh (for root)
+sudo apt-get install zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# install zsh (for root)
+sudo apt-get install zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# add jw user
+adduser jw 
+usermod -aG sudo jw
+mkdir /home/jw/.ssh
+chown jw:jw /home/jw/.ssh
+chmod 700 /home/jw/.ssh
+su - jw
+cat - > ~/.ssh/authorized_keys  #add keys from local machine
+chown 600  ~/.ssh/*
+
+# install zsh (for jw)
+sudo apt-get install zsh
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+
+# ┌───────────────────────────────────────────────────────┐
+# │ as 'jw'
+# └───────────────────────────────────────────────────────┘
+
+# install conda
+wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-x86_64.sh
+bash Miniforge3-Linux-x86_64.sh
+# add to .zshrc
+echo "export PATH=\$HOME/miniforge3/bin:\$PATH">>~/.zshrc
+. ~/.zshrc
+conda init
+conda create --name vhs python=3.12
+conda activate 
+echo -n "source ~/miniforge3/bin/activate vhs" >> ~/.zshrc
+. ~/.zshrc
+pip install python-dotenv
+
+# install base
+sudo apt install git
+sudo apt install nodejs
+sudo apt install npm
+
+# Add docker
+# ┌───────────────────────────────────────────────────────┐
+# │ as 'jw'
+# └───────────────────────────────────────────────────────┘
+
+sudo apt install -y apt-transport-https ca-certificates curl software-properties-common
+
+# Install keyring directory and GPG key
+sudo install -m 0755 -d /etc/apt/keyrings
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | \
+  sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+
+# Add Docker repository
+echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+  https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt update # reload docker keys
+sudo apt install -y docker-ce docker-ce-cli containerd.io docker-compose
+sudo systemctl enable docker
+sudo systemctl start docker
+sudo usermod -aG docker $USER
+#logout/login
+docker run hello-world
+
+#if 'runc' error
+curl -Lo runc https://github.com/opencontainers/runc/releases/download/v1.3.0/runc.amd64
+chmod +x runc
+sudo mv runc /usr/bin/runc
+runc --version
+
+
+
+# check for buildx
+docker buildx version
+
+# if buildz not installed...
+mkdir -p ~/.docker/cli-plugins
+curl -SL https://github.com/docker/buildx/releases/latest/download/buildx-linux-amd64 \
+  -o ~/.docker/cli-plugins/docker-buildx
+chmod +x ~/.docker/cli-plugins/docker-buildx
+docker buildx version
+
+# update everything
+	sudo apt update
+sudo apt full-upgrade -y
+
+# add ssh keys to je
+cat - > .ssh/authorized_keys  
+	cat .ssh/id_ed25519.pub # from local
+	cat .ssh/id_rsa.pub # from local
+
+chmod 600 .ssh/*
+
+# ┌───────────────────────────────────────────────────────┐
+# │ CLONE SITE
+# └───────────────────────────────────────────────────────┘
+mkdir ~/sites
+cd ~/sites
+git clone https://github.com/baardev/vhs.git
+mkdir -p /home/jw/sites/vhs/nginx/ssl
+# ┌───────────────────────────────────────────────────────┐
+# │ FROM LOCAL MACHINE
+# └───────────────────────────────────────────────────────┘
+	cd ~/sites/vhs
+	chmod 600 DEV_SETUP
+	chmod 600 .env         
+	chmod 600 backend/.env
+
+scp /home/jw/sites/vhs/nginx/ssl/* jw@24.199.78.109:sites/vhs/nginx/ssl 
+scp /home/jw/sites/vhs/.adminpw jw@24.199.78.109:sites/vhs/.adminpw
+scp /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/.env
+scp /home/jw/sites/vhs/.env jw@24.199.78.109:sites/vhs/backend/.env
+# ────────────────────────────────────────────────────────
+
+
+
+# 1. Update Your System Regularly
+# First, ensure your system is fully updated:
+apt-get update
+apt full-upgrade -y
+
+
+
+# Set up automatic security updates to ensure you're protected from vulnerabilities:
+sudo apt install unattended-upgrades
+sudo dpkg-reconfigure -plow unattended-upgrades
+
+# 2. Secure SSH Access
+# SSH is often the first target for attackers. Let's harden it:
+cd /etc/ssh/
+sudo cp sshd_config sshd_config.ORG
+sudo perl -pi -e 's/#Port 22/Port 2213/g' /etc/ssh/sshd_config
+sudo systemctl restart ssh
+
+
+# 4. Configure Firewall
+# Set up UFW (Uncomplicated Firewall):
+sudo apt install ufw
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow 2213/tcp # Your SSH port
+sudo ufw allow 80/tcp # HTTP
+sudo ufw allow 443/tcp # HTTPS
+sudo ufw enable
+
+# 5. Install and Set Up Fail2ban
+# Fail2ban helps protect against brute force attacks:
+sudo apt install fail2ban
+sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
+sudo nano /etc/fail2ban/jail.local
+
+#add the following
+[sshd]
+enabled = true
+port = 2213
+filter = sshd
+logpath = /var/log/auth.log
+maxretry = 3
+bantime = 3600
+
+[nginx-http-auth]
+enabled = true
+filter = nginx-http-auth
+port = http,https
+logpath = /var/log/nginx/error.log
+maxretry = 3
+
+
+sudo systemctl enable fail2ban
+sudo systemctl start fail2ban
+
+# 8. Set Up Cryptocurrency Mining Protection
+# Install ClamAV for malware detection:
+sudo apt install clamav clamav-daemon
+sudo systemctl stop clamav-freshclam
+sudo freshclam
+sudo systemctl start clamav-freshclam
+sudo clamscan -r /
+
+#Install and configure RootKit Hunter:
+sudo apt install rkhunter
+sudo rkhunter --update
+sudo rkhunter --propupd
+sudo rkhunter --check
+
+        # 9. Prevent Unauthorized Process Execution
+        # Install and configure AppArmor:
+        sudo apt install apparmor apparmor-utils
+        sudo aa-enforce /etc/apparmor.d/*
+
+# 10. Monitor System Resources and Set Up Alerts
+# Install tools to monitor system resources:
+sudo apt install htop iotop iftop -y
+
+# Set up process monitoring with sysstat:
+sudo apt install sysstat -y
+sudo systemctl enable sysstat 
+sudo systemctl start sysstat 
+
+# Install and configure Logwatch for log monitoring:
+sudo apt install logwatch -y
+sudo logwatch --output mail --mailto jeff.milton@rmail.com --detail high
+
+## Skipping redis sections... not running redis
+
+## 12. Secure Environment Variables for Next.js
+# Store sensitive data in environment variables securely:
+
+
+# 13. Regular Security Audits
+# Install Lynis for security auditing:
+sudo apt install lynis -y
+sudo lynis audit system -y
+
+# 14. Implement File Integrity Monitoring
+# Install and configure AIDE (Advanced Intrusion Detection Environment):
+
+sudo apt install aide -y
+sudo aideinit
+sudo cp /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+
+# Set up a daily check:
+sudo touch /etc/cron.daily/aide-check
+sudo chmod a+rw /etc/cron.daily/aide-check
+echo "#\!/usr/bin/bash\n" >/etc/cron.daily/aide-check
+echo '/usr/bin/aide --check | mail -s "AIDE report for $(hostname)" jeff.milton@gmail.com\n' >> /etc/cron.daily/aide-check
+sudo chmod 755 /etc/cron.daily/aide-check
+
+# not actively using, so suspend
+sudo systemctl disable --now postfix
+```
+
+For Docker nginx
+```sh
+
+# 6. Secure Nginx Configuration
+# Edit your Nginx configuration:
+sudo nano /etc/nginx/nginx.conf
+
+#Add these security improvements:
+# Hide Nginx version
+server_tokens off;
+
+# Configure SSL properly
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers on;
+ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+ssl_session_cache shared:SSL:10m;
+ssl_session_timeout 1h;
+ssl_session_tickets off;
+
+# HTTP security headers
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+# Disable potentially dangerous HTTP methods
+if ($request_method !~ ^(GET|HEAD|POST|PUT|DELETE)$) {
+    return 444;
+}
+# Generate strong DH parameters for better security:
+sudo openssl dhparam -out /etc/nginx/dhparam.pem 2048
+# Add to your Nginx SSL configuration:
+ssl_dhparam /etc/nginx/dhparam.pem;
+
+# 7. Implement ModSecurity Web Application Firewall
+# Install ModSecurity for Nginx:
+sudo apt install libmodsecurity3 libmodsecurity-dev nginx-module-security
+# Configure ModSecurity:
+sudo mkdir -p /etc/nginx/modsec
+sudo wget -P /etc/nginx/modsec/ https://raw.githubusercontent.com/SpiderLabs/ModSecurity/v3/master/modsecurity.conf-recommended
+sudo mv /etc/nginx/modsec/modsecurity.conf-recommended /etc/nginx/modsec/modsecurity.conf
+
+#Edit the configuration:
+perl -pi -e 's/SecRuleEngine DetectionOnly/SecRuleEngine On/gmi' /etc/nginx/modsec/modsecurity.conf
+
+#Install OWASP Core Rule Set:
+sudo wget https://github.com/coreruleset/coreruleset/archive/v3.3.2.tar.gz
+sudo tar -xzf v3.3.2.tar.gz -C /etc/nginx/modsec/
+sudo mv /etc/nginx/modsec/coreruleset-3.3.2 /etc/nginx/modsec/owasp-crs
+sudo cp /etc/nginx/modsec/owasp-crs/crs-setup.conf.example /etc/nginx/modsec/owasp-crs/crs-setup.conf
+
+# Create a ModSecurity include file:
+echo "Include /etc/nginx/modsec/modsecurity.conf" >/etc/nginx/modsec/main.conf
+echo "Include /etc/nginx/modsec/owasp-crs/crs-setup.conf">>/etc/nginx/modsec/main.conf
+echo "Include /etc/nginx/modsec/owasp-crs/rules/*.conf">>/etc/nginx/modsec/main.conf
+
+# Update your Nginx configuration to use ModSecurity:
+server {
+    # Other configurations...
+    modsecurity on;
+    modsecurity_rules_file /etc/nginx/modsec/main.conf;
+    # Rest of your config...
+}
+
+#in docker
+===============================================================
+sudo nano /etc/nginx/nginx.conf
+# Hide Nginx version
+server_tokens off;
+
+# Configure SSL properly
+ssl_protocols TLSv1.2 TLSv1.3;
+ssl_prefer_server_ciphers on;
+ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
+ssl_session_cache shared:SSL:10m;
+ssl_session_timeout 1h;
+ssl_session_tickets off;
+
+# HTTP security headers
+add_header X-Frame-Options "SAMEORIGIN" always;
+add_header X-Content-Type-Options "nosniff" always;
+add_header X-XSS-Protection "1; mode=block" always;
+add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';" always;
+add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+
+# Disable potentially dangerous HTTP methods
+if ($request_method !~ ^(GET|HEAD|POST|PUT|DELETE)$) {
+    return 444;
+}
+===============================================================
+sudo openssl dhparam -out /etc/nginx/dhparam.pem 2048
+ssl_dhparam /etc/nginx/dhparam.pem;
+```
+
+For Docker Next.js
+
+```sh
+# 12. Secure Environment Variables for Next.js
+# Store sensitive data in environment variables securely:
+
+sudo chown your-user:your-user /path/to/your/app/.env.local
+sudo chmod 600 /path/to/your/app/.env.local
+
+sudo nano /etc/environment
+```
+
+
+
+
+
 # Understanding the VHS Application Framework
 
 ## Overview of the Framework Architecture

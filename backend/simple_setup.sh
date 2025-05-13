@@ -44,7 +44,7 @@ CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tok
 -- Add index on user_id for faster lookups
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_user_id ON password_reset_tokens(user_id);
 
--- Create initial admin user (password is 'admin123' - change this in production!)
+-- Create initial admin user (password is '${DB_PASSWORD}' - change this in production!)
 INSERT INTO users (username, email, password)
 VALUES (
   'adminuser',
@@ -59,7 +59,7 @@ echo "Creating database and user..."
 sudo -u postgres psql <<EOF
 DROP DATABASE IF EXISTS vhsdb;
 DROP USER IF EXISTS admin;
-CREATE USER admin WITH PASSWORD 'adminpassword';
+CREATE USER admin WITH PASSWORD 'admin123';
 ALTER USER admin WITH SUPERUSER;
 CREATE DATABASE vhsdb;
 GRANT ALL PRIVILEGES ON DATABASE vhsdb TO admin;

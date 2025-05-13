@@ -8825,9 +8825,9 @@ services:
     image: postgres:latest
     container_name: dev-vhs-db
     environment:
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin123
-      - POSTGRES_DB=vhsdb
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
       - NODE_ENV=production  
     ports:
       - "5432:5432"
@@ -8848,18 +8848,19 @@ services:
 
     container_name: dev-vhs-backend
     environment:
-      DB_USER: admin
-      DB_PASSWORD: admin123
-      DB_NAME: vhsdb
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME}
       DB_HOST: db
-      DB_PORT: 5432
-      DATABASE_URL: postgres://admin:admin123@db:5432/vhsdb
-      PGUSER: admin
-      PGPASSWORD: admin123
-      PGDATABASE: vhsdb
-      PGHOST: db
-      PGPORT: 5432
+      DB_PORT: ${DB_PORT}
+      DATABASE_URL: ${DATABASE_URL}
+      PGUSER: ${DB_USER}
+      PGPASSWORD: ${DB_PASSWORD}
+      PGDATABASE: ${DB_NAME}
+      PGHOST: ${DB_HOST}
+      PGPORT: ${DB_PORT}
       NODE_ENV: production
+
     depends_on:
       - db
     ports:
