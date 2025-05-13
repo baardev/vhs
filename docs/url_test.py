@@ -8,6 +8,10 @@ from colorama import Fore, Style, init
 import concurrent.futures
 import time
 from datetime import datetime
+import dotenv
+
+dotenv.load_dotenv()
+userpw = os.getenv("USERPW")
 # Initialize colorama
 init(autoreset=True)
 
@@ -24,15 +28,15 @@ def main():
     args = parser.parse_args()
 
     username = args.username
-    password = args.password
+    userpw = args.password
     
-    # Try to read password from password file
-    try:
-        with open(os.path.expanduser("~/sites/vhs/.adminpw"), "r") as pw_file:
-            password = pw_file.read().strip()
-    except Exception as e:
-        print(f"{Fore.RED}Error reading password file: {e}")
-        # Keep using the password from command line args
+    # # Try to read password from password file
+    # try:
+    #     with open(os.path.expanduser(userpwites/vhs/.adminpw"), "r") as pw_file:
+    #         password = pw_file.read().strip()
+    # except Exception as e:
+    #     print(f"{Fore.RED}Error reading password file: {e}")
+    #     # Keep using the password from command line args
     
    #print(f"{Fore.YELLOW}Using credentials: username={username}, password={password}")
     now = datetime.now()
@@ -42,7 +46,7 @@ def main():
     
     # Login to get JWT token
     login_url = f"{base_url}/api/auth/login"
-    login_data = {"username": username, "password": password}
+    login_data = {"username": username, "password": userpw}
     
     try:
         response = requests.post(login_url, json=login_data, verify=False)
@@ -56,7 +60,7 @@ def main():
                 print(f"{Fore.YELLOW}Trying {alt_user}/admin123 instead...")
                 alt_response = requests.post(
                     login_url, 
-                    json={"username": alt_user, "password": "admin123"}, 
+                    json={"username": alt_user, "password": userpw}, 
                     verify=False
                 )
                 if alt_response.status_code == 200:

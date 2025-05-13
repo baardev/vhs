@@ -14,7 +14,7 @@ BEGIN
          INHERIT
          REPLICATION
          CONNECTION LIMIT -1
-         PASSWORD 'admin123';
+         PASSWORD 'ABeoAuNKL5f';
    END IF;
 END
 $do$;

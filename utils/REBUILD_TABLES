@@ -49,7 +49,7 @@ done
 
 rebuild_database() {
     local db_container=$1
-    PW=`cat ${ROOT_DIR}/.adminpw`
+    PW=${DB_PASSWORD}
 
     #!  Create the basic tables
 

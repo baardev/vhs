@@ -1,4 +1,6 @@
 #!/bin/bash
+
+. ./.env
 #
 # REBUILD - Container Management and Deployment Utility
 # ====================================================
@@ -26,6 +28,7 @@
 #   --restore           Restore database from the most recent backup (used with 'db' or 'all')
 #   --skip-wipe         Skip the wipe step during 'all' rebuild
 #   --skip-clearcache   Skip the CLEARCACHE step
+#   --solo              Only rebuild/restart the specified service without touching dependencies
 #
 # DEPENDENCIES:
 #   - Docker and docker-compose
@@ -37,6 +40,7 @@
 #   utils/REBUILD all
 #   utils/REBUILD frontend --no-cache
 #   utils/REBUILD db --restore
+#   utils/REBUILD nginx --solo
 #   utils/REBUILD wipe
 #
 # AUTHOR:
@@ -62,6 +66,7 @@ DO_CLEARCACHE="YES"
 DO_RESTORE="NO"
 SKIP_WIPE_ALL="NO"
 NODE_ENV_ARG=""
+SOLO_MODE="NO"
 
 # --- Helper Functions ---
 log_info() {
@@ -198,14 +203,20 @@ rebuild_service() {
 
     log_info "Stopping ${service_pretty_name} container..."
     ${COMPOSE_CMD} stop "${service_name}" || log_warn "Could not stop ${service_name}, perhaps it was not running."
-    # docker compose rm -f "${service_name}" is often included in 'build' or 'up --build' implicitly.
-    # If explicit removal is needed: ${COMPOSE_CMD} rm -f "${service_name}"
 
-    log_info "Building ${service_pretty_name} image..."
-    ${COMPOSE_CMD} build ${BUILD_NO_CACHE} ${BUILD_PULL} ${NODE_ENV_ARG} "${service_name}"
+    if [ "${SOLO_MODE}" = "NO" ]; then
+        log_info "Building ${service_pretty_name} image..."
+        ${COMPOSE_CMD} build ${BUILD_NO_CACHE} ${BUILD_PULL} ${NODE_ENV_ARG} "${service_name}"
+    else
+        log_info "Solo mode: Skipping build for ${service_pretty_name}..."
+    fi
 
     log_info "Starting ${service_pretty_name} container..."
-    ${COMPOSE_CMD} up -d "${service_name}"
+    if [ "${SOLO_MODE}" = "YES" ]; then
+        ${COMPOSE_CMD} up -d --no-build "${service_name}"
+    else
+        ${COMPOSE_CMD} up -d "${service_name}"
+    fi
 
     log_info "${service_pretty_name} rebuilt and restarted successfully."
 }
@@ -243,7 +254,7 @@ if [ $# -eq 0 ]; then
     log_error "No action specified."
     echo "Usage: $0 <service|all|wipe> [options]"
     echo "Services: frontend, backend, nginx, db"
-    echo "Options: --no-cache, --pull, --restore, --skip-wipe, --skip-clearcache"
+    echo "Options: --no-cache, --pull, --restore, --skip-wipe, --skip-clearcache, --solo"
     exit 1
 fi
 
@@ -282,6 +293,11 @@ while [[ $# -gt 0 ]]; do
             log_info "Option: CLEARCACHE will be skipped."
             shift
             ;;
+        --solo)
+            SOLO_MODE="YES"
+            log_info "Option: Solo mode enabled (will not rebuild dependencies)."
+            shift
+            ;;
         *)
             log_error "Unknown option: $1"
             exit 1
@@ -296,6 +312,7 @@ echo "│ PULL: ${BUILD_PULL}"
 echo "│ WIPE DEFAULT: ${DO_WIPE}"
 echo "│ CLEARCACHE DEFAULT: ${DO_CLEARCACHE}"
 echo "│ NODE_ENV_ARG: ${NODE_ENV_ARG}"
+echo "│ SOLO MODE: ${SOLO_MODE}"
 echo "└───────────────────────────────────────────────────────┘"
 
 log_info "Executing action: ${ACTION}"
