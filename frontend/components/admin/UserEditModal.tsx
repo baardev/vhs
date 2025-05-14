@@ -22,12 +22,46 @@ interface User {
   [key: string]: string | number | boolean | undefined;
 }
 
+/**
+ * @interface UserEditModalProps
+ * @description Defines the props for the UserEditModal component.
+ * @property {User} user - The user object to be edited.
+ * @property {() => void} onClose - Callback function to close the modal.
+ * @property {() => void} onSave - Callback function executed after successful user update.
+ */
 interface UserEditModalProps {
   user: User;
   onClose: () => void;
   onSave: () => void;
 }
 
+/**
+ * @component UserEditModal
+ * @description A modal dialog component for editing user details.
+ *
+ * @remarks
+ * This component displays a form pre-filled with the user's current information.
+ * It allows modification of various user attributes including username, email, password (optional),
+ * name, family name, matricula, handicap, gender, birthday, and admin/editor roles.
+ * Form data is validated, and upon submission, an authenticated PUT request is made
+ * to the `/api/admin/users/:id` endpoint to update the user's information.
+ * The component handles loading states during the API call and displays any errors encountered.
+ * It utilizes `next-i18next` for internationalization of labels and messages.
+ *
+ * Called by:
+ * - `frontend/components/admin/UserTable.tsx` (when an admin clicks the "Edit" button for a user)
+ *
+ * Calls:
+ * - `useState` (React hook for managing form data, loading, and error states)
+ * - `axios.put` (to send PUT request to `/api/admin/users/:id` for updating user details)
+ * - `useTranslation` (from `next-i18next` for internationalization)
+ * - `localStorage.getItem` (to retrieve JWT token for API request authorization)
+ * - `props.onClose` (when the close button or cancel button is clicked)
+ * - `props.onSave` (after a successful API call to update the user)
+ *
+ * @param {UserEditModalProps} props - The props for the component.
+ * @returns {React.FC<UserEditModalProps>} The rendered modal component for editing a user.
+ */
 const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave }) => {
   const { t } = useTranslation('common');
   const [formData, setFormData] = useState({

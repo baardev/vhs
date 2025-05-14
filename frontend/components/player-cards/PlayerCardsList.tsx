@@ -29,6 +29,22 @@ ChartJS.register(
   TimeScale // Register TimeScale
 );
 
+/**
+ * @interface PlayerCard
+ * @description Defines the structure for a player card object displayed in the list.
+ * @property {number} id - Unique identifier for the player card.
+ * @property {string} player_id - Identifier for the player.
+ * @property {string} play_date - Date of play.
+ * @property {number} course_id - Identifier for the course.
+ * @property {number} differential - Calculated score differential for the round.
+ * @property {number} hcpi - Handicap index at the time of play.
+ * @property {number} hcp - Course handicap for the round.
+ * @property {number} gross - Gross score for the round.
+ * @property {number} net - Net score for the round.
+ * @property {string} tarj - Status of the card (e.g., 'OK', 'NPT').
+ * @property {string} [course_name] - Optional name of the course.
+ * @property {string} [player_name] - Optional name of the player.
+ */
 interface PlayerCard {
   id: number;
   player_id: string;
@@ -44,6 +60,14 @@ interface PlayerCard {
   player_name?: string;
 }
 
+/**
+ * @interface ChartCardData
+ * @description Defines the structure for data points used in the performance chart.
+ * @property {string} play_date - Date of play.
+ * @property {number | null} [gross] - Optional gross score.
+ * @property {number | null} [net] - Optional net score.
+ * @property {number | null} [differential] - Optional score differential.
+ */
 interface ChartCardData {
   play_date: string;
   gross?: number | null;
@@ -51,6 +75,36 @@ interface ChartCardData {
   differential?: number | null;
 }
 
+/**
+ * @component PlayerCardsList
+ * @description Displays a list of player cards in a table and a performance chart for the logged-in user.
+ *
+ * @remarks
+ * This component fetches and displays two sets of data:
+ * 1. Public Player Cards: Fetched from `/api/player-cards` and displayed in a sortable, paginated table.
+ *    Each row shows player name, date, course, gross/net scores, differential, and status.
+ *    A "View Details" link navigates to the specific player card's detail page (`/player-cards/:id`).
+ * 2. User's Chart Data: Fetched from `/api/user/chart-data` (requires authentication) if a user is logged in.
+ *    Displays a line chart showing the user's Gross, Net, and Differential scores over their last 50 'OK' rounds.
+ *    Handles loading and error states for both data fetches independently.
+ *    Provides an "Add New Card" button if the user is logged in.
+ *    Uses `AuthContext` to manage user authentication state and `useRouter` for programmatic navigation.
+ *    If chart data fetch results in a 401, it logs the user out and redirects to login.
+ *
+ * Called by:
+ * - `frontend/pages/player-cards/index.tsx`
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`, `useContext`
+ * - `axios.get` (to fetch data from `/api/player-cards` and `/api/user/chart-data`)
+ * - `next/link`'s `Link` component (for navigation to add new card and view card details)
+ * - `react-chartjs-2`'s `Line` component (to render the performance chart)
+ * - `AuthContext` (to get user status and logout function)
+ * - `useRouter` (for redirecting on authentication failure)
+ * - `localStorage.getItem('token')` (as part of chart data fetching, though primarily relies on `AuthContext`)
+ *
+ * @returns {JSX.Element} The rendered list of player cards and performance chart.
+ */
 const PlayerCardsList = () => {
   const [playerCards, setPlayerCards] = useState<PlayerCard[]>([]);
   const [loading, setLoading] = useState(true);

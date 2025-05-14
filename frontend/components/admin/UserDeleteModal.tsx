@@ -2,18 +2,55 @@ import { useState } from 'react';
 import axios from 'axios';
 import { useTranslation } from 'next-i18next';
 
+/**
+ * @interface User
+ * @description Defines the structure for a user object passed to the modal.
+ * @property {number} id - The unique identifier of the user.
+ * @property {string} username - The username of the user.
+ * @property {string} email - The email address of the user.
+ */
 interface User {
   id: number;
   username: string;
   email: string;
 }
 
+/**
+ * @interface UserDeleteModalProps
+ * @description Defines the props for the UserDeleteModal component.
+ * @property {User} user - The user object to be deleted.
+ * @property {() => void} onClose - Callback function to close the modal.
+ * @property {() => void} onDelete - Callback function executed after successful deletion.
+ */
 interface UserDeleteModalProps {
   user: User;
   onClose: () => void;
   onDelete: () => void;
 }
 
+/**
+ * @component UserDeleteModal
+ * @description A modal dialog component for confirming and handling user deletion.
+ *
+ * @remarks
+ * This component displays a confirmation message to the admin before deleting a user.
+ * It makes an authenticated DELETE request to the `/api/admin/users/:id` endpoint.
+ * It handles loading states, displays errors, and uses `next-i18next` for translations.
+ *
+ * Called by:
+ * - `frontend/components/admin/UserTable.tsx`
+ *
+ * Calls:
+ * - `useState` (React hook)
+ * - `axios.delete` (to send DELETE request to `/api/admin/users/:id`)
+ * - `useTranslation` (from `next-i18next` for internationalization)
+ * - `localStorage.getItem` (to retrieve JWT token for authorization)
+ * - `props.onClose` (when cancel button is clicked or modal is dismissed)
+ * - `props.onDelete` (after successful API call for deletion)
+ *
+ * @param {UserDeleteModalProps} props - The props for the component.
+ * @returns {React.FC<UserDeleteModalProps>} The rendered modal component.
+ */
 const UserDeleteModal: React.FC<UserDeleteModalProps> = ({ user, onClose, onDelete }) => {
   const { t } = useTranslation('common');
   const [loading, setLoading] = useState(false);

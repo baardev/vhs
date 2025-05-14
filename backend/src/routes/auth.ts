@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Authentication routes for user registration, login, profile management, and password reset.
+ *
+ * @remarks
+ * This module defines API endpoints related to user authentication and authorization.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `bcrypt` (external library)
+ * - `jsonwebtoken` (external library)
+ * - `express-validator` (external library)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
+ * - `./authenticateToken` (`backend/src/routes/authenticateToken.ts` - middleware for JWT authentication)
+ * - `crypto` (Node.js built-in module - for generating password reset tokens)
+ */
 import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';

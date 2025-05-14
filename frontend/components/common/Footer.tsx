@@ -3,6 +3,29 @@ import { useTranslation } from 'next-i18next';
 import { useRouter } from 'next/router';
 import { useState, useEffect } from 'react';
 
+/**
+ * @component Footer
+ * @description Renders the site footer, including navigation links (About, Privacy, Terms)
+ * and language selection buttons.
+ *
+ * @remarks
+ * The component uses a `mounted` state to ensure that language-dependent content
+ * (rendered via `useTranslation`) is only displayed after client-side hydration
+ * to prevent mismatches. Before hydration, a simplified placeholder footer is shown.
+ * Language change is handled by pushing a new route with the selected locale using `next/router`.
+ *
+ * Called by:
+ * - `frontend/pages/_app.tsx` (as part of the main application layout)
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `next/link`'s `Link` component (for navigation to About, Privacy, Terms pages)
+ * - `next-i18next`'s `useTranslation` hook (for internationalizing link text)
+ * - `next/router`'s `useRouter` hook (for handling language changes by navigating to the same path with a different locale)
+ * - Internal function `changeLanguage` (handler for language selection buttons)
+ *
+ * @returns {React.FC} The rendered footer component.
+ */
 const Footer = () => {
   const { t, ready } = useTranslation('common');
   const router = useRouter();

@@ -1,6 +1,25 @@
 import Link from 'next/link';
 import { useTranslation } from 'next-i18next';
 
+/**
+ * @component HomeLink
+ * @description Renders two navigational links: one to the Home page (`/`) and one to the Courses page (`/courses`).
+ * Each link includes an SVG icon and text that is internationalized using `next-i18next`.
+ *
+ * @remarks
+ * This component is styled to be absolutely positioned at the top-left of its container.
+ * It uses the `useTranslation` hook to fetch translated strings for "home" and "courses".
+ *
+ * Called by:
+ * - `frontend/pages/reset-password/[token].tsx`
+ *
+ * Calls:
+ * - `next/link`'s `Link` component (for client-side navigation)
+ * - `next-i18next`'s `useTranslation` hook (for internationalization)
+ * - SVG icons (for visual representation of Home and Courses links)
+ *
+ * @returns {React.FC} The rendered div containing the Home and Courses links.
+ */
 export default function HomeLink() {
   const { t } = useTranslation('common');
   return (

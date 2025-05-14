@@ -3,6 +3,22 @@ import { pool } from '../db';
 import { AuthRequest } from './authenticateToken';
 
 /**
+ * @fileoverview Middleware for admin authorization.
+ *
+ * @remarks
+ * This module provides middleware to verify if an authenticated user has admin privileges.
+ * It should be used after the `authenticateToken` middleware.
+ *
+ * Called by:
+ * - `backend/src/routes/admin.ts`
+ *
+ * Calls:
+ * - `express` (external library - for Response, NextFunction types)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
+ * - `./authenticateToken` (`backend/src/routes/authenticateToken.ts` - provides `AuthRequest` type)
+ */
+
+/**
  * Middleware to verify if a user has admin privileges
  * This middleware should be used after authenticateToken middleware
  */

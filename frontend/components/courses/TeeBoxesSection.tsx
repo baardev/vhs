@@ -1,5 +1,14 @@
 import React from 'react';
 
+/**
+ * @interface TeeBox
+ * @description Defines the structure for a single tee box object.
+ * @property {string} name - The name of the tee box (e.g., "Blue", "Championship").
+ * @property {'male' | 'female' | 'other'} gender - The gender category for the tee box.
+ * @property {string} courseRating - The USGA course rating for this tee box.
+ * @property {string} slopeRating - The USGA slope rating for this tee box.
+ * @property {string} yardage - The total yardage for this tee box (optional).
+ */
 interface TeeBox {
   name: string;
   gender: 'male' | 'female' | 'other';
@@ -8,6 +17,14 @@ interface TeeBox {
   yardage: string;
 }
 
+/**
+ * @interface TeeBoxesSectionProps
+ * @description Defines the props for the TeeBoxesSection component.
+ * @property {TeeBox[]} teeBoxes - An array of tee box objects to be displayed and managed.
+ * @property {(index: number, field: keyof TeeBox, value: string) => void} updateTeeBox - Callback to update a specific field of a tee box.
+ * @property {() => void} addTeeBox - Callback to add a new tee box to the list.
+ * @property {(index: number) => void} removeTeeBox - Callback to remove a tee box from the list.
+ */
 interface TeeBoxesSectionProps {
   teeBoxes: TeeBox[];
   updateTeeBox: (index: number, field: keyof TeeBox, value: string) => void;
@@ -15,6 +32,32 @@ interface TeeBoxesSectionProps {
   removeTeeBox: (index: number) => void;
 }
 
+/**
+ * @component TeeBoxesSection
+ * @description A form section for inputting and managing information about multiple tee boxes for a golf course.
+ * @param {TeeBoxesSectionProps} props - The props for the component.
+ *
+ * @remarks
+ * This component allows users to:
+ * - View and edit details for existing tee boxes (Tee Name, Gender, Course Rating, Slope Rating, Total Yardage).
+ * - Add new tee boxes to the course.
+ * - Remove tee boxes (if more than one exists).
+ * Each tee box is rendered as a distinct sub-form with input fields for its attributes.
+ * Input changes trigger the `updateTeeBox` callback.
+ * The "Add Another Tee Box" button triggers the `addTeeBox` callback.
+ * The "Remove" button (per tee box) triggers the `removeTeeBox` callback.
+ *
+ * Called by:
+ * - `frontend/pages/courses/new.tsx` (as part of the new course creation form)
+ *
+ * Calls:
+ * - React (implicitly, as it's a React functional component)
+ * - `props.updateTeeBox` (when an input field value changes)
+ * - `props.addTeeBox` (when the "Add Another Tee Box" button is clicked)
+ * - `props.removeTeeBox` (when a "Remove" button for a tee box is clicked)
+ *
+ * @returns {React.FC<TeeBoxesSectionProps>} The rendered form section for managing tee box information.
+ */
 const TeeBoxesSection: React.FC<TeeBoxesSectionProps> = ({
   teeBoxes,
   updateTeeBox,

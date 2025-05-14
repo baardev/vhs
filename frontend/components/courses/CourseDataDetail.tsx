@@ -56,6 +56,36 @@ const getBaseUrl = () => {
   return '';
 };
 
+/**
+ * @component CourseDataDetail
+ * @description Fetches and displays detailed information for a specific course, including its name, location, and tee-specific data (summary and hole-by-hole pars).
+ * @param {CourseDataDetailProps} props - The props for the component.
+ * @param {number} props.courseId - The unique identifier of the course to display details for.
+ *
+ * @remarks
+ * This component performs the following actions:
+ * - On mount, or when `courseId` prop changes, it fetches:
+ *   - The course name and location details from `/api/coursesData/course-names/:courseId`.
+ *   - The tee-specific data (including hole-by-hole pars) from `/api/coursesData/normalized-holes/:courseId`.
+ * - Manages loading and error states for these API requests.
+ * - Displays a header with the course name, location, and a "Back to Courses" link.
+ * - If tee data is available, it shows a summary table with tee name, gender, total par, course rating, slope rating, and length.
+ * - It then displays detailed hole-by-hole par information for each tee, broken down into front nine, back nine, and total.
+ * - Includes a helper function `calculateTotalPar` to sum up pars for front nine, back nine, and the total 18 holes, with a fallback if hole-by-hole data isn't present.
+ * - Renders appropriate messages for loading, error, or if the course/tee data is not found.
+ *
+ * Called by:
+ * - `frontend/pages/course-data/[id].tsx` (which gets the `courseId` from the route parameter)
+ *
+ * Calls:
+ * - React Hooks: `useState` (for managing course data, name, loading state, and error messages), `useEffect` (for fetching data)
+ * - `axios.get`: (to make HTTP GET requests to the course names and normalized holes API endpoints)
+ * - `next/link`'s `Link` component (for the "Back to Courses" navigation)
+ * - Internal helper function `getBaseUrl`: (to construct the base URL for API calls)
+ * - Internal helper function `calculateTotalPar`: (to compute par sums for display)
+ *
+ * @returns {React.FC<CourseDataDetailProps>} The rendered detailed view of a course, or a message indicating loading, error, or not found state.
+ */
 const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
   const [courseData, setCourseData] = useState<CourseData[]>([]);
   const [courseName, setCourseName] = useState<CourseName | null>(null);

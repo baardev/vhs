@@ -1,8 +1,29 @@
-import express from 'express';
+/**
+ * @fileoverview Routes for calculating and retrieving player handicaps.
+ *
+ * @remarks
+ * This module defines API endpoints related to handicap calculations.
+ * It includes:
+ * - An endpoint to calculate handicap based on the 20 most recent rounds for a default or specified player.
+ * - An endpoint to retrieve pre-calculated handicap data from the `current_handicap_indexes` view.
+ * - Test and debug endpoints for development and troubleshooting.
+ * It uses two versions of handicap calculation logic (`calculateHandicap` and `calculateHandicap_v2`).
+ * Logging is implemented using a custom logger client.
+ * Cache control headers are aggressively set to prevent caching of handicap results.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
+ * - `../utils/loggerClient` (`backend/src/utils/loggerClient.ts` - for logging information, errors, and debug messages)
+ */
+import * as express from 'express';
 import { pool } from '../db';
 import { logInfo, logError, logDebug } from '../utils/loggerClient';
 
-const router = express.Router();
+const router: express.Router = express.Router();
 
 interface PlayerRound {
   player_id: number;
@@ -13,14 +34,13 @@ interface PlayerRound {
   slope_rating?: number;
 }
 
-router.use((req, res, next) => {
+router.use((req: express.Request, res: express.Response, next: express.NextFunction) => {
   console.log(`[${new Date().toISOString()}] handicapCalc ${req.method} request received`);
   next();
 });
 
 // Root endpoint for backward compatibility
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/', async (req, res) => {
+router.get('/', (async (req, res) => {
   logInfo('handicapCalc processing request at ' + new Date().toISOString(), 'handicapCalc');
   
   // Even more aggressive cache prevention
@@ -99,11 +119,10 @@ router.get('/', async (req, res) => {
       error_message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
 // Alternative endpoint that uses the current_handicap_indexes view
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/view/:player_id', async (req, res) => {
+router.get('/view/:player_id', (async (req, res) => {
   const playerId = req.params.player_id;
   logInfo(`handicapCalc view processing request for player ${playerId}`, 'handicapCalc');
   
@@ -143,20 +162,18 @@ router.get('/view/:player_id', async (req, res) => {
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/test', (req, res) => {
+router.get('/test', ((req, res) => {
   logInfo('Test endpoint was called', 'handicapCalc');
   return res.json({
     message: 'Test endpoint working',
     time: new Date().toISOString(),
     success: true
   });
-});
+}) as unknown as express.RequestHandler);
 
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/debug', async (req, res) => {
+router.get('/debug', (async (req, res) => {
   try {
     // Check if the table exists
     logDebug('Debug endpoint: checking if table exists', 'handicapCalc');
@@ -194,10 +211,9 @@ router.get('/debug', async (req, res) => {
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/:player_id', async (req, res) => {
+router.get('/:player_id', (async (req, res) => {
   const playerId = req.params.player_id;
   logInfo(`handicapCalc processing request for player ${playerId} at ${new Date().toISOString()}`, 'handicapCalc');
   
@@ -258,7 +274,7 @@ router.get('/:player_id', async (req, res) => {
       error_message: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
 /**
  * Calculate handicap index from player rounds

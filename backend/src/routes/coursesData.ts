@@ -1,3 +1,20 @@
+/**
+ * @fileoverview Routes for fetching detailed course data, including names, tee data, and hole data.
+ *
+ * @remarks
+ * This module defines API endpoints primarily for reading and normalizing golf course data from various database views and tables.
+ * It includes routes to get lists of course names, specific course details, tee box information, and hole-by-hole par data.
+ * It also provides an endpoint to get data in a format normalized for frontend consumption.
+ * Update operations for course names, tee data, and hole data are included and require editor privileges.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
+ * - `./authenticateToken` (`backend/src/routes/authenticateToken.ts` - middleware for JWT authentication for update routes)
+ */
 import { Router, Request, Response, NextFunction } from 'express';
 import { pool } from '../db';
 import authenticateToken, { AuthRequest } from './authenticateToken';
@@ -181,25 +198,43 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
       return;
     }
     
-    // Define type to fix TypeScript error
+    // Define type for the final composed object
     interface TeeWithHoles {
-      id: any;
+      id: any; // Or a more specific type if known, e.g., number
       course_id: number;
       tee_name: string;
-      gender: string;
+      gender: string; // Assuming 'M' is a string, or use a literal type 'M' | 'F' | 'Other'
       par: number;
       course_rating: number;
       slope_rating: number;
       length: number;
       [key: string]: any; // Index signature for dynamic par_h* properties
     }
+
+    // Define type for rows coming from the teeResult query
+    interface TeeRow {
+      course_id: number;
+      tee_name: string;
+      par: number;
+      course_rating: number;
+      slope_rating: number;
+      length: number;
+    }
+
+    // Define type for rows coming from the holeResult query
+    interface HoleRow {
+      hole_number: number;
+      par: number;
+      // men_stroke_index?: number; // Uncomment if these are selected and used
+      // women_stroke_index?: number; // Uncomment if these are selected and used
+    }
     
     // Build response objects that match the expected format for the frontend
-    const responseData = teeResult.rows.map(tee => {
+    const responseData = teeResult.rows.map((tee: TeeRow) => {
       // Create base object
       const teeWithHoles: TeeWithHoles = {
-        id: tee.course_id,
-        course_id: parseInt(id, 10),
+        id: tee.course_id, // Using course_id from TeeRow as the primary id for this object
+        course_id: parseInt(id, 10), // id from req.params, which is also the course_id
         tee_name: tee.tee_name,
         gender: 'M', // Default
         par: tee.par,
@@ -211,9 +246,8 @@ router.get('/normalized-holes/:id', async (req: Request, res: Response, next: Ne
         par_h11: null, par_h12: null, par_h13: null, par_h14: null, par_h15: null, 
         par_h16: null, par_h17: null, par_h18: null
       };
-      
-      // Fill in hole data
-      holeResult.rows.forEach(hole => {
+      // Fill in hole data with explicit type annotation to avoid implicit 'any'
+      holeResult.rows.forEach((hole: HoleRow) => {
         const holeNum = hole.hole_number;
         const holeProp = `par_h${holeNum.toString().padStart(2, '0')}`;
         teeWithHoles[holeProp] = hole.par;
@@ -337,8 +371,7 @@ router.put('/course-hole-data/:id', authenticateToken, async (req: AuthRequest, 
     }
     
     // Update the x_course_holes directly since the view is read-only
-    const result = await pool.query(`
-      UPDATE x_course_holes 
+    const result = await pool.query(`      UPDATE x_course_holes 
       SET 
         par = $1,
         men_stroke_index = $2,

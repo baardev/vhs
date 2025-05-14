@@ -2,6 +2,41 @@ import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
 
+/**
+ * @interface PlayerCard
+ * @description Defines the comprehensive structure for a player card object,
+ * including scores, handicap info, course details, and hole-by-hole scores.
+ * @property {number} id - Unique identifier for the player card.
+ * @property {string} player_id - Identifier for the player.
+ * @property {string} play_date - Date of play.
+ * @property {number} course_id - Identifier for the course.
+ * @property {string} weather - Weather conditions on the day of play.
+ * @property {string} day_of_week - Day of the week of play.
+ * @property {string} category - Category of the round (e.g., competitive, casual).
+ * @property {number} differential - Calculated score differential.
+ * @property {string} post - User's post or notes about the round.
+ * @property {string} judges - Any judges or verifiers of the score.
+ * @property {number} hcpi - Handicap index at the time of play.
+ * @property {number} hcp - Course handicap for the round.
+ * @property {number} ida - Front 9 score.
+ * @property {number} vta - Back 9 score.
+ * @property {number} gross - Gross score.
+ * @property {number} net - Net score.
+ * @property {string} tarj - Status of the card (e.g., 'OK', 'NPT', 'ERR').
+ * @property {string} bir - Number of birdies.
+ * @property {string} par_holes - Number of pars.
+ * @property {number} bog - Number of bogeys.
+ * @property {number} bg2 - Number of double bogeys.
+ * @property {number} bg3g - Number of triple bogeys or worse.
+ * @property {string} plus_bg3 - Notes on scores worse than triple bogey.
+ * @property {string} putts - Total number of putts.
+ * @property {string} tee_id - Identifier for the tee box played.
+ * @property {number} h01 - h18 - Scores for each of the 18 holes.
+ * @property {boolean} verified - Whether the scorecard has been verified.
+ * @property {string} [course_name] - Optional name of the course.
+ * @property {string} [player_name] - Optional name of the player.
+ * @property {string} [tee_name] - Optional name of the tee box.
+ */
 interface PlayerCard {
   id: number;
   player_id: string;
@@ -52,10 +87,47 @@ interface PlayerCard {
   tee_name?: string;
 }
 
+/**
+ * @interface PlayerCardDetailProps
+ * @description Defines the props for the PlayerCardDetail component.
+ * @property {number} cardId - The unique identifier of the player card to display.
+ */
 interface PlayerCardDetailProps {
   cardId: number;
 }
 
+/**
+ * @component PlayerCardDetail
+ * @description Fetches and displays detailed information for a specific player card.
+ * Allows editing of the player card data if the user has appropriate permissions (implicitly, through API).
+ * @param {PlayerCardDetailProps} props - The props for the component.
+ * @param {number} props.cardId - The ID of the player card to fetch and display.
+ *
+ * @remarks
+ * - Fetches player card data from `/api/player-cards/:cardId` on mount or when `cardId` changes.
+ * - Manages `loading`, `error`, and `isEditing` states.
+ * - `formData` state holds the card data for editing purposes, initialized with fetched `playerCard` data.
+ * - Provides an "Edit" button to toggle `isEditing` state.
+ * - When editing:
+ *    - Renders a form with input fields for all editable player card attributes (scores, handicap info, hole scores, etc.).
+ *    - "Save" button submits changes via a PUT request to `/api/player-cards/:cardId`.
+ *    - "Cancel" button reverts changes and exits editing mode.
+ * - When not editing, displays player card details in a read-only format.
+ * - Helper functions `getFrontNineTotal`, `getBackNineTotal`, and `getTotalStrokes` calculate sum of scores.
+ * - Displays player name, course name, play date, and detailed sections for Score, Handicap & Status, Statistics, Scorecard (hole-by-hole), and Additional Information.
+ *
+ * Called by:
+ * - `frontend/pages/player-cards/[id].tsx`
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `axios.get` (to fetch player card data from `/api/player-cards/:cardId`)
+ * - `axios.put` (to update player card data at `/api/player-cards/:cardId`)
+ * - `next/link`'s `Link` component (for navigation back to the player cards list)
+ * - Internal helper functions: `getFrontNineTotal`, `getBackNineTotal`, `getTotalStrokes`.
+ *
+ * @returns {JSX.Element} The rendered player card detail view or edit form.
+ */
 const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
   const [playerCard, setPlayerCard] = useState<PlayerCard | null>(null);
   const [loading, setLoading] = useState(true);

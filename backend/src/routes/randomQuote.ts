@@ -1,9 +1,23 @@
-import { Router } from 'express';
+/**
+ * @fileoverview Route for fetching a random golf quote.
+ *
+ * @remarks
+ * This module defines a single API endpoint (`/random-quote`) that retrieves a random quote
+ * from the `golf_quotes` table in the database.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library - for Router)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
+ */
+import { Router, Request, Response } from 'express';
 import { pool } from '../db';
 
-const router = Router();
+const router: Router = Router();
 
-router.get('/random-quote', async (req, res) => {
+router.get('/random-quote', async (req: Request, res: Response) => {
   try {
     const result = await pool.query(
       'SELECT * FROM golf_quotes ORDER BY RANDOM() LIMIT 1'

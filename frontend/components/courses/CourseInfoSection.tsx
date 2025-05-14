@@ -11,6 +11,33 @@ interface CourseInfoSectionProps {
   setWebsite: (value: string) => void;
 }
 
+/**
+ * @component CourseInfoSection
+ * @description A form section for inputting basic course identification details.
+ * It includes fields for course name, country (dropdown), city/province, and an optional website URL.
+ * @param {CourseInfoSectionProps} props - The props for the component.
+ * @param {string} props.courseName - The current value for the course name input.
+ * @param {(value: string) => void} props.setCourseName - Callback to update the course name.
+ * @param {string} props.country - The current selected value for the country dropdown.
+ * @param {(value: string) => void} props.setCountry - Callback to update the selected country.
+ * @param {string} props.cityProvince - The current value for the city/province input.
+ * @param {(value: string) => void} props.setCityProvince - Callback to update the city/province.
+ * @param {string} props.website - The current value for the website URL input.
+ * @param {(value: string) => void} props.setWebsite - Callback to update the website URL.
+ *
+ * @remarks
+ * This component is designed to be part of a larger form, likely for creating or editing course information.
+ * It provides controlled input fields and a select dropdown for country selection.
+ * Input fields for course name and city/province are marked as required.
+ *
+ * Called by:
+ * - `frontend/pages/courses/new.tsx` (as part of the new course creation form)
+ *
+ * Calls:
+ * - React (implicitly, as it's a React functional component)
+ *
+ * @returns {React.FC<CourseInfoSectionProps>} The rendered form section for course information.
+ */
 const CourseInfoSection: React.FC<CourseInfoSectionProps> = ({
   courseName,
   setCourseName,

@@ -1,11 +1,50 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
+/**
+ * @interface LogViewerProps
+ * @description Defines the props for the LogViewer component.
+ * @property {() => void} onClose - Callback function to close the log viewer.
+ * @property {boolean} visible - Controls the visibility of the log viewer.
+ */
 interface LogViewerProps {
   onClose: () => void;
   visible: boolean;
 }
 
+/**
+ * @component LogViewer
+ * @description A component that displays application logs fetched from an API endpoint.
+ * It provides functionality to reload and clear logs.
+ *
+ * @remarks
+ * - Manages internal state for `logs` (the log content as a string), `loading`, and `error`.
+ * - `fetchLogs`: Asynchronously fetches logs from the `/api/logs` endpoint.
+ *   - Sets loading state and handles potential errors during the fetch.
+ * - `useEffect`: Calls `fetchLogs` when the `visible` prop becomes true.
+ * - If `visible` is false, the component renders `null`.
+ * - Renders a fixed-position panel at the top of the screen when visible.
+ * - Includes:
+ *   - A title "Application Logs".
+ *   - A "Reload" button (with a spinning icon during load) that calls `fetchLogs`.
+ *   - A close button (X icon) that calls the `onClose` prop.
+ *   - An error message display area if `error` state is set.
+ *   - A scrollable area (`maxHeight: 50vh`) to display the log content within a `<pre>` tag for formatting.
+ *   - Shows a loading spinner or "No logs available" message within the log display area based on state.
+ *   - A "Clear Logs" button that sends a DELETE request to `/api/logs` and then calls `fetchLogs` to refresh.
+ * - Uses `@heroicons/react/24/outline` for icons (`XMarkIcon`, `ArrowPathIcon`).
+ *
+ * Called by:
+ * - `frontend/pages/_app.tsx` (conditionally rendered, currently commented out)
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - Browser API: `fetch` (to GET and DELETE from `/api/logs`)
+ * - `@heroicons/react/24/outline`: `XMarkIcon`, `ArrowPathIcon` components.
+ *
+ * @param {LogViewerProps} props - The props for the component.
+ * @returns {React.FC<LogViewerProps> | null} The rendered log viewer panel or null if not visible.
+ */
 const LogViewer: React.FC<LogViewerProps> = ({ onClose, visible }) => {
   const [logs, setLogs] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);

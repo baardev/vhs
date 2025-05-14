@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Middleware for JWT authentication.
+ *
+ * @remarks
+ * This module provides middleware to verify JWT tokens from the authorization header.
+ * It defines a custom `AuthRequest` interface that extends Express's `Request` type to include user information.
+ * If authentication is successful, it attaches the user object (containing `id` and optionally `is_editor`) to the request object.
+ *
+ * Called by:
+ * - `backend/src/routes/admin.ts`
+ * - `backend/src/routes/adminAuth.ts`
+ * - `backend/src/routes/auth.ts`
+ * - `backend/src/routes/courses.ts`
+ * - `backend/src/routes/coursesData.ts`
+ * - `backend/src/routes/playerCards.ts`
+ *
+ * Calls:
+ * - `express` (external library - for Request, Response, NextFunction types)
+ * - `jsonwebtoken` (external library - for JWT verification)
+ */
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 
@@ -7,6 +27,12 @@ interface AuthRequest extends Request {
     id: number;
     is_editor?: boolean;
   };
+  // Explicitly include properties from Express.Request that might be causing issues
+  // These should be inherited, but being explicit can sometimes help the linter.
+  headers: Request['headers'];
+  body: Request['body'];
+  params: Request['params'];
+  query: Request['query'];
 }
 
 // Middleware to verify JWT token

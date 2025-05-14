@@ -4,7 +4,9 @@
  - JW: email not working (for pw reset and securioty logs)
  - JW: database still must be rebuilt, so still volatile
  - JW: test apparmor - last time I think it broke the site due to over aggressive security
+
  - VN: need wireframes, bg images, UI text, icons, logos
+ 
  - MR: Handicap api and UI
 
 

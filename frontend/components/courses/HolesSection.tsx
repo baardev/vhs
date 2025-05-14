@@ -11,6 +11,27 @@ interface HolesSectionProps {
   updateHole: (holeNumber: number, field: 'par' | 'strokeIndex', value: number) => void;
 }
 
+/**
+ * @component HolesSection
+ * @description Renders a form section for inputting hole-by-hole par and stroke index information for a golf course.
+ * @param {HolesSectionProps} props - The props for the component.
+ * @param {HoleInfo[]} props.holes - An array of objects, each representing a hole and containing its number, par, and stroke index.
+ * @param {(holeNumber: number, field: 'par' | 'strokeIndex', value: number) => void} props.updateHole - Callback function to update the par or stroke index for a specific hole.
+ *
+ * @remarks
+ * This component displays a table with rows for each hole (1 through 18 typically).
+ * For each hole, it provides number input fields for 'Par' (min 3, max 6) and 'Stroke Index' (min 1, max 18).
+ * These inputs are controlled and call the `updateHole` callback on change.
+ * It includes a note that par and stroke index are typically the same across all tee boxes.
+ *
+ * Called by:
+ * - `frontend/pages/courses/new.tsx` (as part of the new course creation form)
+ *
+ * Calls:
+ * - React (implicitly, as it's a React functional component)
+ *
+ * @returns {React.FC<HolesSectionProps>} The rendered form section for hole-by-hole information.
+ */
 const HolesSection: React.FC<HolesSectionProps> = ({ holes, updateHole }) => {
   return (
     <div className="p-6 border-b border-gray-200 dark:border-gray-800">

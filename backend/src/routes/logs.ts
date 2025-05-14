@@ -1,8 +1,30 @@
-import express from 'express';
+/**
+ * @fileoverview Routes for managing and viewing backend log files.
+ *
+ * @remarks
+ * This module defines API endpoints to interact with a backend log file (`/tmp/backend-debug.log`).
+ * It allows for:
+ * - Viewing all logs.
+ * - Adding new log entries via POST requests.
+ * - Clearing the log file.
+ * - Searching logs with a query parameter.
+ * - A test endpoint to add a sample log entry.
+ * The log file is initialized if it doesn't exist upon module load or first access.
+ * Note: Many route handlers currently use `@ts-ignore` to bypass TypeScript errors, which should be addressed.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `fs` (Node.js built-in module - for reading, writing, and checking existence of the log file)
+ * - `path` (Node.js built-in module - for constructing the log file path)
+ */
+import * as express from 'express';
 import fs from 'fs';
 import path from 'path';
 
-const router = express.Router();
+const router: express.Router = express.Router();
 const LOG_FILE_PATH = path.join('/tmp', 'backend-debug.log');
 
 // Initialize log file if it doesn't exist
@@ -18,8 +40,7 @@ try {
 }
 
 // View all logs
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/', (req, res) => {
+router.get('/', ((req, res) => {
   try {
     // Make sure the file exists
     if (!fs.existsSync(LOG_FILE_PATH)) {
@@ -38,11 +59,10 @@ router.get('/', (req, res) => {
       details: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
 // Add a log entry via HTTP request
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.post('/', (req, res) => {
+router.post('/', ((req, res) => {
   try {
     const { message, level = 'info', source = 'api' } = req.body;
     
@@ -68,11 +88,10 @@ router.post('/', (req, res) => {
       error: error instanceof Error ? error.message : 'Unknown error' 
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
 // Clear logs
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.delete('/', (req, res) => {
+router.delete('/', ((req, res) => {
   try {
     fs.writeFileSync(LOG_FILE_PATH, '');
     return res.json({ 
@@ -85,11 +104,10 @@ router.delete('/', (req, res) => {
       error: error instanceof Error ? error.message : 'Unknown error' 
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
 // Search logs
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/search', (req, res) => {
+router.get('/search', ((req, res) => {
   try {
     const { query } = req.query;
     
@@ -101,7 +119,7 @@ router.get('/search', (req, res) => {
     }
     
     const logs = fs.readFileSync(LOG_FILE_PATH, 'utf8');
-    const lines = logs.split('\n').filter(line => 
+    const lines = logs.split('\n').filter((line: string) => 
       line.toLowerCase().includes(String(query).toLowerCase())
     );
     
@@ -113,11 +131,10 @@ router.get('/search', (req, res) => {
       error: error instanceof Error ? error.message : 'Unknown error' 
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
 // Test endpoint
-// @ts-ignore - Bypass TypeScript errors temporarily
-router.get('/test', (req, res) => {
+router.get('/test', ((req, res) => {
   const timestamp = new Date().toISOString();
   const testMessage = `[${timestamp}] Test log message\n`;
   
@@ -134,6 +151,6 @@ router.get('/test', (req, res) => {
       error: error instanceof Error ? error.message : 'Unknown error'
     });
   }
-});
+}) as unknown as express.RequestHandler);
 
 export default router;

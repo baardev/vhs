@@ -1,3 +1,23 @@
+/**
+ * @fileoverview Routes for managing golf courses, tee boxes, holes, and attachments.
+ *
+ * @remarks
+ * This module defines API endpoints for CRUD operations on golf courses, including their tee boxes and holes.
+ * It also handles file uploads for course-related attachments like scorecards and rating certificates.
+ * Authentication is required for creating courses and uploading attachments.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `express-validator` (external library - for input validation)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
+ * - `./authenticateToken` (`backend/src/routes/authenticateToken.ts` - middleware for JWT authentication)
+ * - `multer` (external library - for handling file uploads)
+ * - `path` (Node.js built-in module - for file path manipulation)
+ * - `fs` (Node.js built-in module - for file system operations, e.g., creating directories)
+ */
 import { Router, Request, Response, NextFunction } from 'express';
 import { body, validationResult } from 'express-validator';
 import { pool } from '../db';

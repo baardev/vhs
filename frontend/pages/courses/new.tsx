@@ -5,7 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import CourseInfoSection from '../../components/courses/CourseInfoSection';
 import TeeBoxesSection from '../../components/courses/TeeBoxesSection';
 import HolesSection from '../../components/courses/HolesSection';
-import AttachmentsSection from '../../components/courses/AttachmentsSection';
+// import AttachmentsSection from '../../components/courses/AttachmentsSection';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",

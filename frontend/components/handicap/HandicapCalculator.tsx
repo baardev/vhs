@@ -1,6 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+/**
+ * @component HandicapCalculator
+ * @description A React functional component that calculates and displays a user's golf handicap index.
+ * It fetches handicap data from the `/api/handicap-calc` endpoint if the user is logged in.
+ * If not logged in, it prompts the user to log in or create an account.
+ * It handles loading and error states during data fetching.
+ * The handicap is calculated as 0.96 times the average differential, rounded to one decimal place.
+ *
+ * @remarks
+ * - Manages internal state for `handicapData`, `loading`, `error`, and `isLoggedIn`.
+ * - On mount, checks for a user token in `localStorage` to determine login status.
+ * - If logged in, calls `fetchHandicap` to get data from `/api/handicap-calc`.
+ * - Listens for `authChange` window events to update `isLoggedIn` state if authentication status changes.
+ * - Displays a loading spinner while fetching data.
+ * - Shows an error message if data fetching fails.
+ * - If `handicapData.is_mock` is true, it displays a note indicating mock data is used.
+ * - Provides a brief explanation that the handicap is based on the average of the 8 best differentials.
+ *
+ * Called by:
+ * - `frontend/pages/handicap.tsx`
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `localStorage.getItem('token')` (to check authentication status)
+ * - `window.addEventListener('authChange', ...)` and `window.removeEventListener('authChange', ...)` (to listen for authentication changes)
+ * - `fetch('/api/handicap-calc')` (to get handicap data)
+ * - `next/link`'s `Link` component (for Login and Create Account links when not logged in)
+ * - Internal `calculateHandicap` function.
+ *
+ * @returns {React.FC} The rendered HandicapCalculator component.
+ */
 const HandicapCalculator: React.FC = () => {
   // The local React state manages our handicap data.
   // 'handicapData' stores the JSON response from the /api/handicap-calc endpoint,

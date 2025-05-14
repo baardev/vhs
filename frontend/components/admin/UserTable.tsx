@@ -19,6 +19,38 @@ interface User {
   [key: string]: string | number | boolean | undefined;
 }
 
+/**
+ * @component UserTable
+ * @description Displays a sortable and paginated table of users with administrative actions.
+ *
+ * @remarks
+ * This component fetches a list of users from the `/api/admin/users` endpoint
+ * and displays them in a table. It supports sorting by ID, username, email, creation date,
+ * admin status, and editor status. Pagination is implemented to handle large numbers of users.
+ * For each user, administrators can:
+ *  - Edit user details (opens the `UserEditModal`).
+ *  - Delete a user (opens the `UserDeleteModal`).
+ *  - Toggle the user's admin status (sends a PATCH request to `/api/admin/users/:id/admin`).
+ *  - Toggle the user's editor status (sends a PATCH request to `/api/admin/users/:id/editor`).
+ *
+ * The component manages loading states, displays success or error messages, and utilizes
+ * `next-i18next` for internationalization.
+ *
+ * Called by:
+ * - `frontend/pages/admin/index.tsx` (as `AdminUserTable`)
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`, `useCallback`
+ * - `axios.get` (to `/api/admin/users` for fetching users)
+ * - `axios.patch` (to `/api/admin/users/:id/admin` and `/api/admin/users/:id/editor` for status updates)
+ * - `useTranslation` (from `next-i18next` for i18n)
+ * - `localStorage.getItem` (to retrieve JWT for API authorization)
+ * - `UserEditModal` (component for editing user details)
+ * - `UserDeleteModal` (component for confirming user deletion)
+ * - Internal handlers for sorting, pagination, and user actions.
+ *
+ * @returns {React.FC} The rendered user table component with administrative functionalities.
+ */
 const UserTable = () => {
   const { t } = useTranslation('common');
   const [users, setUsers] = useState<User[]>([]);

@@ -3,11 +3,48 @@ import { useRouter } from 'next/router';
 import axios from 'axios';
 import { useTranslation } from 'next-i18next';
 
+/**
+ * @interface LogoutButtonProps
+ * @description Defines the props for the LogoutButton component.
+ * @property {'primary' | 'secondary' | 'text'} [variant='primary'] - The visual style of the button.
+ * @property {string} [className=''] - Additional CSS classes to apply to the button.
+ */
 interface LogoutButtonProps {
   variant?: 'primary' | 'secondary' | 'text';
   className?: string;
 }
 
+/**
+ * @component LogoutButton
+ * @description Renders a button that, when clicked, logs the user out of the application.
+ *
+ * @remarks
+ * - Manages an `isLoggingOut` state to provide visual feedback and disable the button during the logout process.
+ * - `handleLogout` function:
+ *   - Retrieves the authentication token from `localStorage`.
+ *   - Sends a POST request to the `/api/auth/logout` endpoint with the token in the Authorization header.
+ *   - Clears `token` and `userData` from `localStorage`.
+ *   - Dispatches an `authChange` event on the `window` object to notify other parts of the application about the authentication state change.
+ *   - Redirects the user to the `/login` page using `next/router`.
+ *   - In case of an error during the API call, it still clears local storage and redirects to ensure the user is logged out client-side.
+ * - Supports different visual variants ('primary', 'secondary', 'text') which determine its styling.
+ * - Uses `next-i18next` for internationalizing the button text (e.g., "Sign Out", "Logging Out...").
+ *
+ * Called by:
+ * - `frontend/components/common/Navbar.tsx` (in both desktop and mobile views)
+ * - `frontend/pages/profile.tsx`
+ *
+ * Calls:
+ * - React Hooks: `useState`
+ * - `next/router`: `useRouter` hook (for navigation)
+ * - `axios.post` (to call the logout API endpoint)
+ * - `next-i18next`: `useTranslation` hook (for internationalization)
+ * - `localStorage.getItem`, `localStorage.removeItem` (for token and user data management)
+ * - `window.dispatchEvent` (to signal authentication state change)
+ *
+ * @param {LogoutButtonProps} props - The props for the component.
+ * @returns {React.FC<LogoutButtonProps>} The rendered logout button.
+ */
 const LogoutButton: React.FC<LogoutButtonProps> = ({
   variant = 'primary',
   className = ''

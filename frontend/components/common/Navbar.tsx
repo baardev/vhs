@@ -4,6 +4,37 @@ import { useTranslation } from 'next-i18next';
 import { useState, useEffect } from 'react';
 import LogoutButton from '../LogoutButton';
 
+/**
+ * @component Navbar
+ * @description Renders the main navigation bar for the application.
+ * It displays different links based on the user's authentication status and roles (admin/editor).
+ * Features a responsive design with a hamburger menu for mobile devices.
+ *
+ * @remarks
+ * - Manages `isLoggedIn`, `username`, and `isEditor` states based on `localStorage` data.
+ * - Listens to `storage` and `authChange` window events to update authentication status dynamically.
+ * - Uses a `mounted` state to prevent hydration mismatches with translated content, showing a skeleton loader initially.
+ * - Includes links to Home, Courses, Player Scorecards.
+ * - Conditionally displays links to Admin dashboard, Editor dashboard, Profile, Sign In, and Create Account.
+ * - Integrates the `LogoutButton` component.
+ * - Uses `next-i18next` for internationalization of link texts and labels.
+ * - Includes a temporary `useEffect` for debugging translations (should be removed in production).
+ *
+ * Called by:
+ * - `frontend/pages/_app.tsx` (as part of the main application layout)
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `next/link`'s `Link` component (for client-side navigation)
+ * - `next-i18next`'s `useTranslation` hook (for internationalization)
+ * - `localStorage.getItem` (to retrieve `token` and `userData`)
+ * - `JSON.parse` (to parse `userData`)
+ * - `window.addEventListener` and `window.removeEventListener` (for `storage` and `authChange` events)
+ * - `LogoutButton` component
+ * - SVG icons (for logo and hamburger menu)
+ *
+ * @returns {React.FC} The rendered navigation bar component.
+ */
 const Navbar = () => {
   const { t, ready, i18n } = useTranslation('common');
 //   const router = useRouter();

@@ -19,6 +19,32 @@ const getBaseUrl = () => {
   return '';
 };
 
+/**
+ * @component CourseCardGrid
+ * @description Fetches and displays a grid of course cards, allowing users to navigate to detailed course pages.
+ *
+ * @remarks
+ * This component performs the following actions:
+ * - On mount, it fetches a list of courses from the `/api/coursesData/course-names` API endpoint.
+ * - It manages loading and error states for the API request.
+ * - Displays courses in a responsive grid. Each card shows the course name (defaulting to "Unknown Course" if unavailable),
+ *   location (city, state, country), and its unique ID.
+ * - Each card is clickable and includes a "View Details" button, both of which trigger navigation.
+ * - Handles navigation to a specific course page (e.g., `/course-data/[courseId]`) upon user interaction.
+ * - Renders appropriate messages for loading state, error occurrences, or when no courses are found.
+ *
+ * Called by:
+ * - [Information needed: Please specify which file/component imports and uses `CourseCardGrid`. Example: `frontend/pages/course-data/index.tsx`]
+ *
+ * Calls:
+ * - React Hooks: `useState` (for managing courses, loading state, and error messages), `useEffect` (for fetching data on mount)
+ * - `next/router`: `useRouter` (for programmatic navigation)
+ * - `axios.get`: (to make HTTP GET requests to the course names API endpoint)
+ * - Internal helper function `getBaseUrl`: (to construct the base URL for API calls)
+ * - Internal event handler `handleCardClick`: (to manage navigation when a course card is clicked)
+ *
+ * @returns {React.FC} The rendered grid of course cards, or a message indicating loading, error, or empty state.
+ */
 const CourseCardGrid = () => {
   const router = useRouter();
   const [courses, setCourses] = useState<CourseName[]>([]);

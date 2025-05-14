@@ -1,3 +1,25 @@
+/**
+ * @fileoverview Routes for managing player scorecards.
+ *
+ * @remarks
+ * This module defines API endpoints for CRUD operations on player scorecards.
+ * It includes routes to:
+ * - Fetch all player cards with course and user information.
+ * - Fetch player cards for a specific player or a specific course.
+ * - Fetch chart data (last 50 'OK' scorecards) for the currently logged-in user.
+ * - Fetch a specific player card by its ID.
+ * - Update a specific player card by its ID.
+ * Authentication is used for fetching user-specific chart data.
+ * A `PlayerCard` interface is defined locally for type safety, though it's noted it could be moved to a shared types file.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides `pool` and `safeQuery` for database interaction)
+ * - `./authenticateToken` (`backend/src/routes/authenticateToken.ts` - for `AuthRequest` type and JWT authentication middleware)
+ */
 import { Router, Request, Response, NextFunction } from 'express';
 import { pool, safeQuery } from '../db';
 import authenticateToken, { AuthRequest } from './authenticateToken'; // Ensure AuthRequest is imported if needed

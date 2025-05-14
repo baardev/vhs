@@ -1,6 +1,14 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 
+/**
+ * @interface Article
+ * @description Defines the structure for a single news article object.
+ * @property {string} title - The title of the news article.
+ * @property {string} url - The URL to the full news article.
+ * @property {string} publishedAt - The publication date of the article.
+ * @property {{ name: string }} source - An object containing the name of the news source.
+ */
 interface Article {
     title: string;
     url: string;
@@ -8,6 +16,37 @@ interface Article {
     source: { name: string };
 }
 
+/**
+ * @component GolfNewsHeadlines
+ * @description Fetches and displays a list of the latest golf news headlines.
+ * It retrieves news articles from the `/api/golf-news` endpoint, respecting the current locale for language.
+ *
+ * @remarks
+ * - Manages internal state for `headlines` (array of articles), `loading`, `error`, and `debug` messages.
+ * - Uses `next/router` to get the current `locale` and fetches news accordingly.
+ * - On mount and when `locale` changes, it calls `fetchHeadlines`.
+ * - `fetchHeadlines`: 
+ *   - Makes an asynchronous GET request to `/api/golf-news?lang=[locale]` with `Cache-Control: no-cache` header.
+ *   - Limits the displayed headlines to the first 8 articles received.
+ *   - Handles API response errors and sets an error message if fetching fails.
+ *   - Sets a `debug` string with information about the fetch process (URL, status, number of articles).
+ * - Displays a loading message while data is being fetched.
+ * - Displays an error message if the fetch fails.
+ * - Displays "No headlines available" if the fetch is successful but returns no articles.
+ * - Renders a list of article titles, each linking to the full article in a new tab.
+ * - Optionally displays debug information if the `debug` state is set.
+ *
+ * Called by:
+ * - `frontend/pages/index.tsx` (on the home page)
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `next/router`: `useRouter` hook (to get current locale)
+ * - Browser API: `fetch` (to get data from `/api/golf-news`)
+ * - Browser API: `window.location.origin` (to construct the full API URL for debugging)
+ *
+ * @returns {JSX.Element} The rendered list of golf news headlines, or loading/error/no data states.
+ */
 export default function GolfNewsHeadlines() {
     const [headlines, setHeadlines] = useState<Article[]>([]);
     const [loading, setLoading] = useState(true);

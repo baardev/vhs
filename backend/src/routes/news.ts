@@ -1,4 +1,24 @@
-import express, { Request, Response } from 'express';
+/**
+ * @fileoverview Routes for fetching golf-related news articles from NewsAPI.
+ *
+ * @remarks
+ * This module defines API endpoints to get golf news. It fetches data from the NewsAPI,
+ * filters out articles containing blocked words (e.g., political terms), and returns a limited set of articles.
+ * It supports language selection via a query parameter and has a debug endpoint to check API key status.
+ * Blocked words are loaded from a file or a default list.
+ * Environment variables (e.g., `NEWS_API_KEY`, `BLOCKED_WORDS_FILE`) are used for configuration.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `axios` (external library - for making HTTP requests to the NewsAPI)
+ * - `dotenv` (external library - for loading environment variables)
+ * - `fs` (Node.js built-in module - for reading the blocked words file)
+ * - `path` (Node.js built-in module - for constructing file paths)
+ */
+import express, { Request, Response, Router } from 'express';
 import axios from 'axios';
 import dotenv from 'dotenv';
 import fs from 'fs';
@@ -17,13 +37,13 @@ const BLOCKED_WORDS_PATH = process.env.BLOCKED_WORDS_FILE || path.join(__dirname
 function getBlockedWords(): string[] {
   try {
     const txt = fs.readFileSync(BLOCKED_WORDS_PATH, 'utf-8');
-    return txt.split(/\r?\n/).map(w => w.trim().toLowerCase()).filter(Boolean);
+    return txt.split(/\r?\n/).map((w: string) => w.trim().toLowerCase()).filter(Boolean);
   } catch {
     return DEFAULT_BLOCKED;
   }
 }
 
-const router = express.Router();
+const router: Router = express.Router();
 
 // Define the expected structure of the response
 interface NewsApiResponse {

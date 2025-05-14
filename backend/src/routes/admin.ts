@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Admin routes for managing users.
+ *
+ * @remarks
+ * This module defines API endpoints for administrative actions such as listing, creating, updating, and deleting users,
+ * as well as managing admin privileges. All routes in this module require authentication and admin privileges.
+ *
+ * Called by:
+ * - `backend/src/index.ts`
+ *
+ * Calls:
+ * - `express` (external library)
+ * - `bcrypt` (external library)
+ * - `express-validator` (external library)
+ * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
+ * - `./authenticateToken` (`backend/src/routes/authenticateToken.ts` - middleware for JWT authentication)
+ * - `./adminAuth` (`backend/src/routes/adminAuth.ts` - middleware for admin authorization)
+ */
 import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import { body, validationResult } from 'express-validator';
