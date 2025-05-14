@@ -32,6 +32,43 @@ const countryMap: Record<string, string> = {
   other: '🌍 Other'
 };
 
+/**
+ * @page CoursesPage
+ * @description A Next.js page component that displays a list of golf courses from a database.
+ * This page is accessible at `/courses`.
+ *
+ * @remarks
+ * - Fetches a list of courses from the `/api/courses` endpoint on component mount.
+ * - Manages `courses`, `isLoading`, `error`, and `isAuthenticated` states.
+ * - `isAuthenticated` state is determined by checking for a 'token' in `localStorage`.
+ * - Displays a loading message while courses are being fetched.
+ * - Shows an error message if the API call fails.
+ * - If no courses are found:
+ *   - If authenticated, prompts the user to "Add your first course" with a link to `/courses/new`.
+ *   - If not authenticated, prompts the user to "Sign in to add a new course" with a link to `/login`.
+ * - If courses are loaded, displays them in a responsive grid (1, 2, or 3 columns based on screen size).
+ * - Each course card shows:
+ *   - Course Name (defaults to "Unknown Course").
+ *   - City, Province/State, and Country (defaulting to "Unknown ..." if data is missing).
+ *   - Course ID.
+ *   - A "View Details" button that links to `/courses/[course_id]` for that specific course.
+ * - Provides an "Add New Course" button (links to `/courses/new`) if the user is authenticated,
+ *   otherwise, it shows a "Log in to add new courses" button (links to `/login`).
+ * - Uses `Geist` and `Geist_Mono` fonts.
+ * - The `countryMap` constant is defined but not directly used in this component for displaying course cards (it seems intended for more detailed views).
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to the `/courses` URL.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `next/link`: `Link` component (for navigation to course details, new course page, or login).
+ * - `next/router`: `useRouter` hook (though not directly used for its properties in the current logic, it's imported).
+ * - `axios.get` (to fetch course data from `/api/courses`).
+ * - `localStorage.getItem` (to check for authentication token).
+ *
+ * @returns {JSX.Element} The rendered page displaying a list of golf courses or relevant messages.
+ */
 export default function CoursesPage() {
   const router = useRouter();
   const [courses, setCourses] = useState<Course[]>([]);

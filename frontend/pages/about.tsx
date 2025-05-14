@@ -3,6 +3,27 @@ import { GetStaticProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @page AboutPage
+ * @description A static Next.js page that displays information about the Virtual Handicap System.
+ * It includes sections detailing the mission, key features of the application, and contact information.
+ * The content is internationalized using `next-i18next`.
+ *
+ * @remarks
+ * - **Content**: Displays static informational content.
+ * - **Internationalization**: Uses `useTranslation` hook from `next-i18next` to load translated strings.
+ *   The `getStaticProps` function is used to provide the necessary i18n props for pre-rendering.
+ * - **Layout**: Standard page layout, likely inheriting global styles and components like Navbar/Footer from `_app.tsx`.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to `/about`.
+ *
+ * Calls:
+ * - `useTranslation` (from `next-i18next` for translations).
+ * - `getI18nProps` (via `getStaticProps` for i18n setup).
+ *
+ * @returns {JSX.Element} The rendered About Us page content.
+ */
 const AboutPage: React.FC = () => {
   const { t } = useTranslation('common');
 

@@ -3,6 +3,29 @@ import { GetStaticProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @page TermsPage
+ * @description A static Next.js page that displays the Terms of Service for the Virtual Handicap System.
+ * It outlines the rules and guidelines users must agree to when using the service. The content is
+ * organized into sections covering user accounts, service provisions, prohibited activities, termination,
+ * and modifications to the terms. The content is internationalized using `next-i18next`.
+ *
+ * @remarks
+ * - **Content**: Displays static legal/informational content regarding the terms of service.
+ * - **Internationalization**: Uses `useTranslation` hook from `next-i18next` to load translated strings
+ *   for various sections of the terms.
+ *   The `getStaticProps` function is used to provide the necessary i18n props for pre-rendering.
+ * - **Layout**: Standard page layout, expected to inherit global styles and components (Navbar/Footer) from `_app.tsx`.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to `/terms` (e.g., from a link in the footer).
+ *
+ * Calls:
+ * - `useTranslation` (from `next-i18next` for translations).
+ * - `getI18nProps` (via `getStaticProps` for i18n setup).
+ *
+ * @returns {JSX.Element} The rendered Terms of Service page content.
+ */
 const TermsPage: React.FC = () => {
   const { t } = useTranslation('common');
 

@@ -7,11 +7,19 @@ import { getI18nProps } from '../../utils/i18n-helpers';
 import Link from 'next/link';
 import axios from 'axios';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
@@ -83,7 +91,12 @@ interface CourseHoleData {
   h18: number;
 }
 
-// Get the base URL for API requests
+/**
+ * @function getBaseUrl
+ * @description Helper function to determine the base URL for API requests.
+ * Returns the current window origin if in a browser environment, otherwise an empty string.
+ * @returns {string} The base URL or an empty string.
+ */
 const getBaseUrl = () => {
   if (typeof window !== 'undefined') {
     return window.location.origin;
@@ -91,6 +104,42 @@ const getBaseUrl = () => {
   return '';
 };
 
+/**
+ * @page CourseEditor
+ * @description A page component for editing detailed golf course information. This page is intended
+ * for users with editor privileges and allows modification of course names, locations, tee box data
+ * (including individual hole pars for each tee), and other specific hole data (e.g., stroke indices, yardages).
+ *
+ * @remarks
+ * - **Authentication & Authorization**: Checks for a JWT token in `localStorage` and verifies if the
+ *   user has `is_editor` status from `localStorage.getItem('userData')`. Redirects to `/login` or `/` if
+ *   not authorized.
+ * - **Data Fetching**: 
+ *   - Fetches a list of all courses from `/api/coursesData/course-names`.
+ *   - Upon selecting a course, fetches its tee box details from `/api/coursesData/course-data/:courseId`.
+ *   - Fetches specific hole data (like stroke indices or yardages per category/gender) from `/api/coursesData/course-hole-data/:courseId`.
+ * - **Data Editing & Saving**:
+ *   - Course general info (name, city, state, country) via PUT to `/api/coursesData/course-names/:courseId`.
+ *   - Tee box data (name, gender, par, ratings, length, individual hole pars) via PUT to `/api/coursesData/course-data/:id` (where `id` is the tee data ID).
+ *   - Course hole data (category-specific values for each of the 18 holes) via PUT to `/api/coursesData/course-hole-data/:id` (where `id` is the hole data record ID).
+ * - **State Management**: Uses `useState` for managing loading states, selected course, fetched data arrays (`courses`, `courseData`, `courseHoleData`), form data for edits (`formData`), edit mode (`editMode`), and success/error messages.
+ * - **UI**: Displays data in tables and provides forms for editing. Uses Geist fonts and `next-i18next` for translations.
+ * - **Interfaces**: `Course`, `CourseData`, `CourseHoleData` define the structure of the data being handled.
+ *
+ * Called by:
+ * - Next.js router, typically when an authorized editor navigates to `/editor/courses`.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`.
+ * - Next.js: `useRouter`, `Link`.
+ * - `axios.get`, `axios.put` for API interactions.
+ * - `localStorage.getItem` (for token and user data).
+ * - `useTranslation` (from `next-i18next`).
+ * - Helper functions: `getBaseUrl`, `renderHoleDataRow`, `renderHoleDataInputRow`.
+ * - `getI18nProps` (via `getStaticProps`).
+ *
+ * @returns {JSX.Element | null} The rendered course editor page, a loading indicator, or null if redirecting.
+ */
 const CourseEditor = () => {
   const { t } = useTranslation('common');
   const router = useRouter();

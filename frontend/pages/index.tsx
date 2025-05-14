@@ -6,16 +6,52 @@ import GolfNewsHeadlines from '../components/GolfNewsHeadlines';
 import RandomQuote from '../components/RandomQuote';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font, applied via CSS variable.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font, applied via CSS variable.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page HomePage
+ * @description The main landing page (homepage) for the application.
+ * It displays a welcome message, a random quote, a list of key features,
+ * and a section for golf news headlines.
+ *
+ * @remarks
+ * - **Content Sections**:
+ *   - Header with a `RandomQuote` component.
+ *   - Main section with a welcome title, subtitle, and a features list.
+ *   - A section displaying `GolfNewsHeadlines`.
+ * - **Internationalization**: Uses `useTranslation` hook from `next-i18next`.
+ *   `getServerSideProps` is used with `getI18nProps` to fetch translations on each request,
+ *   enabling server-side rendering or dynamic rendering with up-to-date translations.
+ * - **Styling**: Uses Geist fonts (`geistSans`, `geistMono`) and Tailwind CSS for layout and styling.
+ * - **Components**: Utilizes `RandomQuote` and `GolfNewsHeadlines` child components.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to the root path (`/`).
+ *
+ * Calls:
+ * - `useTranslation` (from `next-i18next`).
+ * - `RandomQuote` (component).
+ * - `GolfNewsHeadlines` (component).
+ * - `getI18nProps` (via `getServerSideProps`).
+ *
+ * @returns {JSX.Element} The rendered homepage.
+ */
 export default function Home() {
   const { t } = useTranslation('common');
 

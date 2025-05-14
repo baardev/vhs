@@ -4,6 +4,13 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 // Interface for the PlayerCard data - can be shared or imported if defined elsewhere
+/**
+ * @interface NewPlayerCardData
+ * @description Defines the structure for a new player scorecard's data,
+ * covering all fields from basic info to hole-by-hole scores.
+ * Numeric fields that can be optional are typed as `number | string` to accommodate
+ * empty string from input, which are then processed before submission.
+ */
 interface NewPlayerCardData {
   player_id: string; // Or number, depending on your needs
   play_date: string; // Use string for input type='date'
@@ -36,16 +43,32 @@ interface NewPlayerCardData {
   verified: boolean;
 }
 
+/**
+ * @interface CourseName
+ * @description Defines the structure for a course object, typically used in dropdowns,
+ * containing the course ID and name.
+ */
 interface CourseName {
   course_id: number | string; // Match the type from your backend
   course_name: string;
 }
 
+/**
+ * @interface TeeType
+ * @description Defines the structure for a tee object, containing the tee ID and name,
+ * used for selecting a tee for a specific course.
+ */
 interface TeeType {
   tee_id: string; // Match the type from your backend (e.g., VARCHAR or an ID)
   tee_name: string; // Or tee_color, based on what you want to display
 }
 
+/**
+ * @constant initialFormData
+ * @description Provides the initial state for the new player card form,
+ * with default values for all fields.
+ * @type {NewPlayerCardData}
+ */
 const initialFormData: NewPlayerCardData = {
   player_id: '',
   play_date: '',
@@ -78,6 +101,47 @@ const initialFormData: NewPlayerCardData = {
   verified: false,
 };
 
+// Specific type for hole field keys to resolve linter error and improve type safety
+type HoleFieldKey =
+  | 'h01' | 'h02' | 'h03' | 'h04' | 'h05' | 'h06' | 'h07' | 'h08' | 'h09'
+  | 'h10' | 'h11' | 'h12' | 'h13' | 'h14' | 'h15' | 'h16' | 'h17' | 'h18';
+
+/**
+ * @page NewPlayerCardPage
+ * @description A Next.js page component for creating a new player scorecard.
+ * It provides a comprehensive form to input all necessary details for a scorecard,
+ * including course and tee selection (with dynamic fetching of tees based on selected course),
+ * play date, scores (gross, net, hole-by-hole), handicap information, and other
+ * miscellaneous details.
+ *
+ * @remarks
+ * - **State Management**: Uses `useState` for form data (`formData`), loading states (`loading`, `fetchingCourses`, `fetchingTees`),
+ *   error messages (`error`), and success messages (`successMessage`).
+ * - **Data Fetching**:
+ *   - Fetches a list of course names from `/api/courses/list-names` on component mount.
+ *   - Fetches a list of tees for a selected course from `/api/courses/:courseId/tees` when the course selection changes.
+ * - **Form Handling**:
+ *   - `handleChange`: Updates the `formData` state based on user input, handling different input types (text, number, checkbox).
+ *   - `handleSubmit`: Performs basic frontend validation, prepares data for submission (handles empty numeric fields),
+ *     and sends a POST request to `/api/player-cards` to create the new scorecard.
+ *   - `renderHoleInputs`: A helper function to generate input fields for 18 holes, split into front nine and back nine.
+ * - **Routing**: Uses `useRouter` for navigation after successful submission.
+ * - **Interfaces**: Uses `NewPlayerCardData`, `CourseName`, and `TeeType` to define data structures.
+ * - **Initial Data**: `initialFormData` provides default values for the form.
+ * - **User Experience**: Displays loading indicators during data fetching and submission, shows error and success messages.
+ *
+ * Called by:
+ * - Next.js routing system, typically when a user navigates to `/player-cards/new`.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`.
+ * - Next.js: `useRouter`, `Link`.
+ * - `axios.get` (to fetch courses and tees).
+ * - `axios.post` (to submit the new player card).
+ * - Helper function `renderHoleInputs`.
+ *
+ * @returns {JSX.Element} The rendered form page for creating a new player card.
+ */
 const NewPlayerCardPage = () => {
   const [formData, setFormData] = useState<NewPlayerCardData>(initialFormData);
   const [loading, setLoading] = useState(false);
@@ -225,10 +289,17 @@ const NewPlayerCardPage = () => {
   };
   
   // Helper for rendering hole inputs
+  /**
+   * @function renderHoleInputs
+   * @description A helper function that generates a series of number input fields for hole scores.
+   * @param {number} startHole - The starting hole number (e.g., 1 for front nine).
+   * @param {number} endHole - The ending hole number (e.g., 9 for front nine).
+   * @returns {JSX.Element[]} An array of JSX elements, each representing an input field for a hole.
+   */
   const renderHoleInputs = (startHole: number, endHole: number) => {
     const inputs = [];
     for (let i = startHole; i <= endHole; i++) {
-      const holeKey = `h${String(i).padStart(2, '0')}` as keyof NewPlayerCardData;
+      const holeKey = `h${String(i).padStart(2, '0')}` as HoleFieldKey;
       inputs.push(
         <div key={holeKey} className="mb-2">
           <label htmlFor={holeKey} className="block text-sm font-medium text-gray-700 dark:text-gray-300">Hole {i}:</label>

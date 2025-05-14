@@ -12,6 +12,26 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * @page CourseDataListPage
+ * @description A Next.js page component that displays a list or grid of golf courses.
+ * This page is accessible at `/course-data`.
+ *
+ * @remarks
+ * - Renders a main title "Golf Course Database".
+ * - Includes a descriptive paragraph inviting users to browse the database and click on cards for details.
+ * - Utilizes the `CourseCardGrid` component to fetch and display the actual list of course cards.
+ * - Applies `Geist` and `Geist_Mono` fonts to the page.
+ * - The primary content (the grid of courses) is delegated to the `CourseCardGrid` component.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to the `/course-data` URL.
+ *
+ * Calls:
+ * - `CourseCardGrid` component (to display the list/grid of courses).
+ *
+ * @returns {NextPage} The rendered page displaying a grid of course cards.
+ */
 const CourseDataListPage: NextPage = () => {
   return (
     <div className={`${geistSans.className} ${geistMono.className} course-data-page-background min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative`}>

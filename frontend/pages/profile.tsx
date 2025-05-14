@@ -5,16 +5,40 @@ import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 import LogoutButton from '../components/LogoutButton';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @interface User
+ * @description Defines the structure for a user's profile data.
+ * @property {number} id - The unique identifier of the user.
+ * @property {string} username - The username of the user.
+ * @property {string} email - The email address of the user.
+ * @property {string} [created_at] - The date when the user account was created (ISO string).
+ * @property {string} [first_name] - The user's first name (can also be under `name`).
+ * @property {string} [name] - The user's first name (alternative to `first_name`).
+ * @property {string} [family_name] - The user's family name or surname.
+ * @property {string} [matricula] - A unique identifier, possibly a membership number.
+ * @property {number} [handicap] - The user's golf handicap.
+ * @property {string} [gender] - The user's gender.
+ * @property {string} [birthday] - The user's birthday (date string, possibly YYYY-MM-DD).
+ * @property {string} [category] - A user-defined category or classification.
+ */
 interface User {
   id: number;
   username: string;
@@ -30,6 +54,38 @@ interface User {
   category?: string;
 }
 
+/**
+ * @page ProfilePage
+ * @description This page component allows authenticated users to view and manage their profile information.
+ * It fetches user data on load, displays it, and provides functionality to edit the profile,
+ * change the password, and delete the account.
+ *
+ * @remarks
+ * - **Authentication**: Redirects to `/login` if no authentication token is found in `localStorage`.
+ * - **Data Fetching**: Uses `fetchUserProfile` (wrapped in `useCallback`) to GET user data from `/api/auth/profile`.
+ * - **State Management**: Manages `user` object, `isEditing` mode, individual form field states (username, email, etc.),
+ *   `isLoading`, `error`, and `success` messages using `useState`.
+ * - **Profile Editing**: Toggles an edit form (`isEditing`). On submission (`handleUpdate`), sends a PUT request
+ *   to `/api/auth/profile` with updated data. Handles parsing of handicap string to number.
+ * - **Account Deletion**: `handleDeleteAccount` prompts for confirmation and sends a DELETE request to `/api/auth/profile`.
+ *   Clears `localStorage` token and redirects to `/login` on success.
+ * - **Navigation**: Uses `useRouter` for redirection. Provides `Link` to `/change-password` and a back-to-home link.
+ * - **Components**: Includes a `LogoutButton`.
+ * - **Styling**: Uses Geist fonts and Tailwind CSS.
+ *
+ * Called by:
+ * - Next.js router when an authenticated user navigates to `/profile`.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`, `useCallback`.
+ * - Next.js: `useRouter`, `Link`.
+ * - `axios.get`, `axios.put`, `axios.delete` for API interactions with `/api/auth/profile`.
+ * - `localStorage.getItem`, `localStorage.removeItem`.
+ * - `window.confirm` for delete confirmation.
+ * - `LogoutButton` component.
+ *
+ * @returns {JSX.Element} The rendered user profile page, or a loading indicator.
+ */
 export default function Profile() {
   const router = useRouter();
   const [user, setUser] = useState<User | null>(null);

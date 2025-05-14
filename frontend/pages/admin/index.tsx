@@ -16,6 +16,40 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * @page AdminDashboard
+ * @description Represents the admin dashboard page, accessible at `/admin`.
+ * This page is responsible for verifying administrator privileges and displaying an admin-specific user management table.
+ *
+ * @remarks
+ * - On mount, it performs an `useEffect` hook to check for admin status:
+ *   - Retrieves `token` and `userData` from `localStorage`.
+ *   - If no token is found, redirects to `/login`.
+ *   - If `userData` is found and `parsedData.is_admin` is true, sets `isAdmin` state to true.
+ *   - If `userData` is not found, `parsedData.is_admin` is false, or an error occurs during parsing, it sets `isAdmin` to false and redirects to the home page (`/`).
+ * - Manages `isLoading` and `isAdmin` states to control rendering.
+ *   - Shows a "Loading..." message while `isLoading` is true or `isAdmin` is null.
+ *   - If `isAdmin` is false after checks, it renders `null` (as redirection is handled in `useEffect`).
+ * - If the user is confirmed as an admin, it renders the main dashboard content:
+ *   - A title (e.g., "Admin Dashboard", translated using `useTranslation`).
+ *   - The `AdminUserTable` component, which handles the display and management of users.
+ * - Uses `Geist` and `Geist_Mono` fonts.
+ * - `getStaticProps`: Utilizes `getI18nProps` to provide internationalization props for the page, enabling server-side rendering of translated content.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to the `/admin` URL.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `next/router`: `useRouter` hook (for navigation/redirection)
+ * - `next-i18next`: `useTranslation` hook (for internationalization)
+ * - `localStorage.getItem` (to retrieve `token` and `userData`)
+ * - `JSON.parse` (to parse `userData`)
+ * - `AdminUserTable` component (to display the user management table)
+ * - `getI18nProps` (in `getStaticProps` for i18n setup)
+ *
+ * @returns {JSX.Element | null} The rendered admin dashboard page, a loading indicator, or null if redirecting.
+ */
 const AdminDashboard = () => {
   const { t } = useTranslation('common');
   const router = useRouter();

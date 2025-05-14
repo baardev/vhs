@@ -6,16 +6,52 @@ import { GetStaticProps } from 'next';
 import { getI18nProps } from '../../utils/i18n-helpers';
 import Link from 'next/link';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page EditorDashboard
+ * @description This page serves as the main dashboard for users with editor privileges.
+ * It verifies editor status based on user data stored in localStorage and, if authorized,
+ * displays a welcome message and navigation options to various content management sections,
+ * such as course management and scorecard template management.
+ *
+ * @remarks
+ * - **Authentication & Authorization**: Checks for a JWT token and `is_editor` flag in `localStorage`.
+ *   Redirects to `/login` if no token, or to `/` (homepage) if the user is not an editor.
+ * - **State Management**: Uses `useState` for `isEditor` (to store authorization status) and `isLoading`.
+ * - **UI**: Presents a dashboard layout with links to different editor functionalities.
+ *   Currently shows a link to `/editor/courses` for "Course Management" and a placeholder for "Scorecard Templates".
+ * - Uses Geist fonts and `next-i18next` for translations.
+ * - Includes `getStaticProps` for `next-i18next` internationalization.
+ *
+ * Called by:
+ * - Next.js router when an authenticated user navigates to `/editor` or `/editor/index`.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`.
+ * - Next.js: `useRouter`, `Link`.
+ * - `localStorage.getItem` (for token and `userData`).
+ * - `useTranslation` (from `next-i18next`).
+ * - `getI18nProps` (via `getStaticProps`).
+ *
+ * @returns {JSX.Element | null} The rendered editor dashboard, a loading indicator, or null if redirecting due to lack of authorization.
+ */
 const EditorDashboard = () => {
   const { t } = useTranslation('common');
   const router = useRouter();

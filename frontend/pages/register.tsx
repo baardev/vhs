@@ -7,16 +7,52 @@ import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font, applied via CSS variable.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font, applied via CSS variable.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page RegisterPage
+ * @description This page component provides a form for new users to register an account.
+ * It collects username, email, password, and password confirmation. On successful registration,
+ * it redirects the user to the login page.
+ *
+ * @remarks
+ * - **State Management**: Uses `useState` for form inputs (username, email, password, confirmPassword),
+ *   loading state (`isLoading`), and error messages (`error`).
+ * - **Form Validation**: Performs a client-side check to ensure that the password and confirm password fields match.
+ * - **API Interaction**: Makes a POST request to `/api/auth/register` with the registration details.
+ * - **Navigation**: Uses `useRouter` to redirect to `/login?registered=true` upon successful registration.
+ *   Provides a `Link` component for navigation to the `/login` page for existing users.
+ * - **Internationalization**: Uses `useTranslation` from `next-i18next` and `getStaticProps` with `getI18nProps` for translations.
+ * - **Styling**: Uses Geist fonts and Tailwind CSS.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to `/register`.
+ *
+ * Calls:
+ * - React Hooks: `useState`.
+ * - Next.js: `useRouter`, `Link`.
+ * - `axios.post` (to submit registration data to `/api/auth/register`).
+ * - `useTranslation` (from `next-i18next`).
+ * - `getI18nProps` (via `getStaticProps`).
+ *
+ * @returns {JSX.Element} The rendered user registration page.
+ */
 const Register = () => {
   const router = useRouter();
   const [username, setUsername] = useState('');

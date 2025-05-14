@@ -48,6 +48,11 @@ interface Course {
   attachments: Attachment[];
 }
 
+/**
+ * @constant countryMap
+ * @description Maps country codes (e.g., 'US', 'MX') to displayable strings including a flag emoji and country name.
+ * Used to render user-friendly country information for a course.
+ */
 const countryMap: Record<string, string> = {
   US: '🇺🇸 United States',
   MX: '🇲🇽 Mexico',
@@ -57,12 +62,48 @@ const countryMap: Record<string, string> = {
   other: '🌍 Other'
 };
 
+/**
+ * @constant genderLabel
+ * @description Maps gender keys ('male', 'female', 'other') to displayable labels (e.g., 'Men', 'Women').
+ * Used to render user-friendly gender information for tee boxes.
+ */
 const genderLabel: Record<string, string> = {
   'male': 'Men',
   'female': 'Women',
   'other': 'Other / Mixed'
 };
 
+/**
+ * @page CourseDetail
+ * @description A dynamic Next.js page component that displays comprehensive details for a specific golf course.
+ * The page path is `/courses/[id]`, where `[id]` is the unique identifier for the course.
+ *
+ * @remarks
+ * - Fetches course data from `/api/courses/:id` based on the `id` from the URL query parameter.
+ * - Manages `course` (fetched data), `isLoading`, and `error` states.
+ * - Displays a loading message while data is being fetched.
+ * - Displays an error message if fetching fails or if the course is not found, with a link back to the main courses page.
+ * - If course data is successfully loaded, it renders:
+ *   - A "Back to Courses" link.
+ *   - Course name, country (with flag emoji from `countryMap`), and city/province.
+ *   - A link to the course website, if available.
+ *   - A "Tee Information" section in a table, showing tee name, gender (from `genderLabel`), course rating, slope rating, and total yardage for each tee box.
+ *   - A "Hole-by-Hole Information" section with two tables (Front Nine, Back Nine) displaying Par and Stroke Index (S.I.) for each hole, along with OUT, IN, and TOTAL Par scores.
+ *   - An "Attachments" section if any attachments (scorecard, rating certificate, course info) are associated with the course, displaying the attachment type, original filename, and a link to view the attachment.
+ * - Uses `Geist` and `Geist_Mono` fonts.
+ * - Helper constants `countryMap` and `genderLabel` are used for displaying user-friendly country names and gender labels.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to a URL matching `/courses/[some_id]` (e.g., `/courses/42`).
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `next/router`: `useRouter` hook (to get the `id` from the URL path).
+ * - `next/link`: `Link` component (for navigation).
+ * - `axios.get` (to fetch course data from `/api/courses/:id`).
+ *
+ * @returns {JSX.Element} The rendered course detail page, a loading indicator, or an error message.
+ */
 export default function CourseDetail() {
   const router = useRouter();
   const { id } = router.query;

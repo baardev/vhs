@@ -3,6 +3,36 @@ import { GetStaticProps } from 'next';
 import Link from 'next/link';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @page ClearCache
+ * @description A utility page that attempts to clear various browser storage mechanisms
+ * including localStorage, sessionStorage, and cookies. It also dispatches an 'authChange' event.
+ * This is typically used to ensure a complete logout or to reset client-side state.
+ *
+ * @remarks
+ * - **Functionality**: On component mount (via `useEffect`), it calls `localStorage.clear()`, `sessionStorage.clear()`,
+ *   and iterates through `document.cookie` to set past expiry dates for cookies (basic approach).
+ * - **Event Dispatch**: After attempting to clear storage, it dispatches a global `authChange` event.
+ *   This can be listened to by other components (e.g., `_app.tsx`) to react to the logout state.
+ * - **User Feedback**: Displays a message indicating whether the cache clearing was successful or if an error occurred.
+ * - **Navigation**: Provides links to the Login page and the Homepage.
+ * - **Static Props**: Includes `getStaticProps` for `next-i18next` internationalization, though translations are not
+ *   explicitly used in the current visible text of the component itself beyond what `i18n-helpers` might provide globally.
+ *
+ * Called by:
+ * - Next.js router when a user navigates to `/clear-cache`.
+ *
+ * Calls:
+ * - `localStorage.clear()`
+ * - `sessionStorage.clear()`
+ * - `document.cookie` manipulation (to attempt cookie clearing).
+ * - `window.dispatchEvent` (to signal an `authChange`).
+ * - React Hooks: `useState`, `useEffect`.
+ * - Next.js: `Link`.
+ * - `getI18nProps` (via `getStaticProps`).
+ *
+ * @returns {JSX.Element} The rendered page displaying the cache clearing status and navigation links.
+ */
 export default function ClearCache() {
   const [cleared, setCleared] = useState(false);
   const [error, setError] = useState('');

@@ -1,6 +1,24 @@
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 
+/**
+ * @page ResetPassword
+ * @description This page component allows a user to reset their password using a token
+ * received via email (or another method). It validates the token from the URL query parameters,
+ * provides a form for entering and confirming a new password, and submits the new password
+ * along with the token to the backend API.
+ *
+ * @remarks
+ * - Called by: Next.js router when a user navigates to a URL like `/reset-password?token=some_token`.
+ *   Typically, this link is clicked from a password reset email.
+ * - Calls:
+ *   - `fetch` (to POST to `/api/auth/reset-password` with the token and new password)
+ *   - `useState` (React hook for managing password, confirmPassword, error, and success states)
+ *   - `useRouter` (Next.js hook for accessing URL query parameters like `token` and for navigation)
+ *   - `setTimeout` (to redirect the user to the login page after a successful password reset)
+ *
+ * @returns {JSX.Element} The rendered password reset page, or an error message if the token is invalid.
+ */
 const ResetPassword = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

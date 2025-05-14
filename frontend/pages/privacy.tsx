@@ -3,6 +3,29 @@ import { GetStaticProps } from 'next';
 import { useTranslation } from 'next-i18next';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @page PrivacyPage
+ * @description A static Next.js page that displays the Privacy Policy for the Virtual Handicap System.
+ * It outlines how user data is collected, used, disclosed, and safeguarded. The content is organized
+ * into sections such as Introduction, Information Collection, Use of Information, Sharing, Security, etc.
+ * The content is internationalized using `next-i18next`.
+ *
+ * @remarks
+ * - **Content**: Displays static legal/informational content regarding user privacy.
+ * - **Internationalization**: Uses `useTranslation` hook from `next-i18next` to load translated strings
+ *   for various sections and points of the policy.
+ *   The `getStaticProps` function is used to provide the necessary i18n props for pre-rendering.
+ * - **Layout**: Standard page layout, expected to inherit global styles and components (Navbar/Footer) from `_app.tsx`.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to `/privacy` (e.g., from a link in the footer).
+ *
+ * Calls:
+ * - `useTranslation` (from `next-i18next` for translations).
+ * - `getI18nProps` (via `getStaticProps` for i18n setup).
+ *
+ * @returns {JSX.Element} The rendered Privacy Policy page content.
+ */
 const PrivacyPage: React.FC = () => {
   const { t } = useTranslation('common');
 

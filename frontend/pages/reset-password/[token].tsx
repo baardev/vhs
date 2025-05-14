@@ -5,16 +5,46 @@ import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 import HomeLink from '../../components/common/HomeLink';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page ResetPasswordTokenPage
+ * @description This page component handles the password reset process when a user clicks a unique
+ * password reset link containing a token. It captures the token from the URL path (dynamic route),
+ * presents a form for the user to enter and confirm their new password, and then submits this
+ * information to the backend API to update the password.
+ *
+ * @remarks
+ * - Called by: Next.js router for dynamic routes matching `/reset-password/[token]` (e.g., `/reset-password/xyz123abc`).
+ *   This link is typically provided in a password reset email.
+ * - Calls:
+ *   - `axios.post` (to `/api/auth/reset-password` with the token and new password)
+ *   - `useState`, `useEffect` (React hooks for managing component state and side effects)
+ *   - `useRouter` (Next.js hook for accessing the dynamic `token` route parameter and for navigation)
+ *   - `Link` (Next.js component for navigation to `/login`)
+ *   - `HomeLink` (custom component, likely for navigating to the homepage)
+ *   - `setTimeout` (to redirect after successful password reset)
+ * - Utilizes `geistSans` and `geistMono` for font styling.
+ * - Displays success/error messages based on the API response and form validation.
+ *
+ * @returns {JSX.Element} The rendered password reset form page or an error/loading state.
+ */
 export default function ResetPassword() {
   const router = useRouter();
   const { token } = router.query;

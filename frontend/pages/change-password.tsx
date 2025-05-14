@@ -4,16 +4,54 @@ import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page ChangePassword
+ * @description This page component provides a form for authenticated users to change their account password.
+ * It requires the user to input their current password, a new password, and confirm the new password.
+ * Upon submission, it validates the input and makes an API request to update the password.
+ *
+ * @remarks
+ * - **Authentication**: Checks for a JWT token in `localStorage` on mount. If not found, redirects to `/login`.
+ * - **State Management**: Uses `useState` for managing form inputs (currentPassword, newPassword, confirmPassword),
+ *   loading state (`isLoading`), and success/error messages.
+ * - **Form Validation**: Checks if the new password and confirm password fields match.
+ * - **API Interaction**: Makes a POST request to `/api/auth/change-password` with the current and new passwords,
+ *   including the JWT token in the Authorization header.
+ * - **User Feedback**: Displays success or error messages based on the API response.
+ * - **Navigation**: Redirects to the `/profile` page after a successful password change.
+ *   Provides a link back to the profile page.
+ * - Utilizes `geistSans` and `geistMono` for font styling.
+ *
+ * Called by:
+ * - Next.js router, typically when an authenticated user navigates from their profile page or a direct link to `/change-password`.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`.
+ * - Next.js: `useRouter`, `Link`.
+ * - `axios.post` (to submit password change request to `/api/auth/change-password`).
+ * - `localStorage.getItem` (to retrieve JWT token).
+ * - `setTimeout` (to delay redirection after success).
+ *
+ * @returns {JSX.Element} The rendered change password form page.
+ */
 export default function ChangePassword() {
   const router = useRouter();
   const [currentPassword, setCurrentPassword] = useState('');

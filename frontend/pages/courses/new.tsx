@@ -5,7 +5,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import CourseInfoSection from '../../components/courses/CourseInfoSection';
 import TeeBoxesSection from '../../components/courses/TeeBoxesSection';
 import HolesSection from '../../components/courses/HolesSection';
-// import AttachmentsSection from '../../components/courses/AttachmentsSection';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +30,48 @@ interface HoleInfo {
   strokeIndex: number;
 }
 
+/**
+ * @page NewCoursePage
+ * @description A Next.js page component for submitting new golf course information.
+ * This page is accessible at `/courses/new` and requires user authentication.
+ *
+ * @remarks
+ * - **Authentication**: Checks for a `token` in `localStorage` on mount. If not found, redirects to `/login`.
+ * - **State Management**: Uses `useState` for:
+ *   - `isLoading`, `error`, `success` messages for form submission.
+ *   - Course information: `courseName`, `country`, `cityProvince`, `website`.
+ *   - `teeBoxes`: An array of tee box objects, initialized with one empty tee box.
+ *   - `holes`: An array of 18 hole objects, initialized with default par (4) and stroke index.
+ *   - Attachment files: `scorecardFile`, `ratingCertificateFile`, `courseInfoFile` (state and submission logic for these exist; the UI component `AttachmentsSection` has been removed).
+ *   - `isConfirmed`: Boolean for the confirmation checkbox.
+ * - **Form Sections**: The form is composed of several child components:
+ *   - `CourseInfoSection`: For basic course details.
+ *   - `TeeBoxesSection`: For managing multiple tee boxes (add, remove, update).
+ *   - `HolesSection`: For updating par and stroke index for each of the 18 holes.
+ * - **Form Submission (`handleSubmit`):
+ *   - Prevents submission if the confirmation checkbox (`isConfirmed`) is not checked.
+ *   - Constructs `courseData` object with details from the form state.
+ *   - Tee box data (courseRating, slopeRating, yardage) is parsed to numbers (parseFloat/parseInt).
+ *   - Retrieves `token` from `localStorage` for authorization.
+ *   - Makes a POST request to `/api/courses` with `courseData`.
+ *   - If attachments were provided (using `scorecardFile`, `ratingCertificateFile`, `courseInfoFile` states), it makes a subsequent POST request to `/api/courses/:courseId/attachments` with `FormData`.
+ *   - Sets `success` message and redirects to `/courses` page after a 2-second delay on successful submission.
+ *   - Handles errors from the API, displaying them to the user.
+ * - Uses `Geist` and `Geist_Mono` fonts.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to `/courses/new`.
+ * - Links from other pages (e.g., the main `/courses` page if the user is authenticated).
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`
+ * - `next/router`: `useRouter` hook (for navigation/redirection).
+ * - `axios.post` (to submit course data and potentially attachments).
+ * - `localStorage.getItem` (for authentication token).
+ * - Child Components: `CourseInfoSection`, `TeeBoxesSection`, `HolesSection`.
+ *
+ * @returns {JSX.Element} The rendered new course submission form page.
+ */
 export default function NewCoursePage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -246,15 +287,6 @@ export default function NewCoursePage() {
           <HolesSection
             holes={holes}
             updateHole={updateHole}
-          />
-
-          <AttachmentsSection
-            scorecardFile={scorecardFile}
-            setScorecardFile={setScorecardFile}
-            ratingCertificateFile={ratingCertificateFile}
-            setRatingCertificateFile={setRatingCertificateFile}
-            courseInfoFile={courseInfoFile}
-            setCourseInfoFile={setCourseInfoFile}
           />
 
           {/* Confirmation Section */}

@@ -1,15 +1,65 @@
-import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
 
+/**
+ * @page ResetPassword
+ * @description A Next.js page component that allows users to reset their password using a token from the URL query parameters.
+ * It validates the token, new password, and confirmation, then sends a request to the server to update the password.
+ *
+ * @remarks
+ * - **Token Handling**: Retrieves the 'token' from the URL query string (e.g., `/reset-password?token=...`).
+ *   If no token is present or if the router is not ready, it displays an appropriate message (Loading or Invalid Link).
+ * - **Form Submission**: Handles the submission of the new password and confirmation.
+ * - **Validation**: Checks if passwords match and meet length requirements (at least 5 characters).
+ * - **API Interaction**: Sends a POST request to `/api/auth/reset-password` with the token and new password.
+ * - **State Management**: Uses `useState` to manage `password`, `confirmPassword`, `error` messages, `success` status, and the `token` itself.
+ * - **Navigation**: Uses `useRouter` from `next/router` for navigation.
+ *   On successful password reset, it redirects the user to the `/login` page after a 3-second delay.
+ * - **Error/Success Feedback**: Displays error messages or a success message to the user.
+ *
+ * Called by:
+ * - Next.js routing system, typically when a user clicks a password reset link sent to their email,
+ *   directing them to a URL like `/reset-password?token=YOUR_RESET_TOKEN`.
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`.
+ * - `useRouter` (from `next/router`) for accessing URL query parameters and navigation.
+ * - `fetch` API (to POST to `/api/auth/reset-password`).
+ *
+ * @returns {JSX.Element} The rendered password reset page, an invalid link message, or a loading state.
+ */
 const ResetPassword: React.FC = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
-  const [searchParams] = useSearchParams();
-  const navigate = useNavigate();
+  const router = useRouter();
+  const [token, setToken] = useState<string | null>(null);
 
-  const token = searchParams.get('token');
+  useEffect(() => {
+    if (router.isReady) {
+      const queryToken = router.query.token;
+      if (typeof queryToken === 'string') {
+        setToken(queryToken);
+      } else if (Array.isArray(queryToken) && queryToken.length > 0) {
+        setToken(queryToken[0]); // Use the first token if multiple are present
+      } else {
+        // Handle cases where token is not found or invalid, though the render logic below already covers this
+        // For clarity, we could explicitly setToken(null) here if needed, but current logic is okay.
+      }
+    }
+  }, [router.isReady, router.query.token]);
+
+  // Early return if router is not ready yet, to prevent premature rendering of "Invalid Reset Link"
+  if (!router.isReady) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-md w-full space-y-8">
+          <p className="text-center text-lg text-gray-700">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!token) {
     return (
@@ -63,7 +113,7 @@ const ResetPassword: React.FC = () => {
       setSuccess(true);
       // Redirect to login page after 3 seconds
       setTimeout(() => {
-        navigate('/login');
+        router.push('/login');
       }, 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');

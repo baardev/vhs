@@ -7,16 +7,44 @@ import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page ForgotPassword
+ * @description This page component provides a form for users to request a password reset link.
+ * It allows users to enter their email address, and upon submission, it sends a request
+ * to the backend API to initiate the password reset process. It displays success or error
+ * messages based on the API response.
+ *
+ * @remarks
+ * - Called by: Next.js router when navigating to `/forgot-password`.
+ * - Calls:
+ *   - `fetch` (to POST to `/api/auth/forgot-password`)
+ *   - `useState` (React hook for managing email, error, and success states)
+ *   - `useRouter` (Next.js hook for navigation)
+ *   - `useTranslation` (from `next-i18next` for internationalization)
+ *   - `Link` (Next.js component for client-side navigation to `/login`)
+ * - Utilizes `geistSans` and `geistMono` for font styling.
+ * - Includes `getStaticProps` for `next-i18next` internationalization setup.
+ *
+ * @returns {JSX.Element} The rendered forgot password page.
+ */
 const ForgotPassword = () => {
   const { t } = useTranslation('common');
   const [email, setEmail] = useState('');

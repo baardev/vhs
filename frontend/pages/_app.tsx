@@ -1,3 +1,9 @@
+/**
+ * @global
+ * @interface Window
+ * @description Extends the global Window interface to include a custom `logMessage` function.
+ * @property { (msg: string) => void } logMessage - A function to log messages to the console, prefixed with `[LOG]:`.
+ */
 declare global {
   interface Window {
     logMessage: (msg: string) => void;
@@ -18,17 +24,50 @@ import { Geist, Geist_Mono } from "next/font/google"
 import Head from 'next/head';
 import { AuthProvider } from '../src/contexts/AuthContext';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font, applied globally via CSS variable.
+ */
 const geistSans = Geist({
   subsets: ['latin'],
   variable: '--font-geist-sans',
 })
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font, applied globally via CSS variable.
+ */
 const geistMono = Geist_Mono({
   subsets: ['latin'],
   variable: '--font-geist-mono',
 })
 
-// In _app.tsx
+/**
+ * @component MyApp
+ * @description The main App component for the Next.js application.
+ * It initializes pages, wraps them with global layout (Navbar, Footer), and providers
+ * (AuthProvider, appWithTranslation for i18n). It also handles global styles,
+ * font setup (Geist), and a (currently disabled) LogViewer feature.
+ *
+ * @remarks
+ * - **Global Setup**: Imports global CSS, sets up Geist fonts, and `next-i18next` for translations.
+ * - **Layout**: Wraps every page with `Navbar` and `Footer` components for a consistent UI.
+ * - **Context Providers**: Uses `AuthProvider` to provide authentication context throughout the app.
+ * - **Log Viewer**: Contains logic for a `LogViewer` component and a button to toggle its visibility.
+ *   Currently, the `LogViewer` component itself is commented out, and the toggle button's display
+ *   is hardcoded to `false` (`displayLogButton = false`).
+ *   - It checks for admin status (`isAdmin`) and development mode (`isDev`) which was likely intended
+ *     to control the visibility of the log viewer button.
+ *   - It also defines a global `window.logMessage` function for standardized console logging.
+ * - **Event Listener**: Listens for an `authChange` event on the window to re-check admin status.
+ * - Uses `next/head` to set a global viewport meta tag.
+ *
+ * @param {AppProps} props - The props passed to the App component, including the `Component` to render and `pageProps`.
+ * @property {React.ComponentType} Component - The active page component.
+ * @property {object} pageProps - The initial props that were preloaded for the page.
+ *
+ * @returns {JSX.Element} The wrapped page component with global layout and providers.
+ */
 function MyApp({ Component, pageProps }) {
   const [logViewerVisible, setLogViewerVisible] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);

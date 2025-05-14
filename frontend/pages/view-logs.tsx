@@ -1,6 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 
+/**
+ * @page ViewLogsPage
+ * @description A Next.js page component dedicated to viewing application logs.
+ * It fetches log data from a specified API endpoint on load and provides a button
+ * to manually refresh the logs.
+ *
+ * @remarks
+ * - **Log Fetching**: Uses `useEffect` to fetch logs from `/api/handicap-calc/logs` when the component mounts.
+ *   The `handleRefresh` function allows users to manually trigger a re-fetch of the logs.
+ * - **State Management**: Employs `useState` to manage the `logs` content (string),
+ *   and any `error` messages that occur during fetching.
+ * - **Display**: Renders the fetched logs within a `<pre>` tag to preserve formatting.
+ *   Displays loading messages or error messages appropriately.
+ * - **Metadata**: Sets the HTML document title to "Logs Viewer" using the `Head` component from `next/head`.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to `/view-logs` (possibly linked from `/debug-logs` or an admin panel).
+ *
+ * Calls:
+ * - React Hooks: `useState`, `useEffect`.
+ * - `fetch` API (to GET logs from `/api/handicap-calc/logs`).
+ * - `Head` (from `next/head`).
+ *
+ * @returns {JSX.Element} The rendered log viewer page.
+ */
 export default function ViewLogs() {
   const [logs, setLogs] = useState('Loading logs...');
   const [error, setError] = useState('');

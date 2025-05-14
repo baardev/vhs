@@ -7,16 +7,57 @@ import { useTranslation } from 'next-i18next';
 import { GetStaticProps } from 'next';
 import { getI18nProps } from '../utils/i18n-helpers';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font, applied via CSS variable.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font, applied via CSS variable.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page LoginPage
+ * @description This page component provides a user login form.
+ * It allows users to enter their username and password to authenticate.
+ * On successful authentication, it stores user data and a token in localStorage,
+ * dispatches an 'authChange' event, and redirects to the dashboard.
+ * It also handles login errors and provides links for registration and password recovery.
+ *
+ * @remarks
+ * - **State Management**: Uses `useState` for username, password, error messages, and loading state.
+ * - **API Interaction**: Makes a POST request to `/api/auth/login` with username and password.
+ * - **Storage**: On successful login, stores `token` and `userData` in `localStorage`.
+ * - **Event Dispatch**: Dispatches a global `authChange` event on successful login, allowing other
+ *   components (e.g., Navbar in `_app.tsx`) to react to the authentication status change.
+ * - **Navigation**: Uses `useRouter` to redirect to `/dashboard` after successful login.
+ *   Provides `Link` components for navigation to `/register` and `/forgot-password`.
+ * - **Internationalization**: Uses `useTranslation` from `next-i18next` and `getStaticProps` with `getI18nProps` for translations.
+ * - **Styling**: Uses Geist fonts and Tailwind CSS.
+ *
+ * Called by:
+ * - Next.js routing system when a user navigates to `/login` or is redirected due to lack of authentication.
+ *
+ * Calls:
+ * - React Hooks: `useState`.
+ * - Next.js: `useRouter`, `Link`.
+ * - `fetch` (to POST to `/api/auth/login`).
+ * - `localStorage.setItem`.
+ * - `window.dispatchEvent`.
+ * - `useTranslation` (from `next-i18next`).
+ * - `getI18nProps` (via `getStaticProps`).
+ *
+ * @returns {JSX.Element} The rendered login page.
+ */
 const Login = () => {
   const { t } = useTranslation('common');
   const router = useRouter();

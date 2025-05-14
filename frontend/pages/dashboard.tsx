@@ -6,16 +6,46 @@ import { GetStaticProps } from 'next';
 import { getI18nProps } from '../utils/i18n-helpers';
 import { useTranslation } from 'next-i18next';
 
+/**
+ * @constant geistSans
+ * @description Next.js font optimization for Geist Sans font.
+ */
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
 });
 
+/**
+ * @constant geistMono
+ * @description Next.js font optimization for Geist Mono font.
+ */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
 
+/**
+ * @page Dashboard
+ * @description This page serves as the user's personalized dashboard after logging in.
+ * It displays a welcome message, key statistics like current handicap, recent golf rounds,
+ * and quick stats (total rounds, best score, average score). It also provides quick action
+ * links to other relevant sections of the application.
+ *
+ * @remarks
+ * - Called by: Next.js router when a logged-in user navigates to `/dashboard`.
+ * - Calls:
+ *   - `fetch` (to GET from `/api/auth/profile` and `/api/player-cards?limit=3` for user data and recent cards)
+ *   - `useContext` (React hook to access `AuthContext` for user information)
+ *   - `useState`, `useEffect` (React hooks for managing component state and side effects like data fetching)
+ *   - `useTranslation` (from `next-i18next` for internationalization)
+ *   - `Link` (Next.js component for navigation to `/login`, `/player-cards`, `/profile`, `/handicap`, `/course-data`)
+ *   - `localStorage.getItem` (to retrieve JWT token for authenticated API calls)
+ * - If the user is not authenticated, it prompts them to log in.
+ * - Utilizes `geistSans` and `geistMono` for font styling.
+ * - Includes `getStaticProps` for `next-i18next` internationalization setup.
+ *
+ * @returns {JSX.Element} The rendered dashboard page for authenticated users, or a login prompt.
+ */
 const Dashboard: React.FC = () => {
   const { t } = useTranslation('common');
   const { user } = useContext(AuthContext);
