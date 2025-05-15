@@ -56,4 +56,14 @@
 - removed all usernames/passwords form the code and replaced with envvars via ${} and dotenv
 - changed perms on many files as teh site was being hacked for crypto-locking.  Rebult site from scratch with hardened security.
 
+## 0.0.91
+- added DOC comments to all files referencing from/to calls and desc
+- added OnLook consts to _documents.tsx
+
+## 
+- fixed email login notification
+- fixed DEV/PROD build selection
+
+
+
 

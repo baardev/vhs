@@ -1,3 +1,21 @@
+/**
+ * @fileoverview Email utility module for sending emails.
+ *
+ * @description This module provides a centralized way to send emails using `nodemailer`.
+ * It configures a transporter based on SMTP settings defined in environment variables
+ * (e.g., `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`, `SMTP_FROM_NAME`, `SMTP_FROM_EMAIL`).
+ * It exports a single function, `sendEmail`, to dispatch emails.
+ *
+ * @module utils/email
+ *
+ * @requires nodemailer - External library for sending emails.
+ * @requires dotenv - External library for loading environment variables.
+ * @requires process.env - Node.js global for accessing environment variables for SMTP configuration.
+ *
+ * @see {@link backend/src/routes/auth.ts} - This is the primary consumer of the `sendEmail` function,
+ * specifically for sending password reset emails when a user requests a password reset.
+ * The `forgot-password` route in `auth.ts` calls `sendEmail` to dispatch the reset link to the user's email address.
+ */
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 

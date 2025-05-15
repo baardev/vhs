@@ -23,23 +23,20 @@ RUN npm install
 COPY . .
 
 # Ensure proper permissions for the .next directory
-RUN mkdir -p .next && chmod -R 777 .next
+# RUN mkdir -p .next && chmod -R 777 .next # This might not be needed if build handles it
 
-# This conditional build command will now use the NODE_ENV set via build-arg
-RUN echo "Builder stage: Building with NODE_ENV=${NODE_ENV}" && \
-    if [ "${NODE_ENV}" = "production" ]; then \
-      echo "Builder stage: Running npm run build (Production Mode)" && \
-      npm run build; \
-    else \
-      echo "Builder stage: Running npm run dev (Development Mode) - This will hang if not interactive!" && \
-      npm run dev; \
-    fi
+# Always run npm run build. The build process itself can be NODE_ENV aware.
+RUN set -e; \
+    echo "Ensuring .next directory is clean..." && \
+    npm run clean && \
+    echo "Builder stage: Building with NODE_ENV=${NODE_ENV}" && \
+    npm run build
 
 FROM node:lts AS runner
 WORKDIR /app
 
 # Ensure NODE_ENV is set for the runtime environment of the final image.
-# Default to 'production' for the runner stage, as it should run a production build.
+# This will be overridden by docker-compose environment settings if provided.
 ARG NODE_ENV=production
 ENV NODE_ENV=${NODE_ENV}
 
@@ -49,12 +46,20 @@ COPY --from=builder /app/package.json ./package.json
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/next-i18next.config.js ./next-i18next.config.js
-COPY --from=builder /app/public/locales ./public/locales
 
-# Ensure the .next directory has proper permissions
-RUN chmod -R 777 .next
+# Copy the entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# --- Debugging Start --- #
+RUN echo "DEBUG: Listing /app contents in runner stage:" && ls -la /app
+RUN echo "DEBUG: Listing /app/.next contents in runner stage:" && ls -la /app/.next || echo "DEBUG: /app/.next not found or empty"
+# --- Debugging End --- #
+
+# Ensure the .next directory has proper permissions if needed, though build/start should manage this.
+# RUN chmod -R 777 .next
 
 EXPOSE 3000
-# CMD should start the Next.js production server.
-# Ensure your package.json "start" script is typically "next start".
-CMD ["npm", "start"]
+
+ENTRYPOINT ["/app/entrypoint.sh"]
+# CMD is removed as entrypoint handles the command

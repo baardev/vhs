@@ -1,12 +1,12 @@
 # Digital Ocean
 
 curl -X POST -H 'Content-Type: application/json' \
-    -H 'Authorization: Bearer 'dop_v1_ef72acaaa98165e54f408d87b509b3ff9c5efc8bf31a09a1c96d7ea5318fe1e5' \
+    -H 'Authorization: Bearer 'dop_v1_ef72acaaa98165...e1e5' \
     -d '{"name":"ubuntu-s-2vcpu-4gb-amd-sfo3-01",
         "size":"s-2vcpu-4gb-amd",
         "region":"sfo3",
         "image":"ubuntu-24-10-x64",
-        "vpc_uuid":"a0ad32f7-5ad6-4f63-88a4-d36268ae0cdd"}' \
+        "vpc_uuid":"a0a...0cdd"}' \
     "https://api.digitalocean.com/v2/droplets"
 
 ```sh

@@ -1,3 +1,30 @@
+/**
+ * @fileoverview Universal logger client for isomorphic applications.
+ *
+ * @description This module provides a flexible logging utility that can be used on both the
+ * server-side and client-side. 
+ * - On the server (when `window` is undefined), it logs messages directly to a local file
+ *   (`/tmp/backend-debug.log`) and to the console.
+ * - On the client, it sends log messages to a backend API endpoint (`/api/logs` by default,
+ *   configurable via `process.env.API_URL`) using an HTTP POST request via `axios`.
+ *
+ * It exports a main `log` function and several convenience functions (`logInfo`, `logWarning`,
+ * `logError`, `logDebug`) for different log levels.
+ *
+ * @module utils/loggerClient
+ *
+ * @requires axios - External library for making HTTP requests (client-side logging).
+ * @requires fs - Node.js built-in file system module (server-side file logging).
+ * @requires path - Node.js built-in path module (server-side file logging).
+ * @requires process.env - Node.js global for accessing `API_URL` environment variable.
+ *
+ * @remarks
+ * - The server-side log file path is hardcoded to `/tmp/backend-debug.log`.
+ * - The client-side logging relies on the `/api/logs` endpoint (see `backend/src/routes/logs.ts`)
+ *   being available and correctly configured.
+ * - This module is currently not actively imported or used by other modules based on the last codebase scan.
+ *   If intended for wider use, ensure it is integrated where logging is needed.
+ */
 import axios from 'axios';
 import fs from 'fs';
 import path from 'path';

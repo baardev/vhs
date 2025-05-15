@@ -80,7 +80,7 @@ Configure for SSH (using your custom port) and Nginx:
 ```
 [sshd]
 enabled = true
-port = 2222
+port = 2213
 filter = sshd
 logpath = /var/log/auth.log
 maxretry = 3

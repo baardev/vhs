@@ -15,6 +15,7 @@
  * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)
  * - `./authenticateToken` (`backend/src/routes/authenticateToken.ts` - middleware for JWT authentication)
  * - `crypto` (Node.js built-in module - for generating password reset tokens)
+ * - `../utils/email` (Added import for email sending functionality)
  */
 import express, { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
@@ -23,6 +24,7 @@ import { body, validationResult } from 'express-validator';
 import { pool } from '../db';
 import authenticateToken, { AuthRequest } from './authenticateToken';
 import crypto from 'crypto';
+import { sendEmail } from '../utils/email';
 
 const router = express.Router();
 
@@ -175,6 +177,21 @@ router.post(
       // Generate JWT token
       const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: '24h' });
       console.log('Login successful for user:', user.username);
+
+      // Send login notification email
+      try {
+        const loginTime = new Date().toLocaleString();
+        await sendEmail({
+          to: user.email,
+          subject: 'Successful Login Notification',
+          text: `Hello ${user.username},\n\nYour account was logged into at ${loginTime}.\n\nIf this was not you, please secure your account immediately.\n\nThanks,\nThe VHS Team`,
+          html: `<p>Hello ${user.username},</p><p>Your account was logged into at <strong>${loginTime}</strong>.</p><p>If this was not you, please secure your account immediately.</p><p>Thanks,<br/>The VHS Team</p>`
+        });
+        console.log(`Login notification email sent to ${user.email}`);
+      } catch (emailError) {
+        console.error(`Failed to send login notification email to ${user.email}:`, emailError);
+        // Do not block login if email fails
+      }
 
       res.json({
         token,

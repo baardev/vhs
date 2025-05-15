@@ -1,5 +1,13 @@
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 
+declare global {
+  interface Window {
+    webview?: any; // You can use a more specific type if you know the structure of webview
+    __ONLOOK_ENVIRONMENT__?: boolean;
+    __ONLOOK_INITIALIZED__?: boolean;
+  }
+}
+
 /**
  * @class MyDocument
  * @extends Document
@@ -17,7 +25,38 @@ import Document, { Html, Head, Main, NextScript } from 'next/document';
  *   `localStorage` or system preference via `prefers-color-scheme`. It then applies
  *   the `.dark` class to the `<html>` element (`document.documentElement`) if dark mode
  *   should be active, preventing a flash of light mode on initial load.
+ * - **Onlook Polyfill**: Includes logic to detect if the application is running in an
+ *   Onlook environment and polyfills `window.webview` and other expected properties
+ *   to ensure compatibility and prevent runtime errors.
  */
+// Create this as a script that runs before your application code
+// Save it as onlook-polyfill.js and include it in your _app.tsx or _document.tsx
+
+// Check if we're running in the Onlook environment
+const isOnlook = typeof window !== 'undefined' && 
+  (window.navigator.userAgent.includes('Onlook') || (window as any).__ONLOOK_ENVIRONMENT__ === true);
+
+// Create a mock implementation of Onlook's expected methods
+if (isOnlook) {
+  // Create the webview object if it doesn't exist
+  window.webview = window.webview || {};
+  
+  // Define the missing method to prevent the error
+  if (!window.webview.setWebviewId) {
+    window.webview.setWebviewId = function(id) {
+      console.log('Mock setWebviewId called with:', id);
+      // You can implement actual functionality here if needed
+      return true;
+    };
+  }
+  
+  // Add any other Onlook-specific methods that might be missing
+  window.__ONLOOK_INITIALIZED__ = true;
+  
+  console.log('Onlook environment detected and polyfilled');
+}
+
+
 class MyDocument extends Document {
   /**
    * @method render
