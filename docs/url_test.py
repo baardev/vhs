@@ -9,6 +9,7 @@ import concurrent.futures
 import time
 from datetime import datetime
 import dotenv
+import socket
 
 dotenv.load_dotenv()
 userpw = os.getenv("USERPW")
@@ -24,7 +25,11 @@ def main():
     parser.add_argument('username', nargs='?', default='adminuser', help='Username for authentication')
     parser.add_argument('password', nargs='?', default='admin123', help='Password for authentication')
     parser.add_argument('--parallel', '-p', action='store_true', help='Run tests in parallel')
-    parser.add_argument('--timeout', '-t', type=int, default=10, help='Request timeout in seconds')
+    parser.add_argument('--timeout', '-t', type=int, default=30, help='Request timeout in seconds')
+    parser.add_argument('--http', action='store_true', help='Force HTTP protocol')
+    parser.add_argument('--https', action='store_true', help='Force HTTPS protocol')
+    parser.add_argument('--host', default='libronico.com', help='Host to test (default: libronico.com)')
+    parser.add_argument('--port', type=int, help='Port to use (default: 443 for HTTPS, 80 for HTTP)')
     args = parser.parse_args()
 
     username = args.username
@@ -38,18 +43,93 @@ def main():
     #     print(f"{Fore.RED}Error reading password file: {e}")
     #     # Keep using the password from command line args
     
-   #print(f"{Fore.YELLOW}Using credentials: username={username}, password={password}")
     now = datetime.now()
     print(now.strftime("%Y-%m-%d %H:%M:%S"))
-    # Base URL for all requests
-    base_url = "https://libronico.com"
     
-    # Login to get JWT token
-    login_url = f"{base_url}/api/auth/login"
-    login_data = {"username": username, "password": userpw}
+    # Determine protocol and port
+    if args.http:
+        protocol = "http"
+        default_port = 80
+    elif args.https:
+        protocol = "https"
+        default_port = 443
+    else:
+        # Try to autodetect if port 443 is open, otherwise fallback to http
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            s.connect((args.host, 443))
+            s.close()
+            
+            # If we're connecting directly to Next.js on port 3000, use HTTP
+            # as Next.js doesn't typically serve HTTPS directly
+            if args.port == 3000:
+                protocol = "http"
+                default_port = 3000
+                print(f"{Fore.YELLOW}Detected port 3000, using HTTP protocol for direct Next.js connection")
+            else:
+                protocol = "https"
+                default_port = 443
+                print(f"{Fore.GREEN}Port 443 is open, using HTTPS")
+        except:
+            protocol = "http"
+            default_port = 80
+            print(f"{Fore.YELLOW}Port 443 is not responding, using HTTP")
+        finally:
+            if s:
+                s.close()
+    
+    port = args.port if args.port else default_port
+    
+    # Check if it's a standard port (80 for HTTP, 443 for HTTPS)
+    if (port == 80 and protocol == "http") or (port == 443 and protocol == "https"):
+        base_url = f"{protocol}://{args.host}"
+    else:
+        base_url = f"{protocol}://{args.host}:{port}"
+    
+    # Always disable SSL verification for local testing
+    verify_ssl = False
+    
+    print(f"{Fore.CYAN}Testing against: {base_url}")
+    
+    # Test connectivity before proceeding
+    try:
+        print(f"{Fore.YELLOW}Attempting connection to {base_url}...")
+        # Increase timeout for initial test
+        test_response = requests.get(f"{base_url}/", timeout=10, verify=verify_ssl)
+        print(f"{Fore.GREEN}Basic connectivity test: {test_response.status_code}")
+    except requests.exceptions.RequestException as e:
+        print(f"{Fore.RED}Cannot connect to {base_url}: {e}")
+        print(f"{Fore.YELLOW}Try one of these alternatives:")
+        print(f"  - {sys.argv[0]} --http (force HTTP)")
+        print(f"  - {sys.argv[0]} --https (force HTTPS)")
+        print(f"  - {sys.argv[0]} --host localhost --port 3000")
+        print(f"  - {sys.argv[0]} --host localhost --port 4000 (backend API)")
+        print(f"  - Wait for services to fully initialize (try again in 30 seconds)")
+        print(f"  - Check if Docker networks are properly configured")
+        print(f"  - Check if Nginx is properly configured and running")
+        
+        # Try to get socket-level diagnostics
+        try:
+            print(f"\n{Fore.YELLOW}Running network diagnostics...")
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.settimeout(2)
+            host = args.host
+            port = port
+            print(f"Attempting direct socket connection to {host}:{port}...")
+            result = s.connect_ex((host, port))
+            if result == 0:
+                print(f"{Fore.GREEN}TCP port {port} is open on {host}, but HTTP request timed out")
+                print(f"This suggests the service is running but not responding properly to HTTP requests")
+            else:
+                print(f"{Fore.RED}TCP port {port} is not accessible on {host} (error: {result})")
+            s.close()
+        except Exception as sock_error:
+            print(f"{Fore.RED}Socket diagnostics failed: {sock_error}")
+            
+        return
     
     try:
-        response = requests.post(login_url, json=login_data, verify=False)
+        response = requests.post(f"{base_url}/api/auth/login", json={"username": username, "password": userpw}, verify=verify_ssl)
         print(f"{Fore.CYAN}Login response status: {response.status_code}")
         
         if response.status_code != 200:
@@ -59,9 +139,9 @@ def main():
             for alt_user in alt_users:
                 print(f"{Fore.YELLOW}Trying {alt_user}/admin123 instead...")
                 alt_response = requests.post(
-                    login_url, 
+                    f"{base_url}/api/auth/login", 
                     json={"username": alt_user, "password": userpw}, 
-                    verify=False
+                    verify=verify_ssl
                 )
                 if alt_response.status_code == 200:
                     print(f"{Fore.GREEN}Successfully authenticated with {alt_user}")
@@ -103,54 +183,73 @@ def main():
         "Content-Type": "application/json"
     }
     
-    # List of frontend URLs to test
+    # List of frontend URLs to test (updated for App Router with i18n)
     frontend_urls = [
         # Main pages
         "/",
-        "/login",
-        "/register",
-        "/forgot-password",
-        "/reset-password",
-        "/profile",
-        "/dashboard",
-        "/change-password",
-        "/about",
-        "/privacy",
-        "/terms",
+        "/en/login",
+        "/en/register",
+        "/en/forgot-password",
+        "/en/reset-password",
+        "/en/profile",
+        "/en/dashboard",
+        "/en/change-password",
+        "/en/about",
+        "/en/privacy",
+        "/en/terms",
         "/robots.txt",
         
         # Course-related pages
-        "/courses",
-        "/courses/new",
-        "/course-data",
+        "/en/courses",
+        "/en/courses/create",
+        "/en/courses/data",
         
         # Player cards
-        "/player-cards",
-        "/player-cards/new",
+        "/en/player-cards",
+        "/en/player-cards/create",
         
         # Admin and editor pages
-        "/admin",
-        "/administration",
-        "/editor",
-        "/editor/courses",
+        "/en/admin",
+        "/en/admin/users",
+        "/en/editor",
+        "/en/editor/courses",
         
         # Utility pages
-        "/view-logs",
-        "/debug-logs",
-        "/clear-cache",
-        "/handicap",
+        "/en/admin/logs",
+        "/en/admin/debug",
+        "/en/admin/cache",
+        "/en/handicap",
+    ]
+    
+    # Try some alternative path patterns (in case App Router structure is different)
+    alt_frontend_urls = [
+        # App Router with i18n paths
+        "/[lang]/login",
+        "/[lang]/register",
+        # Legacy structure paths
+        "/auth/login",
+        "/auth/register",
+        "/login",
+        "/register",
+        "/profile",
+        # Other languages
+        "/es/login",
+        "/fr/login",
     ]
     
     # Additional dynamic URLs to test
     # These are patterns that would normally have an ID
     dynamic_urls = [
-        "/courses/1",
-        "/player-cards/1", 
-        "/reset-password/dummy-token"
+        "/courses/[id]",
+        "/player-cards/[id]", 
+        "/auth/reset-password/[token]"
     ]
     
+    # Replace placeholder patterns with actual values for testing
+    dynamic_urls = [url.replace('[id]', '1').replace('[token]', 'dummy-token') for url in dynamic_urls]
+    
     # Combine all URLs
-    all_urls = frontend_urls + dynamic_urls
+    all_urls = frontend_urls + alt_frontend_urls + dynamic_urls
     
     print(f"{Fore.YELLOW}Testing {len(all_urls)} frontend URLs...")
     results = []
@@ -161,9 +260,9 @@ def main():
         try:
             start_time = time.time()
             if token:
-                response = requests.get(url, headers=auth_headers, verify=False, timeout=args.timeout)
+                response = requests.get(url, headers=auth_headers, verify=verify_ssl, timeout=args.timeout)
             else:
-                response = requests.get(url, verify=False, timeout=args.timeout)
+                response = requests.get(url, verify=verify_ssl, timeout=args.timeout)
             elapsed = time.time() - start_time
             
             # Determine status color

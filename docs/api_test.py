@@ -38,10 +38,12 @@ def main():
     parser.add_argument('password', nargs='?', default='admin123', help='Password for authentication')
     parser.add_argument('--parallel', '-p', action='store_true', help='Run tests in parallel')
     parser.add_argument('--timeout', '-t', type=int, default=10, help='Request timeout in seconds')
+    parser.add_argument('--lang', '-l', type=str, default='en', help='Language for testing frontend routes')
     args = parser.parse_args()
 
     username = args.username
     userpw = args.password
+    language = args.lang
     
     # Try to read password from password file
     # try:
@@ -63,7 +65,7 @@ def main():
     login_data = {"username": username, "password": userpw}
     
     try:
-        response = requests.post(login_url, json=login_data, verify=False)
+        response = requests.post(login_url, json=login_data, verify=False, timeout=args.timeout)
         print(f"{Fore.CYAN}Full response: {response.text}")
         
         if response.status_code != 200:
@@ -75,7 +77,8 @@ def main():
                 alt_response = requests.post(
                     login_url, 
                     json={"username": "admin", "password": userpw}, 
-                    verify=False
+                    verify=False,
+                    timeout=args.timeout
                 )
                 print(f"{Fore.CYAN}New response: {alt_response.text}")
                 response = alt_response
@@ -130,28 +133,51 @@ def main():
         
         try:
             if method.upper() == 'GET':
-                response = requests.get(url, headers=headers, params=params, verify=False)
+                response = requests.get(url, headers=headers, params=params, verify=False, timeout=args.timeout)
             elif method.upper() == 'POST':
-                response = requests.post(url, headers=headers, json=data, verify=False)
+                response = requests.post(url, headers=headers, json=data, verify=False, timeout=args.timeout)
             elif method.upper() == 'PUT':
-                response = requests.put(url, headers=headers, json=data, verify=False)
+                response = requests.put(url, headers=headers, json=data, verify=False, timeout=args.timeout)
             elif method.upper() == 'DELETE':
-                response = requests.delete(url, headers=headers, verify=False)
+                response = requests.delete(url, headers=headers, verify=False, timeout=args.timeout)
             else:
                 print(f"{Fore.RED}Unsupported method: {method}")
                 return
                 
-            print(f"{Fore.YELLOW}Status: {response.status_code}")
+            # Set color based on status code
+            output_color = Fore.GREEN if response.status_code == 200 else Fore.RED
             
-            # Try to pretty-print JSON response
+            # Print status with appropriate color
+            print(f"{output_color}Status: {response.status_code}")
+            
+            # Try to pretty-print JSON response with the same color
             try:
                 json_response = response.json()
-                print(f"{Fore.CYAN}Response: {json.dumps(json_response, indent=2)}")
+                print(f"{output_color}Response: {json.dumps(json_response, indent=2)}")
             except:
-                print(f"{Fore.CYAN}Response: {response.text[:200]}...")
+                # For HTML responses, print just the first bit
+                if response.headers.get('content-type', '').startswith('text/html'):
+                    print(f"{output_color}HTML Response (first 200 chars): {response.text[:200]}...")
+                else:
+                    print(f"{output_color}Response: {response.text[:200]}...")
                 
         except requests.exceptions.RequestException as e:
             print(f"{Fore.RED}Request failed: {e}")
+    
+    # Test frontend routes with App Router architecture
+    print(f"\n{Fore.GREEN}=== Testing App Router Frontend Routes ===")
+    
+    # Test language route
+    test_endpoint('GET', f'/{language}')
+    
+    # Test other language-specific routes
+    test_endpoint('GET', f'/{language}/login')
+    test_endpoint('GET', f'/{language}/register')
+    test_endpoint('GET', f'/{language}/forgot-password')
+    test_endpoint('GET', f'/{language}/about')
+    
+    # Test API endpoints
+    print(f"\n{Fore.GREEN}=== Testing API Routes ===")
     
     # Test authentication endpoints
     test_endpoint('POST', '/api/auth/register', data={

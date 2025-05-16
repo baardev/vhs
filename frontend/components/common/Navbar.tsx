@@ -1,8 +1,18 @@
+'use client';
+
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-// import { useRouter } from 'next/router';
+// import { useTranslation } from 'next-i18next'; // REMOVED
+import { useParams } from 'next/navigation'; // ADDED
 import { useState, useEffect } from 'react';
 import LogoutButton from '../LogoutButton';
+import { getCommonDictionary } from '../../app/dictionaries'; // ADDED - Adjust path if necessary
+
+// Add the necessary type declaration for the window object
+declare global {
+  interface Window {
+    toggleDarkMode?: () => void;
+  }
+}
 
 /**
  * @component Navbar
@@ -11,22 +21,24 @@ import LogoutButton from '../LogoutButton';
  * Features a responsive design with a hamburger menu for mobile devices.
  *
  * @remarks
+ * - Now includes dark mode toggle.
  * - Manages `isLoggedIn`, `username`, and `isEditor` states based on `localStorage` data.
  * - Listens to `storage` and `authChange` window events to update authentication status dynamically.
- * - Uses a `mounted` state to prevent hydration mismatches with translated content, showing a skeleton loader initially.
+ * - Uses a `mounted` state to prevent hydration mismatches, showing a skeleton loader initially.
  * - Includes links to Home, Courses, Player Scorecards.
  * - Conditionally displays links to Admin dashboard, Editor dashboard, Profile, Sign In, and Create Account.
  * - Integrates the `LogoutButton` component.
- * - Uses `next-i18next` for internationalization of link texts and labels.
+ * - Uses dictionary-based approach for internationalization.
  * - Includes a temporary `useEffect` for debugging translations (should be removed in production).
  *
  * Called by:
- * - `frontend/pages/_app.tsx` (as part of the main application layout)
+ * - `frontend/app/[lang]/layout.tsx` (as part of the main application layout)
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`
  * - `next/link`'s `Link` component (for client-side navigation)
- * - `next-i18next`'s `useTranslation` hook (for internationalization)
+ * - `next/navigation`'s `useParams` hook (for language parameter and dictionary loading)
+ * - `getCommonDictionary` for loading translations.
  * - `localStorage.getItem` (to retrieve `token` and `userData`)
  * - `JSON.parse` (to parse `userData`)
  * - `window.addEventListener` and `window.removeEventListener` (for `storage` and `authChange` events)
@@ -36,14 +48,17 @@ import LogoutButton from '../LogoutButton';
  * @returns {React.FC} The rendered navigation bar component.
  */
 const Navbar = () => {
-  const { t, ready, i18n } = useTranslation('common');
-//   const router = useRouter();
+  // const { t, ready, i18n } = useTranslation('common'); // REMOVED
+  const params = useParams() || {}; // Add fallback empty object
+  const lang = (params.lang as string) || 'en'; // ADDED
+
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
   const [mounted, setMounted] = useState(false);
   const [isEditor, setIsEditor] = useState(false);
-  // Add state for mobile menu
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [dict, setDict] = useState<Record<string, any> | null>(null); // Initialize with null
+  const [dictError, setDictError] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -90,36 +105,73 @@ const Navbar = () => {
     };
   }, []);
 
-  // Debug translations - TEMPORARY
   useEffect(() => {
-    if (mounted && isLoggedIn) {
-      console.log('Current language:', i18n.language);
-      console.log('Upload Scorecard translation:', t('uploadScorecard', 'FALLBACK VALUE'));
-      console.log('Is translation ready:', ready);
-      console.log('Available languages:', i18n.languages);
-      console.log('Namespace loaded:', i18n.hasLoadedNamespace('common'));
+    if (lang) {
+      console.log(`[Navbar] Attempting to load dictionary for lang: ${lang}`);
+      setDict(null); // Reset dict on lang change to show loading state
+      setDictError(null);
+      getCommonDictionary(lang)
+        .then(loadedDict => {
+          if (loadedDict && typeof loadedDict === 'object' && Object.keys(loadedDict).length > 0) {
+            console.log(`[Navbar] Successfully loaded dictionary for lang '${lang}'. First key:`, Object.keys(loadedDict)[0], loadedDict[Object.keys(loadedDict)[0]]);
+            setDict(loadedDict);
+          } else {
+            console.error(`[Navbar] Loaded dictionary for lang '${lang}' is empty or invalid:`, loadedDict);
+            setDict({}); // Set to empty object to allow fallbacks to work
+            setDictError(`Dictionary for lang '${lang}' was empty or invalid.`);
+          }
+        })
+        .catch(error => {
+          console.error(`[Navbar] Catch: Error loading dictionary for lang '${lang}':`, error);
+          setDict({}); // Set to empty object on error
+          setDictError(`Failed to load dictionary for lang '${lang}': ${error.message}`);
+        });
+    } else {
+      console.warn('[Navbar] lang parameter is not available. Cannot load dictionary.');
+      setDict({}); // No lang, no dictionary
+      setDictError('Language parameter missing.');
     }
-  }, [mounted, isLoggedIn, i18n, t, ready]);
+  }, [lang]);
 
-  // Skip rendering fully until client-side and translations are ready
+  // Skip rendering fully until client-side and dictionary are ready or an error occurred
   if (!mounted) {
-    // Return a minimal navbar skeleton that doesn't use translations
+    // Return a minimal navbar skeleton
     return (
-      <nav className="w-full bg-white dark:bg-gray-900 shadow">
+      <nav className="w-full bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Simple placeholder with no text that requires translation */}
           <div className="flex justify-between h-16"></div>
         </div>
       </nav>
     );
   }
+  
+  // If dictionary is still loading (null) and no error, show loading. 
+  // If error, it will show fallbacks. If dict is {}, it will show fallbacks.
+  if (dict === null && !dictError) {
+     console.log('[Navbar] Dictionary is null and no error, showing loading skeleton.');
+     // Return a minimal navbar skeleton or a specific loading indicator
+     return (
+      <nav className="w-full bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16"><span>Loading translations...</span></div>
+        </div>
+      </nav>
+    );
+  }
+  
+  if (dictError && (!dict || Object.keys(dict).length === 0) ) {
+    console.warn(`[Navbar] Rendering with fallback texts due to dictionary error: ${dictError}`);
+  }
+  
+  // Ensure dict is an object for safe access, even if it's empty from an error
+  const currentDict = dict || {};
 
   return (
-    <nav className="w-full bg-white dark:bg-gray-900 shadow-sm py-4">
+    <nav className="w-full bg-white shadow-sm py-4">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center">
           <div className="flex items-center">
-            <Link href="/" className="flex items-center text-[#2d6a4f] dark:text-[#4fd1c5]">
+            <Link href={`/${lang}/`} className="flex items-center text-[#2d6a4f]">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 width="24"
@@ -140,11 +192,10 @@ const Navbar = () => {
             </Link>
           </div>
 
-          {/* Hamburger menu button - only visible on mobile */}
           <div className="md:hidden">
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="text-gray-700 dark:text-gray-300 p-2"
+              className="text-gray-700 p-2"
               aria-label="Toggle menu"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -154,110 +205,18 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
-            {mounted && (
-              <>
-                {/* ---------------------------- {t('home')} ---------------------------- */}
-                <Link href="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
-                  {t('home')}
-                </Link>
-                {/* ---------------------------- {t('courses')} ---------------------------- */}
-                <Link href="/course-data" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
-                  {t('courses')}
-                </Link>
-                {/* ---------------------------- Player Scorecards ---------------------------- */}
-                <Link href="/player-cards" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
-                  {t('playerScorecards', 'Player Scorecards')}
-                </Link>
-
-                {isLoggedIn ? (
-                  <>
-                    {/* ---------------------------- Admin Link ---------------------------- */}
-                    {(() => {
-                      try {
-                        const userData = localStorage.getItem('userData');
-                        if (userData) {
-                          const parsedData = JSON.parse(userData);
-                          if (parsedData.is_admin) {
-                            return (
-                              <Link
-                                href="/admin"
-                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md shadow-sm"
-                              >
-                                {t('admin.title', 'Admin')}
-                              </Link>
-                            );
-                          }
-                        }
-                      } catch (error) {
-                        console.error('Error checking admin status:', error);
-                      }
-                      return null;
-                    })()}
-
-                    {/* ---------------------------- Editor Link ---------------------------- */}
-                    {isEditor && (
-                      <Link href="/editor" className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm ml-3">
-                        {t('update', 'Update')}
-                      </Link>
-                    )}
-
-                    {/* ---------------------------- User Profile ---------------------------- */}
-                    <div className="flex items-center ml-6">
-                      <Link
-                        href="/profile"
-                        className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] font-medium mr-3"
-                      >
-                        {username}
-                      </Link>
-
-                      <LogoutButton
-                        variant="text"
-                          className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]"
-                      />
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    {/* ---------------------------- {t('signIn')} ---------------------------- */}
-                    <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
-                      {t('signIn')}
-                    </Link>
-                    {/* ---------------------------- {t('createAccount')} ---------------------------- */}
-                    <Link href="/register" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]">
-                      {t('createAccount')}
-                    </Link>
-                  </>
-                )}
-              </>
-            )}
-            {!mounted && (
-              <>
-                <span className="text-gray-700 dark:text-gray-300">...</span>
-                <span className="text-gray-700 dark:text-gray-300">...</span>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile menu dropdown - only visible when hamburger clicked */}
-      {mobileMenuOpen && (
-        <div className="md:hidden mt-4 bg-white dark:bg-gray-800 rounded-lg shadow-lg p-4 absolute right-4 left-4 z-50">
-          <div className="flex flex-col space-y-4">
-            <Link href="/dashboard" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
-              {t('home')}
+            <Link href={`/${lang}/dashboard`} className="text-gray-700 hover:text-[#2d6a4f]">
+              {currentDict?.home || 'Home'}
             </Link>
-            <Link href="/course-data" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
-              {t('courses')}
+            <Link href={`/${lang}/courses`} className="text-gray-700 hover:text-[#2d6a4f]">
+              {currentDict?.courses || 'Courses'}
             </Link>
-            <Link href="/player-cards" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
-              {t('playerScorecards', 'Player Scorecards')}
+            <Link href={`/${lang}/player-cards`} className="text-gray-700 hover:text-[#2d6a4f]">
+              {currentDict?.playerScorecards || 'Player Scorecards'}
             </Link>
-
 
             {isLoggedIn ? (
               <>
-                {/* Mobile Admin Link */}
                 {(() => {
                   try {
                     const userData = localStorage.getItem('userData');
@@ -266,11 +225,10 @@ const Navbar = () => {
                       if (parsedData.is_admin) {
                         return (
                           <Link
-                            href="/admin"
-                            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-md"
-                            onClick={() => setMobileMenuOpen(false)}
+                            href={`/${lang}/admin`}
+                            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-md shadow-sm"
                           >
-                            {t('admin.title', 'Admin')}
+                            {currentDict?.admin?.title || 'Admin'} 
                           </Link>
                         );
                       }
@@ -281,38 +239,113 @@ const Navbar = () => {
                   return null;
                 })()}
 
-                {/* Mobile Editor Link */}
                 {isEditor && (
-                  <Link
-                    href="/editor"
-                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-md"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {t('update', 'Update')}
+                  <Link href={`/${lang}/editor`} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm ml-3">
+                    {currentDict?.editor?.title || currentDict?.editorDashboard || 'Editor'}
                   </Link>
                 )}
 
-                <Link href="/profile" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 font-medium" onClick={() => setMobileMenuOpen(false)}>
-                  {username}
-                </Link>
-                <div className="py-2 px-3">
-                  <LogoutButton variant="text" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5]" />
+                <div className="flex items-center ml-6">
+                  <Link
+                    href={`/${lang}/profile`}
+                    className="text-gray-700 hover:text-[#2d6a4f] font-medium mr-3"
+                  >
+                    {username}
+                  </Link>
+
+                  <LogoutButton
+                    variant="text"
+                    className="text-gray-700 hover:text-[#2d6a4f]"
+                    dict={currentDict} // Pass currentDict
+                  />
                 </div>
               </>
             ) : (
               <>
-                <Link href="/login" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
-                  {t('signIn')}
+                <Link href={`/${lang}/login`} className="text-gray-700 hover:text-[#2d6a4f]">
+                  {currentDict?.signIn || 'Sign In'}
                 </Link>
-                <Link href="/register" className="text-gray-700 dark:text-gray-300 hover:text-[#2d6a4f] dark:hover:text-[#4fd1c5] py-2 px-3 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700" onClick={() => setMobileMenuOpen(false)}>
-                  {t('createAccount')}
+                <Link href={`/${lang}/register`} className="text-gray-700 hover:text-[#2d6a4f]">
+                  {currentDict?.createAccount || 'Create Account'}
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {mobileMenuOpen && (
+        <div className="md:hidden mt-4 bg-white rounded-lg shadow-lg p-4 absolute right-4 left-4 z-50">
+          <div className="flex flex-col space-y-4">
+            <Link href={`/${lang}/dashboard`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
+              {currentDict?.home || 'Home'}
+            </Link>
+            <Link href={`/${lang}/courses`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
+              {currentDict?.courses || 'Courses'}
+            </Link>
+            <Link href={`/${lang}/player-cards`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
+              {currentDict?.playerScorecards || 'Player Scorecards'}
+            </Link>
+
+            {isLoggedIn ? (
+              <>
+                {(() => {
+                  try {
+                    const userData = localStorage.getItem('userData');
+                    if (userData) {
+                      const parsedData = JSON.parse(userData);
+                      if (parsedData.is_admin) {
+                        return (
+                          <Link
+                            href={`/${lang}/admin`}
+                            className="bg-red-600 hover:bg-red-700 text-white font-medium py-2 px-3 rounded-md"
+                            onClick={() => setMobileMenuOpen(false)}
+                          >
+                            {currentDict?.admin?.title || 'Admin'}
+                          </Link>
+                        );
+                      }
+                    }
+                  } catch (error) {
+                    console.error('Error checking admin status:', error);
+                  }
+                  return null;
+                })()}
+
+                {isEditor && (
+                  <Link
+                    href={`/${lang}/editor`}
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-md"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    {currentDict?.editor?.title || currentDict?.editorDashboard || 'Editor'}
+                  </Link>
+                )}
+
+                <Link href={`/${lang}/profile`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100 font-medium" onClick={() => setMobileMenuOpen(false)}>
+                  {username}
+                </Link>
+                <div className="py-2 px-3">
+                  <LogoutButton 
+                    variant="text" 
+                    className="text-gray-700 hover:text-[#2d6a4f]" 
+                    dict={currentDict} // Pass currentDict
+                  />
+                </div>
+              </>
+            ) : (
+              <>
+                <Link href={`/${lang}/login`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
+                  {currentDict?.signIn || 'Sign In'}
+                </Link>
+                <Link href={`/${lang}/register`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
+                  {currentDict?.createAccount || 'Create Account'}
                 </Link>
               </>
             )}
             
-            {/* Close button */}
-            <button onClick={() => setMobileMenuOpen(false)} className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-sm mt-2">
-              Close Menu
+            <button onClick={() => setMobileMenuOpen(false)} className="text-gray-500 hover:text-gray-700 text-sm mt-2">
+              {currentDict?.closeMenu || 'Close Menu'} 
             </button>
           </div>
         </div>

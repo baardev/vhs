@@ -16,7 +16,7 @@ import {
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns'; // Import adapter for date handling
 import { AuthContext } from '../../src/contexts/AuthContext'; // Import AuthContext
-import { useRouter } from 'next/router'; // Import useRouter for redirection
+import { useRouter } from 'next/navigation'; // Import useRouter for redirection
 
 ChartJS.register(
   CategoryScale,

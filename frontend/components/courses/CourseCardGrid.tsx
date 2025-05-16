@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 import axios from 'axios';
 
 interface CourseName {
@@ -38,7 +38,7 @@ const getBaseUrl = () => {
  *
  * Calls:
  * - React Hooks: `useState` (for managing courses, loading state, and error messages), `useEffect` (for fetching data on mount)
- * - `next/router`: `useRouter` (for programmatic navigation)
+ * - `next/navigation`: `useRouter` (for programmatic navigation)
  * - `axios.get`: (to make HTTP GET requests to the course names API endpoint)
  * - Internal helper function `getBaseUrl`: (to construct the base URL for API calls)
  * - Internal event handler `handleCardClick`: (to manage navigation when a course card is clicked)

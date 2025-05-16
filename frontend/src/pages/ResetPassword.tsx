@@ -13,7 +13,7 @@ import { useRouter } from 'next/router';
  * - **Validation**: Checks if passwords match and meet length requirements (at least 5 characters).
  * - **API Interaction**: Sends a POST request to `/api/auth/reset-password` with the token and new password.
  * - **State Management**: Uses `useState` to manage `password`, `confirmPassword`, `error` messages, `success` status, and the `token` itself.
- * - **Navigation**: Uses `useRouter` from `next/router` for navigation.
+ * - **Navigation**: Uses `useRouter` from `next/navigation` for navigation.
  *   On successful password reset, it redirects the user to the `/login` page after a 3-second delay.
  * - **Error/Success Feedback**: Displays error messages or a success message to the user.
  *
@@ -23,7 +23,7 @@ import { useRouter } from 'next/router';
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`.
- * - `useRouter` (from `next/router`) for accessing URL query parameters and navigation.
+ * - `useRouter` (from `next/navigation`) for accessing URL query parameters and navigation.
  * - `fetch` API (to POST to `/api/auth/reset-password`).
  *
  * @returns {JSX.Element} The rendered password reset page, an invalid link message, or a loading state.
@@ -37,21 +37,27 @@ const ResetPassword: React.FC = () => {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    if (router.isReady) {
+    // Ensure router is ready and query is available before trying to access token
+    if (router.isReady && router.query) { 
       const queryToken = router.query.token;
       if (typeof queryToken === 'string') {
         setToken(queryToken);
       } else if (Array.isArray(queryToken) && queryToken.length > 0) {
-        setToken(queryToken[0]); // Use the first token if multiple are present
+        setToken(queryToken[0]);
       } else {
-        // Handle cases where token is not found or invalid, though the render logic below already covers this
-        // For clarity, we could explicitly setToken(null) here if needed, but current logic is okay.
+        setToken(null); // Explicitly set to null if not found or invalid type
       }
+    } else if (!router.isReady) {
+      // Router not ready yet, token will be set once it is
+      setToken(null); // Or some loading state for token
+    } else {
+      // Router is ready but query is not available (should be rare if isReady is true)
+      setToken(null);
     }
-  }, [router.isReady, router.query.token]);
+  }, [router.isReady, router.query]); // MODIFIED dependency array to router.query
 
-  // Early return if router is not ready yet, to prevent premature rendering of "Invalid Reset Link"
-  if (!router.isReady) {
+  // Early return if router is not ready yet, or if token hasn't been processed yet
+  if (!router.isReady) { // KEPT: router.isReady check for loading state
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-md w-full space-y-8">

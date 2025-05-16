@@ -1,6 +1,7 @@
+'use client';
+
 import Link from 'next/link';
-import { useTranslation } from 'next-i18next';
-import { useRouter } from 'next/router';
+import { useParams, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 /**
@@ -9,34 +10,37 @@ import { useState, useEffect } from 'react';
  * and language selection buttons.
  *
  * @remarks
- * The component uses a `mounted` state to ensure that language-dependent content
- * (rendered via `useTranslation`) is only displayed after client-side hydration
- * to prevent mismatches. Before hydration, a simplified placeholder footer is shown.
- * Language change is handled by pushing a new route with the selected locale using `next/router`.
+ * The component uses a `mounted` state to ensure that content is only displayed after 
+ * client-side hydration to prevent mismatches. Before hydration, a simplified placeholder footer is shown.
+ * Language change is handled by creating links with the updated language parameter.
  *
  * Called by:
- * - `frontend/pages/_app.tsx` (as part of the main application layout)
+ * - `frontend/app/layout.tsx` (as part of the main application layout)
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`
  * - `next/link`'s `Link` component (for navigation to About, Privacy, Terms pages)
- * - `next-i18next`'s `useTranslation` hook (for internationalizing link text)
- * - `next/router`'s `useRouter` hook (for handling language changes by navigating to the same path with a different locale)
- * - Internal function `changeLanguage` (handler for language selection buttons)
+ * - `next/navigation`'s `useParams` and `usePathname` hooks (for handling language changes)
  *
  * @returns {React.FC} The rendered footer component.
  */
 const Footer = () => {
-  const { t, ready } = useTranslation('common');
-  const router = useRouter();
+  const params = useParams();
+  const pathname = usePathname();
+  const currentLang = params.lang as string || 'en';
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  const changeLanguage = (locale: string) => {
-    router.push(router.pathname, router.asPath, { locale });
+  // Get the path without the language prefix
+  const getPathWithoutLang = () => {
+    if (!pathname) return '/';
+    const pathParts = pathname.split('/');
+    // Remove the first empty string and the language part
+    pathParts.splice(0, 2);
+    return '/' + pathParts.join('/');
   };
 
   // Return a simplified footer during initial client-side rendering
@@ -55,29 +59,29 @@ const Footer = () => {
       <div className="flex gap-[24px] flex-wrap items-center justify-center">
         <Link
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="/about"
+          href={`/${currentLang}/about`}
         >
-          {t('about')}
+          About
         </Link>
         <Link
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="/privacy"
+          href={`/${currentLang}/privacy`}
         >
-          {t('privacy')}
+          Privacy
         </Link>
         <Link
           className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="/terms"
+          href={`/${currentLang}/terms`}
         >
-          {t('terms')}
+          Terms
         </Link>
       </div>
       <div className="flex flex-wrap space-x-3 justify-center mt-2">
-        <button onClick={() => changeLanguage('en')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">English</button>
-        <button onClick={() => changeLanguage('es')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Español</button>
-        <button onClick={() => changeLanguage('he')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">עברית</button>
-        <button onClick={() => changeLanguage('ru')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Русский</button>
-        <button onClick={() => changeLanguage('zh')} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">中文</button>
+        <Link href={`/en${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">English</Link>
+        <Link href={`/es${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Español</Link>
+        <Link href={`/he${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">עברית</Link>
+        <Link href={`/ru${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Русский</Link>
+        <Link href={`/zh${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">中文</Link>
       </div>
     </footer>
   );

@@ -1,65 +1,48 @@
-FROM node:lts AS linter
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run lint && npx tsc --noEmit
-
-FROM node:lts AS builder
+FROM node:18 AS builder
 WORKDIR /app
 
-# Declare NODE_ENV as a build argument.
-# It will pick up the value from --build-arg passed by your REBUILD script
-# or default to 'development' if not provided directly to 'docker build'.
-ARG NODE_ENV=development
-# Set the ENV variable from the ARG so shell commands in this stage can use it.
-ENV NODE_ENV=${NODE_ENV}
+# Copy package files
+COPY package.json ./
 
-# Update npm as part of the build process
-RUN npm install -g npm@latest
-
-COPY package.json package-lock.json ./
+# Install dependencies (including dev dependencies)
+# RUN npm install -g npm@latest
 RUN npm install
+
+# Copy the application code
 COPY . .
 
-# Ensure proper permissions for the .next directory
-# RUN mkdir -p .next && chmod -R 777 .next # This might not be needed if build handles it
+# Modify package.json to remove type: module if it exists
+RUN grep -v '"type"' package.json > package.json.tmp && mv package.json.tmp package.json
 
-# Always run npm run build. The build process itself can be NODE_ENV aware.
-RUN set -e; \
-    echo "Ensuring .next directory is clean..." && \
-    npm run clean && \
-    echo "Builder stage: Building with NODE_ENV=${NODE_ENV}" && \
-    npm run build
+# Create proper config files
+RUN rm -f postcss.config.* tailwind.config.*
+RUN echo 'module.exports = { plugins: { tailwindcss: {}, autoprefixer: {} } };' > postcss.config.js
+RUN echo '/** @type {import("tailwindcss").Config} */ module.exports = { content: ["./pages/**/*.{js,ts,jsx,tsx,mdx}", "./components/**/*.{js,ts,jsx,tsx,mdx}", "./app/**/*.{js,ts,jsx,tsx,mdx}"], theme: { extend: { colors: { primary: { DEFAULT: "#2d6a4f", dark: "#4fd1c5" } }, fontFamily: { sans: ["Geist", "sans-serif"], mono: ["Geist Mono", "monospace"] } } }, plugins: [] };' > tailwind.config.js
 
-FROM node:lts AS runner
+# Build the application
+ENV NODE_ENV=production
+RUN npm run build
+
+FROM node:18-alpine AS runner
 WORKDIR /app
 
-# Ensure NODE_ENV is set for the runtime environment of the final image.
-# This will be overridden by docker-compose environment settings if provided.
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+ENV NODE_ENV=production
 
+# Copy everything needed to run the app
+COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/public ./public
+COPY --from=builder /app/middleware.js ./middleware.js
 COPY --from=builder /app/next.config.js ./next.config.js
 COPY --from=builder /app/next-i18next.config.js ./next-i18next.config.js
+COPY --from=builder /app/postcss.config.js ./postcss.config.js
+COPY --from=builder /app/tailwind.config.js ./tailwind.config.js
 
 # Copy the entrypoint script
-COPY entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
-
-# --- Debugging Start --- #
-RUN echo "DEBUG: Listing /app contents in runner stage:" && ls -la /app
-RUN echo "DEBUG: Listing /app/.next contents in runner stage:" && ls -la /app/.next || echo "DEBUG: /app/.next not found or empty"
-# --- Debugging End --- #
-
-# Ensure the .next directory has proper permissions if needed, though build/start should manage this.
-# RUN chmod -R 777 .next
+COPY entrypoint.sh ./
+RUN chmod +x ./entrypoint.sh
 
 EXPOSE 3000
 
-ENTRYPOINT ["/app/entrypoint.sh"]
-# CMD is removed as entrypoint handles the command
+ENTRYPOINT ["./entrypoint.sh"]

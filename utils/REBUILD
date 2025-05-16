@@ -1,5 +1,6 @@
 #!/bin/bash
 
+
 source ${HOME}/sites/vhs/.env
 #
 # REBUILD - Container Management and Deployment Utility
@@ -223,6 +224,9 @@ rebuild_service() {
 
 rebuild_db_action() {
     rebuild_service "db" "PostgreSQL Database"
+    
+    log_info "Waiting 5 seconds before running REBUILD_TABLES..."
+    sleep 5
     
     log_info "Running REBUILD_TABLES..."
     if [ -x "${SCRIPT_DIR}/REBUILD_TABLES" ]; then

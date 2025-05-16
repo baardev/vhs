@@ -1,5 +1,7 @@
+'use client';
+
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
+import { useRouter, useParams } from 'next/navigation';
 
 /**
  * @interface Article
@@ -23,7 +25,7 @@ interface Article {
  *
  * @remarks
  * - Manages internal state for `headlines` (array of articles), `loading`, `error`, and `debug` messages.
- * - Uses `next/router` to get the current `locale` and fetches news accordingly.
+ * - Uses `next/navigation` to get the current `locale` and fetches news accordingly.
  * - On mount and when `locale` changes, it calls `fetchHeadlines`.
  * - `fetchHeadlines`: 
  *   - Makes an asynchronous GET request to `/api/golf-news?lang=[locale]` with `Cache-Control: no-cache` header.
@@ -41,7 +43,7 @@ interface Article {
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`
- * - `next/router`: `useRouter` hook (to get current locale)
+ * - `next/navigation`: `useRouter` hook (to get current locale)
  * - Browser API: `fetch` (to get data from `/api/golf-news`)
  * - Browser API: `window.location.origin` (to construct the full API URL for debugging)
  *
@@ -53,13 +55,14 @@ export default function GolfNewsHeadlines() {
     const [error, setError] = useState<string | null>(null);
     const [debug, setDebug] = useState<string | null>(null);
     const router = useRouter();
-    const { locale } = router;
+    const params = useParams();
+    const lang = params.lang as string || 'en';
 
     useEffect(() => {
         async function fetchHeadlines() {
             try {
                 setLoading(true);
-                const apiUrl = `/api/golf-news?lang=${locale || 'en'}`;
+                const apiUrl = `/api/golf-news?lang=${lang}`;
                 setDebug(`Fetching from ${window.location.origin}${apiUrl}...`);
 
                 const response = await fetch(apiUrl, {
@@ -91,7 +94,7 @@ export default function GolfNewsHeadlines() {
         }
 
         fetchHeadlines();
-    }, [locale]);
+    }, [lang]);
 
     // Show loading state
     if (loading) {
