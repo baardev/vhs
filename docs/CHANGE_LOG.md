@@ -60,12 +60,12 @@
 - added DOC comments to all files referencing from/to calls and desc
 - added OnLook consts to _documents.tsx
 
-## 
+## 0.0.93
 - fixed email login notification
 - fixed DEV/PROD build selection
 - limit auth token to 15 min
 - fixed password reset email link
-
+- all .sh now require sourcing {$HOME}/sites/vhs/.env
 
 
 
