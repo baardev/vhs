@@ -1,8 +1,10 @@
 #!/bin/bash
 set -e
 
+source ${HOME}/sites/vhs/.env
+
 # Container and path variables
-DB_CONTAINER=${DB_CONTAINER:-vhs-postgres}
+# DB_CONTAINER=${DB_CONTAINER:-dev-vhs-db
 DB_USER=${DB_USER:-admin}
 DB_NAME=${DB_NAME:-vhsdb}
 SQL_FILE="${ROOT_DIR}/backend/db/sql/010_create_users_table.sql"

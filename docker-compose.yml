@@ -1,7 +1,7 @@
 services:
   nginx:
     image: nginx:alpine
-    container_name: dev-vhs-nginx
+    container_name: vhs-nginx
     ports:
       - "443:443"
       - "80:80"
@@ -31,7 +31,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: dev-vhs-db
+    container_name: vhs-db
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -50,7 +50,7 @@ services:
       args:
         - NODE_ENV=${NODE_ENV}
 
-    container_name: dev-vhs-backend
+    container_name: vhs-backend
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -73,6 +73,7 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME}
       SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL}
+      FRONTEND_URL: https://libronico.com
     depends_on:
       - db
     ports:
@@ -87,7 +88,7 @@ services:
       context: ./frontend
       args:
         - NODE_ENV=${NODE_ENV}
-    container_name: dev-vhs-frontend
+    container_name: vhs-frontend
     ports:
       - "3000:3000"
     volumes:

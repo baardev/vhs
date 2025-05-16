@@ -2,6 +2,7 @@
 #!/bin/bash
 set -e
 
+source ${HOME}/sites/vhs/.env
 # Check if container is running
 if ! docker ps | grep -q $DB_CONTAINER; then
     echo "Error: Database container '$DB_CONTAINER' is not running"

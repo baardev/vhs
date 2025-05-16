@@ -1,7 +1,12 @@
 #!/bin/bash
 
+source ${HOME}/sites/vhs/.env
+# cat ${HOME}/sites/vhs/.env
+
 # Set consistent variable name (uppercase)
-DB_CONTAINER=${DB_CONTAINER:-vhs-postgres}
+echo "DB_CONTAINER: $DB_CONTAINER"
+
+DB_CONTAINER=${DB_CONTAINER}
 
 # Check if container is running
 if ! docker ps | grep -q $DB_CONTAINER; then

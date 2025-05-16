@@ -93,12 +93,12 @@ const ForgotPassword = () => {
           <div className="rounded-md bg-green-50 dark:bg-green-900 p-4 mb-6">
             <div className="flex">
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">
-                  {t('forgotPassword.success')}
+                <h3 className="text-sm font-medium text-green-800 dark:text-white">
+                  {t('forgotPassword.successTitle', 'Request Sent')}
                 </h3>
-                <div className="mt-2 text-sm text-green-700">
+                <div className="mt-2 text-sm text-green-700 dark:text-gray-100">
                   <p>
-                    {t('forgotPassword.successMessage')}
+                    {t('forgotPassword.successMessage', 'If an account with that email exists, a password reset link has been sent to your email. Please check your inbox (and spam folder).')}
                   </p>
                 </div>
               </div>

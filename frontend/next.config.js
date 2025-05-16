@@ -30,7 +30,7 @@ const nextConfig = {
       {
         source: '/api/:path*',
         destination: process.env.NODE_ENV === 'development' 
-          ? 'http://dev-vhs-backend:4000/api/:path*'  // Development - use backend container name and port
+          ? 'http://vhs-backend:4000/api/:path*'  // Development - use backend container name and port
           : 'https://libronico.com/api/:path*',  // Production
       },
     ];

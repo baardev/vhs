@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+source ${HOME}/sites/vhs/.env
 # Container and path variables
 #DB_CONTAINER=${DB_CONTAINER:-vhs-postgres}
 #ROOT_DIR=${ROOT_DIR:-$(git rev-parse --show-toplevel)}

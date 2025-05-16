@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+source ${HOME}/sites/vhs/.env
 SQL_FILE="${ROOT_DIR}/backend/db/sql/300_create_course_names_VIEW.sql"
 
 

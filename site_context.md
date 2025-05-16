@@ -8794,7 +8794,7 @@
 services:
   nginx:
     image: nginx:alpine
-    container_name: dev-vhs-nginx
+    container_name: vhs-nginx
     ports:
       - "443:443"
       - "80:80"
@@ -8823,7 +8823,7 @@ services:
 
   db:
     image: postgres:latest
-    container_name: dev-vhs-db
+    container_name: vhs-db
     environment:
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -8846,7 +8846,7 @@ services:
       args:
         - NODE_ENV=production
 
-    container_name: dev-vhs-backend
+    container_name: vhs-backend
     environment:
       DB_USER: ${DB_USER}
       DB_PASSWORD: ${DB_PASSWORD}
@@ -8875,7 +8875,7 @@ services:
       context: ./frontend
       args:
         - NODE_ENV=production
-    container_name: dev-vhs-frontend
+    container_name: vhs-frontend
     ports:
       - "3000:3000"
     volumes:

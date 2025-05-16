@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./.env
+source ${HOME}/sites/vhs/.env
 #
 # REBUILD - Container Management and Deployment Utility
 # ====================================================
@@ -226,7 +226,7 @@ rebuild_db_action() {
     
     log_info "Running REBUILD_TABLES..."
     if [ -x "${SCRIPT_DIR}/REBUILD_TABLES" ]; then
-        "${SCRIPT_DIR}/REBUILD_TABLES"
+        source "${SCRIPT_DIR}/REBUILD_TABLES"
     else
         log_error "REBUILD_TABLES script not found or not executable."
         exit 1
@@ -235,7 +235,7 @@ rebuild_db_action() {
     if [ "${DO_RESTORE}" = "YES" ]; then
         log_info "Restoring database from backup..."
         if [ -x "${SCRIPT_DIR}/IMPEX" ]; then
-            "${SCRIPT_DIR}/IMPEX" --import
+            source "${SCRIPT_DIR}/IMPEX" --import
         else
             log_error "IMPEX script not found or not executable."
             exit 1

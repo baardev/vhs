@@ -175,7 +175,7 @@ router.post(
       const jwtSecret = process.env.JWT_SECRET || 'default_jwt_secret_for_development';
 
       // Generate JWT token
-      const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: '24h' });
+      const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: '15m' });
       console.log('Login successful for user:', user.username);
 
       // Send login notification email
@@ -371,7 +371,7 @@ router.post(
       // Generate a token
       const token = crypto.randomBytes(32).toString('hex');
       const expires = new Date();
-      expires.setHours(expires.getHours() + 1); // Token valid for 1 hour
+      expires.setHours(expires.getHours() + 24); // Token valid for 24 hours
 
       // Save token to database
       await pool.query(
@@ -379,11 +379,34 @@ router.post(
         [user.id, token, expires]
       );
 
-      // In a real app, you would send an email with a link like:
-      // https://yourdomain.com/reset-password/${token}
+      // Send the password reset email
+      const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000';
+      const resetLink = `${frontendUrl}/reset-password?token=${token}`;
 
-      console.log(`Password reset token generated for user ${user.id}:`);
-      console.log(`Reset link would be: https://localhost/reset-password/${token}`);
+      try {
+        await sendEmail({
+          to: user.email,
+          subject: 'Password Reset Request',
+          text: `Hello ${user.username},` + 
+                `\n\nPlease click the following link to reset your password: ${resetLink}` + 
+                `\n\nIf you did not request a password reset, please ignore this email.` + 
+                `\n\nThis link will expire in 24 hours.` + 
+                `\n\nThanks,\nThe VHS Team`,
+          html: `<p>Hello ${user.username},</p>` + 
+                `<p>Please click the following link to reset your password: <a href="${resetLink}">${resetLink}</a></p>` + 
+                `<p>If you did not request a password reset, please ignore this email.</p>` + 
+                `<p>This link will expire in 24 hours.</p>` + 
+                `<p>Thanks,<br/>The VHS Team</p>`
+        });
+        console.log(`Password reset email sent to ${user.email} with link: ${resetLink}`);
+      } catch (emailError) {
+        console.error(`Failed to send password reset email to ${user.email}:`, emailError);
+        // Optionally, you could decide to return an error to the user here if email is critical
+        // For now, we still return the generic message for security (don't reveal if email exists/works)
+      }
+
+      // console.log(`Password reset token generated for user ${user.id}:`);
+      // console.log(`Reset link would be: ${resetLink}`); // Already logged above
 
       res.status(200).json({ message: 'If an account with this email exists, a password reset link has been sent.' });
     } catch (error: any) {
@@ -422,15 +445,42 @@ router.post(
 
       const { token, password } = req.body;
 
+      console.log(`[Reset Password] Attempting to reset password with token: ${token}`);
+
+      // Log current time from database for comparison
+      try {
+        const dbTimeResult = await pool.query('SELECT NOW() as db_current_time;');
+        console.log(`[Reset Password] Current DB time: ${dbTimeResult.rows[0].db_current_time}`);
+      } catch (timeError) {
+        console.error('[Reset Password] Error fetching DB time:', timeError);
+      }
+
       // Find valid token
       const tokenResult = await pool.query(
-        'SELECT * FROM password_reset_tokens WHERE token = $1 AND used = false AND expires_at > NOW()',
+        'SELECT *, expires_at > NOW() as is_valid_time FROM password_reset_tokens WHERE token = $1 AND used = false',
         [token]
       );
 
       const resetToken = tokenResult.rows[0];
 
       if (!resetToken) {
+        console.log(`[Reset Password] Token not found or already used. Token value searched: ${token}`);
+        res.status(400).json({ error: 'Invalid or expired token' });
+        return;
+      }
+
+      // Log the retrieved token details for debugging
+      console.log('[Reset Password] Found token in DB:', {
+        tokenId: resetToken.id,
+        userId: resetToken.user_id,
+        storedToken: resetToken.token, // Should match the input token
+        expiresAt: resetToken.expires_at,
+        isUsed: resetToken.used,
+        isValidTimeAgainstDBNow: resetToken.is_valid_time // Result of expires_at > NOW()
+      });
+
+      if (!resetToken.is_valid_time) {
+        console.log(`[Reset Password] Token found but expired based on DB time. Expires At: ${resetToken.expires_at}`);
         res.status(400).json({ error: 'Invalid or expired token' });
         return;
       }

@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+source ${HOME}/sites/vhs/.env
 # # Set database connection parameters
 # DB_CONTAINER=${DB_CONTAINER:-vhs-postgres}
 # DB_USER=${DB_USER:-admin}

@@ -1,4 +1,5 @@
 #!/bin/bash
+source ${HOME}/sites/vhs/.env
 #
 # REBUILD_TABLES - Database Table Creation and Restoration Script
 # ==============================================================
@@ -133,5 +134,5 @@ if [ "$RESTORE" = true ]; then
     exit 0
 else
     # Only run the normal rebuild process if not restoring
-    rebuild_database $(docker ps --format "{{.Names}}" | grep db)
+    rebuild_database vhs-db  #$(docker ps --format "{{.Names}}" | grep db)
 fi

@@ -63,6 +63,8 @@
 ## 
 - fixed email login notification
 - fixed DEV/PROD build selection
+- limit auth token to 15 min
+- fixed password reset email link
 
 
 

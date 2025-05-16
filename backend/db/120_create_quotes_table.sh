@@ -1,6 +1,7 @@
 #!/bin/bash
 set -e
 
+source ${HOME}/sites/vhs/.env
 SQL_FILE="${ROOT_DIR}/backend/db/sql/120_create_quotes_table.sql"
 
 # Check if SQL file exists

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. ./.env
+source ${HOME}/sites/vhs/.env
 
 # export DISPLAY=:0
 # export DB_USER=admin
@@ -28,7 +28,7 @@ export ROOT_DIR=$(git rev-parse --show-toplevel)
 # export PGPASSWORD=`cat ${ROOT_DIR}/.adminpw`
 # export DB_PASSWORD=`cat ${ROOT_DIR}/.adminpw`
 
-# export DB_CONTAINER=dev-vhs-db  # this is the default container name that is explicitly set in the docker-compose.yml
+# export DB_CONTAINER=vhs-db  # this is the default container name that is explicitly set in the docker-compose.yml
 
 # # Check system information and set conda environment accordingly
 # if uname -a | grep -q ":jwbox"; then
@@ -50,6 +50,7 @@ echo "DB_PORT: [$DB_PORT]"
 echo "DATABASE_URL: [$DATABASE_URL]"
 echo "PGUSER: [$PGUSER]"
 echo "PGDATABASE: [$PGDATABASE]"    
+echo "DB_CONTAINER: [$DB_CONTAINER]"
 echo "PGHOST: [$PGHOST]"
 echo "PGPORT: [$PGPORT]"
 echo "NODE_ENV: [$NODE_ENV]"
