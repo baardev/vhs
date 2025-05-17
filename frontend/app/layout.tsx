@@ -37,7 +37,7 @@ if (typeof window !== "undefined") {
 }
 
 export const metadata = {
-  title: "VHS Open Handicap System",
+  title: "OHS Open Handicap System",
   description: "Track your golf handicap easily",
   alternates: {
     canonical: '/',

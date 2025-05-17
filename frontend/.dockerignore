@@ -1,5 +1,19 @@
+# Ignore node_modules and build artifacts
 node_modules
 .next
+out
+
+# Explicitly ignore the pages directory
+pages
+pages/**/*
+
+# Ignore Plasmic-related files
+plasmic.json
+plasmic-host.json
+plasmic.lock
+plasmic-config.js
+PLASMIC_SETUP_INSTRUCTIONS.md
+
 npm-debug.log
 README.md
 .DS_Store 

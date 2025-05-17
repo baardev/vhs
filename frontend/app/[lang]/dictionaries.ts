@@ -97,13 +97,13 @@ const createFallbackDictionary = () => {
       general: 'An error occurred'
     },
     login: {
-      title: 'Sign in to VHS',
+      title: 'Sign in to OHS',
       forgotPassword: 'Forgot Password?',
       noAccount: "Don't have an account?"
     },
     home: {
       title: 'Welcome',
-      subtitle: 'Discover amazing features.'
+      subtitle: 'A free alternative to expensive handicapping services'
     }
   };
 };
@@ -147,13 +147,13 @@ export const getHomeDictionary = async (locale: string) => {
     const t = await loadCommonJson(locale); // Assuming home translations are in common.json
     return {
       title: t.home?.title || 'Welcome',
-      subtitle: t.home?.subtitle || 'Discover amazing features.',
+      subtitle: t.home?.subtitle || 'A free alternative to expensive handicapping services',
     };
   } catch (error) {
     console.error(`[dictionaries.ts] getHomeDictionary error:`, error);
     return { 
       title: 'Welcome', 
-      subtitle: 'Discover amazing features.' 
+      subtitle: 'A free alternative to expensive handicapping services' 
     };
   }
 };

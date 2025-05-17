@@ -19,6 +19,10 @@ const nextConfig = {
   // Use a relative assetPrefix to avoid CORS issues
   assetPrefix: '',
   
+  // Use proper configuration for App Router
+  // Include only app directory files in the build
+  pageExtensions: ['tsx', 'ts', 'jsx', 'js'],
+  
   images: {
     domains: ['localhost', 'libronico.com'],
   },
@@ -83,6 +87,15 @@ const nextConfig = {
         'process.env.__NEXT_WEBPACK_PUBLIC_HOSTNAME': JSON.stringify('')
       })
     );
+    
+    // Ignore all files in the pages directory
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      './pages': false,
+      '../pages': false,
+      '../../pages': false,
+    };
+    
     return config;
   },
 };

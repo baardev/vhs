@@ -219,7 +219,7 @@ def main():
         "/en/admin/cache",  #placeholder
         "/en/handicap",     
         "/en/debug-logs", 
-        "/en/video-logs",
+        "/en/view-logs",
 
         "/robots.txt",
         
