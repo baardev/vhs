@@ -18,6 +18,7 @@ import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns'; // Import adapter for date handling
 import { AuthContext } from '../../../src/contexts/AuthContext'; // Updated path for AuthContext
 import { useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 
 ChartJS.register(
   CategoryScale,
@@ -84,7 +85,7 @@ interface ChartCardData {
  * This component fetches and displays two sets of data:
  * 1. Public Player Cards: Fetched from `/api/player-cards` and displayed in a sortable, paginated table.
  *    Each row shows player name, date, course, gross/net scores, differential, and status.
- *    A "View Details" link navigates to the specific player card's detail page (`/player-cards/:id`).
+ *    A "View Details" link navigates to the specific player card's detail page (`/[lang]/player-cards/:id`).
  * 2. User's Chart Data: Fetched from `/api/user/chart-data` (requires authentication) if a user is logged in.
  *    Displays a line chart showing the user's Gross, Net, and Differential scores over their last 50 'OK' rounds.
  *    Handles loading and error states for both data fetches independently.
@@ -110,6 +111,8 @@ const PlayerCardsList = () => {
   const [playerCards, setPlayerCards] = useState<PlayerCard[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const params = useParams();
+  const lang = params?.lang || 'en';
 
   const [chartData, setChartData] = useState<any>(null); // Can be more specific with Chart.js types
   const [chartLoading, setChartLoading] = useState(true);
@@ -266,7 +269,7 @@ const PlayerCardsList = () => {
     <div>
       <div className="mb-4 flex justify-end">
         {user && ( // Only show Add New Card if user is logged in
-          <Link href="/player-cards/new" className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+          <Link href={`/${lang}/player-cards/new`} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
             <span>Add New Card</span>
           </Link>
         )}
@@ -356,7 +359,7 @@ const PlayerCardsList = () => {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    <Link href={`/player-cards/${card.id}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
+                    <Link href={`/${lang}/player-cards/${card.id}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
                       View Details
                     </Link>
                   </td>
