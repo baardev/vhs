@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface HoleInfo {
@@ -25,7 +27,7 @@ interface HolesSectionProps {
  * It includes a note that par and stroke index are typically the same across all tee boxes.
  *
  * Called by:
- * - `frontend/pages/courses/new.tsx` (as part of the new course creation form)
+ * - `frontend/app/[lang]/courses/new/page.tsx` (as part of the new course creation form)
  *
  * Calls:
  * - React (implicitly, as it's a React functional component)
@@ -100,4 +102,4 @@ const HolesSection: React.FC<HolesSectionProps> = ({ holes, updateHole }) => {
   );
 };
 
-export default HolesSection;
+export default HolesSection; 

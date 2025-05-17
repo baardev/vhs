@@ -10,7 +10,7 @@ RUN npm install
 
 # Copy only necessary files, excluding pages directory (handled by .dockerignore)
 COPY app ./app
-COPY components ./components
+# COPY components ./components
 COPY public ./public
 COPY styles ./styles
 COPY src ./src

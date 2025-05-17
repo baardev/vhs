@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
@@ -46,6 +48,7 @@ interface CourseName {
 
 interface CourseDataDetailProps {
   courseId: number;
+  lang: string; // Added lang parameter for proper navigation
 }
 
 // Get the base URL for API requests
@@ -61,6 +64,7 @@ const getBaseUrl = () => {
  * @description Fetches and displays detailed information for a specific course, including its name, location, and tee-specific data (summary and hole-by-hole pars).
  * @param {CourseDataDetailProps} props - The props for the component.
  * @param {number} props.courseId - The unique identifier of the course to display details for.
+ * @param {string} props.lang - The current language code for localized routes.
  *
  * @remarks
  * This component performs the following actions:
@@ -75,7 +79,7 @@ const getBaseUrl = () => {
  * - Renders appropriate messages for loading, error, or if the course/tee data is not found.
  *
  * Called by:
- * - `frontend/pages/course-data/[id].tsx` (which gets the `courseId` from the route parameter)
+ * - `frontend/app/[lang]/courses/[id]/page.tsx` (which gets the `courseId` from the route parameter)
  *
  * Calls:
  * - React Hooks: `useState` (for managing course data, name, loading state, and error messages), `useEffect` (for fetching data)
@@ -86,7 +90,7 @@ const getBaseUrl = () => {
  *
  * @returns {React.FC<CourseDataDetailProps>} The rendered detailed view of a course, or a message indicating loading, error, or not found state.
  */
-const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
+const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) => {
   const [courseData, setCourseData] = useState<CourseData[]>([]);
   const [courseName, setCourseName] = useState<CourseName | null>(null);
   const [loading, setLoading] = useState(true);
@@ -134,17 +138,19 @@ const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
       };
     }
 
+    // Fix for linter errors: using Number() to ensure we get 0 instead of undefined
+    // when accessing potentially undefined properties
     const frontNine = [
-      teeData.par_h01, teeData.par_h02, teeData.par_h03, 
-      teeData.par_h04, teeData.par_h05, teeData.par_h06, 
-      teeData.par_h07, teeData.par_h08, teeData.par_h09
-    ].filter(Boolean).reduce((sum, par) => sum + (par || 0), 0);
+      Number(teeData.par_h01 || 0), Number(teeData.par_h02 || 0), Number(teeData.par_h03 || 0), 
+      Number(teeData.par_h04 || 0), Number(teeData.par_h05 || 0), Number(teeData.par_h06 || 0), 
+      Number(teeData.par_h07 || 0), Number(teeData.par_h08 || 0), Number(teeData.par_h09 || 0)
+    ].reduce((sum, par) => sum + par, 0);
     
     const backNine = [
-      teeData.par_h10, teeData.par_h11, teeData.par_h12, 
-      teeData.par_h13, teeData.par_h14, teeData.par_h15, 
-      teeData.par_h16, teeData.par_h17, teeData.par_h18
-    ].filter(Boolean).reduce((sum, par) => sum + (par || 0), 0);
+      Number(teeData.par_h10 || 0), Number(teeData.par_h11 || 0), Number(teeData.par_h12 || 0), 
+      Number(teeData.par_h13 || 0), Number(teeData.par_h14 || 0), Number(teeData.par_h15 || 0), 
+      Number(teeData.par_h16 || 0), Number(teeData.par_h17 || 0), Number(teeData.par_h18 || 0)
+    ].reduce((sum, par) => sum + par, 0);
     
     return {
       frontNine,
@@ -158,7 +164,7 @@ const CourseDataDetail = ({ courseId }: CourseDataDetailProps) => {
       {/* Course Header */}
       <div className="bg-green-700 dark:bg-green-800 p-6 text-white">
         <div className="mb-4">
-          <Link href="/course-data" className="text-white hover:underline">
+          <Link href={`/${lang}/courses`} className="text-white hover:underline">
             &larr; Back to Courses
           </Link>
         </div>

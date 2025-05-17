@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import CourseCardGrid from '../../components/courses/CourseCardGrid';
 
 interface Course {
   course_id: number;
@@ -68,9 +69,6 @@ export default function CoursesPage({ params }: { params: { lang: string } }) {
     fetchCourses();
   }, []);
 
-  // Ensure courses is always an array before rendering
-  const safeCourses = Array.isArray(courses) ? courses : [];
-
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto">
@@ -99,72 +97,13 @@ export default function CoursesPage({ params }: { params: { lang: string } }) {
           </p>
         </div>
 
-        {error && (
-          <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md mb-6">
-            <p className="text-sm text-red-800 dark:text-red-400">{error}</p>
-          </div>
-        )}
-
-        {isLoading ? (
-          <div className="text-center py-12">
-            <div className="text-xl font-medium">Loading courses...</div>
-          </div>
-        ) : safeCourses.length === 0 ? (
-          <div className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md p-6 text-center">
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">No courses found.</p>
-            {isAuthenticated ? (
-              <p>
-                <Link
-                  href={`/${params.lang}/courses/new`}
-                  className="text-[#2d6a4f] dark:text-[#4fd1c5] hover:underline"
-                >
-                  Add your first course
-                </Link>
-              </p>
-            ) : (
-              <p>
-                <Link
-                  href={`/${params.lang}/login`}
-                  className="text-[#2d6a4f] dark:text-[#4fd1c5] hover:underline"
-                >
-                  Sign in
-                </Link>
-                {' '}to add a new course.
-              </p>
-            )}
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {safeCourses.map((course) => (
-              <div
-                key={course.course_id}
-                className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
-              >
-                <div className="px-6 py-4">
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
-                    {course.name || "Unknown Course"}
-                  </h2>
-                  <div className="flex items-center mt-2 text-gray-500 dark:text-[#b5ceff]">
-                    <span>{course.city || "Unknown City"}, {course.province_state || "Unknown Province"}, {course.country || "Unknown Country"}</span>
-                  </div>
-                  
-                  <div className="flex justify-between items-center mt-4">
-                    <div className="text-sm text-gray-500 dark:text-gray-400">
-                      Course ID: {course.course_id}
-                    </div>
-                    <Link 
-                      href={`/${params.lang}/courses/${course.course_id}`}
-                      className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#2d6a4f] hover:bg-[#1b4332] dark:bg-[#00cc7e] dark:hover:bg-[#00aa69] rounded-md"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      View Details
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <CourseCardGrid 
+          lang={params.lang}
+          courses={courses}
+          isLoading={isLoading}
+          error={error}
+          isAuthenticated={isAuthenticated}
+        />
       </div>
     </div>
   );

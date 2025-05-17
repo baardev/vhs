@@ -2,7 +2,7 @@
 
 import { Suspense } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
-import PlayerCardsList from '../../../components/player-cards/PlayerCardsList';
+import PlayerCardsList from '../../components/player-cards/PlayerCardsList';
 import Link from 'next/link';
 
 /**
@@ -34,7 +34,7 @@ const geistMono = Geist_Mono({
  * The page features:
  * - A clear header section explaining the purpose of the view
  * - A prominent "Add New Scorecard" button for quick data entry
- * - A responsive grid layout of scorecard entries
+ * - A responsive grid layout of scorecard entries 
  * - Loading state handling via Suspense
  *
  * @remarks

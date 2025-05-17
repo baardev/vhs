@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Geist, Geist_Mono } from "next/font/google";
 import { getCommonDictionary } from '../../dictionaries';
 import { forceValidateTokenOrLogout } from '../../../src/utils/authUtils';
-import AdminUserTable from '../../../components/admin/UserTable';
+import AdminUserTable from '../../components/admin/UserTable';
 
 // Script to validate token immediately on page load
 const authCheckScript = `

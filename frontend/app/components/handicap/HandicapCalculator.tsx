@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 
@@ -20,7 +22,7 @@ import Link from 'next/link';
  * - Provides a brief explanation that the handicap is based on the average of the 8 best differentials.
  *
  * Called by:
- * - `frontend/pages/handicap.tsx`
+ * - `frontend/app/[lang]/handicap/page.tsx`
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`
@@ -94,7 +96,7 @@ const HandicapCalculator: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden   border border-green-500">
+    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
       <div className="bg-[#2d6a4f] dark:bg-[#1e3a8a] p-4">
         <h2 className="flex justify-center text-xl font-semibold text-white flex items-center">
           <span className="mr-2">⛳</span>
@@ -125,12 +127,12 @@ const HandicapCalculator: React.FC = () => {
           <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4">
             <p className="text-red-700 dark:text-red-400">{error}</p>
           </div>
-        ) :
-          <div className="space-y-4  border border-green-500">
-            <div className="flex justify-center w-full   border border-green-500">
-              <div className="flex flex-col items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md p-4 w-40 h-40   border border-green-500">
-                <span className="text-gray-700 dark:text-gray-300 text-base   border border-green-500">Handicap Index</span>
-                <span className="mt-2 text-3xl font-bold text-[#2d6a4f] dark:text-[#4fd1c5]   border border-green-500">
+        ) : (
+          <div className="space-y-4">
+            <div className="flex justify-center w-full">
+              <div className="flex flex-col items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md p-4 w-40 h-40">
+                <span className="text-gray-700 dark:text-gray-300 text-base">Handicap Index</span>
+                <span className="mt-2 text-3xl font-bold text-[#2d6a4f] dark:text-[#4fd1c5]">
                   {calculateHandicap(handicapData?.avg_differential || null)}
                 </span>
               </div>
@@ -146,7 +148,7 @@ const HandicapCalculator: React.FC = () => {
               * Calculated based on the average of your 8 best differentials
             </div>
           </div>
-        }
+        )}
       </div>
     </div>
   );

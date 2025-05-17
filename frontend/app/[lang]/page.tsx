@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react';
 import { getHomeDictionary } from './dictionaries';
-import RandomQuote from '../../components/RandomQuote';
+import RandomQuote from '../components/RandomQuote';
 
 /**
- * @page HomePage
+ * @page HomePage 
  * @description Main landing page for the Open Handicap System application.
  * 
  * This page serves as the entry point for the application, providing:

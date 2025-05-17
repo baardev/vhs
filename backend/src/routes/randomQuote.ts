@@ -4,10 +4,14 @@
  * @remarks
  * This module defines a single API endpoint (`/random-quote`) that retrieves a random quote
  * from the `golf_quotes` table in the database.
+ * 
+ * The quotes provided by this endpoint are used in the frontend application to display
+ * inspirational golf quotes on various pages, primarily through the RandomQuote component.
  *
  * Called by:
  * - `backend/src/index.ts`
- *
+ * - Frontend API route: `frontend/app/api/random-quote/route.ts`
+ * 
  * Calls:
  * - `express` (external library - for Router)
  * - `../db` (likely `backend/src/db.ts` or `backend/src/db/index.ts` - provides database connection pool)

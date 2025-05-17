@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 /**
@@ -48,7 +50,7 @@ interface TeeBoxesSectionProps {
  * The "Remove" button (per tee box) triggers the `removeTeeBox` callback.
  *
  * Called by:
- * - `frontend/pages/courses/new.tsx` (as part of the new course creation form)
+ * - `frontend/app/[lang]/courses/new/page.tsx` (as part of the new course creation form)
  *
  * Calls:
  * - React (implicitly, as it's a React functional component)
@@ -183,4 +185,4 @@ const TeeBoxesSection: React.FC<TeeBoxesSectionProps> = ({
   );
 };
 
-export default TeeBoxesSection;
+export default TeeBoxesSection; 

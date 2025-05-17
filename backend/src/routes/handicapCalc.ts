@@ -12,7 +12,8 @@
  * Cache control headers are aggressively set to prevent caching of handicap results.
  *
  * Called by:
- * - `backend/src/index.ts`
+ * - `backend/src/index.ts` 
+ * - Frontend API route: `frontend/app/api/handicap-calc/route.ts`
  *
  * Calls:
  * - `express` (external library)

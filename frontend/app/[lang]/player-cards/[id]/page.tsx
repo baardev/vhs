@@ -1,7 +1,7 @@
 'use client';
 
 import { Geist, Geist_Mono } from "next/font/google";
-import PlayerCardDetail from '../../../../components/player-cards/PlayerCardDetail';
+import PlayerCardDetail from '../../../components/player-cards/PlayerCardDetail';
 
 /**
  * @constant geistSans
@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
  * @page PlayerCardPage
  * @description A dynamic page for displaying detailed information about a specific player card.
  * 
- * This page serves as the detailed view for individual player handicap cards in the Open
+ * This page serves a s the detailed view for individual player handicap cards in the Open
  * Handicap System. It retrieves the card ID from the route parameters and delegates
  * the actual rendering and data fetching to the PlayerCardDetail component.
  * 

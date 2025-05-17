@@ -14,7 +14,7 @@ interface Quote {
   author: string;
 }
 
-/**
+/** 
  * @component RandomQuote
  * @description A React functional component that fetches and displays a random quote.
  *
@@ -29,7 +29,7 @@ interface Quote {
  * - The component is styled with the class `random-quote` on its root div.
  *
  * Called by:
- * - `frontend/pages/index.tsx` (on the home page, in the header section)
+ * - `frontend/app/[lang]/page.tsx` (on the homepage in the hero section)
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`
@@ -66,4 +66,4 @@ const RandomQuote: React.FC = () => {
   );
 };
 
-export default RandomQuote;
+export default RandomQuote; 

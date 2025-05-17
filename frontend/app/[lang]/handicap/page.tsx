@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import HandicapCalculator from '../../../components/handicap/HandicapCalculator';
+import HandicapCalculator from '../../components/handicap/HandicapCalculator';
 import { Geist, Geist_Mono } from "next/font/google";
 import { getCommonDictionary } from '../dictionaries';
 
@@ -15,13 +15,24 @@ const geistSans = Geist({
 });
 
 /**
- * @constant geistMono
+ * @constant geistMono 
  * @description Next.js font optimization for Geist Mono font.
  */
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+/**
+ * @interface Dictionary
+ * @description Defines the structure for the translation dictionary.
+ */
+interface Dictionary {
+  handicap?: {
+    title?: string;
+  };
+  [key: string]: any;
+}
 
 /**
  * @page HandicapPage
@@ -51,8 +62,8 @@ const geistMono = Geist_Mono({
  *   submits data to the server
  * - Dictionary translations for handicap page content
  */
-export default function HandicapPage({ params: { lang } }) {
-  const [dict, setDict] = useState(null);
+export default function HandicapPage({ params: { lang } }: { params: { lang: string } }) {
+  const [dict, setDict] = useState<Dictionary | null>(null);
   
   // Load dictionary
   useEffect(() => {

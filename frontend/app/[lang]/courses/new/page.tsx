@@ -3,9 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
-import CourseInfoSection from '../../../../components/courses/CourseInfoSection';
-import TeeBoxesSection from '../../../../components/courses/TeeBoxesSection';
-import HolesSection from '../../../../components/courses/HolesSection';
+import CourseInfoSection from '../../../components/courses/CourseInfoSection';
+import TeeBoxesSection from '../../../components/courses/TeeBoxesSection';
+import HolesSection from '../../../components/courses/HolesSection';
 
 interface TeeBox {
   name: string;

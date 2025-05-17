@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 
-/**
+/** 
  * @apiRoute GET /api/random-quote
  * @description Content delivery API endpoint for retrieving inspirational golf quotes.
  * 
@@ -18,7 +18,7 @@ import { NextResponse } from 'next/server';
  * 
  * @calledBy
  * - HomePage component (for featured quotes)
- * - RandomQuote component
+ * - RandomQuote component (frontend/app/components/RandomQuote.tsx)
  * - Dashboard motivational sections
  * - Loading screens or transitional UI
  * 

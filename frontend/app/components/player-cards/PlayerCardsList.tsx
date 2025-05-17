@@ -1,6 +1,7 @@
+'use client';
+
 import { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
-// @ts-ignore: next/link module is missing its type declarations in the current setup
 import Link from 'next/link';
 import {
   Chart as ChartJS,
@@ -15,8 +16,8 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import 'chartjs-adapter-date-fns'; // Import adapter for date handling
-import { AuthContext } from '../../src/contexts/AuthContext'; // Import AuthContext
-import { useRouter } from 'next/navigation'; // Import useRouter for redirection
+import { AuthContext } from '../../../src/contexts/AuthContext'; // Updated path for AuthContext
+import { useRouter } from 'next/navigation';
 
 ChartJS.register(
   CategoryScale,
@@ -29,7 +30,7 @@ ChartJS.register(
   TimeScale // Register TimeScale
 );
 
-/**
+/** 
  * @interface PlayerCard
  * @description Defines the structure for a player card object displayed in the list.
  * @property {number} id - Unique identifier for the player card.
@@ -92,7 +93,7 @@ interface ChartCardData {
  *    If chart data fetch results in a 401, it logs the user out and redirects to login.
  *
  * Called by:
- * - `frontend/pages/player-cards/index.tsx`
+ * - `frontend/app/[lang]/player-cards/page.tsx`
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`, `useContext`

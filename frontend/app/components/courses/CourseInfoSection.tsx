@@ -1,3 +1,5 @@
+'use client';
+
 import React from 'react';
 
 interface CourseInfoSectionProps {
@@ -31,7 +33,7 @@ interface CourseInfoSectionProps {
  * Input fields for course name and city/province are marked as required.
  *
  * Called by:
- * - `frontend/pages/courses/new.tsx` (as part of the new course creation form)
+ * - `frontend/app/[lang]/courses/new/page.tsx` (as part of the new course creation form)
  *
  * Calls:
  * - React (implicitly, as it's a React functional component)
@@ -130,4 +132,4 @@ const CourseInfoSection: React.FC<CourseInfoSectionProps> = ({
   );
 };
 
-export default CourseInfoSection;
+export default CourseInfoSection; 
