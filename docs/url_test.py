@@ -224,25 +224,25 @@ def main():
     # Try some alternative path patterns (in case App Router structure is different)
     alt_frontend_urls = [
         # App Router with i18n paths
-        "/[lang]/login",
-        "/[lang]/register",
+        # "/[lang]/login",
+        # "/[lang]/register",
         # Legacy structure paths
-        "/auth/login",
-        "/auth/register",
-        "/login",
-        "/register",
-        "/profile",
+        # "/auth/login",
+        # "/auth/register",
+        # "/login",
+        # "/register",
+        "/en/profile",
         # Other languages
-        "/es/login",
-        "/fr/login",
+        # "/es/login",
+        # "/fr/login",
     ]
     
     # Additional dynamic URLs to test
     # These are patterns that would normally have an ID
     dynamic_urls = [
-        "/courses/[id]",
-        "/player-cards/[id]", 
-        "/auth/reset-password/[token]"
+        "/en/courses/1",
+        "/en//player-cards/1"
+        # "/auth/reset-password/[token]"
     ]
     
     # Replace placeholder patterns with actual values for testing

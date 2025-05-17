@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
 
@@ -35,7 +37,7 @@ interface LogViewerProps {
  * - Uses `@heroicons/react/24/outline` for icons (`XMarkIcon`, `ArrowPathIcon`).
  *
  * Called by:
- * - `frontend/pages/_app.tsx` (conditionally rendered, currently commented out)
+ * - App router implementation in `frontend/app/[lang]/view-logs/page.tsx`
  *
  * Calls:
  * - React Hooks: `useState`, `useEffect`
