@@ -73,7 +73,7 @@ services:
       SMTP_PASS: ${SMTP_PASS}
       SMTP_FROM_NAME: ${SMTP_FROM_NAME}
       SMTP_FROM_EMAIL: ${SMTP_FROM_EMAIL}
-      FRONTEND_URL: http://localhost:3000
+      FRONTEND_URL: https://libronico.com
     depends_on:
       - db
     ports:
@@ -87,22 +87,20 @@ services:
     build:
       context: ./frontend
       args:
-        - NODE_ENV=development
+        - NODE_ENV=production
     container_name: vhs-frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - frontend_next_cache:/app/.next
     depends_on:
       - backend
     networks:
       - app-network
     environment:
-      - NODE_ENV=development
-      - NEXT_PUBLIC_HOSTNAME=localhost
-      - NEXTAUTH_URL=http://localhost:3000
+      - NODE_ENV=production
+      - NEXT_PUBLIC_HOSTNAME=libronico.com
+      - NEXTAUTH_URL=https://libronico.com
+      - NEXT_PUBLIC_BASE_URL=https://libronico.com
+    restart: unless-stopped
 
 volumes:
   vhsdb_data:

@@ -39,7 +39,6 @@ if (typeof window !== "undefined") {
 export const metadata = {
   title: "VHS Open Handicap System",
   description: "Track your golf handicap easily",
-  metadataBase: new URL('http://localhost:3000'),
   alternates: {
     canonical: '/',
   }
@@ -61,8 +60,8 @@ export default function RootLayout({
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta httpEquiv="Content-Security-Policy" content="default-src 'self' http://localhost:* https://localhost:*; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://localhost:* https://localhost:*; style-src 'self' 'unsafe-inline' http://localhost:* https://localhost:*; img-src 'self' data: http://localhost:* https://localhost:*; font-src 'self' data: http://localhost:* https://localhost:*; connect-src 'self' ws: wss: http://localhost:* https://localhost:* http://vhs-backend:*;" />
-        <base href="http://localhost:3000/" />
+        <meta httpEquiv="Content-Security-Policy" content="default-src 'self' * data:; script-src 'self' 'unsafe-inline' 'unsafe-eval' *; style-src 'self' 'unsafe-inline' *; img-src 'self' data: *; font-src 'self' data: *; connect-src 'self' ws: wss: *;" />
+        <base href="/" />
         <link rel="icon" href="/favicon.ico" />
         <link 
           rel="preload" 

@@ -9,20 +9,22 @@ export const getBaseUrl = () => {
     return window.location.origin;
   }
   
-  // In server environment, use environment variables or defaults
-  if (process.env.NODE_ENV === 'production') {
-    return process.env.NEXT_PUBLIC_APP_URL || 'https://libronico.com';
-  }
-  
-  // For development environment
-  return process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000';
+  // In server environment, use relative URLs
+  return '';
 };
 
 // Create a full URL by joining the base URL with a path
 export const createUrl = (path) => {
   const baseUrl = getBaseUrl();
   const normalizedPath = path.startsWith('/') ? path : `/${path}`;
-  return `${baseUrl}${normalizedPath}`;
+  
+  // If we're in the browser or have a base URL, use it
+  if (baseUrl) {
+    return `${baseUrl}${normalizedPath}`;
+  }
+  
+  // Otherwise just return the path (relative URL)
+  return normalizedPath;
 };
 
 // Export a default configuration object

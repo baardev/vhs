@@ -211,9 +211,6 @@ const Navbar = () => {
             <Link href={`/${lang}/courses`} className="text-gray-700 hover:text-[#2d6a4f]">
               {currentDict?.courses || 'Courses'}
             </Link>
-            <Link href={`/${lang}/player-cards`} className="text-gray-700 hover:text-[#2d6a4f]">
-              {currentDict?.playerScorecards || 'Player Scorecards'}
-            </Link>
 
             {isLoggedIn ? (
               <>
@@ -282,9 +279,6 @@ const Navbar = () => {
             </Link>
             <Link href={`/${lang}/courses`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
               {currentDict?.courses || 'Courses'}
-            </Link>
-            <Link href={`/${lang}/player-cards`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
-              {currentDict?.playerScorecards || 'Player Scorecards'}
             </Link>
 
             {isLoggedIn ? (

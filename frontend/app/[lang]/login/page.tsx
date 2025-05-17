@@ -24,21 +24,30 @@ export default function Login({
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [dictionary, setDictionary] = useState<any>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [dictionary, setDictionary] = useState<any>({
+    title: 'Sign in to VHS',
+    subtitle: 'Access your account',
+    forgotPassword: 'Forgot Password?',
+    noAccount: "Don't have an account?"
+  });
+  const [dictionaryLoaded, setDictionaryLoaded] = useState(false);
 
   // Load dictionary asynchronously
   useEffect(() => {
     async function loadDictionary() {
-      const dict = await getLoginDictionary(lang);
-      setDictionary(dict);
+      try {
+        const dict = await getLoginDictionary(lang);
+        setDictionary(dict);
+      } catch (err) {
+        console.error('Error loading dictionary:', err);
+        // Continue with default fallback values
+      } finally {
+        setDictionaryLoaded(true);
+      }
     }
     loadDictionary();
   }, [lang]);
-
-  // If dictionary is not loaded yet, show loading indicator
-  if (!dictionary) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
-  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,6 +55,7 @@ export default function Login({
     setIsLoading(true);
 
     try {
+      console.log('Attempting login with:', username);
       const response = await fetch('/api/auth/login', {
         method: 'POST',
         headers: {
@@ -54,25 +64,47 @@ export default function Login({
         body: JSON.stringify({ username, password }),
       });
 
-      const data = await response.json();
-
-      if (response.ok) {
-        localStorage.setItem('token', data.token);
-        localStorage.setItem('userData', JSON.stringify(data.user));
+      console.log('Login response status:', response.status);
+      
+      if (!response.ok) {
+        if (response.status === 404) {
+          setError('API endpoint not found. Please contact support.');
+          setIsLoading(false);
+          return;
+        }
         
-        window.dispatchEvent(new Event('authChange'));
-        
-        // Redirect user to dashboard
-        router.push(`/${lang}/dashboard`);
-      } else {
-        setError(data.message || 'Invalid credentials');
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.indexOf('application/json') !== -1) {
+          const data = await response.json();
+          console.log('Login response error data:', data);
+          setError(data.error || data.message || 'Invalid credentials');
+        } else {
+          setError(`Server returned ${response.status}: ${response.statusText}`);
+        }
+        setIsLoading(false);
+        return;
       }
+      
+      const data = await response.json();
+      console.log('Login response data:', data);
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('userData', JSON.stringify(data.user));
+      
+      window.dispatchEvent(new Event('authChange'));
+      
+      // Redirect user to dashboard
+      router.push(`/${lang}/dashboard`);
     } catch (err) {
-      setError('Server error. Please try again.');
-      console.error('Login error:', err);
+      console.error('Login error details:', err);
+      setError(`Server error (${err instanceof Error ? err.message : 'unknown'}). Please try again.`);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -108,7 +140,7 @@ export default function Login({
                 required
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white"
                 placeholder="username or email"
               />
             </div>
@@ -116,17 +148,37 @@ export default function Login({
               <label htmlFor="password" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                 Password
               </label>
-              <input
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="mt-1 block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                placeholder="u2022u2022u2022u2022u2022u2022u2022u2022"
-              />
+              <div className="relative mt-1">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="block w-full px-3 py-2 bg-white dark:bg-[#111] border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 text-gray-900 dark:text-white pr-10"
+                  placeholder="••••••••"
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  onClick={togglePasswordVisibility}
+                  tabIndex={-1}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                      <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                      <path fillRule="evenodd" d="M3.707 2.293a1 1 0 00-1.414 1.414l14 14a1 1 0 001.414-1.414l-1.473-1.473A10.014 10.014 0 0019.542 10C18.268 5.943 14.478 3 10 3a9.958 9.958 0 00-4.512 1.074l-1.78-1.781zm4.261 4.26l1.514 1.515a2.003 2.003 0 012.45 2.45l1.514 1.514a4 4 0 00-5.478-5.478z" clipRule="evenodd" />
+                      <path d="M12.454 16.697L9.75 13.992a4 4 0 01-3.742-3.741L2.335 6.578A9.98 9.98 0 00.458 10c1.274 4.057 5.065 7 9.542 7 .847 0 1.669-.105 2.454-.303z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
             </div>
           </div>
 

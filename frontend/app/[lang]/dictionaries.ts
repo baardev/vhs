@@ -3,6 +3,24 @@
 // Create a cache for dictionaries to avoid reloading the same dictionary multiple times
 const dictionaryCache: Record<string, Record<string, any>> = {};
 
+// Add timeout functionality for dictionary loading
+const loadWithTimeout = async <T>(promise: Promise<T>, timeoutMs: number = 3000): Promise<T> => {
+  let timeoutId: ReturnType<typeof setTimeout> | undefined;
+  
+  const timeoutPromise = new Promise<never>((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`Dictionary loading timed out after ${timeoutMs}ms`));
+    }, timeoutMs);
+  });
+
+  try {
+    // Race between the actual promise and the timeout
+    return await Promise.race([promise, timeoutPromise]);
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
+};
+
 // Helper to directly load the JSON for the common namespace
 // This is similar to what's in app/dictionaries.ts but kept here as this file
 // seems to be the intended provider for these page-specific dictionary functions.
@@ -16,8 +34,10 @@ const loadCommonJson = async (locale: string): Promise<Record<string, any>> => {
   console.log(`[dictionaries.ts] Cache miss for locale: ${locale}, importing file.`);
 
   try {
-    // Dynamically import the common.json for the given locale
-    const module = await import(`../../public/locales/${locale}/common.json`);
+    // Dynamically import the common.json for the given locale with a timeout
+    const importPromise = import(`../../public/locales/${locale}/common.json`);
+    const module = await loadWithTimeout(importPromise);
+    
     if (!module || typeof module.default !== 'object' || module.default === null) {
       console.error(`[dictionaries.ts] Failed to load or parse common.json for locale '''${locale}'''. Module or default export is invalid:`, module);
       throw new Error(`Invalid dictionary structure for locale '''${locale}'''.`);
@@ -32,7 +52,9 @@ const loadCommonJson = async (locale: string): Promise<Record<string, any>> => {
     if (locale !== 'en') {
       try {
         console.warn(`[dictionaries.ts] Falling back to English common.json for lang '''${locale}'''.`);
-        const fallbackModule = await import(`../../public/locales/en/common.json`);
+        const fallbackImportPromise = import(`../../public/locales/en/common.json`);
+        const fallbackModule = await loadWithTimeout(fallbackImportPromise);
+        
         if (!fallbackModule || typeof fallbackModule.default !== 'object' || fallbackModule.default === null) {
           console.error(`[dictionaries.ts] Failed to load or parse FALLBACK English common.json. Module or default export is invalid:`, fallbackModule);
           throw new Error('Invalid fallback English dictionary structure.');
@@ -43,11 +65,47 @@ const loadCommonJson = async (locale: string): Promise<Record<string, any>> => {
         return fallbackModule.default;
       } catch (fallbackError) {
         console.error('[dictionaries.ts] Error loading fallback English common.json:', fallbackError);
-        throw new Error('Failed to load any common.json dictionary after fallback attempt.');
+        // Return minimal dictionary instead of throwing
+        return createFallbackDictionary();
       }
     }
-    throw error; // Re-throw original error if English also failed or was the original request
+    // Return minimal dictionary instead of throwing
+    return createFallbackDictionary();
   }
+};
+
+// Create a minimal fallback dictionary with essential keys
+const createFallbackDictionary = () => {
+  return {
+    navigation: {
+      home: 'Home',
+      courses: 'Courses',
+      dashboard: 'Dashboard',
+      login: 'Login',
+      register: 'Register'
+    },
+    buttons: {
+      submit: 'Submit',
+      cancel: 'Cancel'
+    },
+    formLabels: {
+      username: 'Username',
+      email: 'Email',
+      password: 'Password'
+    },
+    errors: {
+      general: 'An error occurred'
+    },
+    login: {
+      title: 'Sign in to VHS',
+      forgotPassword: 'Forgot Password?',
+      noAccount: "Don't have an account?"
+    },
+    home: {
+      title: 'Welcome',
+      subtitle: 'Discover amazing features.'
+    }
+  };
 };
 
 export const getCommonDictionary = async (locale: string) => {
@@ -57,16 +115,12 @@ export const getCommonDictionary = async (locale: string) => {
     t = await loadCommonJson(locale);
   } catch (error) {
     console.error(`[dictionaries.ts] getCommonDictionary: Error from loadCommonJson for locale '''${locale}''':`, error);
-    // Return a very basic structure or rethrow to ensure consuming code doesn't hit secondary errors
-    // For now, let's rethrow to make the failure obvious.
-    // Alternatively, return a minimal dictionary: return { errorState: true, errorMessage: "Dictionary load failed" };
-    throw error;
+    return createFallbackDictionary();
   }
 
   if (!t || typeof t !== 'object' || t === null) {
     console.error(`[dictionaries.ts] getCommonDictionary: loadCommonJson returned invalid data for locale '''${locale}'''. Received:`, t);
-    // This case should ideally be caught by errors in loadCommonJson, but as a safeguard:
-    throw new Error(`Dictionary for locale '''${locale}''' is null, undefined, or not an object.`);
+    return createFallbackDictionary();
   }
 
   console.log(`[dictionaries.ts] getCommonDictionary: Successfully retrieved 't' for locale '''${locale}'''. Keys:`, Object.keys(t).slice(0, 10)); // Log first 10 keys
@@ -89,30 +143,40 @@ export const getCommonDictionary = async (locale: string) => {
 
 export const getHomeDictionary = async (locale: string) => {
   console.log(`[dictionaries.ts] getHomeDictionary called for locale: ${locale}`);
-  const t = await loadCommonJson(locale); // Assuming home translations are in common.json
-  if (!t || typeof t !== 'object' || t === null) { // Safeguard
-    console.error(`[dictionaries.ts] getHomeDictionary: common.json (t) is invalid for locale '''${locale}'''.`);
-    return { title: 'Welcome (Error)', subtitle: 'Dictionary load failed.' };
+  try {
+    const t = await loadCommonJson(locale); // Assuming home translations are in common.json
+    return {
+      title: t.home?.title || 'Welcome',
+      subtitle: t.home?.subtitle || 'Discover amazing features.',
+    };
+  } catch (error) {
+    console.error(`[dictionaries.ts] getHomeDictionary error:`, error);
+    return { 
+      title: 'Welcome', 
+      subtitle: 'Discover amazing features.' 
+    };
   }
-  return {
-    title: t.home?.title || 'Welcome', // Accessing nested keys, ensure structure in common.json
-    subtitle: t.home?.subtitle || 'Discover amazing features.',
-  };
 };
 
 export const getLoginDictionary = async (locale: string) => {
   console.log(`[dictionaries.ts] getLoginDictionary called for locale: ${locale}`);
-  const t = await loadCommonJson(locale); // Assuming login translations are in common.json
-  if (!t || typeof t !== 'object' || t === null) { // Safeguard
-    console.error(`[dictionaries.ts] getLoginDictionary: common.json (t) is invalid for locale '''${locale}'''.`);
-    return { title: 'Login (Error)', subtitle: 'Dictionary load failed.', forgotPassword: '', noAccount: '' };
+  try {
+    const t = await loadCommonJson(locale); // Assuming login translations are in common.json
+    return {
+      title: t.login?.title || 'Login',
+      subtitle: t.login?.subtitle || 'Access your account',
+      forgotPassword: t.login?.forgotPassword || 'Forgot Password?',
+      noAccount: t.login?.noAccount || "Don't have an account?",
+    };
+  } catch (error) {
+    console.error(`[dictionaries.ts] getLoginDictionary error:`, error);
+    return { 
+      title: 'Login', 
+      subtitle: 'Access your account', 
+      forgotPassword: 'Forgot Password?', 
+      noAccount: "Don't have an account?" 
+    };
   }
-  return {
-    title: t.login?.title || 'Login',
-    subtitle: t.login?.subtitle || 'Access your account',
-    forgotPassword: t.login?.forgotPassword || 'Forgot Password?',
-    noAccount: t.login?.noAccount || "Don't have an account?",
-  };
 };
 
 // If you have other dictionary functions (e.g., getProfileDictionary)

@@ -7,7 +7,7 @@ export const defaultLocale = 'en';
 
 // Simple function to check development environment without using process.env
 function isDevelopmentEnv() {
-  return true; // Force development mode for now
+  return false; // Use production mode
 }
 
 // Get the preferred locale from cookie, accept-language header, or default
@@ -28,28 +28,6 @@ export function middleware(request: NextRequest) {
     pathname === '/robots.txt'
   ) {
     return NextResponse.next();
-  }
-
-  // Check if the hostname is libronico.com and handle it specially
-  const host = request.headers.get('host');
-  if (host && host.includes('libronico.com')) {
-    // Create a new URL using localhost:3000
-    const url = new URL(request.url);
-    const originalPathname = url.pathname;
-    
-    // Set the hostname to localhost:3000
-    url.host = 'localhost:3000';
-    url.protocol = 'http:';
-    
-    // Keep the original path but make sure it has the locale
-    if (!originalPathname.startsWith('/en') && originalPathname !== '/') {
-      url.pathname = `/en${originalPathname}`;
-    } else if (originalPathname === '/') {
-      url.pathname = '/en';
-    }
-    
-    // Return a redirect to the localhost URL
-    return NextResponse.redirect(url);
   }
 
   // Check if the pathname already starts with a locale

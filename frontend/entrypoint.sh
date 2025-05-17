@@ -6,12 +6,18 @@ export NODE_OPTIONS="--inspect"
 export NEXT_TELEMETRY_DEBUG=1
 export DEBUG=middleware,next:middleware,next:*
 
-# Force localhost settings
-export NEXT_PUBLIC_HOSTNAME=localhost
+# Use the environment variable or default to libronico.com
+export NEXT_PUBLIC_HOSTNAME=${NEXT_PUBLIC_HOSTNAME:-libronico.com}
 export HOSTNAME=0.0.0.0
 export PORT=3000
 
 echo "Entrypoint: Current NODE_ENV is $NODE_ENV"
+
+# Check if .next directory exists and has content
+if [ ! -d .next ] || [ -z "$(ls -A .next 2>/dev/null)" ]; then
+  echo "Entrypoint: .next directory doesn't exist or is empty. Running build first..."
+  npm run build
+fi
 
 if [ "$NODE_ENV" = "development" ]; then
   echo "Entrypoint: Starting development server (npm run dev)..."

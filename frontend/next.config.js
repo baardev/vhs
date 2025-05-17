@@ -16,16 +16,17 @@ const nextConfig = {
   // Remove the hardcoded allowedDevOrigins to fix WebSocket connections
   // allowedDevOrigins: ['https://libronico.com'],
   
-  // Set assetPrefix for development to ensure all assets are loaded from localhost
-  assetPrefix: process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : undefined,
+  // Use a relative assetPrefix to avoid CORS issues
+  assetPrefix: '',
   
   images: {
-    domains: ['localhost'],
+    domains: ['localhost', 'libronico.com'],
   },
   
+  // Use relative paths for environment variables
   env: {
-    NEXT_PUBLIC_HOSTNAME: 'localhost',
-    NEXT_PUBLIC_BASE_URL: 'http://localhost:3000',
+    NEXT_PUBLIC_HOSTNAME: '',
+    NEXT_PUBLIC_BASE_URL: '',
   },
   
   typescript: {
@@ -54,9 +55,7 @@ const nextConfig = {
     return [
       {
         source: '/api/:path*',
-        destination: process.env.NODE_ENV === 'development' 
-          ? 'http://vhs-backend:4000/api/:path*'  // Development
-          : 'https://libronico.com/api/:path*',   // Production
+        destination: '/api/:path*', // Use relative URLs
       },
     ];
   },
@@ -69,6 +68,10 @@ const nextConfig = {
           { key: 'Cache-Control', value: 'no-store, no-cache, must-revalidate' },
           { key: 'Pragma', value: 'no-cache' },
           { key: 'Expires', value: '0' },
+          // Add CORS headers to allow all origins
+          { key: 'Access-Control-Allow-Origin', value: '*' },
+          { key: 'Access-Control-Allow-Methods', value: 'GET, POST, OPTIONS, PUT, DELETE' },
+          { key: 'Access-Control-Allow-Headers', value: 'Origin, X-Requested-With, Content-Type, Accept, Authorization' },
         ],
       },
     ];
@@ -77,9 +80,7 @@ const nextConfig = {
   webpack: (config, { isServer, webpack }) => {
     config.plugins.push(
       new webpack.DefinePlugin({
-        'process.env.__NEXT_WEBPACK_PUBLIC_HOSTNAME': JSON.stringify(
-          process.env.NEXT_PUBLIC_HOSTNAME || 'localhost'
-        ),
+        'process.env.__NEXT_WEBPACK_PUBLIC_HOSTNAME': JSON.stringify('')
       })
     );
     return config;
