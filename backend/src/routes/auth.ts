@@ -23,7 +23,8 @@ import jwt from 'jsonwebtoken';
 import { body, validationResult } from 'express-validator';
 import { pool } from '../db';
 import authenticateToken, { AuthRequest } from './authenticateToken';
-import crypto from 'crypto';
+// Node.js built-in crypto module
+import * as crypto from 'crypto';
 import { sendEmail } from '../utils/email';
 
 const router = express.Router();
@@ -425,6 +426,18 @@ router.post('/logout', authenticateToken, (req: AuthRequest, res: Response): voi
   // For now, we'll just return a success message
   console.log('User logged out:', req.user?.id);
   res.status(200).json({ message: 'Successfully logged out' });
+});
+
+// Validate token endpoint
+router.post('/validate-token', authenticateToken, (req: AuthRequest, res: Response): void => {
+  // If this endpoint is reached, it means the token is valid (authenticateToken middleware passed)
+  console.log('Token validated for user:', req.user?.id);
+  
+  // Return user ID to confirm token is valid for a specific user
+  res.status(200).json({ 
+    valid: true, 
+    userId: req.user?.id 
+  });
 });
 
 // Reset password using token

@@ -44,6 +44,59 @@ export const metadata = {
   }
 };
 
+// Global 401 error detector script
+const authErrorDetectorScript = `
+  (function() {
+    // Set up XHR interceptor for 401 errors
+    const originalXHROpen = XMLHttpRequest.prototype.open;
+    const originalXHRSend = XMLHttpRequest.prototype.send;
+    
+    // Override open method
+    XMLHttpRequest.prototype.open = function() {
+      this._url = arguments[1];
+      return originalXHROpen.apply(this, arguments);
+    };
+    
+    // Override send method
+    XMLHttpRequest.prototype.send = function() {
+      const originalOnReadyStateChange = this.onreadystatechange;
+      
+      this.onreadystatechange = function() {
+        if (this.readyState === 4) {
+          // If status is 401, clear auth and redirect
+          if (this.status === 401) {
+            console.warn("[Global Error Detector] Caught 401 Unauthorized, clearing auth data");
+            // Clear auth data
+            localStorage.removeItem('userData');
+            localStorage.removeItem('token');
+            
+            // Dispatch auth change event
+            window.dispatchEvent(new Event('authChange'));
+            
+            // Get language prefix from URL
+            const urlPath = window.location.pathname;
+            const parts = urlPath.split('/');
+            const lang = (parts.length > 1 && parts[1]) ? parts[1] : 'en';
+            
+            // Force redirect to login if on protected page
+            if (urlPath.includes('/admin') || urlPath.includes('/editor')) {
+              window.location.href = '/' + lang + '/login';
+            }
+          }
+        }
+        
+        if (originalOnReadyStateChange) {
+          originalOnReadyStateChange.apply(this, arguments);
+        }
+      };
+      
+      return originalXHRSend.apply(this, arguments);
+    };
+    
+    console.log("[Global Error Detector] Installed 401 error interceptor");
+  })();
+`;
+
 /**
  * Root layout for the App Router
  * Combines functionality from _app.tsx and _document.tsx
@@ -77,6 +130,7 @@ export default function RootLayout({
           type="font/woff2" 
           crossOrigin="anonymous" 
         />
+        <script dangerouslySetInnerHTML={{ __html: authErrorDetectorScript }} />
       </head>
       <body className="flex flex-col min-h-screen bg-white text-gray-900">
         <AuthProvider>

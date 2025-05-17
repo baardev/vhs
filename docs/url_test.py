@@ -185,8 +185,9 @@ def main():
     
     # List of frontend URLs to test (updated for App Router with i18n)
     frontend_urls = [
-        # Main pages
+        # Main page
         "/",
+        # rerouted pages
         "/en/login",
         "/en/register",
         "/en/forgot-password",
@@ -197,8 +198,6 @@ def main():
         "/en/about",
         "/en/privacy",
         "/en/terms",
-        "/robots.txt",
-        
         # Course-related pages
         "/en/courses",
         "/en/courses/create",
@@ -215,10 +214,15 @@ def main():
         "/en/editor/courses",
         
         # Utility pages
-        "/en/admin/logs",
-        "/en/admin/debug",
-        "/en/admin/cache",
-        "/en/handicap",
+        "/en/admin/logs",  #placeholder
+        "/en/admin/debug",  #placeholder
+        "/en/admin/cache",  #placeholder
+        "/en/handicap",     
+        "/en/debug-logs", 
+        "/en/video-logs",
+
+        "/robots.txt",
+        
     ]
     
     # Try some alternative path patterns (in case App Router structure is different)

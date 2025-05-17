@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 // import { useTranslation } from 'next-i18next'; // REMOVED
-import { useParams } from 'next/navigation'; // ADDED
+import { useParams, useRouter } from 'next/navigation'; // ADDED router
 import { useState, useEffect } from 'react';
 import LogoutButton from '../LogoutButton';
 import { getCommonDictionary } from '../../app/dictionaries'; // ADDED - Adjust path if necessary
+import { validateToken, clearAuthData } from '../../src/utils/authUtils';
 
 // Add the necessary type declaration for the window object
 declare global {
@@ -37,13 +38,14 @@ declare global {
  * Calls:
  * - React Hooks: `useState`, `useEffect`
  * - `next/link`'s `Link` component (for client-side navigation)
- * - `next/navigation`'s `useParams` hook (for language parameter and dictionary loading)
+ * - `next/navigation`'s `useParams` and `useRouter` hooks (for language parameter, dictionary loading, and routing)
  * - `getCommonDictionary` for loading translations.
  * - `localStorage.getItem` (to retrieve `token` and `userData`)
  * - `JSON.parse` (to parse `userData`)
  * - `window.addEventListener` and `window.removeEventListener` (for `storage` and `authChange` events)
  * - `LogoutButton` component
  * - SVG icons (for logo and hamburger menu)
+ * - `validateToken` and `clearAuthData` from `authUtils` for token validation
  *
  * @returns {React.FC} The rendered navigation bar component.
  */
@@ -51,6 +53,7 @@ const Navbar = () => {
   // const { t, ready, i18n } = useTranslation('common'); // REMOVED
   const params = useParams() || {}; // Add fallback empty object
   const lang = (params.lang as string) || 'en'; // ADDED
+  const router = useRouter();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [username, setUsername] = useState('');
@@ -59,6 +62,33 @@ const Navbar = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [dict, setDict] = useState<Record<string, any> | null>(null); // Initialize with null
   const [dictError, setDictError] = useState<string | null>(null);
+
+  // Validate token on mount
+  useEffect(() => {
+    const validateUserToken = async () => {
+      const token = localStorage.getItem('token');
+      
+      if (token) {
+        console.log('[Navbar] Validating token on page load');
+        const isValid = await validateToken();
+        
+        if (!isValid) {
+          console.warn('[Navbar] Token validation failed, logging out user');
+          clearAuthData();
+          if (window.location.pathname.includes('/admin') || 
+              window.location.pathname.includes('/editor')) {
+            router.push(`/${lang}/login`);
+          }
+        } else {
+          console.log('[Navbar] Token successfully validated');
+        }
+      }
+    };
+    
+    if (mounted) {
+      validateUserToken();
+    }
+  }, [mounted, lang, router]);
 
   useEffect(() => {
     setMounted(true);

@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useState, useEffect, FC, ReactNode } from 'react';
+import { validateToken, clearAuthData } from '../utils/authUtils';
 
 /**
  * @interface User
@@ -110,8 +111,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   const logout = () => {
     setUserState(null);
-    localStorage.removeItem('userData');
-    localStorage.removeItem('token');
+    clearAuthData();
     console.log("User logged out, token and userData removed.");
     // Dispatch custom event for auth changes
     window.dispatchEvent(new CustomEvent('authChange'));
@@ -119,7 +119,7 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
 
   /**
    * @effect
-   * @description Initializes the user state from localStorage on component mount.
+   * @description Initializes the user state from localStorage on component mount and validates the token.
    * This effect runs once after the initial render on the client-side.
    * It retrieves 'userData' from localStorage, parses it, and sets the user state.
    * If parsing fails or data is invalid, it calls `logout()` to ensure a clean state.
@@ -127,16 +127,33 @@ export const AuthProvider: FC<{ children: ReactNode }> = ({ children }) => {
    */
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      const storedUserData = localStorage.getItem('userData');
-      if (storedUserData) {
-        try {
-          setUserState(JSON.parse(storedUserData));
-        } catch (error) {
-          console.error('Error parsing userData from localStorage on init:', error);
-          logout(); // Clear invalid stored data
+      const initializeAuth = async () => {
+        const storedUserData = localStorage.getItem('userData');
+        const token = localStorage.getItem('token');
+        
+        if (storedUserData && token) {
+          // Validate token with the backend
+          const isTokenValid = await validateToken();
+          
+          if (!isTokenValid) {
+            console.warn('Stored token is invalid. Logging out user.');
+            logout();
+            setInitialized(true);
+            return;
+          }
+          
+          try {
+            setUserState(JSON.parse(storedUserData));
+          } catch (error) {
+            console.error('Error parsing userData from localStorage on init:', error);
+            logout(); // Clear invalid stored data
+          }
         }
-      }
-      setInitialized(true);
+        
+        setInitialized(true);
+      };
+      
+      initializeAuth();
     }
   }, []);
 

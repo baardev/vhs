@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from 'next/link';
 import { getCommonDictionary } from '../../dictionaries';
+import { forceValidateTokenOrLogout } from '../../../src/utils/authUtils';
 
 /**
  * @constant geistSans
@@ -46,15 +47,18 @@ export default function EditorDashboard({ params }: { params: { lang: string } }
   }, [params.lang]);
 
   useEffect(() => {
-    // Check editor status
-    const checkEditorStatus = () => {
-      const token = localStorage.getItem('token');
-
-      if (!token) {
-        router.push(`/${params.lang}/login`);
+    // Check editor status and validate token
+    const checkEditorStatus = async () => {
+      console.log('[Editor Page] Checking editor status');
+      
+      // First validate token
+      const isTokenValid = await forceValidateTokenOrLogout(params.lang, router.push);
+      if (!isTokenValid) {
+        // The forceValidateTokenOrLogout function will handle logout and redirect
         return;
       }
 
+      // If token is valid, check if user is editor
       try {
         const userData = localStorage.getItem('userData');
         if (userData) {
@@ -63,14 +67,16 @@ export default function EditorDashboard({ params }: { params: { lang: string } }
             setIsEditor(true);
           } else {
             setIsEditor(false);
+            console.log('[Editor Page] User is not an editor, redirecting');
             router.push(`/${params.lang}/`);
           }
         } else {
           setIsEditor(false);
+          console.log('[Editor Page] No user data found, redirecting');
           router.push(`/${params.lang}/`);
         }
       } catch (error) {
-        console.error('Error checking editor status:', error);
+        console.error('[Editor Page] Error checking editor status:', error);
         setIsEditor(false);
         router.push(`/${params.lang}/`);
       } finally {

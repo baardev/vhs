@@ -98,9 +98,19 @@ const UserTable: React.FC<UserTableProps> = ({ locale }) => {
     try {
       const token = localStorage.getItem('token');
       if (!token) {
-        throw new Error('No authentication token found');
+        console.error('[AdminUserTable] No token found when fetching users');
+        setError('Authentication required. Please log in again.');
+        // Clear any stale data
+        localStorage.removeItem('userData');
+        localStorage.removeItem('token');
+        window.dispatchEvent(new Event('authChange'));
+        // Force redirect to login page
+        const lang = window.location.pathname.split('/')[1] || 'en';
+        window.location.href = `/${lang}/login`;
+        return;
       }
 
+      console.log('[AdminUserTable] Attempting to fetch users with token');
       const response = await axios.get('/api/admin/users', {
         headers: { Authorization: `Bearer ${token}` },
         params: { limit, offset, sortBy, sortOrder }
@@ -108,9 +118,24 @@ const UserTable: React.FC<UserTableProps> = ({ locale }) => {
 
       setUsers(response.data.users);
       setTotalUsers(response.data.total);
-    } catch (error) {
-      console.error('Error fetching users:', error);
-      setError(dictionary?.admin?.errorFetchingUsers || 'Error fetching users');
+      console.log('[AdminUserTable] Successfully fetched users');
+    } catch (error: any) {
+      console.error('[AdminUserTable] Error fetching users:', error);
+      
+      // Handle 401 Unauthorized specially
+      if (error.response && error.response.status === 401) {
+        console.warn('[AdminUserTable] Unauthorized - clearing auth data and redirecting');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('token');
+        window.dispatchEvent(new Event('authChange'));
+        
+        // Force hard redirect to login page
+        const lang = window.location.pathname.split('/')[1] || 'en';
+        window.location.href = `/${lang}/login`;
+        return;
+      } else {
+        setError(dictionary?.admin?.errorFetchingUsers || 'Error fetching users');
+      }
     } finally {
       setLoading(false);
     }
