@@ -25,6 +25,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * @page RegisterPage
+ * @description User registration interface for the Open Handicap System.
+ * 
+ * This client component provides a complete registration form that allows new users 
+ * to create accounts in the system. The registration process includes:
+ * - Username selection
+ * - Email address verification
+ * - Password creation and confirmation
+ * - Form validation with error handling
+ * - Submission feedback with loading states
+ * 
+ * Upon successful registration, users are redirected to the login page with 
+ * a success indicator to improve the user experience flow. The form includes
+ * proper input validation and clear error messaging.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/register)
+ * - Login page (via "Create an account" link)
+ * - Homepage call-to-action buttons (for new user onboarding)
+ * - Marketing landing pages (for conversion)
+ * 
+ * @calls
+ * - API: POST /api/auth/register (to create the user account)
+ * - Function: getCommonDictionary (for internationalization)
+ * - Component: Link (for navigation to login page)
+ * - Router: useRouter().push() (for redirect after successful registration)
+ * 
+ * @requires
+ * - Backend API with user registration endpoint
+ * - Dictionary translations for registration page content
+ * - Proper Next.js route configuration
+ */
 export default function Register({ params: { lang } }) {
   const router = useRouter();
   const [dict, setDict] = useState(null);

@@ -14,7 +14,7 @@ const geistSans = Geist({
   subsets: ["latin"],
 });
 
-/**
+/** 
  * @constant geistMono
  * @description Next.js font optimization for Geist Mono font.
  */
@@ -23,14 +23,23 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+// Type for the dictionary
+interface Dictionary {
+  debugLogs?: {
+    title?: string;
+    viewLogsLink?: string;
+  };
+  [key: string]: any;
+}
+
 export default function DebugLogs({ params: { lang } }) {
-  const [dict, setDict] = useState(null);
+  const [dict, setDict] = useState<Dictionary | null>(null);
   
   // Load dictionary
   useEffect(() => {
     async function loadDictionary() {
       const dictionary = await getCommonDictionary(lang);
-      setDict(dictionary);
+      setDict(dictionary as Dictionary);
     }
     loadDictionary();
   }, [lang]);

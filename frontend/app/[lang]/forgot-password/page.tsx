@@ -24,6 +24,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * @page ForgotPassword
+ * @description Password recovery interface for the Open Handicap System.
+ * 
+ * This page provides users with a way to reset their forgotten passwords by:
+ * - Allowing them to enter their email address
+ * - Submitting a request to the backend to send a password reset link
+ * - Displaying appropriate success or error messages
+ * - Providing navigation back to the login page
+ * 
+ * For security reasons, the page always shows a success message regardless
+ * of whether the email exists in the system, preventing user enumeration attacks.
+ * The actual verification happens securely on the server side.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/forgot-password)
+ * - Login page (via "Forgot Password?" link)
+ * 
+ * @calls
+ * - API: POST /api/auth/forgot-password (to request password reset email)
+ * - Function: getCommonDictionary (for internationalization)
+ * - Component: Link (for navigation back to login)
+ * 
+ * @requires
+ * - Backend API support for password reset functionality
+ * - Email service configured on the backend
+ * - Dictionary translations for password reset page content
+ */
 export default function ForgotPassword({ params: { lang } }) {
   const [dict, setDict] = useState(null);
   const [email, setEmail] = useState('');

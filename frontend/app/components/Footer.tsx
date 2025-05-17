@@ -6,28 +6,34 @@ import { useState, useEffect } from 'react';
 
 /**
  * @component Footer
- * @description Renders the site footer, including navigation links (About, Privacy, Terms)
- * and language selection buttons.
- *
- * @remarks
- * The component uses a `mounted` state to ensure that content is only displayed after 
- * client-side hydration to prevent mismatches. Before hydration, a simplified placeholder footer is shown.
- * Language change is handled by creating links with the updated language parameter.
- *
- * Called by:
- * - `frontend/app/layout.tsx` (as part of the main application layout)
- *
- * Calls:
- * - React Hooks: `useState`, `useEffect`
- * - `next/link`'s `Link` component (for navigation to About, Privacy, Terms pages)
- * - `next/navigation`'s `useParams` and `usePathname` hooks (for handling language changes)
- *
- * @returns {React.FC} The rendered footer component.
+ * @description Footer component for the Open Handicap System application.
+ * 
+ * This component provides the global footer with:
+ * - Links to informational pages (About, Privacy, Terms)
+ * - Language selection buttons to switch between supported languages
+ * - Support for maintaining the current path when changing languages
+ * 
+ * The component handles mounted state properly to prevent hydration mismatches
+ * and provides a simplified placeholder until client-side rendering is complete.
+ * 
+ * @calledBy
+ * - RootLayout (as the main application footer)
+ * - All pages that use the default layout
+ * 
+ * @calls
+ * - next/navigation hooks (useParams, usePathname)
+ * - Link component for navigation
+ * 
+ * @requires
+ * - Client-side rendering ('use client' directive)
+ * - Next.js App Router
+ * 
+ * @returns {JSX.Element} The rendered footer component
  */
 const Footer = () => {
-  const params = useParams();
+  const params = useParams() || {};
   const pathname = usePathname();
-  const currentLang = params.lang as string || 'en';
+  const currentLang = (params.lang as string) || 'en';
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
@@ -87,4 +93,4 @@ const Footer = () => {
   );
 };
 
-export default Footer;
+export default Footer; 

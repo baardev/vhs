@@ -6,7 +6,30 @@ import RandomQuote from '../../components/RandomQuote';
 
 /**
  * @page HomePage
- * @description South America Golf themed homepage
+ * @description Main landing page for the Open Handicap System application.
+ * 
+ * This page serves as the entry point for the application, providing:
+ * - A visually appealing introduction to the handicap system
+ * - A brief overview of the purpose (alternative to expensive handicapping services)
+ * - A featured golf quote that changes randomly for engagement
+ * - Key features of the system presented in a grid layout
+ * 
+ * The component handles internationalization through the dictionary system,
+ * displaying content in the user's selected language.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to the root / or /{lang})
+ * - Navigation links throughout the application (Navbar, Footer, etc.)
+ * - Redirect actions from login/registration flows
+ * 
+ * @calls
+ * - Function: getHomeDictionary (for language-specific content)
+ * - Component: RandomQuote (to display changing golf quotes)
+ * 
+ * @requires
+ * - Language parameter from the URL (provided by Next.js App Router)
+ * - Dictionary translations for homepage content
+ * - Background image of a golf course
  */
 export default function Home({ params }: { params: { lang: string } | Promise<{ lang: string }> }) {
   const [dict, setDict] = useState<any>(null);

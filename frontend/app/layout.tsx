@@ -1,10 +1,12 @@
 import { Geist, Geist_Mono } from "next/font/google";
-import Navbar from "../components/common/Navbar";
-import Footer from "../components/common/Footer";
+import Navbar from "./components/Navbar";
+import Footer from "./components/Footer";
 import { AuthProvider } from "../src/contexts/AuthContext";
+// Import LogViewer commented out since it's not currently used but might be in the future
+// import LogViewer from "./components/LogViewer";
 
 /**
- * @constant geistSans
+ * @constant geistSans 
  * @description Next.js font optimization for Geist Sans font, applied globally via CSS variable.
  */
 const geistSans = Geist({
@@ -36,6 +38,14 @@ if (typeof window !== "undefined") {
   };
 }
 
+/**
+ * @constant metadata
+ * @description Next.js metadata configuration that defines SEO-related properties.
+ * 
+ * These values are used by Next.js to generate appropriate meta tags in the HTML head.
+ * The metadata affects how the site appears in search results and when shared on
+ * social media platforms.
+ */
 export const metadata = {
   title: "OHS Open Handicap System",
   description: "Track your golf handicap easily",
@@ -44,7 +54,22 @@ export const metadata = {
   }
 };
 
-// Global 401 error detector script
+/**
+ * @constant authErrorDetectorScript
+ * @description Client-side script that intercepts 401 Unauthorized errors and handles authentication failures.
+ * 
+ * This script:
+ * - Intercepts all XHR requests to detect 401 authentication failures
+ * - Clears authentication data from localStorage when a 401 error is detected
+ * - Triggers an authChange event for components to respond to auth state changes
+ * - Redirects users to the login page when accessing protected routes after auth failure
+ * - Preserves the current language preference in redirects
+ * 
+ * @requires
+ * - Browser environment with XMLHttpRequest
+ * - localStorage API access
+ * - Custom 'authChange' event listeners in relevant components
+ */
 const authErrorDetectorScript = `
   (function() {
     // Set up XHR interceptor for 401 errors
@@ -98,16 +123,53 @@ const authErrorDetectorScript = `
 `;
 
 /**
- * Root layout for the App Router
- * Combines functionality from _app.tsx and _document.tsx
+ * @component RootLayout
+ * @description Root layout component for the entire Open Handicap System application.
+ * 
+ * This is the top-level layout component that:
+ * - Establishes the HTML document structure
+ * - Configures global fonts, meta tags, and security policies
+ * - Provides the authentication context to all child components
+ * - Implements the common layout structure (navbar, main content, footer)
+ * - Includes global error handling for authentication failures
+ * - Sets up font preloading for performance optimization
+ * 
+ * In Next.js App Router, this replaces functionality previously split between
+ * _app.tsx and _document.tsx in the Pages Router.
+ * 
+ * @calledBy
+ * - Next.js App Router (automatically)
+ * - All page routes in the application
+ * 
+ * @calls
+ * - AuthProvider (context provider for authentication)
+ * - Navbar (global navigation component)
+ * - Footer (global footer component)
+ * - Various Next.js font optimization functions
+ * 
+ * @requires
+ * - Next.js App Router configuration
+ * - Global CSS styles
+ * - Preloaded fonts
+ * - AuthProvider context
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components to render within the layout
+ * @returns {JSX.Element} The complete HTML document with app layout
  */
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  // This flag controls whether to show the LogViewer button
+  // When set to true, the button will appear and allow toggling the log viewer
   const displayLogButton = false;
-
+  
+  // If we were to implement the LogViewer toggle functionality,
+  // we would need something like:
+  // const [showLogs, setShowLogs] = useState(false);
+  
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
@@ -138,6 +200,7 @@ export default function RootLayout({
             <button
               className="fixed top-4 right-4 z-50 bg-red-600 text-white px-3 py-2 rounded shadow-lg hover:bg-red-700 flex items-center"
               title="Toggle Log Viewer"
+              // onClick={() => setShowLogs(!showLogs)} // Uncomment when implementing
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -156,6 +219,9 @@ export default function RootLayout({
               LOGS
             </button>
           )}
+          
+          {/* If we were to display LogViewer, we'd add: */}
+          {/* {showLogs && <LogViewer visible={showLogs} onClose={() => setShowLogs(false)} />} */}
 
           <Navbar />
           <main className="flex-grow">{children}</main>

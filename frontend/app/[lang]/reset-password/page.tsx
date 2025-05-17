@@ -23,6 +23,39 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * @page ResetPasswordPage
+ * @description Password reset interface for the Open Handicap System.
+ * 
+ * This client component handles the final step in the password recovery process,
+ * allowing users to set a new password after receiving a reset token via email.
+ * The component includes:
+ * - Validation of the reset token from URL parameters
+ * - A form for entering and confirming a new password
+ * - Password validation (matching passwords, minimum length)
+ * - Error handling for invalid tokens or submission failures
+ * - Success feedback with automatic redirection to login
+ * 
+ * If no valid token is provided in the URL, the page displays an error message
+ * instead of the password reset form. On successful password reset, the user
+ * is automatically redirected to the login page after a brief success message.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/reset-password)
+ * - Email reset links (with token parameter)
+ * - Forgot password flow (as the final step)
+ * 
+ * @calls
+ * - API: POST /api/auth/reset-password (to reset the user password)
+ * - Function: getCommonDictionary (for internationalization)
+ * - Router: useRouter().push() (for redirect after successful reset)
+ * - Hook: useSearchParams() (to extract the token from the URL)
+ * 
+ * @requires
+ * - Backend API with password reset endpoint
+ * - Valid reset token in URL parameters
+ * - Dictionary translations for reset password page content
+ */
 export default function ResetPassword({ params: { lang } }) {
   const [dict, setDict] = useState(null);
   const [password, setPassword] = useState('');

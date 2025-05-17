@@ -23,6 +23,34 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+/**
+ * @page HandicapPage
+ * @description Handicap calculation page for the Open Handicap System.
+ * 
+ * This page allows users to access the handicap calculation functionality, which is
+ * a core feature of the OHS platform. It provides:
+ * - A user-friendly interface for calculating golf handicaps
+ * - Access to the handicap calculation tools for both registered and unregistered users
+ * - An alternative to expensive commercial handicapping services
+ * 
+ * The page renders the HandicapCalculator component that contains the actual
+ * calculation form and logic. This separation of concerns keeps the page component
+ * focused on layout and translation, while the calculator component handles
+ * the business logic.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/handicap)
+ * - Application navbar/menu links
+ * 
+ * @calls
+ * - Component: HandicapCalculator (handles the actual handicap calculation UI and logic)
+ * - Function: getCommonDictionary (for internationalization)
+ * 
+ * @requires
+ * - Backend API support for handicap calculations if the HandicapCalculator
+ *   submits data to the server
+ * - Dictionary translations for handicap page content
+ */
 export default function HandicapPage({ params: { lang } }) {
   const [dict, setDict] = useState(null);
   

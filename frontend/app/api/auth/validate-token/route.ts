@@ -1,8 +1,38 @@
 import { NextResponse } from 'next/server';
 
 /**
- * API route handler for token validation
- * Proxies the request to the backend service to validate the token
+ * @apiRoute POST /api/auth/validate-token
+ * @description Token validation API endpoint for the Open Handicap System authentication flow.
+ * 
+ * This API route acts as a secure proxy between frontend authentication requests 
+ * and the backend validation service. It performs the following functions:
+ * 
+ * - Receives and validates the presence of an Authorization header
+ * - Forwards the token to the backend validation service
+ * - Passes backend validation results back to the client
+ * - Maintains consistent error handling and status code propagation
+ * - Provides detailed logging for debugging authentication issues
+ * 
+ * The route is designed following the proxy pattern, adding minimal processing
+ * while ensuring proper error handling and security boundaries between
+ * the frontend client and backend authentication system.
+ * 
+ * @calledBy
+ * - Client-side authentication services
+ * - Other API routes that need token validation (like check-session)
+ * - Server-side authentication middleware
+ * - Protected API operations requiring validation
+ * 
+ * @calls
+ * - Backend API: POST /api/auth/validate-token (on the backend service)
+ * - NextResponse utilities for structured API responses
+ * 
+ * @requires
+ * - Valid NEXT_PUBLIC_API_URL environment variable
+ * - Authorization header with bearer token
+ * - Functioning backend validation service
+ * 
+ * @returns {Promise<NextResponse>} JSON response with token validation result
  */
 export async function POST(request: Request) {
   try {

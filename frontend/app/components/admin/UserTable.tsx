@@ -20,13 +20,53 @@ interface User {
   [key: string]: string | number | boolean | undefined;
 }
 
+/**
+ * @interface UserTableProps
+ * @description Defines the props for the UserTable component.
+ * @property {string} locale - The current locale/language for internationalization.
+ */
 interface UserTableProps {
   locale: string;
 }
 
 /**
  * @component UserTable
- * @description Displays a sortable and paginated table of users with administrative actions.
+ * @description Administrative component for managing users in the Open Handicap System.
+ * 
+ * This component provides a comprehensive user management interface with:
+ * - Sortable columns for efficient user browsing (username, email, creation date)
+ * - Pagination controls for handling large numbers of users
+ * - Per-page display options (5, 10, 25, 50 users)
+ * - Direct role management via toggle buttons (admin/editor status)
+ * - Modal-based interfaces for detailed user editing
+ * - User deletion with confirmation safeguards
+ * - Error handling and success messaging
+ * - Loading states during API operations
+ * - Internationalization support through dictionary loading
+ * 
+ * The component maintains filtering, sorting, and pagination state internally and
+ * refreshes data when these parameters change. It provides visual feedback for
+ * all operations through success and error messages.
+ * 
+ * @calledBy
+ * - AdminDashboard (main administrative interface)
+ * - UserManagementPage (dedicated user management page)
+ * - AccountsSection (administrative accounts section)
+ * 
+ * @calls
+ * - API: GET /api/admin/users (to fetch paginated/sorted user list)
+ * - API: PATCH /api/admin/users/{id}/admin (to toggle admin status)
+ * - API: PATCH /api/admin/users/{id}/editor (to toggle editor status)
+ * - UserEditModal (for detailed user editing)
+ * - UserDeleteModal (for user deletion confirmation)
+ * - localStorage.getItem() (to retrieve authentication token)
+ * 
+ * @requires
+ * - Authentication token in localStorage
+ * - Administrative privileges
+ * - Backend API endpoints for user management
+ * - UserEditModal and UserDeleteModal components
+ * - Dictionary data for localization
  */
 const UserTable: React.FC<UserTableProps> = ({ locale }) => {
   const [users, setUsers] = useState<User[]>([]);

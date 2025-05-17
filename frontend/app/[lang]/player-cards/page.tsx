@@ -25,14 +25,38 @@ const geistMono = Geist_Mono({
 
 /**
  * @page PlayerCardsPage
- * @description An App Router page component that displays a list of all player scorecards.
- * It serves as a container for the `PlayerCardsList` component, which handles the fetching
- * and rendering of the scorecard data.
+ * @description List view of all player scorecards in the Open Handicap System.
+ * 
+ * This page serves as the main interface for users to browse, search, and access
+ * player scorecard records. It displays a comprehensive list of all scorecards
+ * in the system, with options to view details of individual cards or add new ones.
+ * 
+ * The page features:
+ * - A clear header section explaining the purpose of the view
+ * - A prominent "Add New Scorecard" button for quick data entry
+ * - A responsive grid layout of scorecard entries
+ * - Loading state handling via Suspense
  *
  * @remarks
  * - **Component Composition**: Primarily renders the `PlayerCardsList` component.
  * - **Styling**: Uses `Geist` and `Geist_Mono` fonts and includes a background image with an overlay.
  * - Provides a title and a brief description for the page.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/player-cards)
+ * - Dashboard links (likely has a "View Scorecards" link)
+ * - Navbar/menu items for scorecard management
+ * - User profile page (potentially links to user's scorecards)
+ * 
+ * @calls
+ * - Component: PlayerCardsList (handles fetching and displaying the actual scorecard data)
+ * - Component: Link (for navigation to add new scorecard)
+ * - React.Suspense (for handling loading states)
+ * 
+ * @requires
+ * - Backend API endpoint for retrieving scorecard data (via PlayerCardsList)
+ * - Proper route configuration in Next.js App Router
+ * - Background image asset (/wp-golf-1.webp)
  *
  * @returns {JSX.Element} The rendered page displaying the list of player scorecards.
  */

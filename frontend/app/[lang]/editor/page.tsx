@@ -27,9 +27,34 @@ const geistMono = Geist_Mono({
 
 /**
  * @page EditorDashboard
- * @description This page serves as the main dashboard for users with editor privileges.
- * It verifies editor status based on user data stored in localStorage and, if authorized,
- * displays a welcome message and navigation options to various content management sections.
+ * @description The editor dashboard for content management in the Open Handicap System.
+ * 
+ * This secure page serves as the main dashboard for users with editor privileges. It:
+ * - Performs authentication and authorization checks
+ * - Validates the user has editor permissions
+ * - Provides navigation to various content management sections
+ * - Offers tools for managing golf courses and scorecard templates
+ * 
+ * The page implements role-based access control, redirecting non-editor users
+ * back to the homepage if they attempt to access it. Authentication state is
+ * checked with each page load for security.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/editor)
+ * - Navbar component (when editor users click editor dashboard link)
+ * - Other sections of the editor interface (when returning to dashboard)
+ * 
+ * @calls
+ * - Function: forceValidateTokenOrLogout (for authentication verification)
+ * - Function: getCommonDictionary (for internationalization)
+ * - Component: Link (for navigation to sub-sections)
+ * - Router: useRouter().push() (for redirects when unauthorized)
+ * 
+ * @requires
+ * - Authentication token in localStorage
+ * - User data with is_editor flag set to true
+ * - Language parameter from the URL
+ * - Dictionary translations for editor interface
  */
 export default function EditorDashboard({ params }: { params: { lang: string } }) {
   const router = useRouter();

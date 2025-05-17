@@ -5,8 +5,39 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
 import { Geist, Geist_Mono } from "next/font/google";
-import LogoutButton from '../../../components/LogoutButton';
+import LogoutButton from '../../components/LogoutButton';
 import { getCommonDictionary } from '../dictionaries';
+
+/** 
+ * @page ProfilePage
+ * @description User profile page that displays and manages user information.
+ * 
+ * This page allows authenticated users to:
+ * - View their profile information (username, email, name, handicap, gender, etc.)
+ * - Edit and update their profile details
+ * - Change password (via navigation to the change-password page)
+ * - Delete their account
+ * 
+ * The component manages authentication state and will redirect to login if no
+ * token is found or if the token is invalid.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/profile)
+ * - Navbar component (when user clicks on their username or profile link)
+ * 
+ * @calls
+ * - API: GET /api/auth/profile (to fetch user profile data)
+ * - API: PUT /api/auth/profile (to update user profile data)
+ * - API: DELETE /api/auth/profile (to delete user account)
+ * - Component: LogoutButton (for logging out)
+ * - Component: Link (for navigation)
+ * - Function: getCommonDictionary (for internationalization)
+ * - Router: useRouter().push() (for navigation redirects)
+ * 
+ * @requires
+ * - Authentication token in localStorage
+ * - Backend API support for profile operations
+ */
 
 /**
  * @constant geistSans
@@ -45,9 +76,52 @@ interface User {
   category?: string;
 }
 
+/**
+ * @interface Dictionary
+ * @description Defines the structure for translation dictionary.
+ */
+interface Dictionary {
+  common?: {
+    loading?: string;
+    cancel?: string;
+    saveChanges?: string;
+    backToHome?: string;
+  };
+  profile?: {
+    title?: string;
+    username?: string;
+    email?: string;
+    name?: string;
+    familyName?: string;
+    matricula?: string;
+    handicap?: string;
+    gender?: string;
+    selectGender?: string;
+    male?: string;
+    female?: string;
+    other?: string;
+    birthday?: string;
+    category?: string;
+    memberSince?: string;
+    editProfile?: string;
+    accountActions?: string;
+    changePassword?: string;
+    deleteAccount?: string;
+    updateSuccess?: string;
+    updateError?: string;
+    deleteConfirm?: string;
+    deleteError?: string;
+  };
+  logout?: {
+    loggingOut?: string;
+    signOut?: string;
+  };
+  [key: string]: any;
+}
+
 export default function Profile({ params: { lang } }) {
   const router = useRouter();
-  const [dict, setDict] = useState(null);
+  const [dict, setDict] = useState<Dictionary | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState('');
@@ -193,7 +267,7 @@ export default function Profile({ params: { lang } }) {
               <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                 {dict?.profile?.title || 'Your Profile'}
               </h1>
-              <LogoutButton variant="secondary" className="text-sm" />
+              <LogoutButton variant="secondary" className="text-sm" dict={dict || {}} />
             </div>
           </div>
 

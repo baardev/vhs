@@ -1,6 +1,43 @@
 import React from 'react';
 import { getCommonDictionary } from '../dictionaries';
 
+/**
+ * @page PrivacyPage
+ * @description Legal information page displaying the Privacy Policy for the Open Handicap System.
+ * 
+ * This server component renders a comprehensive privacy policy that informs users about 
+ * how their data is collected, used, shared, and protected within the application. The page 
+ * is structured into multiple sections covering all aspects of data privacy, including:
+ * 
+ * - Introduction and policy overview
+ * - Information collection practices
+ * - How user information is used
+ * - Data sharing policies
+ * - Security measures
+ * - User privacy rights
+ * - Policy update procedures
+ * 
+ * The component uses translations from the dictionary system to support multiple languages,
+ * with fallback text provided for each section in case translations are unavailable.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/privacy)
+ * - Footer links (typically contains a "Privacy Policy" link)
+ * - Legal notice references (such as during user registration)
+ * - Settings/account pages (for user reference)
+ * 
+ * @calls
+ * - Function: getCommonDictionary (for internationalization)
+ * 
+ * @requires
+ * - Dictionary translations for privacy policy content (privacy.* keys)
+ * - Proper route configuration in Next.js App Router
+ * 
+ * @param {Object} props - Component props
+ * @param {Object} props.params - Route parameters
+ * @param {string} props.params.lang - Language code for translations
+ * @returns {Promise<JSX.Element>} The rendered Privacy Policy page
+ */
 export default async function PrivacyPage({ params: { lang } }: { params: { lang: string } }) {
   const dict = await getCommonDictionary(lang);
   

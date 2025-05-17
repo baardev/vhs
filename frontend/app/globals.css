@@ -1,17 +1,60 @@
+/**
+ * globals.css
+ * -----------
+ * Global stylesheet for the Open Handicap System application.
+ * 
+ * This file provides:
+ * - Tailwind CSS framework integration (base, components, utilities)
+ * - Global CSS variables for theming (light/dark mode)
+ * - Base styling for the entire application
+ * - Global utility classes and overrides
+ * 
+ * Structure:
+ * 1. Tailwind directives (@tailwind)
+ * 2. CSS variable definitions (:root and .dark)
+ * 3. Global element styling (body)
+ * 4. Custom global styles and utilities
+ * 
+ * Used by:
+ * - The root layout component
+ * - All pages in the application
+ * - Component styling through Tailwind classes
+ * 
+ * Requires:
+ * - Tailwind CSS configuration in tailwind.config.js
+ * - PostCSS configuration
+ * - Implementation of .dark class toggling for dark mode
+ */
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/**
+ * Light mode theme variables
+ * --------------------------
+ * Default color scheme used when no .dark class is applied
+ */
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-rgb: 255, 255, 255;
 }
 
+/**
+ * Dark mode theme variables
+ * ------------------------
+ * Applied when the .dark class is added to an ancestor element
+ */
 .dark {
   --foreground-rgb: 255, 255, 255;
   --background-rgb: 30, 30, 30;
 }
 
+/**
+ * Base body styling
+ * ----------------
+ * Sets default text and background colors from theme variables
+ */
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));

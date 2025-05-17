@@ -1,58 +1,49 @@
 'use client';
 
 import Link from 'next/link';
-// import { useTranslation } from 'next-i18next'; // REMOVED
-import { useParams, useRouter } from 'next/navigation'; // ADDED router
+import { useParams, useRouter } from 'next/navigation';
 import { useState, useEffect } from 'react';
-import LogoutButton from '../LogoutButton';
-import { getCommonDictionary } from '../../app/dictionaries'; // ADDED - Adjust path if necessary
-import { validateToken, clearAuthData } from '../../src/utils/authUtils';
-
-// Add the necessary type declaration for the window object
-declare global {
-  interface Window {
-    toggleDarkMode?: () => void;
-  }
-}
+import LogoutButton from './LogoutButton';
+import { getCommonDictionary } from '../dictionaries';
+import { validateToken, clearAuthData } from '../../src/utils/authUtils'; 
 
 /**
  * @component Navbar
- * @description Renders the main navigation bar for the application.
- * It displays different links based on the user's authentication status and roles (admin/editor).
- * Features a responsive design with a hamburger menu for mobile devices.
- *
- * @remarks
- * - Now includes dark mode toggle.
- * - Manages `isLoggedIn`, `username`, and `isEditor` states based on `localStorage` data.
- * - Listens to `storage` and `authChange` window events to update authentication status dynamically.
- * - Uses a `mounted` state to prevent hydration mismatches, showing a skeleton loader initially.
- * - Includes links to Home, Courses, Player Scorecards.
- * - Conditionally displays links to Admin dashboard, Editor dashboard, Profile, Sign In, and Create Account.
- * - Integrates the `LogoutButton` component.
- * - Uses dictionary-based approach for internationalization.
- * - Includes a temporary `useEffect` for debugging translations (should be removed in production).
- *
- * Called by:
- * - `frontend/app/[lang]/layout.tsx` (as part of the main application layout)
- *
- * Calls:
- * - React Hooks: `useState`, `useEffect`
- * - `next/link`'s `Link` component (for client-side navigation)
- * - `next/navigation`'s `useParams` and `useRouter` hooks (for language parameter, dictionary loading, and routing)
- * - `getCommonDictionary` for loading translations.
- * - `localStorage.getItem` (to retrieve `token` and `userData`)
- * - `JSON.parse` (to parse `userData`)
- * - `window.addEventListener` and `window.removeEventListener` (for `storage` and `authChange` events)
- * - `LogoutButton` component
- * - SVG icons (for logo and hamburger menu)
- * - `validateToken` and `clearAuthData` from `authUtils` for token validation
- *
- * @returns {React.FC} The rendered navigation bar component.
+ * @description Renders the main navigation bar for the Open Handicap System application.
+ * 
+ * This component provides the primary navigation interface with:
+ * - Dynamic link generation based on user authentication state
+ * - Role-based access control for admin and editor sections
+ * - Responsive design with mobile menu toggle
+ * - Internationalization support via dictionary loading
+ * - Dark mode toggle support
+ * - Authentication state monitoring and token validation
+ * 
+ * The component handles loading states appropriately to prevent hydration mismatches
+ * and provides fallback UI during dictionary loading.
+ * 
+ * @calledBy
+ * - RootLayout (as the main application header)
+ * - All pages that use the default layout
+ * 
+ * @calls
+ * - getCommonDictionary (for internationalization)
+ * - validateToken/clearAuthData (for auth verification)
+ * - LogoutButton component
+ * - localStorage API (for auth state persistence)
+ * - next/navigation hooks (for routing and params)
+ * 
+ * @requires
+ * - Client-side rendering ('use client' directive)
+ * - Authentication utilities
+ * - Dictionary data for localization
+ * - localStorage access
+ * 
+ * @returns {JSX.Element} The rendered navigation bar component
  */
 const Navbar = () => {
-  // const { t, ready, i18n } = useTranslation('common'); // REMOVED
-  const params = useParams() || {}; // Add fallback empty object
-  const lang = (params.lang as string) || 'en'; // ADDED
+  const params = useParams() || {};
+  const lang = (params.lang as string) || 'en';
   const router = useRouter();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -60,7 +51,7 @@ const Navbar = () => {
   const [mounted, setMounted] = useState(false);
   const [isEditor, setIsEditor] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [dict, setDict] = useState<Record<string, any> | null>(null); // Initialize with null
+  const [dict, setDict] = useState<Record<string, any> | null>(null);
   const [dictError, setDictError] = useState<string | null>(null);
 
   // Validate token on mount
@@ -378,4 +369,4 @@ const Navbar = () => {
   );
 };
 
-export default Navbar;
+export default Navbar; 

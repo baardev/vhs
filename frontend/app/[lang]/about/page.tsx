@@ -3,6 +3,29 @@
 import React, { useState, useEffect } from 'react';
 import { getCommonDictionary } from '../dictionaries';
 
+/**
+ * @page AboutPage
+ * @description The About page for the Open Handicap System application.
+ * 
+ * This page provides information about the system, including:
+ * - The mission and purpose of the handicap system
+ * - Key features and capabilities
+ * - Contact information for support
+ * 
+ * The component uses internationalization to display content in the user's
+ * selected language through the dictionary system.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/about)
+ * - Navigation links in the application (likely in Navbar and Footer components)
+ * 
+ * @calls
+ * - Function: getCommonDictionary (for internationalization)
+ * 
+ * @requires
+ * - Language parameter from the URL (provided by Next.js App Router)
+ * - Dictionary translations for the about page content
+ */
 export default function AboutPage({ params: { lang } }) {
   const [dict, setDict] = useState(null);
   

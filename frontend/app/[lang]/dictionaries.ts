@@ -1,3 +1,33 @@
+/**
+ * @module dictionaries
+ * @description Internationalization module for the Open Handicap System.
+ * 
+ * This module provides a robust translation system for the application, handling:
+ * - Loading and caching of locale-specific dictionaries
+ * - Intelligent fallback to English when translations are missing
+ * - Timeout protection for dictionary loading operations
+ * - Error handling with graceful fallbacks
+ * 
+ * The module implements a defensive approach to internationalization, ensuring
+ * that the application never crashes due to missing or invalid translations.
+ * Dictionary entries are accessed with optional chaining to prevent runtime errors.
+ * 
+ * @calledBy
+ * - Page components throughout the application
+ * - Layout components requiring translations
+ * - UI components with text content
+ * - Error handling systems requiring localized messages
+ * 
+ * @calls
+ * - Dynamic imports of JSON translation files
+ * - Browser's localStorage API (via caching mechanism)
+ * 
+ * @requires
+ * - JSON translation files in /public/locales/{locale}/common.json
+ * - At minimum, an English (en) translation file as fallback
+ * - Proper locale parameter being passed from page components
+ */
+
 // import { getTranslations } from '../i18n'; // REMOVED
 
 // Create a cache for dictionaries to avoid reloading the same dictionary multiple times

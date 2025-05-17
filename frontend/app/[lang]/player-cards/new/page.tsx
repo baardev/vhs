@@ -111,11 +111,37 @@ type HoleFieldKey =
 
 /**
  * @page NewPlayerCardPage
- * @description An App Router page component for creating a new player scorecard.
- * It provides a comprehensive form to input all necessary details for a scorecard,
- * including course and tee selection (with dynamic fetching of tees based on selected course),
- * play date, scores (gross, net, hole-by-hole), handicap information, and other
- * miscellaneous details.
+ * @description A comprehensive form interface for creating a new golf scorecard in the Open Handicap System.
+ * 
+ * This page provides users with a detailed form to record all aspects of a golf round:
+ * - Course and tee selection with dynamic loading of available options
+ * - Play date, weather conditions, and other contextual information
+ * - Score entry (both gross/net totals and hole-by-hole details)
+ * - Handicap information and calculations
+ * - Additional metadata and notes
+ * 
+ * The form implements robust error handling, data validation, timeout protection for API calls,
+ * and user feedback during the submission process. Upon successful creation, it redirects
+ * the user to the player cards listing page.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/player-cards/new)
+ * - Player cards list page (via "Add New Card" button)
+ * - Dashboard (potentially via quick action links)
+ * 
+ * @calls
+ * - API: GET /api/courses/list-names (to fetch available courses)
+ * - API: GET /api/courses/{courseId}/tees (to fetch tees for selected course)
+ * - API: POST /api/player-cards (to create the new player card)
+ * - Component: ErrorBoundary (for graceful error handling)
+ * - Component: Link (for navigation)
+ * - Router: useRouter().push() (for redirect after submission)
+ * 
+ * @requires
+ * - Authentication (user must be logged in to record scores)
+ * - Backend API endpoints for courses, tees, and player card creation
+ * - Course and tee data in the database
+ * - Form validation and error handling logic
  *
  * @returns {JSX.Element} The rendered form page for creating a new player card.
  */

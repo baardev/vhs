@@ -3,6 +3,37 @@
 import React, { useState, useEffect } from 'react';
 import { getCommonDictionary } from '../../[lang]/dictionaries';
 
+/**
+ * @page TermsPage
+ * @description Legal terms of service page for the Open Handicap System.
+ * 
+ * This client component renders the Terms of Service document that establishes
+ * the legal agreement between users and the platform. The page presents a 
+ * comprehensive breakdown of the terms in multiple sections:
+ * 
+ * - Introduction and effective date
+ * - User account responsibilities and requirements
+ * - Service descriptions and limitations
+ * - Prohibited activities and restrictions
+ * - Account termination policies
+ * - Terms modification procedures
+ * 
+ * All content is internationalized using the dictionary system, with fallback
+ * text provided for each section in case translations are unavailable.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/terms)
+ * - Footer links (typically contains a "Terms of Service" link)
+ * - Registration page (for users to review before creating an account)
+ * - Legal notice references throughout the application
+ * 
+ * @calls
+ * - Function: getCommonDictionary (for internationalization)
+ * 
+ * @requires
+ * - Dictionary translations for terms of service content (terms.* keys)
+ * - Proper route configuration in Next.js App Router
+ */
 export default function TermsPage({ params: { lang } }) {
   const [dict, setDict] = useState(null);
   

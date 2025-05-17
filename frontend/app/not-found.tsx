@@ -1,5 +1,34 @@
 import Link from 'next/link';
 
+/**
+ * @component NotFound
+ * @description Custom 404 error page component for the Open Handicap System.
+ * 
+ * This component provides a user-friendly error page when users navigate to
+ * non-existent routes or resources. It features:
+ * - Clear error messaging with the 404 status code
+ * - Helpful explanation of what might have happened
+ * - Easy navigation back to the home page
+ * - Responsive design that works across device sizes
+ * - Dark/light mode support through utility classes
+ * 
+ * In the Next.js App Router, this special file is automatically used when
+ * a route cannot be matched or when notFound() is thrown in a route handler.
+ * 
+ * @calledBy
+ * - Next.js App Router (automatically for unmatched routes)
+ * - Error boundaries that call notFound()
+ * - API routes that return a 404 status
+ * 
+ * @calls
+ * - next/link (for client-side navigation back to homepage)
+ * 
+ * @requires
+ * - Next.js App Router configuration
+ * - Tailwind CSS for styling
+ * 
+ * @returns {JSX.Element} The 404 error page component
+ */
 export default function NotFound() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">

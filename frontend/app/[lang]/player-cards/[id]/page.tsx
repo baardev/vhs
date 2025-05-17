@@ -23,10 +23,12 @@ const geistMono = Geist_Mono({
 
 /**
  * @page PlayerCardPage
- * @description A dynamic App Router page component responsible for displaying the details of a specific player card.
- * It retrieves the card ID from the route parameters and passes it to the
- * `PlayerCardDetail` component for rendering.
- *
+ * @description A dynamic page for displaying detailed information about a specific player card.
+ * 
+ * This page serves as the detailed view for individual player handicap cards in the Open
+ * Handicap System. It retrieves the card ID from the route parameters and delegates
+ * the actual rendering and data fetching to the PlayerCardDetail component.
+ * 
  * @remarks
  * - **Dynamic Routing**: Uses App Router dynamic routing `[id]/page.tsx` to capture the player card ID.
  * - **Component Composition**: Primarily acts as a wrapper for the `PlayerCardDetail` component.
@@ -34,6 +36,20 @@ const geistMono = Geist_Mono({
  *   and passes `cardId` as a prop to `PlayerCardDetail`.
  * - Displays a loading message if `cardId` is not valid (e.g., 0).
  * - Uses `Geist` and `Geist_Mono` fonts for styling.
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/player-cards/{id})
+ * - Player card list page (when user selects a specific card)
+ * - Dashboard links (when showing recent or featured player cards)
+ * - Search results (when displaying player card matches)
+ * 
+ * @calls
+ * - Component: PlayerCardDetail (which handles data fetching and rendering the card details)
+ * 
+ * @requires
+ * - PlayerCardDetail component
+ * - Valid numeric ID in the route parameters
+ * - Backend API support for retrieving player card data by ID (via PlayerCardDetail)
  *
  * @returns {JSX.Element} The rendered page containing the player card details or a loading state.
  */

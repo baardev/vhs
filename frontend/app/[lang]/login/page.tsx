@@ -7,12 +7,37 @@ import { getLoginDictionary } from '../dictionaries';
 
 /**
  * @page LoginPage
- * @description This page component provides a user login form.
- * It allows users to enter their username and password to authenticate.
- * On successful authentication, it stores user data and a token in localStorage,
- * dispatches an 'authChange' event, and redirects to the dashboard.
+ * @description Authentication interface for the Open Handicap System.
  * 
- * Implemented as a Client Component for the App Router.
+ * This page provides the main entry point for user authentication, featuring:
+ * - A secure login form for username/email and password
+ * - Password visibility toggle for better user experience
+ * - Error handling with descriptive messages
+ * - Links to account registration and password recovery
+ * - Proper form validation and submission handling
+ * 
+ * On successful authentication, the component:
+ * - Stores the JWT token in localStorage for subsequent authenticated requests
+ * - Saves user data to localStorage for easy access throughout the application
+ * - Dispatches an 'authChange' event to notify other components of the auth state change
+ * - Redirects the user to their dashboard
+ * 
+ * @calledBy
+ * - Next.js App Router (when user navigates to /{lang}/login)
+ * - Protected routes (via redirect when authentication is required)
+ * - Navbar login link
+ * - Registration page (if user already has an account)
+ * 
+ * @calls
+ * - API: POST /api/auth/login (to authenticate user credentials)
+ * - Function: getLoginDictionary (for internationalization)
+ * - Component: Link (for navigation to register and forgot-password pages)
+ * - Router: useRouter().push() (for redirect after successful login)
+ * 
+ * @requires
+ * - Backend API with authentication endpoint
+ * - localStorage for token/user data storage
+ * - Dictionary translations for login page content
  */
 export default function Login({
   params: { lang }

@@ -34,6 +34,42 @@ import { use } from 'react';
 //   };
 // }
 
+/**
+ * @component LangLayout
+ * @description Internationalization layout wrapper for the Open Handicap System.
+ * 
+ * This layout serves as a critical part of the application's internationalization 
+ * architecture, wrapping all pages within language-specific routes. It:
+ * 
+ * - Captures and processes the language parameter from the URL ([lang])
+ * - Handles both synchronous and asynchronous parameter resolution using React.use()
+ * - Provides the language context to all child components
+ * - Would normally validate language codes against supported locales (currently commented out)
+ * 
+ * The component is intentionally minimal, focusing solely on language handling
+ * while delegating common UI elements (navbar, footer) to the root layout.
+ * This separation of concerns allows for clean internationalization without
+ * duplicating shared layout elements.
+ * 
+ * @calledBy
+ * - Next.js App Router (automatically for all pages under the [lang] directory)
+ * - Parent layout: Root layout (app/layout.tsx)
+ * 
+ * @calls
+ * - React.use() - To unwrap Promise parameters when necessary
+ * - (Commented out) notFound() - Would redirect to 404 for invalid language codes
+ * 
+ * @requires
+ * - Next.js App Router with route groups
+ * - Dynamic route segment [lang] in the URL
+ * - Global CSS styles
+ * 
+ * @param {Object} props - Component props
+ * @param {React.ReactNode} props.children - Child components to render
+ * @param {Object|Promise<Object>} props.params - Route parameters, may be a Promise
+ * @param {string} props.params.lang - Language code extracted from the URL
+ * @returns {JSX.Element} The layout with its children
+ */
 export default function LangLayout({
   children,
   params,

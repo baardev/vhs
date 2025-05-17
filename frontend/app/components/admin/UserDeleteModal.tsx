@@ -33,7 +33,38 @@ interface UserDeleteModalProps {
 
 /**
  * @component UserDeleteModal
- * @description A modal dialog component for confirming and handling user deletion.
+ * @description Administrative modal component for user account deletion in the Open Handicap System.
+ * 
+ * This component provides a confirmation dialog for admins to safely delete user accounts with:
+ * - Clear identification of the user being deleted (username display)
+ * - Explicit warning about the permanent nature of the action
+ * - Error handling for failed deletion attempts
+ * - Loading state management during the API request
+ * - Internationalization support through dictionary loading
+ * - Accessible UI with proper focus management
+ * 
+ * The modal implements a two-step confirmation process (open modal + confirm button)
+ * to prevent accidental deletions, and provides clear feedback throughout the
+ * deletion workflow.
+ * 
+ * @calledBy
+ * - UserManagementPage (admin dashboard)
+ * - UserListComponent (admin user table)
+ * - UserActionsMenu (dropdown or action buttons for each user)
+ * - UserDetailView (when viewing individual user details)
+ * 
+ * @calls
+ * - API: DELETE /api/admin/users/{id} (to perform the actual user deletion)
+ * - localStorage.getItem() (to retrieve authentication token)
+ * - Props callback: onClose() (when canceling or after completion)
+ * - Props callback: onDelete() (after successful deletion)
+ * 
+ * @requires
+ * - Authentication token in localStorage
+ * - Administrative privileges
+ * - Valid User object with id, username, and email
+ * - Proper API endpoint for user deletion
+ * - Parent component to handle the onDelete callback
  */
 const UserDeleteModal: React.FC<UserDeleteModalProps> = ({ user, onClose, onDelete, locale }) => {
   const [dictionary, setDictionary] = useState<any>(null);

@@ -106,8 +106,39 @@ const getBaseUrl = () => {
 
 /**
  * @page CourseEditor
- * @description A page component for editing detailed golf course information.
- * Adapted for App Router architecture.
+ * @description Advanced course management interface for editors in the Open Handicap System.
+ * 
+ * This page provides a comprehensive interface for editors to manage golf course data, including:
+ * - Viewing and selecting from a list of all available courses
+ * - Editing course basic information (name, location, etc.)
+ * - Managing tee box details (ratings, par values, lengths)
+ * - Editing hole-specific data for different categories and genders
+ * - Visualizing course data in structured tables
+ * 
+ * The component implements secure access control, verifying editor privileges
+ * before allowing access to course management functions. It handles multiple
+ * edit modes for different aspects of course data.
+ * 
+ * @calledBy
+ * - Next.js App Router (when editor navigates to /{lang}/editor/courses)
+ * - EditorDashboard component (via navigation link)
+ * 
+ * @calls
+ * - API: GET /api/coursesData/course-names (to fetch course list)
+ * - API: GET /api/coursesData/course-data/{id} (to fetch course tee details)
+ * - API: GET /api/coursesData/course-hole-data/{id} (to fetch hole data)
+ * - API: PUT /api/coursesData/course-names/{id} (to update course details)
+ * - API: PUT /api/coursesData/course-data/{id} (to update tee details)
+ * - API: PUT /api/coursesData/course-hole-data/{id} (to update hole data)
+ * - Function: getCommonDictionary (for internationalization)
+ * - Component: Link (for navigation)
+ * - Router: useRouter().push() (for redirects when unauthorized)
+ * 
+ * @requires
+ * - Authentication token in localStorage
+ * - Editor privileges (is_editor flag in user data)
+ * - Backend API endpoints for course data operations
+ * - Dictionary translations for course editor interface
  */
 export default function CourseEditor({ params }: { params: { lang: string } }) {
   const lang = params.lang;

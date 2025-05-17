@@ -1,46 +1,31 @@
-// import { createInstance } from 'i18next';
-// import resourcesToBackend from 'i18next-resources-to-backend';
-// import { initReactI18next } from 'react-i18next';
-
-// Language options
-export const locales = ['en', 'es', 'zh', 'ru', 'he'];
-export const defaultLocale = 'en';
+/*
+ * @module i18n
+ * @description Core internationalization configuration for the Open Handicap System.
+ * 
+ * This module defines the supported languages and default locale for the application.
+ * It provides essential internationalization constants used throughout the system
+ * for language detection, routing, and fallback handling.
+ * 
+ * @calledBy
+ * - Language-specific layout components
+ * - Routing configuration
+ * - Dictionary loading utilities
+ * 
+ * @requires
+ * - Corresponding language files in the locales directory
+ */
 
 /*
-// Helper function to create instance
-export const getI18nInstance = async (locale: string, ns: string[]) => {
-  const i18nInstance = createInstance();
-  
-  await i18nInstance
-    .use(initReactI18next)
-    .use(
-      resourcesToBackend(
-        (language: string, namespace: string) =>
-          import(`../public/locales/${language}/${namespace}.json`)
-      )
-    )
-    .init({
-      lng: locale,
-      supportedLngs: locales,
-      fallbackLng: defaultLocale,
-      ns,
-      defaultNS: 'common',
-      fallbackNS: 'common',
-      react: {
-        useSuspense: false,
-      },
-    });
+ * @constant locales
+ * @description Array of supported language codes in the application.
+ * These ISO 639-1 language codes represent all languages that have
+ * translation resources available.
+ */
+export const locales = ['en', 'es', 'zh', 'ru', 'he'];
 
-  return i18nInstance;
-};
-
-// Translation function
-export async function getTranslations(locale: string = defaultLocale, ns: string[] = ['common']) {
-  const i18nextInstance = await getI18nInstance(locale, ns);
-  
-  return {
-    t: i18nextInstance.getFixedT(locale, ns),
-    i18n: i18nextInstance,
-  };
-}
-*/ 
+/*
+ * @constant defaultLocale
+ * @description The fallback language code used when a requested locale
+ * is not available or when no specific locale is requested.
+ */
+export const defaultLocale = 'en';

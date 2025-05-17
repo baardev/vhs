@@ -40,7 +40,39 @@ interface UserEditModalProps {
 
 /**
  * @component UserEditModal
- * @description A modal dialog component for editing user details.
+ * @description Administrative modal component for editing user accounts in the Open Handicap System.
+ * 
+ * This component provides a comprehensive form interface for administrators to modify user accounts with:
+ * - Core user data fields (username, email, password)
+ * - Personal information (name, family name, birthday, gender)
+ * - Golf-specific details (handicap, matricula)
+ * - Permission management (admin and editor roles)
+ * - Form validation and error handling
+ * - Loading state management during API requests
+ * - Internationalization support through dictionary loading
+ * 
+ * The modal maintains the current state of all form fields, transforms data appropriately for API submission
+ * (e.g., converting string handicap values to numbers), and provides clear feedback throughout the
+ * editing workflow. It also handles partial updates, only sending modified fields to the API.
+ * 
+ * @calledBy
+ * - UserManagementPage (admin dashboard)
+ * - UserListComponent (admin user table)
+ * - UserActionsMenu (dropdown or action buttons for each user)
+ * - UserDetailView (when viewing individual user details)
+ * 
+ * @calls
+ * - API: PUT /api/admin/users/{id} (to update user data)
+ * - localStorage.getItem() (to retrieve authentication token)
+ * - Props callback: onClose() (when canceling or after completion)
+ * - Props callback: onSave() (after successful update)
+ * 
+ * @requires
+ * - Authentication token in localStorage
+ * - Administrative privileges
+ * - Valid User object with all required properties
+ * - Proper API endpoint for user updates
+ * - Parent component to handle the onSave callback
  */
 const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave, locale }) => {
   const [dictionary, setDictionary] = useState<any>(null);
