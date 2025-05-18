@@ -1,41 +1,9 @@
 #!/bin/bash
 
-. ./.env
-# export DISPLAY=:0
-# export DB_USER=admin
-# export DB_NAME=vhsdb
-# export DB_HOST=db
-# export DB_PORT=5432
-# export DATABASE_URL=postgres://admin:ABeoAuNKL5f@db:5432/vhsdb
-# export PGUSER=admin
-# export PGDATABASE=vhsdb
-# export PGHOST=db
-# export PGPORT=5432
+source ${HOME}/sites/vhs/.env
+
 export NODE_ENV=development
-# export COMPOSE_BAKE=true
 export ROOT_DIR=$(git rev-parse --show-toplevel)
-# export USERPW=$(cat .adminpw)
-
-# Check if utils is already in PATH before adding it
-#if is_in_path; then
-#  echo "Utils directory already in PATH"
-#else
-#  echo "Adding utils directory to PATH"
-#  export PATH=${ROOT_DIR}/utils:$PATH
-#fi
-
-#  
-# Check system information and set conda environment accordingly
-# if uname -a | grep -q ":jwbox"; then
-#     source /home/jw/miniforge3/etc/profile.d/conda.sh
-#     echo "Setting conda environment to 'vhs'"
-#     conda activate vhs
-# elif uname -a | grep -q "Ubuntu"; then
-#     echo "Setting conda environment to 'base'"
-#     source /home/jw/miniforge3/etc/profile.d/conda.sh
-#     conda activate base
-# fi
-
 
 echo "DISPLAY: [$DISPLAY]"
 echo "DB_USER: [$DB_USER]"

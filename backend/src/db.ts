@@ -1,7 +1,13 @@
 import { Pool } from 'pg';
 import dotenv from 'dotenv';
 
+// Load environment variables
 dotenv.config();
+
+// Override the pg module defaults for every connection
+import * as pg from 'pg';
+// Change the default port for all pg connections
+(pg.defaults as any).port = 6541;
 
 // Create a simple dummy data implementation if database connection fails
 let useDummyData = false;
@@ -38,16 +44,16 @@ const dummyPlayerCards = [
   }
 ];
 
-
+// Create a database connection pool with your environment settings
 const pool = new Pool({
-  user:     process.env.DB_USER     || process.env.PGUSER     || 'admin',
-  host:     process.env.DB_HOST     || process.env.PGHOST     || 'db', // Changed back to 'db' for Docker
-  database: process.env.DB_NAME     || process.env.PGDATABASE || 'vhsdb',
-  password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'ABeoAuNKL5f',
-  port:     Number(process.env.DB_PORT || process.env.PGPORT || 6541),
+  user: process.env.DB_USER || 'admin',
+  host: process.env.DB_HOST || 'db',
+  database: process.env.DB_NAME || 'vhsdb',
+  password: process.env.DB_PASSWORD,
+  port: parseInt(process.env.DB_PORT || '6541'),
+  // Force the port to be 6541 regardless of defaults
+  // This explicit setting will override any defaults
 });
-
-
 
 // Check if we can connect to the database
 pool.query('SELECT NOW()')
