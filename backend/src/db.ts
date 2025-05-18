@@ -38,28 +38,15 @@ const dummyPlayerCards = [
   }
 ];
 
-// Try to connect to the real database
-// const pool = new Pool({
-//   user:     process.env.DB_USER     || process.env.PGUSER     || 'admin',
-//   host:     process.env.DB_HOST     || process.env.PGHOST     || 'localhost', // Changed from 'db' to 'localhost'
-//   database: process.env.DB_NAME     || process.env.PGDATABASE || 'vhsdb',
-//   password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'admin123',
-//   port:     Number(process.env.DB_PORT || process.env.PGPORT || 5432),
-// });
+
 const pool = new Pool({
   user:     process.env.DB_USER     || process.env.PGUSER     || 'admin',
   host:     process.env.DB_HOST     || process.env.PGHOST     || 'db', // Changed back to 'db' for Docker
   database: process.env.DB_NAME     || process.env.PGDATABASE || 'vhsdb',
   password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'ABeoAuNKL5f',
-  port:     Number(process.env.DB_PORT || process.env.PGPORT || 5432),
+  port:     Number(process.env.DB_PORT || process.env.PGPORT || 6541),
 });
-// const pool = new Pool({
-//   user: process.env.DB_USER || process.env.PGUSER || 'admin',
-//   host: process.env.DB_HOST || process.env.PGHOST || 'localhost', // Changed from 'db' to 'localhost'
-//   database: process.env.DB_NAME || process.env.PGDATABASE || 'vhsdb',
-//   password: process.env.DB_PASSWORD || process.env.PGPASSWORD || 'admin123',
-//   port: Number(process.env.DB_PORT || process.env.PGPORT || 5432),
-// });
+
 
 
 // Check if we can connect to the database

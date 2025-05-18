@@ -2,7 +2,7 @@
 # db operations
 docker exec -it vhs-db-1 sh -c "psql -U user -d vhsdb -c 'SELECT * FROM users;'"
 # backend debugging
-docker exec vhs-backend-1 sh -c "nc -zv db 5432"
+docker exec vhs-backend-1 sh -c "nc -zv db 6541"
 # Service monitoring
 docker-compose exec backend sh -c "npm run test"
 # Database connection test (from previous steps):
