@@ -25,14 +25,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 done < .env
 
 # Add any additional variables here
-export NODE_ENV=development
-echo -e "Exported: ${RED}NODE_ENV${NC}=${GREEN}$NODE_ENV${NC}"
-
-echo -e "${NC}Environment variables loaded successfully!${NC}"
-
 
 export NODE_ENV=production
 echo -e "${NC}OVERIDE: ${RED}NODE_ENV${NC}=${GREEN}${NODE_ENV}${NC}"
+
+export PATH=${ROOT_DIR}/sites/vhs/utils:$PATH
+echo -e "${NC}OVERIDE: ${RED}PATH${NC}=${GREEN}${PATH}${NC}"
 
 
 
