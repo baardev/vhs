@@ -261,7 +261,7 @@ const Navbar = () => {
 
                 {isEditor && (
                   <Link href={`/${lang}/editor`} className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-md shadow-sm ml-3">
-                    {currentDict?.editor?.title || currentDict?.editorDashboard || 'Editor'}
+                    {currentDict?.editor?.title || (currentDict?.editorDashboard?.dashboard) || 'Editor'}
                   </Link>
                 )}
 
@@ -337,7 +337,7 @@ const Navbar = () => {
                     className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-3 rounded-md"
                     onClick={() => setMobileMenuOpen(false)}
                   >
-                    {currentDict?.editor?.title || currentDict?.editorDashboard || 'Editor'}
+                    {currentDict?.editor?.title || (currentDict?.editorDashboard?.dashboard) || 'Editor'}
                   </Link>
                 )}
 

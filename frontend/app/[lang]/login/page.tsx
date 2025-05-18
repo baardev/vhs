@@ -81,48 +81,83 @@ export default function Login({
 
     try {
       console.log('Attempting login with:', username);
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-      });
-
-      console.log('Login response status:', response.status);
       
-      if (!response.ok) {
-        if (response.status === 404) {
-          setError('API endpoint not found. Please contact support.');
+      // Set a timeout for the fetch operation
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+      
+      try {
+        const response = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ username, password }),
+          signal: controller.signal
+        });
+
+        // Clear the timeout
+        clearTimeout(timeoutId);
+        
+        console.log('Login response status:', response.status);
+        
+        if (!response.ok) {
+          if (response.status === 404) {
+            setError('API endpoint not found. Please contact support.');
+            setIsLoading(false);
+            return;
+          }
+          
+          if (response.status === 524 || response.status === 522 || response.status === 523) {
+            console.error('CloudFlare timeout error:', response.status);
+            setError('The server is taking too long to respond. This is a known issue we are fixing. Please try again in a moment.');
+            setIsLoading(false);
+            return;
+          }
+          
+          const contentType = response.headers.get('content-type');
+          if (contentType && contentType.indexOf('application/json') !== -1) {
+            const data = await response.json();
+            console.log('Login response error data:', data);
+            setError(data.error || data.message || 'Invalid credentials');
+          } else {
+            setError(`Server returned ${response.status}: ${response.statusText}`);
+          }
           setIsLoading(false);
           return;
         }
         
-        const contentType = response.headers.get('content-type');
-        if (contentType && contentType.indexOf('application/json') !== -1) {
-          const data = await response.json();
-          console.log('Login response error data:', data);
-          setError(data.error || data.message || 'Invalid credentials');
-        } else {
-          setError(`Server returned ${response.status}: ${response.statusText}`);
-        }
-        setIsLoading(false);
-        return;
-      }
-      
-      const data = await response.json();
-      console.log('Login response data:', data);
+        const data = await response.json();
+        console.log('Login response data:', data);
 
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('userData', JSON.stringify(data.user));
-      
-      window.dispatchEvent(new Event('authChange'));
-      
-      // Redirect user to dashboard
-      router.push(`/${lang}/dashboard`);
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('userData', JSON.stringify(data.user));
+        
+        window.dispatchEvent(new Event('authChange'));
+        
+        // Redirect user to dashboard
+        router.push(`/${lang}/dashboard`);
+      } catch (fetchError) {
+        clearTimeout(timeoutId);
+        
+        // Handle abort error specifically
+        if (fetchError instanceof DOMException && fetchError.name === 'AbortError') {
+          console.error('Fetch request timed out');
+          setError('Login request timed out. The server may be overloaded. Please try again.');
+        } else {
+          throw fetchError; // Re-throw to be caught by the outer catch
+        }
+      }
     } catch (err) {
       console.error('Login error details:', err);
-      setError(`Server error (${err instanceof Error ? err.message : 'unknown'}). Please try again.`);
+      
+      if (err instanceof TypeError && err.message.includes('NetworkError')) {
+        setError('Network error. Please check your internet connection and try again.');
+      } else if (err instanceof TypeError && err.message.includes('Failed to fetch')) {
+        setError('Connection to server failed. The server may be temporarily unavailable.');
+      } else {
+        setError(`Server error (${err instanceof Error ? err.message : 'unknown'}). Please try again.`);
+      }
     } finally {
       setIsLoading(false);
     }

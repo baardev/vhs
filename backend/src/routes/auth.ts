@@ -179,7 +179,8 @@ router.post(
       const token = jwt.sign({ userId: user.id }, jwtSecret, { expiresIn: '15m' });
       console.log('Login successful for user:', user.username);
 
-      // Send login notification email
+      // Send login notification email - TEMPORARILY DISABLED DUE TO TIMEOUT ISSUES
+      /* 
       try {
         const loginTime = new Date().toLocaleString();
         await sendEmail({
@@ -193,6 +194,8 @@ router.post(
         console.error(`Failed to send login notification email to ${user.email}:`, emailError);
         // Do not block login if email fails
       }
+      */
+      console.log(`Email notifications disabled - skipping login email to ${user.email}`);
 
       res.json({
         token,
