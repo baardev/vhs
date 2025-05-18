@@ -226,9 +226,11 @@ const Navbar = () => {
           </div>
 
           <div className="hidden md:flex items-center space-x-6">
-            <Link href={`/${lang}/dashboard`} className="text-gray-700 hover:text-[#2d6a4f]">
-              {currentDict?.home || 'Home'}
-            </Link>
+            {isLoggedIn && (
+              <Link href={`/${lang}/dashboard`} className="text-gray-700 hover:text-[#2d6a4f]">
+                {currentDict?.home || 'Home'}
+              </Link>
+            )}
             <Link href={`/${lang}/courses`} className="text-gray-700 hover:text-[#2d6a4f]">
               {currentDict?.courses || 'Courses'}
             </Link>
@@ -295,9 +297,11 @@ const Navbar = () => {
       {mobileMenuOpen && (
         <div className="md:hidden mt-4 bg-white rounded-lg shadow-lg p-4 absolute right-4 left-4 z-50">
           <div className="flex flex-col space-y-4">
-            <Link href={`/${lang}/dashboard`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
-              {currentDict?.home || 'Home'}
-            </Link>
+            {isLoggedIn && (
+              <Link href={`/${lang}/dashboard`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
+                {currentDict?.home || 'Home'}
+              </Link>
+            )}
             <Link href={`/${lang}/courses`} className="text-gray-700 hover:text-[#2d6a4f] py-2 px-3 rounded-md hover:bg-gray-100" onClick={() => setMobileMenuOpen(false)}>
               {currentDict?.courses || 'Courses'}
             </Link>

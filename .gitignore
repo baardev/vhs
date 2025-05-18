@@ -29,3 +29,13 @@ XSYNC
 nohup.out
 DIGITALOCEAN_BUILD
 PUBLISH
+.cursor/
+docs/Estimated_Costs_1_Million_Users.xlsx
+docs/PLAN.md
+docs/Small_Golf_Handicap_Cost_Estimate.xlsx
+docs/cost-estimation-small.md
+docs/cost-spreadsheet.md
+docs/implementation-plan.md
+frontend/app/[lang]/test/
+frontend/components.zip
+frontend/pages.zip

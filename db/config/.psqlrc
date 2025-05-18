@@ -1,0 +1,3 @@
+-- PostgreSQL configuration for psql
+-- Add your preferred SQL commands here
+\set PROMPT1 "%n@%m:%>/%/ %R%# "

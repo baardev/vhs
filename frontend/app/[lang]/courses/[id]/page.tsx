@@ -111,8 +111,10 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
     );
   }
 
-  const frontNine = course.holes.filter(hole => hole.hole_number <= 9);
-  const backNine = course.holes.filter(hole => hole.hole_number > 9);
+  // Ensure the holes array exists before operating on it
+  const holes = course.holes || [];
+  const frontNine = holes.filter(hole => hole.hole_number <= 9);
+  const backNine = holes.filter(hole => hole.hole_number > 9);
 
   const frontNinePar = frontNine.reduce((total, hole) => total + hole.par, 0);
   const backNinePar = backNine.reduce((total, hole) => total + hole.par, 0);
@@ -180,7 +182,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                   </tr>
                 </thead>
                 <tbody>
-                  {course.tee_boxes.map((tee) => (
+                  {(course.tee_boxes || []).map((tee) => (
                     <tr key={tee.id}>
                       <td className="p-2 border border-gray-300 dark:border-gray-700">
                         {tee.name}
@@ -327,13 +329,13 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
               </table>
             </div>
 
-            {course.attachments.length > 0 && (
+            {(course.attachments || []).length > 0 && (
               <div className="mt-8">
                 <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-[#4fd1c5] mb-4">
                   Attachments
                 </h2>
                 <div className="space-y-3">
-                  {course.attachments.map((attachment) => (
+                  {(course.attachments || []).map((attachment) => (
                     <div
                       key={attachment.id}
                       className="flex items-center p-3 bg-gray-50 dark:bg-gray-800 rounded-md border border-gray-200 dark:border-gray-700"

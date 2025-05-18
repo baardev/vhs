@@ -58,10 +58,14 @@ const nextConfig = {
   // Add rewrites to direct API requests to the backend server
   async rewrites() {
     return [
-      // First try to use the local Next.js API routes (for /api/courses)
+      // Use local Next.js API routes for specific endpoints
       {
         source: '/api/courses',
         destination: '/api/courses',
+      },
+      {
+        source: '/api/courses/:id',
+        destination: '/api/courses/:id',
       },
       // Then fallback to the backend for all other API routes
       {
