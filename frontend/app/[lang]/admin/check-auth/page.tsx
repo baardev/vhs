@@ -1,7 +1,8 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { getCommonDictionary } from '../../../dictionaries';
 
 /**
  * Utility page that checks authentication and redirects appropriately
@@ -9,6 +10,16 @@ import { useRouter } from 'next/navigation';
  */
 export default function CheckAuth({ params }: { params: { lang: string } }) {
   const router = useRouter();
+  const [dict, setDict] = useState<Record<string, any> | null>(null);
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      const dictionary = await getCommonDictionary(params.lang);
+      setDict(dictionary);
+    };
+    loadDictionary();
+  }, [params.lang]);
 
   useEffect(() => {
     const checkToken = async () => {
@@ -63,11 +74,20 @@ export default function CheckAuth({ params }: { params: { lang: string } }) {
     checkToken();
   }, [params.lang, router]);
   
+  // Use basic language-specific loading text if dictionary isn't loaded yet
+  const loadingText = params?.lang === 'en' ? 'Loading...' : 
+                      params?.lang === 'es' ? 'Cargando...' : 
+                      params?.lang === 'he' ? 'טוען...' : 
+                      params?.lang === 'ru' ? 'Загрузка...' : 
+                      params?.lang === 'zh' ? '加载中...' : 'Loading...';
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md">
-        <h2 className="text-xl font-semibold mb-4">Checking authentication...</h2>
-        <p>Please wait while we validate your session.</p>
+        <h2 className="text-xl font-semibold mb-4">
+          {dict?.adminCheckAuth?.checkingAuth || 'Checking authentication...'}
+        </h2>
+        <p>{dict?.adminCheckAuth?.pleaseWait || 'Please wait while we validate your session.'}</p>
       </div>
     </div>
   );

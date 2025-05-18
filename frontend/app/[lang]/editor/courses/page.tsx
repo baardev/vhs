@@ -234,7 +234,7 @@ export default function CourseEditor({ params }: { params: { lang: string } }) {
     }
   };
 
-  const handleCourseSelect = (course: Course) => {
+  const handleCourseSelect = (course: Course) => { 
     setSelectedCourse(course);
     setSelectedCourseData(null);
     setSelectedHoleData(null);

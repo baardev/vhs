@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { ErrorBoundary } from 'react-error-boundary';
+import { getCommonDictionary } from '../../dictionaries';
 
 // Interface for the PlayerCard data - can be shared or imported if defined elsewhere
 /**
@@ -147,6 +148,7 @@ type HoleFieldKey =
  */
 export default function NewPlayerCardPage({ params }: { params: { lang: string } }) {
   const { lang } = params;
+  const [dict, setDict] = useState<Record<string, any> | null>(null);
   const [formData, setFormData] = useState<NewPlayerCardData>(initialFormData);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -157,6 +159,15 @@ export default function NewPlayerCardPage({ params }: { params: { lang: string }
   const [teesList, setTeesList] = useState<TeeType[]>([]);
   const [fetchingCourses, setFetchingCourses] = useState(false);
   const [fetchingTees, setFetchingTees] = useState(false);
+  
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      const dictionary = await getCommonDictionary(lang);
+      setDict(dictionary);
+    };
+    loadDictionary();
+  }, [lang]);
   
   // Use timeout for API calls to prevent hanging
   const fetchWithTimeout = useCallback(async (url: string, options = {}, timeout = 10000) => {
@@ -254,60 +265,70 @@ export default function NewPlayerCardPage({ params }: { params: { lang: string }
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     setError('');
     setSuccessMessage('');
-
-    // Basic frontend validation example (can be expanded)
-    if (!formData.player_id || !formData.play_date || !formData.course_id || !formData.gross || !formData.tee_id) {
-      setError('Player ID, Play Date, Course ID, Gross Score, and Tee ID are required.');
-      setLoading(false);
-      return;
-    }
+    setLoading(true);
     
-    // Prepare data for API (convert empty strings for numbers to null or handle as needed by backend)
-    const dataToSubmit: any = {};
-    for (const key in formData) {
-      const fieldKey = key as keyof NewPlayerCardData;
-      if (formData[fieldKey] === '' && typeof initialFormData[fieldKey] === 'number') {
-        dataToSubmit[fieldKey] = null; // Or omit, depending on backend handling for optional numbers
-      } else {
-        dataToSubmit[fieldKey] = formData[fieldKey];
-      }
-    }
-    if (dataToSubmit.differential === '') dataToSubmit.differential = null;
-    if (dataToSubmit.hcpi === '') dataToSubmit.hcpi = null;
-    if (dataToSubmit.hcp === '') dataToSubmit.hcp = null;
-    // ... and so on for all numeric fields that can be empty
-
-    // Setup a timeout for the API call
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 15000);
-
     try {
-      console.log('Submitting new player card:', dataToSubmit);
-      const response = await axios.post('/api/player-cards', dataToSubmit, {
-        signal: controller.signal
-      });
-      clearTimeout(timeout);
-      setSuccessMessage('Player card created successfully! Redirecting...');
-      setFormData(initialFormData); // Reset form
-      setTimeout(() => {
-        router.push(`/${lang}/player-cards`); // Redirect to list page with correct language prefix
-      }, 2000);
-    } catch (err) {
-      clearTimeout(timeout);
-      console.error('Error creating player card:', err);
-      if (axios.isAxiosError(err)) {
-        if (err.code === 'ERR_CANCELED') {
-          setError('Request took too long and was canceled. Please try again.');
-        } else if (err.response) {
-          setError(`Failed to create player card: ${err.response.data.error || err.message}`);
-        } else {
-          setError('Failed to create player card. Network error or server not responding.');
+      // Convert empty strings to null for numeric fields
+      const processedData = { ...formData };
+      
+      // Convert string numeric values to actual numbers for API
+      for (const [key, value] of Object.entries(processedData)) {
+        if (value === '') {
+          // @ts-ignore - Dynamic property access
+          processedData[key] = null;
+        } else if (
+          typeof value === 'string' && 
+          !isNaN(Number(value)) && 
+          key !== 'play_date' && // Don't convert date string
+          !key.startsWith('weather') && // Don't convert weather string
+          !key.startsWith('day_of_week') && // Don't convert day of week string
+          !key.startsWith('post') && // Don't convert post notes
+          !key.startsWith('judges') && // Don't convert judges notes
+          !key.startsWith('tarj') && // Don't convert status string
+          !key.startsWith('category') // Don't convert category string
+        ) {
+          // @ts-ignore - Dynamic property access
+          processedData[key] = Number(value);
         }
+      }
+      
+      // Set player_id from token if not explicitly set
+      if (!processedData.player_id) {
+        const token = localStorage.getItem('token');
+        if (token) {
+          try {
+            // Implement your JWT decode logic here if needed
+            // For now we'll rely on the backend to extract player_id from the token
+          } catch (tokenErr) {
+            console.error('Token decode error:', tokenErr);
+          }
+        }
+      }
+      
+      const response = await axios.post('/api/player-cards', processedData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      
+      setSuccessMessage('Player card created successfully!');
+      
+      // Redirect after a short delay
+      setTimeout(() => {
+        router.push(`/${lang}/player-cards`);
+      }, 1500);
+      
+    } catch (err) {
+      console.error('Error creating player card:', err);
+      
+      if (axios.isAxiosError(err)) {
+        const errorMessage = err.response?.data?.message || err.response?.data?.error || dict?.playerCardNew?.errorPrefix + ' ' + err.message || 'Error: ' + err.message;
+        setError(errorMessage);
       } else {
-        setError('Failed to create player card. Please try again.');
+        setError(dict?.playerCardNew?.errorPrefix + ' ' + (err instanceof Error ? err.message : 'Unknown error occurred') || 'Error: Unknown error occurred');
       }
     } finally {
       setLoading(false);
@@ -323,261 +344,398 @@ export default function NewPlayerCardPage({ params }: { params: { lang: string }
    * @returns {JSX.Element[]} An array of JSX elements, each representing an input field for a hole.
    */
   const renderHoleInputs = (startHole: number, endHole: number) => {
-    const inputs: ReactElement[] = []; // Use ReactElement instead of JSX.Element
+    const inputs: ReactElement[] = [];
+    
     for (let i = startHole; i <= endHole; i++) {
-      const holeKey = `h${String(i).padStart(2, '0')}` as HoleFieldKey;
+      const holeKey = `h${i.toString().padStart(2, '0')}` as HoleFieldKey;
       inputs.push(
-        <div key={holeKey} className="mb-2">
-          <label htmlFor={holeKey} className="block text-sm font-medium text-gray-700 dark:text-gray-300">Hole {i}:</label>
+        <div key={holeKey}>
+          <label className="block text-gray-700 font-medium mb-1" htmlFor={holeKey}>
+            {dict?.playerCardNew?.hole || 'Hole'} {i}
+          </label>
           <input
             type="number"
             id={holeKey}
             name={holeKey}
             value={formData[holeKey] ?? ''}
             onChange={handleChange}
-            data-type="number-empty"
-            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white dark:border-gray-600"
+            className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+            min="1"
+            max="15"
+            placeholder="-"
           />
         </div>
       );
     }
+    
     return inputs;
   };
 
-  // Fallback UI for error boundary
+  // Replace hardcoded text in the ErrorFallback component
   const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error, resetErrorBoundary: () => void }) => (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 flex items-center justify-center p-5">
-      <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-xl max-w-md w-full">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">Something went wrong</h2>
-        <p className="text-gray-700 dark:text-gray-300 mb-4">{error.message}</p>
-        <button 
-          onClick={resetErrorBoundary}
-          className="bg-indigo-600 hover:bg-indigo-700 text-white py-2 px-4 rounded"
-        >
-          Try again
-        </button>
-        <Link 
-          href={`/${lang}/player-cards`} 
-          className="ml-4 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded inline-block dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600"
-        >
-          Return to scorecards
-        </Link>
-      </div>
+    <div className="text-center p-4 bg-red-50 border border-red-200 rounded-md">
+      <h2 className="text-lg font-semibold text-red-800 mb-2">
+        {dict?.playerCardNew?.errorPrefix || 'Error:'} {error.message}
+      </h2>
+      <button
+        onClick={resetErrorBoundary}
+        className="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+      >
+        {dict?.playerCardNew?.tryAgain || 'Try again'}
+      </button>
     </div>
   );
 
+  if (!dict) {
+    return <div className="text-center p-4">Loading...</div>;
+  }
+
   return (
-    <ErrorBoundary 
-      FallbackComponent={ErrorFallback}
-      onReset={() => {
-        // Reset state when the error boundary is reset
-        setError('');
-        setLoading(false);
-      }}
-    >
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 py-8 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          <div className="mb-6">
-            <Link href={`/${lang}/player-cards`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
-              &larr; Back to Player Cards List
-            </Link>
+    <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6 flex justify-between items-center">
+          <Link 
+            href={`/${lang}/player-cards`}
+            className="text-blue-600 hover:text-blue-800"
+          >
+            ← {dict.playerCardNew.backToPlayerCards}
+          </Link>
+          <h1 className="text-2xl font-bold">{dict.playerCardNew.addNewPlayerCard}</h1>
+        </div>
+
+        {error && (
+          <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-md">
+            <p className="text-red-700">{error}</p>
           </div>
-          <h1 className="text-3xl font-bold text-center mb-8 text-gray-900 dark:text-white">Add New Player Card</h1>
+        )}
 
-          <form onSubmit={handleSubmit} className="bg-white dark:bg-gray-800 shadow-xl rounded-lg p-8 space-y-6">
-            {error && <div className="p-3 bg-red-100 text-red-700 rounded-md">Error: {error}</div>}
-            {successMessage && <div className="p-3 bg-green-100 text-green-700 rounded-md">{successMessage}</div>}
+        {successMessage && (
+          <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-md">
+            <p className="text-green-700">{successMessage}</p>
+          </div>
+        )}
 
-            {/* Main Details Section */}
+        <form onSubmit={handleSubmit} className="space-y-8">
+          {/* Main Details */}
+          <section className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">{dict.playerCardNew.mainDetails}</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="col-span-1">
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="course_id">
+                  {dict.playerCardNew.course}
+                </label>
+                <div>
+                  {fetchingCourses ? (
+                    <p className="text-gray-500 italic">{dict.playerCardNew.loadingCourses}</p>
+                  ) : (
+                    <select
+                      id="course_id"
+                      name="course_id"
+                      value={formData.course_id}
+                      onChange={handleChange}
+                      className="form-select w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                      required
+                    >
+                      <option value="">{dict.playerCardNew.selectCourse}</option>
+                      {coursesList.map((course) => (
+                        <option key={course.course_id} value={course.course_id}>
+                          {course.course_name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+              
+              <div className="col-span-1">
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="play_date">
+                  {dict.playerCardNew.playDate}
+                </label>
+                <input
+                  type="date"
+                  id="play_date"
+                  name="play_date"
+                  value={formData.play_date}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  required
+                />
+              </div>
+
+              <div className="col-span-1">
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="tee_id">
+                  {dict.playerCardNew.tee}
+                </label>
+                <div>
+                  {fetchingTees ? (
+                    <p className="text-gray-500 italic">{dict.playerCardNew.loadingTees}</p>
+                  ) : !formData.course_id ? (
+                    <p className="text-gray-500">{dict.playerCardNew.selectCourseThen}</p>
+                  ) : teesList.length === 0 ? (
+                    <p className="text-gray-500">{dict.playerCardNew.noTeesAvailable}</p>
+                  ) : (
+                    <select
+                      id="tee_id"
+                      name="tee_id"
+                      value={formData.tee_id}
+                      onChange={handleChange}
+                      className="form-select w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                      required
+                    >
+                      <option value="">{dict.playerCardNew.selectTee}</option>
+                      {teesList.map((tee) => (
+                        <option key={tee.tee_id} value={tee.tee_id}>
+                          {tee.tee_name}
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Score Details */}
+          <section className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">{dict.playerCardNew.scoreDetails}</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="gross">
+                  {dict.playerCardNew.grossScore}
+                </label>
+                <input
+                  type="number"
+                  id="gross"
+                  name="gross"
+                  value={formData.gross}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  required
+                  min="30"
+                  max="200"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="net">
+                  {dict.playerCardNew.netScore}
+                </label>
+                <input
+                  type="number"
+                  id="net"
+                  name="net"
+                  value={formData.net}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  min="30"
+                  max="200"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="tarj">
+                  {dict.playerCardNew.status}
+                </label>
+                <select
+                  id="tarj"
+                  name="tarj"
+                  value={formData.tarj}
+                  onChange={handleChange}
+                  className="form-select w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  required
+                >
+                  <option value="OK">OK</option>
+                  <option value="HOLD">HOLD</option>
+                  <option value="ERROR">ERROR</option>
+                  <option value="PENDING">PENDING</option>
+                </select>
+              </div>
+            </div>
+          </section>
+          
+          {/* Handicap details section */}
+          <section className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">{dict.playerCardNew.handicapDetails}</h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="hcpi">
+                  {dict.playerCardNew.hcpi}
+                </label>
+                <input
+                  type="number"
+                  id="hcpi"
+                  name="hcpi"
+                  value={formData.hcpi}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  step="0.1"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="hcp">
+                  {dict.playerCardNew.hcp}
+                </label>
+                <input
+                  type="number"
+                  id="hcp"
+                  name="hcp"
+                  value={formData.hcp}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  step="0.1"
+                />
+              </div>
+              
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="differential">
+                  {dict.playerCardNew.differential}
+                </label>
+                <input
+                  type="number"
+                  id="differential"
+                  name="differential"
+                  value={formData.differential}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  step="0.1"
+                />
+              </div>
+            </div>
+          </section>
+          
+          {/* Hole Scores section */}
+          <section className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">{dict.playerCardNew.holeScores}</h2>
+            
+            <div className="mb-6">
+              <h3 className="text-lg font-medium mb-3">{dict.playerCardNew.frontNine}</h3>
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+                {renderHoleInputs(1, 9)}
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-medium mb-3">{dict.playerCardNew.backNine}</h3>
+              <div className="grid grid-cols-3 md:grid-cols-5 gap-4">
+                {renderHoleInputs(10, 18)}
+              </div>
+            </div>
+          </section>
+          
+          {/* Additional Information section */}
+          <section className="bg-white p-6 rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold mb-4">{dict.playerCardNew.additionalInformation}</h2>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <label htmlFor="course_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Course*</label>
-                <select 
-                  name="course_id" 
-                  id="course_id" 
-                  value={formData.course_id} 
-                  onChange={handleChange} 
-                  required 
-                  className="mt-1 input-field"
-                  disabled={fetchingCourses}
-                >
-                  <option value="">{fetchingCourses ? 'Loading courses...' : 'Select a Course'}</option>
-                  {coursesList.map(course => (
-                    <option key={course.course_id} value={course.course_id}>
-                      {course.course_name}
-                    </option>
-                  ))}
-                </select>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="category">
+                  {dict.playerCardNew.category}
+                </label>
+                <input
+                  type="text"
+                  id="category"
+                  name="category"
+                  value={formData.category}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                />
               </div>
+              
               <div>
-                <label htmlFor="play_date" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Play Date*</label>
-                <input type="date" name="play_date" id="play_date" value={formData.play_date} onChange={handleChange} required className="mt-1 input-field" />
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="weather">
+                  {dict.playerCardNew.weather}
+                </label>
+                <input
+                  type="text"
+                  id="weather"
+                  name="weather"
+                  value={formData.weather}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                />
               </div>
-               <div>
-                <label htmlFor="tee_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Tee*</label>
-                <select 
-                  name="tee_id" 
-                  id="tee_id" 
-                  value={formData.tee_id} 
-                  onChange={handleChange} 
-                  required 
-                  className="mt-1 input-field"
-                  disabled={fetchingTees || !formData.course_id || teesList.length === 0}
-                >
-                  <option value="">
-                    {fetchingTees ? 'Loading tees...' : 
-                     !formData.course_id ? 'Select a course first' : 
-                     teesList.length === 0 ? 'No tees available' :
-                     'Select a Tee'}
-                  </option>
-                  {teesList.map(tee => (
-                    <option key={tee.tee_id} value={tee.tee_id}>
-                      {tee.tee_name}
-                    </option>
-                  ))}
-                </select>
+              
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="day_of_week">
+                  {dict.playerCardNew.dayOfWeek}
+                </label>
+                <input
+                  type="text"
+                  id="day_of_week"
+                  name="day_of_week"
+                  value={formData.day_of_week}
+                  onChange={handleChange}
+                  className="form-input w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                />
               </div>
-            </div>
-
-            {/* Score Details Section */}
-            <fieldset className="border p-4 rounded-md">
-              <legend className="text-lg font-medium text-gray-900 dark:text-white px-2">Score Details</legend>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
-                <div>
-                  <label htmlFor="gross" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Gross Score*</label>
-                  <input type="number" name="gross" id="gross" value={formData.gross} onChange={handleChange} required className="mt-1 input-field" />
-                </div>
-                <div>
-                  <label htmlFor="net" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Net Score</label>
-                  <input type="number" name="net" id="net" value={formData.net ?? ''} data-type="number-empty" onChange={handleChange} className="mt-1 input-field" />
-                </div>
-                <div>
-                  <label htmlFor="tarj" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Status (Tarj)*</label>
-                  <select name="tarj" id="tarj" value={formData.tarj} onChange={handleChange} required className="mt-1 input-field">
-                    <option value="OK">OK</option>
-                    <option value="NPT">NPT</option>
-                    <option value="ERR">ERR</option>
-                    {/* Add other relevant statuses */}
-                  </select>
-                </div>
+              
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="post">
+                  {dict.playerCardNew.postNotes}
+                </label>
+                <textarea
+                  id="post"
+                  name="post"
+                  value={formData.post}
+                  onChange={handleChange}
+                  className="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  rows={3}
+                />
               </div>
-            </fieldset>
-
-            {/* Handicap Details Section */}
-            <fieldset className="border p-4 rounded-md">
-              <legend className="text-lg font-medium text-gray-900 dark:text-white px-2">Handicap Details</legend>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-2">
-                <div>
-                  <label htmlFor="hcpi" className="block text-sm font-medium text-gray-700 dark:text-gray-300">HCPI</label>
-                  <input type="number" step="0.1" name="hcpi" id="hcpi" value={formData.hcpi ?? ''} data-type="number-empty" onChange={handleChange} className="mt-1 input-field" />
-                </div>
-                <div>
-                  <label htmlFor="hcp" className="block text-sm font-medium text-gray-700 dark:text-gray-300">HCP</label>
-                  <input type="number" step="0.1" name="hcp" id="hcp" value={formData.hcp ?? ''} data-type="number-empty" onChange={handleChange} className="mt-1 input-field" />
-                </div>
-                <div>
-                  <label htmlFor="differential" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Differential</label>
-                  <input type="number" step="0.1" name="differential" id="differential" value={formData.differential ?? ''} data-type="number-empty" onChange={handleChange} className="mt-1 input-field" />
-                </div>
+              
+              <div>
+                <label className="block text-gray-700 font-medium mb-2" htmlFor="judges">
+                  {dict.playerCardNew.judgesNotes}
+                </label>
+                <textarea
+                  id="judges"
+                  name="judges"
+                  value={formData.judges}
+                  onChange={handleChange}
+                  className="form-textarea w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+                  rows={3}
+                />
               </div>
-            </fieldset>
-            
-            {/* Hole Scores Section */}
-            <fieldset className="border p-4 rounded-md">
-              <legend className="text-lg font-medium text-gray-900 dark:text-white px-2">Hole-by-Hole Scores</legend>
-              <div className="mt-2">
-                <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Front Nine</h4>
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-2">
-                  {renderHoleInputs(1, 9)}
-                </div>
-              </div>
-              <div className="mt-4">
-                <h4 className="text-md font-semibold text-gray-800 dark:text-gray-200 mb-2">Back Nine</h4>
-                <div className="grid grid-cols-3 md:grid-cols-5 gap-x-4 gap-y-2">
-                  {renderHoleInputs(10, 18)}
-                </div>
-              </div>
-            </fieldset>
-
-            {/* Additional Information Section */}
-            <fieldset className="border p-4 rounded-md">
-              <legend className="text-lg font-medium text-gray-900 dark:text-white px-2">Additional Information</legend>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2">
-                 <div>
-                  <label htmlFor="category" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Category</label>
-                  <input type="text" name="category" id="category" value={formData.category ?? ''} onChange={handleChange} className="mt-1 input-field" />
-                </div>
-                <div>
-                  <label htmlFor="weather" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Weather</label>
-                  <input type="text" name="weather" id="weather" value={formData.weather ?? ''} onChange={handleChange} className="mt-1 input-field" />
-                </div>
-                <div>
-                  <label htmlFor="day_of_week" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Day of Week</label>
-                  <input type="text" name="day_of_week" id="day_of_week" value={formData.day_of_week ?? ''} onChange={handleChange} className="mt-1 input-field" />
-                </div>
-                <div className="md:col-span-2">
-                  <label htmlFor="post" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Post Notes</label>
-                  <textarea name="post" id="post" value={formData.post ?? ''} onChange={handleChange} rows={3} className="mt-1 input-field"></textarea>
-                </div>
-                <div className="md:col-span-2">
-                  <label htmlFor="judges" className="block text-sm font-medium text-gray-700 dark:text-gray-300">Judges Notes</label>
-                  <textarea name="judges" id="judges" value={formData.judges ?? ''} onChange={handleChange} rows={3} className="mt-1 input-field"></textarea>
-                </div>
-                 <div className="flex items-start">
-                  <div className="flex items-center h-5">
-                    <input id="verified" name="verified" type="checkbox" checked={formData.verified} onChange={handleChange} className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded dark:bg-gray-700 dark:border-gray-600" />
-                  </div>
-                  <div className="ml-3 text-sm">
-                    <label htmlFor="verified" className="font-medium text-gray-700 dark:text-gray-300">Verified</label>
-                  </div>
-                </div>
-              </div>
-            </fieldset>
-
-            <div className="pt-5">
-              <div className="flex justify-end">
-                <Link href={`/${lang}/player-cards`} className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded mr-3 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
-                  Cancel
-                </Link>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline disabled:opacity-50"
-                >
-                  {loading ? 'Creating Card...' : 'Create Player Card'}
-                </button>
+              
+              <div className="flex items-center">
+                <input
+                  type="checkbox"
+                  id="verified"
+                  name="verified"
+                  checked={formData.verified}
+                  onChange={handleChange}
+                  className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                />
+                <label className="ml-2 block text-gray-700" htmlFor="verified">
+                  {dict.playerCardNew.verified}
+                </label>
               </div>
             </div>
-          </form>
-        </div>
+          </section>
+          
+          <div className="flex justify-end gap-3">
+            <Link 
+              href={`/${lang}/player-cards`}
+              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50"
+            >
+              {dict.playerCardNew.cancel}
+            </Link>
+            <button
+              type="submit"
+              className={`px-6 py-2 bg-blue-600 text-white rounded-md ${
+                loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-blue-700'
+              }`}
+              disabled={loading}
+            >
+              {loading ? dict.playerCardNew.creatingCard : dict.playerCardNew.createPlayerCard}
+            </button>
+          </div>
+        </form>
       </div>
-      <style jsx>{`
-        .input-field {
-          display: block;
-          width: 100%;
-          padding: 0.5rem;
-          border-radius: 0.375rem;
-          border: 1px solid #d1d5db; /* gray-300 */
-        }
-        .dark .input-field {
-          background-color: #374151; /* gray-700 */
-          border-color: #4b5563; /* gray-600 */
-        }
-        .input-field:focus {
-          outline: none;
-          --tw-ring-color: #6366f1; /* indigo-500 */
-          border-color: #6366f1; /* indigo-500 */
-          box-shadow: 0 0 0 3px var(--tw-ring-color);
-        }
-        select.input-field option {
-          color: black;
-          background: white;
-        }
-        .dark select.input-field option {
-           color: black;
-           background: white;
-        }
-      `}</style>
     </ErrorBoundary>
   );
 } 

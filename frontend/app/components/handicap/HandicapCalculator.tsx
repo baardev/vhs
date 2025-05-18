@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
+import { getCommonDictionary } from '../../dictionaries';
 
 /**
  * @component HandicapCalculator
@@ -35,16 +37,38 @@ import Link from 'next/link';
  * @returns {React.FC} The rendered HandicapCalculator component.
  */
 const HandicapCalculator: React.FC = () => {
-  // The local React state manages our handicap data.
-  // 'handicapData' stores the JSON response from the /api/handicap-calc endpoint,
-  // and 'setHandicapData' is the updater function provided by useState to change that state.
-  // This state is held internally by the component and is not passed in from any parent.
   const [handicapData, setHandicapData] = useState<{ avg_differential: number | null; is_mock?: boolean } | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [dict, setDict] = useState<any>(null);
+
+  const params = useParams() || {};
+  const lang = (params.lang as string) || 'en';
 
   useEffect(() => {
+    const loadDict = async () => {
+      try {
+        const commonDict = await getCommonDictionary(lang);
+        setDict(commonDict.handicapCalculator || commonDict);
+      } catch (e) {
+        console.error("Error loading dictionary for HandicapCalculator:", e);
+        setDict({
+          title: 'Handicap Calculator',
+          notLoggedIn: 'You need to be logged in to view your handicap.',
+          loginButton: 'Login',
+          createAccountButton: 'Create Account',
+          calculating: 'Calculating handicap...',
+          fetchErrorPrefix: 'Error',
+          handicapIndexLabel: 'Handicap Index',
+          mockDataNote: 'Note: Using mock adjusted gross data.',
+          calculationNote: '* Calculated based on the average of your 8 best differentials',
+          notApplicable: 'N/A'
+        });
+      }
+    };
+    loadDict();
+
     // Check if the user is logged in
     const token = localStorage.getItem('token');
     setIsLoggedIn(!!token);
@@ -90,48 +114,52 @@ const HandicapCalculator: React.FC = () => {
 
   // Calculate the golf handicap (typically 0.96 * avg_differential)
   const calculateHandicap = (avgDifferential: number | null): string => {
-    if (avgDifferential === null) return 'N/A';
+    if (avgDifferential === null) return dict?.notApplicable || 'N/A';
     const handicap = Math.round(avgDifferential * 0.96 * 10) / 10;
     return handicap.toFixed(1);
   };
+
+  if (!dict) {
+    return <div className="text-center py-4">Loading...</div>;
+  }
 
   return (
     <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
       <div className="bg-[#2d6a4f] dark:bg-[#1e3a8a] p-4">
         <h2 className="flex justify-center text-xl font-semibold text-white flex items-center">
           <span className="mr-2">⛳</span>
-          Handicap Calculator
+          {dict.title || 'Handicap Calculator'}
         </h2>
       </div>
       <div className="p-6">
         {!isLoggedIn ? (
           <div className="text-center py-4">
             <p className="text-gray-600 dark:text-gray-300 mb-4">
-              You need to be logged in to view your handicap.
+              {dict.notLoggedIn || 'You need to be logged in to view your handicap.'}
             </p>
             <div className="flex justify-center space-x-4">
-              <Link href="/login" className="px-4 py-2 bg-[#2d6a4f] text-white rounded-md hover:bg-[#1e4835] transition-colors">
-                Login
+              <Link href={`/${lang}/login`} className="px-4 py-2 bg-[#2d6a4f] text-white rounded-md hover:bg-[#1e4835] transition-colors">
+                {dict.loginButton || 'Login'}
               </Link>
-              <Link href="/createAccount" className="px-4 py-2 border border-[#2d6a4f] text-[#2d6a4f] dark:text-[#4fd1c5] rounded-md hover:bg-[#e6f7ee] dark:hover:bg-[#1e3a8a] transition-colors">
-                Create Account
+              <Link href={`/${lang}/create-account`} className="px-4 py-2 border border-[#2d6a4f] text-[#2d6a4f] dark:text-[#4fd1c5] rounded-md hover:bg-[#e6f7ee] dark:hover:bg-[#1e3a8a] transition-colors">
+                {dict.createAccountButton || 'Create Account'}
               </Link>
             </div>
           </div>
         ) : loading ? (
           <div className="text-center py-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#2d6a4f] mx-auto"></div>
-            <p className="mt-2 text-gray-600 dark:text-gray-300">Calculating handicap...</p>
+            <p className="mt-2 text-gray-600 dark:text-gray-300">{dict.calculating || 'Calculating handicap...'}</p>
           </div>
         ) : error ? (
           <div className="bg-red-50 dark:bg-red-900/20 border-l-4 border-red-500 p-4">
-            <p className="text-red-700 dark:text-red-400">{error}</p>
+            <p className="text-red-700 dark:text-red-400">{error || dict.fetchErrorPrefix || 'Error'}</p>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="flex justify-center w-full">
               <div className="flex flex-col items-center justify-center border border-gray-300 dark:border-gray-600 rounded-md p-4 w-40 h-40">
-                <span className="text-gray-700 dark:text-gray-300 text-base">Handicap Index</span>
+                <span className="text-gray-700 dark:text-gray-300 text-base">{dict.handicapIndexLabel || 'Handicap Index'}</span>
                 <span className="mt-2 text-3xl font-bold text-[#2d6a4f] dark:text-[#4fd1c5]">
                   {calculateHandicap(handicapData?.avg_differential || null)}
                 </span>
@@ -140,12 +168,12 @@ const HandicapCalculator: React.FC = () => {
             
             {handicapData?.is_mock && (
               <div className="flex justify-center mt-2 bg-yellow-50 dark:bg-yellow-900/20 p-3 rounded text-sm text-yellow-700 dark:text-yellow-400">
-                Note: Using mock adjusted gross data.
+                {dict.mockDataNote || 'Note: Using mock adjusted gross data.'}
               </div>
             )}
             
             <div className="flex justify-center mt-4 text-xs text-gray-500 dark:text-gray-400">
-              * Calculated based on the average of your 8 best differentials
+              {dict.calculationNote || '* Calculated based on the average of your 8 best differentials'}
             </div>
           </div>
         )}

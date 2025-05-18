@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'next/navigation';
+import { getCommonDictionary } from '../../dictionaries';
 
 interface User {
   id: number;
@@ -92,12 +94,17 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave, lo
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | { message: string } | unknown>('');
 
+  const params = useParams() || {};
+  const lang = (params.lang as string) || locale || 'en';
+
   useEffect(() => {
     const loadDictionary = async () => {
       try {
-        // In a real implementation, we would load the dictionary from a JSON file
-        // For now, we'll use a simple fallback
-        const dictionaryData = {
+        const loadedDictionary = await getCommonDictionary(lang);
+        setDictionary(loadedDictionary);
+      } catch (error) {
+        console.error('Error loading dictionary in UserEditModal:', error);
+        setDictionary({
           admin: {
             editUser: 'Edit User',
             username: 'Username',
@@ -113,17 +120,20 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave, lo
             cancel: 'Cancel',
             save: 'Save',
             saving: 'Saving...',
-            errorUpdatingUser: 'Error updating user'
+            errorUpdatingUser: 'Error updating user',
+            gender: 'Gender',
+            birthday: 'Birthday',
+            selectGender: '-- Select Gender --'
+          },
+          common: {
+            loading: 'Loading...'
           }
-        };
-        setDictionary(dictionaryData);
-      } catch (error) {
-        console.error('Error loading dictionary:', error);
+        });
       }
     };
 
     loadDictionary();
-  }, [locale]);
+  }, [lang]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target as HTMLInputElement;
@@ -188,7 +198,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave, lo
   };
 
   if (!dictionary) {
-    return <div>Loading...</div>;
+    return <div>{dictionary?.common?.loading || 'Loading...'}</div>;
   }
 
   const hasError = error !== null && error !== undefined && error !== '';
@@ -313,7 +323,7 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave, lo
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Gender
+                  {dictionary.admin?.gender || 'Gender'}
                 </label>
                 <select
                   name="gender"
@@ -321,16 +331,16 @@ const UserEditModal: React.FC<UserEditModalProps> = ({ user, onClose, onSave, lo
                   onChange={handleChange}
                   className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                 >
-                  <option value="">--</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="">{dictionary.admin?.selectGender || '-- Select Gender --'}</option>
+                  <option value="male">{dictionary.admin?.male || 'Male'}</option>
+                  <option value="female">{dictionary.admin?.female || 'Female'}</option>
+                  <option value="other">{dictionary.admin?.other || 'Other'}</option>
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                  Birthday
+                  {dictionary.admin?.birthday || 'Birthday'}
                 </label>
                 <input
                   type="date"

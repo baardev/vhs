@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
+import { getCommonDictionary } from '../../dictionaries'; // Import dictionary helper
 
 interface Course {
   course_id: number;
@@ -57,6 +58,28 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
   const [error, setError] = useState(propError || '');
   // Add debugging state to track renders
   const [renderCount, setRenderCount] = useState(0);
+  const [dict, setDict] = useState<Record<string, any>>({}); // State for dictionary
+  const [dictLoading, setDictLoading] = useState(true); // State for dictionary loading
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        setDictLoading(true);
+        const commonDict = await getCommonDictionary(lang);
+        setDict(commonDict.courseCardGrid || {}); // Assuming keys are under 'courseCardGrid'
+      } catch (err) {
+        console.error('Error loading dictionary in CourseCardGrid:', err);
+        // Fallback or default strings could be set here if needed
+        setDict({}); // Set to empty to avoid undefined errors, rely on default text in render
+      } finally {
+        setDictLoading(false);
+      }
+    };
+    if (lang) {
+      loadDictionary();
+    }
+  }, [lang]);
 
   // Debug effects
   useEffect(() => {
@@ -131,11 +154,11 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
         } else {
           console.error('API returned non-array data:', response.data);
           setCourses([]);
-          setError('Invalid data format received from server.');
+          setError(dict.invalidDataFormat || 'Invalid data format received from server.');
         }
       } catch (err) {
         console.error('Error fetching courses:', err);
-        setError('Failed to load courses. Please try again later.');
+        setError(dict.failedToLoadCourses || 'Failed to load courses. Please try again later.');
       } finally {
         console.log('CourseCardGrid setting isLoading to false');
         setIsLoading(false);
@@ -155,10 +178,10 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
     renderCount
   });
 
-  if (isLoading) {
+  if (isLoading || dictLoading) { // Also wait for dictionary
     return (
       <div className="text-center py-12">
-        <div className="text-xl font-medium">Loading courses...</div>
+        <div className="text-xl font-medium">{dict.loadingCourses || 'Loading courses...'}</div>
       </div>
     );
   }
@@ -174,14 +197,14 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
   if (safeCourses.length === 0) {
     return (
       <div className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md p-6 text-center">
-        <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">No courses found.</p>
+        <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">{dict.noCoursesFound || 'No courses found.'}</p>
         {isAuthenticated ? (
           <p>
             <Link
               href={`/${lang}/courses/new`}
               className="text-[#2d6a4f] dark:text-[#4fd1c5] hover:underline"
             >
-              Add your first course
+              {dict.addFirstCourse || 'Add your first course'}
             </Link>
           </p>
         ) : (
@@ -190,9 +213,9 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
               href={`/${lang}/login`}
               className="text-[#2d6a4f] dark:text-[#4fd1c5] hover:underline"
             >
-              Sign in
+              {dict.signIn || 'Sign in'}
             </Link>
-            {' '}to add a new course.
+            {' '}{dict.toAddNewCourse || 'to add a new course.'}
           </p>
         )}
       </div>
@@ -201,42 +224,45 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
 
   // This is what should display the courses
   console.log('CourseCardGrid rendering grid with courses:', safeCourses.map(c => c.course_id));
-  
+
   return (
     <div>
+      {/* Removed debug div */}
+      {/* 
       <div className="mb-4 p-2 text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 rounded">
         Debug: Loaded {safeCourses.length} courses | Loading: {isLoading ? 'Yes' : 'No'} | Render #{renderCount}
       </div>
+      */}
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {safeCourses.map((course) => (
-          <div
-            key={course.course_id}
-            className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
-          >
-            <div className="px-6 py-4">
-              <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
-                {course.name || "Unknown Course"}
-              </h2>
-              <div className="flex items-center mt-2 text-gray-500 dark:text-[#b5ceff]">
-                <span>{course.city || "Unknown City"}, {course.province_state || "Unknown Province"}, {course.country || "Unknown Country"}</span>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {safeCourses.map((course) => (
+        <div
+          key={course.course_id}
+          className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+        >
+          <div className="px-6 py-4">
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
+              {course.name || dict.unknownCourse || "Unknown Course"}
+            </h2>
+            <div className="flex items-center mt-2 text-gray-500 dark:text-[#b5ceff]">
+              <span>{course.city || dict.unknownCity || "Unknown City"}, {course.province_state || dict.unknownProvince || "Unknown Province"}, {course.country || dict.unknownCountry || "Unknown Country"}</span>
+            </div>
+            
+            <div className="flex justify-between items-center mt-4">
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {dict.courseIdLabel || "Course ID:"} {course.course_id}
               </div>
-              
-              <div className="flex justify-between items-center mt-4">
-                <div className="text-sm text-gray-500 dark:text-gray-400">
-                  Course ID: {course.course_id}
-                </div>
-                <Link 
-                  href={`/${lang}/courses/${course.course_id}`}
-                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#2d6a4f] hover:bg-[#1b4332] dark:bg-[#00cc7e] dark:hover:bg-[#00aa69] rounded-md"
-                  onClick={(e) => e.stopPropagation()}
-                >
-                  View Details
-                </Link>
-              </div>
+              <Link 
+                href={`/${lang}/courses/${course.course_id}`}
+                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#2d6a4f] hover:bg-[#1b4332] dark:bg-[#00cc7e] dark:hover:bg-[#00aa69] rounded-md"
+                onClick={(e) => e.stopPropagation()}
+              >
+                {dict.viewDetails || 'View Details'}
+              </Link>
             </div>
           </div>
-        ))}
+        </div>
+      ))}
       </div>
     </div>
   );

@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Geist, Geist_Mono } from "next/font/google";
-import { getCommonDictionary } from '../dictionaries';
+import { getCommonDictionary } from '../dictionaries'; 
 
 /**
  * @constant geistSans

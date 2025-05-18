@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, ArrowPathIcon } from '@heroicons/react/24/outline';
+import { useParams } from 'next/navigation';
+import { getCommonDictionary } from '../dictionaries';
 
 /**
  * @interface LogViewerProps
@@ -48,9 +50,12 @@ interface LogViewerProps {
  * @returns {React.FC<LogViewerProps> | null} The rendered log viewer panel or null if not visible.
  */
 const LogViewer: React.FC<LogViewerProps> = ({ onClose, visible }) => {
+  const params = useParams() || {};
+  const lang = (params.lang as string) || 'en';
   const [logs, setLogs] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
+  const [dict, setDict] = useState<Record<string, any>>({});
 
   const fetchLogs = async () => {
     try {
@@ -73,10 +78,21 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, visible }) => {
   };
 
   useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang);
+        setDict(dictionary);
+      } catch (error) {
+        console.error('Error loading dictionary in LogViewer:', error);
+      }
+    };
+    
+    loadDictionary();
+
     if (visible) {
       fetchLogs();
     }
-  }, [visible]);
+  }, [visible, lang]);
 
   if (!visible) return null;
 
@@ -85,7 +101,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, visible }) => {
       <div className="container mx-auto px-4 py-2">
         <div className="flex justify-between items-center mb-2">
           <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            Application Logs
+            {dict.logViewer?.title || 'Application Logs'}
           </h3>
           <div className="flex space-x-2">
             <button
@@ -94,7 +110,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, visible }) => {
               disabled={loading}
             >
               <ArrowPathIcon className={`h-4 w-4 mr-1 ${loading ? 'animate-spin' : ''}`} />
-              Reload
+              {dict.logViewer?.reload || 'Reload'}
             </button>
             <button
               onClick={onClose}
@@ -121,7 +137,9 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, visible }) => {
               {logs}
             </pre>
           ) : (
-            <p className="text-gray-500 dark:text-gray-400 text-center py-4">No logs available</p>
+            <p className="text-gray-500 dark:text-gray-400 text-center py-4">
+              {dict.logViewer?.noLogs || 'No logs available'}
+            </p>
           )}
         </div>
         
@@ -134,7 +152,7 @@ const LogViewer: React.FC<LogViewerProps> = ({ onClose, visible }) => {
             }}
             className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-sm"
           >
-            Clear Logs
+            {dict.logViewer?.clearLogs || 'Clear Logs'}
           </button>
         </div>
       </div>

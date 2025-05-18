@@ -2,6 +2,8 @@
 
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useParams } from 'next/navigation';
+import { getCommonDictionary } from '../dictionaries';
 
 /**
  * @interface Quote
@@ -38,9 +40,23 @@ interface Quote {
  * @returns {React.FC} The rendered random quote or a loading message.
  */
 const RandomQuote: React.FC = () => {
+  const params = useParams() || {};
+  const lang = (params.lang as string) || 'en';
   const [quote, setQuote] = useState<Quote | null>(null);
+  const [dict, setDict] = useState<Record<string, any>>({});
 
   useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang);
+        setDict(dictionary);
+      } catch (error) {
+        console.error('Error loading dictionary in RandomQuote:', error);
+      }
+    };
+    
+    loadDictionary();
+    
     const fetchQuote = async () => {
       try {
         const response = await axios.get('/api/random-quote');
@@ -51,10 +67,10 @@ const RandomQuote: React.FC = () => {
     };
 
     fetchQuote();
-  }, []);
+  }, [lang]);
 
   if (!quote) {
-    return <p>Loading...</p>;
+    return <p>{dict.loading || 'Loading...'}</p>;
   }
   return (
     <div className="random-quote">

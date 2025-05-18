@@ -19,13 +19,13 @@ const geistSans = Geist({
  * @description Next.js font optimization for Geist Mono font.
  */
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-geist-mono", 
   subsets: ["latin"],
 });
 
 // Type for the dictionary
 interface Dictionary {
-  viewLogs?: {
+  viewLogsPage?: {
     title?: string;
     refreshButton?: string;
     showLogs?: string;
@@ -77,15 +77,24 @@ export default function ViewLogs({ params: { lang } }) {
     loadDictionary();
   }, [lang]);
 
+  // Add proper loading handling with internationalized text
+  if (!dict) {
+    return <div>{lang === 'en' ? 'Loading...' : 
+           lang === 'es' ? 'Cargando...' : 
+           lang === 'he' ? 'טוען...' : 
+           lang === 'ru' ? 'Загрузка...' : 
+           lang === 'zh' ? '加载中...' : 'Loading...'}</div>;
+  }
+
   return (
     <div className={`${geistSans.className} ${geistMono.className} container mx-auto px-4 py-8`}>
       <h1 className="text-2xl font-bold mb-4 flex justify-between items-center">
-        <span>{dict?.viewLogs?.title || 'Application Logs'}</span>
+        <span>{dict?.viewLogsPage?.title || 'Application Logs'}</span>
         <button 
           onClick={() => setShowLogViewer(true)}
           className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
         >
-          {dict?.viewLogs?.refreshButton || 'Refresh Logs'}
+          {dict?.viewLogsPage?.refreshButton || 'Refresh Logs'}
         </button>
       </h1>
       
@@ -100,7 +109,7 @@ export default function ViewLogs({ params: { lang } }) {
             onClick={() => setShowLogViewer(true)}
             className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
           >
-            {dict?.viewLogs?.showLogs || 'Show Logs'}
+            {dict?.viewLogsPage?.showLogs || 'Show Logs'}
           </button>
         </div>
       )}

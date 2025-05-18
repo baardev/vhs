@@ -4,6 +4,8 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import UserEditModal from './UserEditModal';
 import UserDeleteModal from './UserDeleteModal';
+import { useParams } from 'next/navigation';
+import { getCommonDictionary } from '../../dictionaries';
 
 interface User {
   id: number;
@@ -84,16 +86,20 @@ const UserTable: React.FC<UserTableProps> = ({ locale }) => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
 
+  const params = useParams() || {};
+  const lang = (params.lang as string) || locale || 'en';
+
   // Load dictionary
   useEffect(() => {
     const loadDictionary = async () => {
       try {
-        // In a real implementation, we would load the dictionary from a JSON file
-        // For now, we'll use a simple fallback
-        const dictionaryData = {
+        const loadedDictionary = await getCommonDictionary(lang);
+        setDictionary(loadedDictionary);
+      } catch (error) {
+        console.error('Error loading dictionary:', error);
+        setDictionary({
           loading: 'Loading...',
           admin: {
-            dashboard: 'Admin Dashboard',
             userManagement: 'User Management',
             showing: 'Showing',
             to: 'to',
@@ -118,17 +124,18 @@ const UserTable: React.FC<UserTableProps> = ({ locale }) => {
             errorUpdatingEditor: 'Error updating editor status',
             errorFetchingUsers: 'Error fetching users',
             userUpdated: 'User updated successfully',
-            userDeleted: 'User deleted successfully'
+            userDeleted: 'User deleted successfully',
+            errorLoadingDictionary: 'Error loading translations'
+          },
+          common: {
+            loading: 'Loading...'
           }
-        };
-        setDictionary(dictionaryData);
-      } catch (error) {
-        console.error('Error loading dictionary:', error);
+        });
       }
     };
 
     loadDictionary();
-  }, [locale]);
+  }, [lang]);
 
   // Fetch users - wrapped in useCallback
   const fetchUsers = useCallback(async () => {
@@ -269,7 +276,7 @@ const UserTable: React.FC<UserTableProps> = ({ locale }) => {
     return (
       <div className="px-4 py-5 sm:p-6">
         <div className="text-center">
-          <p className="text-gray-500 dark:text-gray-400">{dictionary?.loading || 'Loading...'}</p>
+          <p className="text-gray-500 dark:text-gray-400">{dictionary?.common?.loading || dictionary?.loading || 'Loading...'}</p>
         </div>
       </div>
     );
@@ -344,7 +351,7 @@ const UserTable: React.FC<UserTableProps> = ({ locale }) => {
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider cursor-pointer"
                 onClick={() => handleSort('is_editor')}
               >
-                {dictionary?.admin?.isEditor || 'Editor'} {sortBy === 'is_editor' && (sortOrder === 'ASC' ? '↑' : '↓')}
+                {dictionary?.admin?.isEditor || dictionary?.isEditor || 'Editor'} {sortBy === 'is_editor' && (sortOrder === 'ASC' ? '↑' : '↓')}
               </th>
               <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                 {dictionary?.admin?.actions || 'Actions'}

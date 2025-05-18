@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import axios from 'axios';
+import { getCommonDictionary } from '../../../dictionaries';
 
 interface TeeBox {
   id: number;
@@ -67,6 +68,16 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
+  const [dictionary, setDictionary] = useState<any>(null);
+
+  useEffect(() => {
+    const loadDictionary = async () => {
+      const dict = await getCommonDictionary(params.lang);
+      setDictionary(dict);
+    };
+    
+    loadDictionary();
+  }, [params.lang]);
 
   useEffect(() => {
     if (!params.id) return;
@@ -86,10 +97,18 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
     fetchCourse();
   }, [params.id]);
 
+  if (!dictionary) {
+    return <div>{params?.lang === 'en' ? 'Loading...' : 
+           params?.lang === 'es' ? 'Cargando...' : 
+           params?.lang === 'he' ? 'טוען...' : 
+           params?.lang === 'ru' ? 'Загрузка...' : 
+           params?.lang === 'zh' ? '加载中...' : 'Loading...'}</div>;
+  }
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#f8f9fa] dark:bg-[#111]">
-        <div className="text-xl font-medium">Loading course details...</div>
+        <div className="text-xl font-medium">{dictionary.courseDetail?.loading || 'Loading course data...'}</div>
       </div>
     );
   }
@@ -98,13 +117,13 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
     return (
       <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative">
         <div className="max-w-3xl mx-auto text-center py-12">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">Error</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">{error || 'Course not found'}</p>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">{dictionary.error || 'Error'}</h1>
+          <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">{error || dictionary.courseDetail?.courseNotFound || 'Course not found'}</p>
           <Link
             href={`/${params.lang}/courses`}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#2d6a4f] hover:bg-[#1b4332] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#40916c] dark:bg-[#4fd1c5] dark:hover:bg-[#38b2ac] dark:focus:ring-[#38b2ac]"
           >
-            Back to Courses
+            {dictionary.courseDetail?.backToCourses || 'Back to Courses'}
           </Link>
         </div>
       </div>
@@ -120,6 +139,16 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
   const backNinePar = backNine.reduce((total, hole) => total + hole.par, 0);
   const totalPar = frontNinePar + backNinePar;
 
+  // Get localized gender labels
+  const getGenderLabel = (gender: string) => {
+    if (dictionary.courseDetail) {
+      if (gender === 'male') return dictionary.courseDetail.male || 'Male';
+      if (gender === 'female') return dictionary.courseDetail.female || 'Female';
+      if (gender === 'other') return dictionary.courseDetail.other || 'Other';
+    }
+    return genderLabel[gender] || gender;
+  };
+
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-7xl mx-auto">
@@ -128,7 +157,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
             href={`/${params.lang}/courses`}
             className="inline-flex items-center text-[#2d6a4f] dark:text-[#4fd1c5] hover:underline"
           >
-            ← Back to Courses
+            ← {dictionary.courseDetail?.backToCourses || 'Back to Courses'}
           </Link>
         </div>
 
@@ -137,7 +166,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
             <h1 className="text-2xl sm:text-3xl font-bold text-white">{course.name}</h1>
             <div className="flex flex-wrap items-center mt-2 text-[#d8f3dc] dark:text-gray-300">
               <span className="mr-6 text-sm">{countryMap[course.country] || countryMap.other}</span>
-              <span className="text-sm">{course.city_province}</span>
+              <span className="text-sm">{course.city_province || dictionary.courseDetail?.unknownCity || 'Unknown City'}</span>
             </div>
           </div>
 
@@ -157,7 +186,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
           {/* Tee Boxes Section */}
           <div className="px-6 py-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-[#4fd1c5] mb-4">
-              Tee Information
+              {dictionary.courseDetail?.teeInformation || 'Tee Information'}
             </h2>
 
             <div className="overflow-x-auto">
@@ -165,19 +194,19 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                 <thead>
                   <tr>
                     <th className="p-2 text-left bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Tee Name
+                      {dictionary.courseDetail?.teeName || 'Tee Name'}
                     </th>
                     <th className="p-2 text-left bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Gender
+                      {dictionary.courseDetail?.gender || 'Gender'}
                     </th>
                     <th className="p-2 text-left bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Course Rating
+                      {dictionary.courseDetail?.courseRating || 'Course Rating'}
                     </th>
                     <th className="p-2 text-left bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Slope Rating
+                      {dictionary.courseDetail?.slopeRating || 'Slope Rating'}
                     </th>
                     <th className="p-2 text-left bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Total Yardage
+                      {dictionary.courseDetail?.lengthYards || 'Length (Yards)'}
                     </th>
                   </tr>
                 </thead>
@@ -188,7 +217,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                         {tee.name}
                       </td>
                       <td className="p-2 border border-gray-300 dark:border-gray-700">
-                        {genderLabel[tee.gender]}
+                        {getGenderLabel(tee.gender)}
                       </td>
                       <td className="p-2 border border-gray-300 dark:border-gray-700">
                         {tee.course_rating != null
@@ -221,7 +250,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
           {/* Hole Information Section */}
           <div className="px-6 py-6">
             <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-[#4fd1c5] mb-4">
-              Hole-by-Hole Information
+              {dictionary.courseDetail?.holeByHole || 'Hole-by-Hole Information'}
             </h2>
 
             <div className="overflow-x-auto mb-6">
@@ -229,7 +258,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                 <thead>
                   <tr>
                     <th className="p-2 text-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Hole
+                      {dictionary.courseDetail?.hole || 'Hole'}
                     </th>
                     {frontNine.map(hole => (
                       <th key={hole.hole_number} className="p-2 w-12 text-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
@@ -237,14 +266,14 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                       </th>
                     ))}
                     <th className="p-2 text-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      OUT
+                      {dictionary.courseDetail?.out || 'OUT'}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td className="p-2 text-center font-semibold bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Par
+                      {dictionary.courseDetail?.par || 'Par'}
                     </td>
                     {frontNine.map(hole => (
                       <td key={hole.hole_number} className="p-2 text-center border border-gray-300 dark:border-gray-700">
@@ -277,7 +306,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                 <thead>
                   <tr>
                     <th className="p-2 text-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Hole
+                      {dictionary.courseDetail?.hole || 'Hole'}
                     </th>
                     {backNine.map(hole => (
                       <th key={hole.hole_number} className="p-2 w-12 text-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
@@ -285,17 +314,17 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                       </th>
                     ))}
                     <th className="p-2 text-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      IN
+                      {dictionary.courseDetail?.in || 'IN'}
                     </th>
                     <th className="p-2 text-center bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      TOT
+                      {dictionary.courseDetail?.total || 'TOT'}
                     </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
                     <td className="p-2 text-center font-semibold bg-gray-50 dark:bg-gray-800 border border-gray-300 dark:border-gray-700">
-                      Par
+                      {dictionary.courseDetail?.par || 'Par'}
                     </td>
                     {backNine.map(hole => (
                       <td key={hole.hole_number} className="p-2 text-center border border-gray-300 dark:border-gray-700">
@@ -332,7 +361,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
             {(course.attachments || []).length > 0 && (
               <div className="mt-8">
                 <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-[#4fd1c5] mb-4">
-                  Attachments
+                  {dictionary.attachments || 'Attachments'}
                 </h2>
                 <div className="space-y-3">
                   {(course.attachments || []).map((attachment) => (
@@ -347,9 +376,9 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                       </div>
                       <div>
                         <div className="font-medium">
-                          {attachment.attachment_type === 'scorecard' && 'Scorecard'}
-                          {attachment.attachment_type === 'rating_certificate' && 'Rating Certificate'}
-                          {attachment.attachment_type === 'course_info' && 'Course Info'}
+                          {attachment.attachment_type === 'scorecard' && (dictionary.scorecard || 'Scorecard')}
+                          {attachment.attachment_type === 'rating_certificate' && (dictionary.ratingCertificate || 'Rating Certificate')}
+                          {attachment.attachment_type === 'course_info' && (dictionary.courseInfo || 'Course Info')}
                         </div>
                         <div className="text-sm text-gray-600 dark:text-gray-400">
                           {attachment.original_filename}
@@ -361,7 +390,7 @@ export default function CourseDetail({ params }: { params: { id: string, lang: s
                         rel="noopener noreferrer"
                         className="ml-auto px-3 py-1 text-sm bg-[#d8f3dc] text-[#2d6a4f] dark:bg-[#2d3748] dark:text-[#4fd1c5] rounded hover:bg-[#b7e4c7] dark:hover:bg-[#374151] transition-colors"
                       >
-                        View
+                        {dictionary.view || 'View'}
                       </a>
                     </div>
                   ))}

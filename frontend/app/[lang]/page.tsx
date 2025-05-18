@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getHomeDictionary } from './dictionaries';
+import { getCommonDictionary } from './dictionaries';
 import RandomQuote from '../components/RandomQuote';
 
 /**
@@ -23,7 +23,7 @@ import RandomQuote from '../components/RandomQuote';
  * - Redirect actions from login/registration flows
  * 
  * @calls
- * - Function: getHomeDictionary (for language-specific content)
+ * - Function: getCommonDictionary (for language-specific content)
  * - Component: RandomQuote (to display changing golf quotes)
  * 
  * @requires
@@ -57,7 +57,7 @@ export default function Home({ params }: { params: { lang: string } | Promise<{ 
     // Load dictionary using the local state variable
     async function loadDictionary() {
       if (!lang) return; // Skip if lang is not set yet
-      const dictionary = await getHomeDictionary(lang);
+      const dictionary = await getCommonDictionary(lang);
       setDict(dictionary);
       setTimestamp(new Date().toISOString());
     }
@@ -65,11 +65,11 @@ export default function Home({ params }: { params: { lang: string } | Promise<{ 
   }, [lang]);
 
   if (!dict) {
-    return <div className="container mx-auto px-4 py-8 text-center">Loading...</div>;
+    return <div className="container mx-auto px-4 py-8 text-center">{dict?.loading || 'Loading...'}</div>;
   }
 
-  const title = dict.title || "Open Handicap System";
-  const subtitle = dict.subtitle || "An alternative to expensive handicapping services in South America";
+  const title = dict.homePage?.mainTitle || dict.welcome || "Open Handicap System";
+  const subtitle = dict.homePage?.subtitle || "An alternative to expensive handicapping services in South America";
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-teal-50 to-emerald-100">
@@ -82,7 +82,7 @@ export default function Home({ params }: { params: { lang: string } | Promise<{ 
         <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-800 z-20">
           <div className="w-[80%] max-w-5xl mx-auto text-center">
             <h1 className="text-4xl md:text-5xl font-bold mb-3 drop-shadow-lg">
-              Open Handicap System
+              {title}
             </h1>
             <p className="text-xl md:text-2xl mb-4 drop-shadow-md">
               {subtitle}
@@ -97,28 +97,42 @@ export default function Home({ params }: { params: { lang: string } | Promise<{ 
       {/* Features Section */}
       <div className="bg-gradient-to-r from-white to-blue-50 py-16 shadow-inner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-semibold mb-10 text-center text-teal-800">Key Features (Client Updated: {timestamp})</h2>
+          <h2 className="text-3xl font-semibold mb-10 text-center text-teal-800">
+            {dict.homePage?.keyFeatures || 'Key Features'} (Client Updated: {timestamp})
+          </h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="border-2 border-teal-200 rounded-lg p-8 hover:shadow-xl transition-all bg-gradient-to-br from-white to-teal-50 hover:-translate-y-1 duration-300">
               <div className="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-teal-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z"></path><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z"></path></svg>
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-teal-800 text-center">Easy Handicap Tracking</h3>
-              <p className="text-gray-700">Record your golf scores and automatically calculate your handicap index based on the World Handicap System (WHS) rules.</p>
+              <h3 className="text-xl font-semibold mb-3 text-teal-800 text-center">
+                {dict.homePage?.easyHandicapTrackingTitle || 'Easy Handicap Tracking'}
+              </h3>
+              <p className="text-gray-700">
+                {dict.homePage?.easyHandicapTrackingDescription || 'Record your golf scores and automatically calculate your handicap index based on the World Handicap System (WHS) rules.'}
+              </p>
             </div>
             <div className="border-2 border-teal-200 rounded-lg p-8 hover:shadow-xl transition-all bg-gradient-to-br from-white to-teal-50 hover:-translate-y-1 duration-300">
               <div className="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-teal-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd"></path></svg>
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-teal-800 text-center">Course Database</h3>
-              <p className="text-gray-700">Access our comprehensive database of South American golf courses, complete with slope ratings, course ratings, and par information.</p>
+              <h3 className="text-xl font-semibold mb-3 text-teal-800 text-center">
+                {dict.homePage?.courseDatabaseTitle || 'Course Database'}
+              </h3>
+              <p className="text-gray-700">
+                {dict.homePage?.courseDatabaseDescription || 'Access our comprehensive database of South American golf courses, complete with slope ratings, course ratings, and par information.'}
+              </p>
             </div>
             <div className="border-2 border-teal-200 rounded-lg p-8 hover:shadow-xl transition-all bg-gradient-to-br from-white to-teal-50 hover:-translate-y-1 duration-300">
               <div className="bg-teal-100 w-16 h-16 rounded-full flex items-center justify-center mb-4 mx-auto">
                 <svg className="w-8 h-8 text-teal-600" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z"></path></svg>
               </div>
-              <h3 className="text-xl font-semibold mb-3 text-teal-800 text-center">Score History</h3>
-              <p className="text-gray-700">View your progress over time with detailed statistics and historical trends of your golf game across South American courses.</p>
+              <h3 className="text-xl font-semibold mb-3 text-teal-800 text-center">
+                {dict.homePage?.scoreHistoryTitle || 'Score History'}
+              </h3>
+              <p className="text-gray-700">
+                {dict.homePage?.scoreHistoryDescription || 'View your progress over time with detailed statistics and historical trends of your golf game across South American courses.'}
+              </p>
             </div>
           </div>
         </div>

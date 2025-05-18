@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { getCommonDictionary } from '../../dictionaries';
 
 interface CourseData {
   id: number;
@@ -95,7 +96,22 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
   const [courseName, setCourseName] = useState<CourseName | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [dict, setDict] = useState<Record<string, any>>({});
   const baseUrl = getBaseUrl();
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang);
+        setDict(dictionary);
+      } catch (err) {
+        console.error('Error loading dictionary in CourseDataDetail:', err);
+      }
+    };
+    
+    loadDictionary();
+  }, [lang]);
 
   useEffect(() => {
     const fetchCourseData = async () => {
@@ -112,7 +128,7 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
         setCourseData(dataResponse.data);
       } catch (err) {
         console.error('Error fetching course data:', err);
-        setError('Failed to load course data');
+        setError(dict.courseDetail?.loading || 'Failed to load course data');
       } finally {
         setLoading(false);
       }
@@ -121,11 +137,11 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
     if (courseId) {
       fetchCourseData();
     }
-  }, [courseId]);
+  }, [courseId, dict]);
 
-  if (loading) return <div className="text-center py-8">Loading course data...</div>;
+  if (loading) return <div className="text-center py-8">{dict.courseDetail?.loading || 'Loading course data...'}</div>;
   if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
-  if (!courseName) return <div className="text-center py-8">Course not found</div>;
+  if (!courseName) return <div className="text-center py-8">{dict.courseDetail?.courseNotFound || 'Course not found'}</div>;
 
   // Calculate total front nine, back nine, and overall pars
   const calculateTotalPar = (teeData: CourseData) => {
@@ -165,23 +181,23 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
       <div className="bg-green-700 dark:bg-green-800 p-6 text-white">
         <div className="mb-4">
           <Link href={`/${lang}/courses`} className="text-white hover:underline">
-            &larr; Back to Courses
+            &larr; {dict.courseDetail?.backToCourses || 'Back to Courses'}
           </Link>
         </div>
         <h1 className="text-2xl font-bold mb-2">{courseName.course_name || courseName.name}</h1>
         <p>
-          {courseName.city || (courseName.course_name && courseName.course_name.split(' - ')[0]) || 'Unknown City'}, 
-          {courseName.state || courseName.province_name || 'Buenos Aires Province'}, 
-          {courseName.country || courseName.country_name || 'Argentina'}
+          {courseName.city || (courseName.course_name && courseName.course_name.split(' - ')[0]) || dict.courseDetail?.unknownCity || 'Unknown City'}, 
+          {courseName.state || courseName.province_name || dict.courseDetail?.defaultProvince || 'Buenos Aires Province'}, 
+          {courseName.country || courseName.country_name || dict.courseDetail?.defaultCountry || 'Argentina'}
         </p>
       </div>
 
       {/* Tee Data Section */}
       <div className="p-6">
-        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Tee Information</h2>
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{dict.courseDetail?.teeInformation || 'Tee Information'}</h2>
         
         {courseData.length === 0 ? (
-          <p className="text-gray-600 dark:text-gray-300">No tee data available for this course.</p>
+          <p className="text-gray-600 dark:text-gray-300">{dict.courseDetail?.noTeeData || 'No tee data available for this course.'}</p>
         ) : (
           <>
             {/* Tee Summary Table */}
@@ -190,22 +206,22 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Tee Name
+                      {dict.courseDetail?.teeName || 'Tee Name'}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Gender
+                      {dict.courseDetail?.gender || 'Gender'}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Par
+                      {dict.courseDetail?.par || 'Par'}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Course Rating
+                      {dict.courseDetail?.courseRating || 'Course Rating'}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Slope Rating
+                      {dict.courseDetail?.slopeRating || 'Slope Rating'}
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Length (Yards)
+                      {dict.courseDetail?.lengthYards || 'Length (Yards)'}
                     </th>
                   </tr>
                 </thead>
@@ -216,7 +232,9 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
                         {tee.tee_name}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                        {tee.gender === 'M' ? 'Male' : tee.gender === 'F' ? 'Female' : 'Other'}
+                        {tee.gender === 'M' ? (dict.courseDetail?.male || 'Male') : 
+                          tee.gender === 'F' ? (dict.courseDetail?.female || 'Female') : 
+                          (dict.courseDetail?.other || 'Other')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                         {tee.par}
@@ -239,14 +257,14 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
             </div>
 
             {/* Hole-by-Hole Section */}
-            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Hole-by-Hole Information</h2>
+            <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">{dict.courseDetail?.holeByHole || 'Hole-by-Hole Information'}</h2>
             
             {courseData.map((tee) => {
               const pars = calculateTotalPar(tee);
               return (
                 <div key={`holes-${tee.id}`} className="mb-8">
                   <h3 className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">
-                    {tee.tee_name} Tees
+                    {tee.tee_name} {dict.courseDetail?.teesSuffix || 'Tees'}
                   </h3>
                   
                   {/* Front Nine */}
@@ -255,7 +273,7 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
                       <thead className="bg-gray-100 dark:bg-gray-700">
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                            Hole
+                            {dict.courseDetail?.hole || 'Hole'}
                           </th>
                           {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                             <th key={num} className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
@@ -263,14 +281,14 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
                             </th>
                           ))}
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            OUT
+                            {dict.courseDetail?.out || 'OUT'}
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr className="bg-white dark:bg-gray-800">
                           <td className="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white border-r">
-                            Par
+                            {dict.courseDetail?.par || 'Par'}
                           </td>
                           <td className="px-3 py-2 text-center text-sm text-gray-500 dark:text-gray-300 border-r">{tee.par_h01 || '-'}</td>
                           <td className="px-3 py-2 text-center text-sm text-gray-500 dark:text-gray-300 border-r">{tee.par_h02 || '-'}</td>
@@ -295,7 +313,7 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
                       <thead className="bg-gray-100 dark:bg-gray-700">
                         <tr>
                           <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                            Hole
+                            {dict.courseDetail?.hole || 'Hole'}
                           </th>
                           {[10, 11, 12, 13, 14, 15, 16, 17, 18].map(num => (
                             <th key={num} className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
@@ -303,17 +321,17 @@ const CourseDataDetail: React.FC<CourseDataDetailProps> = ({ courseId, lang }) =
                             </th>
                           ))}
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                            IN
+                            {dict.courseDetail?.in || 'IN'}
                           </th>
                           <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                            TOTAL
+                            {dict.courseDetail?.total || 'TOTAL'}
                           </th>
                         </tr>
                       </thead>
                       <tbody>
                         <tr className="bg-white dark:bg-gray-800">
                           <td className="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white border-r">
-                            Par
+                            {dict.courseDetail?.par || 'Par'}
                           </td>
                           <td className="px-3 py-2 text-center text-sm text-gray-500 dark:text-gray-300 border-r">{tee.par_h10 || '-'}</td>
                           <td className="px-3 py-2 text-center text-sm text-gray-500 dark:text-gray-300 border-r">{tee.par_h11 || '-'}</td>

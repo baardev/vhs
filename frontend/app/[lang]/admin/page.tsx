@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react'; 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Geist, Geist_Mono } from "next/font/google";
@@ -41,7 +41,7 @@ const geistMono = Geist_Mono({
  */
 export default function AdminDashboard({ params }: { params: { lang: string } }) {
   const router = useRouter();
-  const [dict, setDict] = useState<any>(null);
+  const [dict, setDict] = useState<Record<string, any> | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 

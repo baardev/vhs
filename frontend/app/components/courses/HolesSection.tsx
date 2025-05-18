@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getCommonDictionary } from '../../dictionaries';
 
 interface HoleInfo {
   holeNumber: number;
@@ -11,6 +12,7 @@ interface HoleInfo {
 interface HolesSectionProps {
   holes: HoleInfo[];
   updateHole: (holeNumber: number, field: 'par' | 'strokeIndex', value: number) => void;
+  lang: string;
 }
 
 /**
@@ -19,6 +21,7 @@ interface HolesSectionProps {
  * @param {HolesSectionProps} props - The props for the component.
  * @param {HoleInfo[]} props.holes - An array of objects, each representing a hole and containing its number, par, and stroke index.
  * @param {(holeNumber: number, field: 'par' | 'strokeIndex', value: number) => void} props.updateHole - Callback function to update the par or stroke index for a specific hole.
+ * @param {string} props.lang - The current language for internationalization.
  *
  * @remarks
  * This component displays a table with rows for each hole (1 through 18 typically).
@@ -31,19 +34,40 @@ interface HolesSectionProps {
  *
  * Calls:
  * - React (implicitly, as it's a React functional component)
+ * - getCommonDictionary (for internationalization)
  *
  * @returns {React.FC<HolesSectionProps>} The rendered form section for hole-by-hole information.
  */
-const HolesSection: React.FC<HolesSectionProps> = ({ holes, updateHole }) => {
+const HolesSection: React.FC<HolesSectionProps> = ({ holes, updateHole, lang }) => {
+  const [dict, setDict] = useState<Record<string, any>>({});
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang);
+        setDict(dictionary);
+      } catch (err) {
+        console.error('Error loading dictionary in HolesSection:', err);
+      }
+    };
+    
+    if (lang) {
+      loadDictionary();
+    }
+  }, [lang]);
+
   return (
     <div className="p-6 border-b border-gray-200 dark:border-gray-800">
       <div className="bg-[#f1faee] dark:bg-[#2d3748] p-4 mb-6 -mx-6 flex items-center">
         <span className="text-2xl mr-2">🕳️</span>
-        <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-white">Hole-by-Hole Information</h2>
+        <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-white">
+          {dict.holesSection?.header || 'Hole-by-Hole Information'}
+        </h2>
       </div>
 
       <p className="mb-6 text-gray-600 dark:text-gray-300">
-        Enter the par and stroke index for each hole. These values are typically the same across all tee boxes.
+        {dict.holesSection?.description || 'Enter the par and stroke index for each hole. These values are typically the same across all tee boxes.'}
       </p>
 
       <div className="overflow-x-auto">
@@ -51,13 +75,13 @@ const HolesSection: React.FC<HolesSectionProps> = ({ holes, updateHole }) => {
           <thead>
             <tr>
               <th className="p-3 bg-[#f1faee] dark:bg-[#2d3748] border border-gray-300 dark:border-gray-700 font-semibold text-[#2d6a4f] dark:text-white">
-                Hole
+                {dict.holesSection?.hole || 'Hole'}
               </th>
               <th className="p-3 bg-[#f1faee] dark:bg-[#2d3748] border border-gray-300 dark:border-gray-700 font-semibold text-[#2d6a4f] dark:text-white">
-                Par
+                {dict.holesSection?.par || 'Par'}
               </th>
               <th className="p-3 bg-[#f1faee] dark:bg-[#2d3748] border border-gray-300 dark:border-gray-700 font-semibold text-[#2d6a4f] dark:text-white">
-                Stroke Index
+                {dict.holesSection?.strokeIndex || 'Stroke Index'}
               </th>
             </tr>
           </thead>
@@ -96,7 +120,7 @@ const HolesSection: React.FC<HolesSectionProps> = ({ holes, updateHole }) => {
       </div>
 
       <div className="mt-4 text-sm text-gray-500 dark:text-gray-400">
-        Note: Par and Stroke Index are typically the same across all tee boxes at a course.
+        {dict.holesSection?.footerNote || 'Note: Par and Stroke Index are typically the same across all tee boxes at a course.'}
       </div>
     </div>
   );

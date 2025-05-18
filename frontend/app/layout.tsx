@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import { AuthProvider } from "../src/contexts/AuthContext";
+import { getCommonDictionary } from "./dictionaries"; // Assuming dictionaries is at ./dictionaries
 // Import LogViewer commented out since it's not currently used but might be in the future
 // import LogViewer from "./components/LogViewer";
 
@@ -39,20 +40,38 @@ if (typeof window !== "undefined") {
 }
 
 /**
- * @constant metadata
- * @description Next.js metadata configuration that defines SEO-related properties.
+ * @function generateMetadata
+ * @description Next.js metadata configuration that defines SEO-related properties dynamically based on language.
  * 
  * These values are used by Next.js to generate appropriate meta tags in the HTML head.
  * The metadata affects how the site appears in search results and when shared on
  * social media platforms.
  */
-export const metadata = {
-  title: "OHS Open Handicap System",
-  description: "Track your golf handicap easily",
-  alternates: {
-    canonical: '/',
+export async function generateMetadata({ params }: { params: { lang: string } }) {
+  const lang = params.lang || 'en';
+  let dict = {};
+  try {
+    dict = await getCommonDictionary(lang);
+  } catch (error) {
+    console.error(`Error loading dictionary for lang ${lang} in generateMetadata:`, error);
+    // Fallback to English dictionary if the requested one fails
+    if (lang !== 'en') {
+      try {
+        dict = await getCommonDictionary('en');
+      } catch (enError) {
+        console.error('Error loading fallback English dictionary in generateMetadata:', enError);
+      }
+    }
   }
-};
+
+  return {
+    title: (dict as any).layout?.title || "OHS Open Handicap System",
+    description: (dict as any).layout?.description || "Track your golf handicap easily",
+    alternates: {
+      canonical: '/',
+    }
+  };
+}
 
 /**
  * @constant authErrorDetectorScript
@@ -155,23 +174,43 @@ const authErrorDetectorScript = `
  * 
  * @param {Object} props - Component props
  * @param {React.ReactNode} props.children - Child components to render within the layout
+ * @param {Object} props.params - Route parameters, including lang
+ * @param {string} props.params.lang - The current language code
  * @returns {JSX.Element} The complete HTML document with app layout
  */
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { lang: string };
 }) {
   // This flag controls whether to show the LogViewer button
   // When set to true, the button will appear and allow toggling the log viewer
   const displayLogButton = false;
+  const currentLang = params.lang || 'en';
+  let dict = {};
+
+  try {
+    dict = await getCommonDictionary(currentLang);
+  } catch (error) {
+    console.error(`Error loading dictionary for lang ${currentLang} in RootLayout:`, error);
+    // Fallback to English dictionary if the requested one fails
+    if (currentLang !== 'en') {
+      try {
+        dict = await getCommonDictionary('en');
+      } catch (enError) {
+        console.error('Error loading fallback English dictionary in RootLayout:', enError);
+      }
+    }
+  }
   
   // If we were to implement the LogViewer toggle functionality,
   // we would need something like:
   // const [showLogs, setShowLogs] = useState(false);
   
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang={currentLang} className={`${geistSans.variable} ${geistMono.variable}`}>
       <head>
         <meta charSet="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -216,7 +255,7 @@ export default function RootLayout({
                   d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
                 />
               </svg>
-              LOGS
+              {(dict as any).layout?.logsButton || 'LOGS'}
             </button>
           )}
           

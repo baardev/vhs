@@ -19,6 +19,7 @@ import 'chartjs-adapter-date-fns'; // Import adapter for date handling
 import { AuthContext } from '../../../src/contexts/AuthContext'; // Updated path for AuthContext
 import { useRouter } from 'next/navigation';
 import { useParams } from 'next/navigation';
+import { getCommonDictionary } from '../../dictionaries';
 
 ChartJS.register(
   CategoryScale,
@@ -92,6 +93,7 @@ interface ChartCardData {
  *    Provides an "Add New Card" button if the user is logged in.
  *    Uses `AuthContext` to manage user authentication state and `useRouter` for programmatic navigation.
  *    If chart data fetch results in a 401, it logs the user out and redirects to login.
+ *    Uses translations loaded from the language dictionaries.
  *
  * Called by:
  * - `frontend/app/[lang]/player-cards/page.tsx`
@@ -104,6 +106,7 @@ interface ChartCardData {
  * - `AuthContext` (to get user status and logout function)
  * - `useRouter` (for redirecting on authentication failure)
  * - `localStorage.getItem('token')` (as part of chart data fetching, though primarily relies on `AuthContext`)
+ * - `getCommonDictionary` (for loading translations)
  *
  * @returns {JSX.Element} The rendered list of player cards and performance chart.
  */
@@ -113,6 +116,7 @@ const PlayerCardsList = () => {
   const [error, setError] = useState('');
   const params = useParams();
   const lang = params?.lang || 'en';
+  const [dict, setDict] = useState<Record<string, any>>({});
 
   const [chartData, setChartData] = useState<any>(null); // Can be more specific with Chart.js types
   const [chartLoading, setChartLoading] = useState(true);
@@ -120,6 +124,22 @@ const PlayerCardsList = () => {
   
   const { user, logout } = useContext(AuthContext); // Use AuthContext
   const router = useRouter(); // Initialize router
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang as string);
+        setDict(dictionary);
+      } catch (err) {
+        console.error('Error loading dictionary in PlayerCardsList:', err);
+      }
+    };
+    
+    if (lang) {
+      loadDictionary();
+    }
+  }, [lang]);
 
   // Fetch general player cards (public data)
   useEffect(() => {
@@ -133,9 +153,9 @@ const PlayerCardsList = () => {
       } catch (err) {
         console.error('Error fetching player cards:', err);
         if (axios.isAxiosError(err)) {
-          setError(`Failed to load player cards: ${err.message} (${err.response?.status || 'unknown'} ${err.response?.statusText || ''})`);
+          setError(`${dict?.playerCardsList?.error || 'Failed to load player cards: '}${err.message} (${err.response?.status || 'unknown'} ${err.response?.statusText || ''})`);
         } else {
-          setError(`Failed to load player cards: ${err.toString()}`);
+          setError(`${dict?.playerCardsList?.error || 'Failed to load player cards: '}${err.toString()}`);
         }
       } finally {
         setLoading(false);
@@ -143,14 +163,14 @@ const PlayerCardsList = () => {
     };
 
     fetchPlayerCards();
-  }, []);
+  }, [dict]);
 
   // Fetch chart data (requires authentication)
   useEffect(() => {
     const fetchChartData = async () => {
       if (!user) { // Check if user is authenticated via AuthContext
         setChartLoading(false);
-        setChartError('Please log in to view your chart data.'); // Or set to null if chart shouldn't show
+        setChartError(dict?.playerCardsList?.chartError || 'Please log in to view your chart data.'); // Or set to null if chart shouldn't show
         setChartData(null);
         return;
       }
@@ -161,7 +181,7 @@ const PlayerCardsList = () => {
         const token = localStorage.getItem('token');
         if (!token) {
           // This case should ideally be handled by AuthContext state, but as a fallback:
-          setChartError('Authentication token not found.');
+          setChartError(dict?.playerCardsList?.chartLoginError || 'Authentication token not found.');
           setChartLoading(false);
           setChartData(null);
           return;
@@ -181,21 +201,21 @@ const PlayerCardsList = () => {
             labels,
             datasets: [
               {
-                label: 'Gross',
+                label: dict?.playerCardsList?.tableHeaders?.gross || 'Gross',
                 data: response.data.map(d => d.gross),
                 borderColor: 'rgb(255, 99, 132)',
                 backgroundColor: 'rgba(255, 99, 132, 0.5)',
                 tension: 0.1,
               },
               {
-                label: 'Net',
+                label: dict?.playerCardsList?.tableHeaders?.net || 'Net',
                 data: response.data.map(d => d.net),
                 borderColor: 'rgb(54, 162, 235)',
                 backgroundColor: 'rgba(54, 162, 235, 0.5)',
                 tension: 0.1,
               },
               {
-                label: 'Differential',
+                label: dict?.playerCardsList?.tableHeaders?.differential || 'Differential',
                 data: response.data.map(d => d.differential),
                 borderColor: 'rgb(75, 192, 192)',
                 backgroundColor: 'rgba(75, 192, 192, 0.5)',
@@ -209,11 +229,11 @@ const PlayerCardsList = () => {
       } catch (err) {
         console.error('Error fetching chart data:', err);
         if (axios.isAxiosError(err) && err.response?.status === 401) {
-          setChartError('Session expired or invalid. Please log in again.');
+          setChartError(dict?.playerCardsList?.chart401Error || 'Session expired or invalid. Please log in again.');
           logout(); // Call logout from AuthContext to clear user state and token
-          router.push('/login'); // Redirect to login page
+          router.push(`/${lang}/login`); // Redirect to login page with language
         } else {
-          setChartError('Failed to load chart data.');
+          setChartError(dict?.playerCardsList?.chartGenericError || 'Failed to load chart data.');
         }
         setChartData(null);
       } finally {
@@ -222,7 +242,7 @@ const PlayerCardsList = () => {
     };
 
     fetchChartData();
-  }, [user, logout, router]); // Depend on user from AuthContext, logout, and router
+  }, [user, logout, router, dict, lang]); // Depend on user from AuthContext, logout, router, dict, and lang
 
   const chartOptions = {
     responsive: true,
@@ -233,7 +253,7 @@ const PlayerCardsList = () => {
       },
       title: {
         display: true,
-        text: 'Your Last 50 Rounds (Status: OK)',
+        text: dict?.playerCardsList?.chartTitle || 'Your Last 50 Rounds (Status: OK)',
       },
     },
     scales: {
@@ -248,20 +268,20 @@ const PlayerCardsList = () => {
         },
         title: {
           display: true,
-          text: 'Play Date'
+          text: dict?.playerCardsList?.chartXAxis || 'Play Date'
         }
       },
       y: {
         beginAtZero: true, // Or false if scores can be negative / differentials
         title: {
           display: true,
-          text: 'Score / Differential'
+          text: dict?.playerCardsList?.chartYAxis || 'Score / Differential'
         }
       }
     }
   };
 
-  if (loading) return <div className="text-center py-8">Loading player cards...</div>;
+  if (loading) return <div className="text-center py-8">{dict?.playerCardsList?.loading || 'Loading player cards...'}</div>;
   if (error) return <div className="text-center py-8 text-red-600">{error}</div>;
   // No longer return "No player cards found" immediately, show chart if available
   
@@ -270,7 +290,7 @@ const PlayerCardsList = () => {
       <div className="mb-4 flex justify-end">
         {user && ( // Only show Add New Card if user is logged in
           <Link href={`/${lang}/player-cards/new`} className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
-            <span>Add New Card</span>
+            <span>{dict?.playerCardsList?.addNewCard || 'Add New Card'}</span>
           </Link>
         )}
       </div>
@@ -278,7 +298,7 @@ const PlayerCardsList = () => {
       {/* Chart Section - Only show if user is logged in (implicitly handled by useEffect dependency) */}
       {user && (
         <div className="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-          {chartLoading && <div className="text-center py-4">Loading chart data...</div>}
+          {chartLoading && <div className="text-center py-4">{dict?.playerCardsList?.chartLoading || 'Loading chart data...'}</div>}
           {chartError && <div className="text-center py-4 text-red-600">{chartError}</div>}
           {!chartLoading && !chartError && chartData && (
             <div style={{ height: '400px' }}> {/* Set a fixed height for the chart container */}
@@ -286,41 +306,41 @@ const PlayerCardsList = () => {
             </div>
           )}
           {!chartLoading && !chartError && !chartData && (
-            <div className="text-center py-4">No chart data available (no recent 'OK' scorecards found or not logged in).</div>
+            <div className="text-center py-4">{dict?.playerCardsList?.noChartData || 'No chart data available (no recent \'OK\' scorecards found or not logged in).'}</div>
           )}
         </div>
       )}
 
       {/* Table Section */}
-      {playerCards.length === 0 && !loading && <div className="text-center py-8">No player cards found in table.</div>}
+      {playerCards.length === 0 && !loading && <div className="text-center py-8">{dict?.playerCardsList?.noCardsFound || 'No player cards found in table.'}</div>}
       {playerCards.length > 0 && (
         <div className="overflow-x-auto">
           <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
             <thead className="bg-gray-100 dark:bg-gray-700">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Player
+                  {dict?.playerCardsList?.tableHeaders?.player || 'Player'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Date
+                  {dict?.playerCardsList?.tableHeaders?.date || 'Date'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Course
+                  {dict?.playerCardsList?.tableHeaders?.course || 'Course'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Gross
+                  {dict?.playerCardsList?.tableHeaders?.gross || 'Gross'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Net
+                  {dict?.playerCardsList?.tableHeaders?.net || 'Net'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Differential
+                  {dict?.playerCardsList?.tableHeaders?.differential || 'Differential'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Status
+                  {dict?.playerCardsList?.tableHeaders?.status || 'Status'}
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  Action
+                  {dict?.playerCardsList?.tableHeaders?.action || 'Action'}
                 </th>
               </tr>
             </thead>
@@ -360,7 +380,7 @@ const PlayerCardsList = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
                     <Link href={`/${lang}/player-cards/${card.id}`} className="text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300">
-                      View Details
+                      {dict?.playerCardsList?.viewDetails || 'View Details'}
                     </Link>
                   </td>
                 </tr>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; 
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import axios from 'axios';
@@ -27,7 +27,7 @@ const geistMono = Geist_Mono({
 
 export default function ChangePassword({ params: { lang } }) {
   const router = useRouter();
-  const [dict, setDict] = useState(null);
+  const [dict, setDict] = useState<Record<string, any> | null>(null);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');

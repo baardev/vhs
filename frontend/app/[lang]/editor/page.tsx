@@ -12,7 +12,7 @@ import { forceValidateTokenOrLogout } from '../../../src/utils/authUtils';
  * @description Next.js font optimization for Geist Sans font.
  */
 const geistSans = Geist({
-  variable: "--font-geist-sans",
+  variable: "--font-geist-sans", 
   subsets: ["latin"],
 });
 

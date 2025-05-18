@@ -1,6 +1,7 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getCommonDictionary } from '../../dictionaries';
 
 interface CourseInfoSectionProps {
   courseName: string;
@@ -11,6 +12,7 @@ interface CourseInfoSectionProps {
   setCityProvince: (value: string) => void;
   website: string;
   setWebsite: (value: string) => void;
+  lang: string;
 }
 
 /**
@@ -26,6 +28,7 @@ interface CourseInfoSectionProps {
  * @param {(value: string) => void} props.setCityProvince - Callback to update the city/province.
  * @param {string} props.website - The current value for the website URL input.
  * @param {(value: string) => void} props.setWebsite - Callback to update the website URL.
+ * @param {string} props.lang - The current language for internationalization.
  *
  * @remarks
  * This component is designed to be part of a larger form, likely for creating or editing course information.
@@ -37,6 +40,7 @@ interface CourseInfoSectionProps {
  *
  * Calls:
  * - React (implicitly, as it's a React functional component)
+ * - getCommonDictionary (for internationalization)
  *
  * @returns {React.FC<CourseInfoSectionProps>} The rendered form section for course information.
  */
@@ -48,29 +52,50 @@ const CourseInfoSection: React.FC<CourseInfoSectionProps> = ({
   cityProvince,
   setCityProvince,
   website,
-  setWebsite
+  setWebsite,
+  lang
 }) => {
+  const [dict, setDict] = useState<Record<string, any>>({});
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang);
+        setDict(dictionary);
+      } catch (err) {
+        console.error('Error loading dictionary in CourseInfoSection:', err);
+      }
+    };
+    
+    if (lang) {
+      loadDictionary();
+    }
+  }, [lang]);
+
   return (
     <div className="p-6 border-b border-gray-200 dark:border-gray-800">
       <div className="bg-[#f1faee] dark:bg-[#2d3748] p-4 mb-6 -mx-6 flex items-center">
         <span className="text-2xl mr-2">🧱</span>
-        <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-white">Course Info</h2>
+        <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-white">
+          {dict.courseInfoSection?.header || 'Course Info'}
+        </h2>
       </div>
 
       <p className="mb-6 text-gray-600 dark:text-gray-300">
-        Basic identity information to catalog the course in our database.
+        {dict.courseInfoSection?.description || 'Basic identity information to catalog the course in our database.'}
       </p>
 
       <div className="mb-6">
         <label htmlFor="courseName" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Course Name
+          {dict.courseInfoSection?.courseNameLabel || 'Course Name'}
         </label>
         <input
           type="text"
           id="courseName"
           value={courseName}
           onChange={(e) => setCourseName(e.target.value)}
-          placeholder="e.g., Club de Golf Los Cedros"
+          placeholder={dict.courseInfoSection?.courseNamePlaceholder || 'e.g., Club de Golf Los Cedros'}
           required
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#40916c] focus:border-[#40916c] dark:bg-[#2d3748] dark:text-white"
         />
@@ -78,7 +103,7 @@ const CourseInfoSection: React.FC<CourseInfoSectionProps> = ({
 
       <div className="mb-6">
         <label htmlFor="country" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Country
+          {dict.courseInfoSection?.countryLabel || 'Country'}
         </label>
         <select
           id="country"
@@ -87,44 +112,47 @@ const CourseInfoSection: React.FC<CourseInfoSectionProps> = ({
           required
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#40916c] focus:border-[#40916c] dark:bg-[#2d3748] dark:text-white"
         >
-          <option value="">Select a country</option>
-          <option value="US">United States</option>
-          <option value="MX">Mexico</option>
-          <option value="CA">Canada</option>
-          <option value="GB">United Kingdom</option>
-          <option value="ES">Spain</option>
-          <option value="other">Other</option>
+          <option value="">{dict.courseInfoSection?.selectCountry || 'Select a country'}</option>
+          <option value="US">{dict.courseInfoSection?.unitedStates || 'United States'}</option>
+          <option value="MX">{dict.courseInfoSection?.mexico || 'Mexico'}</option>
+          <option value="CA">{dict.courseInfoSection?.canada || 'Canada'}</option>
+          <option value="GB">{dict.courseInfoSection?.unitedKingdom || 'United Kingdom'}</option>
+          <option value="ES">{dict.courseInfoSection?.spain || 'Spain'}</option>
+          <option value="other">{dict.courseInfoSection?.other || 'Other'}</option>
         </select>
       </div>
 
       <div className="mb-6">
         <label htmlFor="cityProvince" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          City / Province
+          {dict.courseInfoSection?.cityProvinceLabel || 'City / Province'}
         </label>
         <input
           type="text"
           id="cityProvince"
           value={cityProvince}
           onChange={(e) => setCityProvince(e.target.value)}
-          placeholder="e.g., Phoenix, Arizona"
+          placeholder={dict.courseInfoSection?.cityProvincePlaceholder || 'e.g., Phoenix, Arizona'}
           required
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#40916c] focus:border-[#40916c] dark:bg-[#2d3748] dark:text-white"
         />
         <div className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-          Helps distinguish courses with similar names
+          {dict.courseInfoSection?.cityProvinceHelperText || 'Helps distinguish courses with similar names'}
         </div>
       </div>
 
       <div className="mb-6">
         <label htmlFor="website" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-          Website <span className="font-normal text-gray-500 dark:text-gray-400 text-sm">(optional)</span>
+          {dict.courseInfoSection?.websiteLabel || 'Website'} 
+          <span className="font-normal text-gray-500 dark:text-gray-400 text-sm">
+            {dict.courseInfoSection?.optional || '(optional)'}
+          </span>
         </label>
         <input
           type="url"
           id="website"
           value={website}
           onChange={(e) => setWebsite(e.target.value)}
-          placeholder="e.g., https://www.golfcourse.com"
+          placeholder={dict.courseInfoSection?.websitePlaceholder || 'e.g., https://www.golfcourse.com'}
           className="w-full px-3 py-2 border border-gray-300 dark:border-gray-700 rounded-md shadow-sm focus:outline-none focus:ring-[#40916c] focus:border-[#40916c] dark:bg-[#2d3748] dark:text-white"
         />
       </div>

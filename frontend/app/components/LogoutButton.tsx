@@ -1,25 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import axios from 'axios';
+import { getCommonDictionary } from '../dictionaries';
 
 /**
  * @interface LogoutButtonProps
  * @description Defines the props for the LogoutButton component.
  * @property {'primary' | 'secondary' | 'text'} [variant='primary'] - The visual style of the button.
  * @property {string} [className=''] - Additional CSS classes to apply to the button.
- * @property {object} dict - The dictionary object for translations.
+ * @property {string} [lang] - The language code for translations. If not provided, it will be extracted from URL params.
  */
 interface LogoutButtonProps {
   variant?: 'primary' | 'secondary' | 'text';
   className?: string;
-  dict: {
-    logout?: {
-        loggingOut?: string;
-        signOut?: string;
-    };
-  };
+  lang?: string;
 }
 
 /**
@@ -36,15 +32,16 @@ interface LogoutButtonProps {
  *   - Redirects the user to the `/login` page using `next/navigation`, including the current language.
  *   - In case of an error during the API call, it still clears local storage and redirects to ensure the user is logged out client-side.
  * - Supports different visual variants ('primary', 'secondary', 'text') which determine its styling.
- * - Receives translations via a `dict` prop.
+ * - Loads translations based on the current language.
  *
  * Called by:
  * - `frontend/app/components/Navbar.tsx` (in both desktop and mobile views)
  * - `frontend/app/[lang]/profile/page.tsx` (in the profile header)
  *
  * Calls:
- * - React Hooks: `useState`
+ * - React Hooks: `useState`, `useEffect`
  * - `next/navigation`: `useRouter`, `useParams` hooks (for navigation and language)
+ * - `getCommonDictionary` (for internationalization)
  * - `axios.post` (to call the logout API endpoint)
  * - `localStorage.getItem`, `localStorage.removeItem` (for token and user data management)
  * - `window.dispatchEvent` (to signal authentication state change)
@@ -55,12 +52,31 @@ interface LogoutButtonProps {
 const LogoutButton: React.FC<LogoutButtonProps> = ({
   variant = 'primary',
   className = '',
-  dict,
+  lang: propLang,
 }) => {
   const router = useRouter();
   const params = useParams() || {};
-  const lang = (params.lang as string) || 'en';
+  const urlLang = (params.lang as string) || 'en';
+  const lang = propLang || urlLang;
+  
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [dict, setDict] = useState<Record<string, any>>({});
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang);
+        setDict(dictionary);
+      } catch (err) {
+        console.error('Error loading dictionary in LogoutButton:', err);
+      }
+    };
+    
+    if (lang) {
+      loadDictionary();
+    }
+  }, [lang]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);

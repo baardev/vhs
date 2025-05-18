@@ -71,7 +71,7 @@ export default function Dashboard({ params }: { params: { lang: string } }) {
       }
     }
 
-    if (user) {
+    if (user) { 
       fetchData();
     } else {
       setLoading(false);

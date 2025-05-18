@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import HandicapCalculator from '../../components/handicap/HandicapCalculator';
 import { Geist, Geist_Mono } from "next/font/google";
-import { getCommonDictionary } from '../dictionaries';
+import { getCommonDictionary } from '../dictionaries'; 
 
 /**
  * @constant geistSans

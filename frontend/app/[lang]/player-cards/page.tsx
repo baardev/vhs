@@ -1,9 +1,10 @@
 'use client';
 
-import { Suspense } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
 import PlayerCardsList from '../../components/player-cards/PlayerCardsList';
 import Link from 'next/link';
+import { getCommonDictionary } from '../dictionaries';
 
 /**
  * @constant geistSans
@@ -63,6 +64,23 @@ const geistMono = Geist_Mono({
 export default function PlayerCardsPage({ params }: { params: { lang: string } }) {
   // Update to handle params properly without React.use() since we're in a client component
   const { lang } = params;
+  const [dict, setDict] = useState<Record<string, any> | null>(null);
+
+  useEffect(() => {
+    const loadDictionary = async () => {
+      const dictionary = await getCommonDictionary(lang);
+      setDict(dictionary);
+    };
+    loadDictionary();
+  }, [lang]);
+  
+  if (!dict) {
+    return <div>{params?.lang === 'en' ? 'Loading...' : 
+           params?.lang === 'es' ? 'Cargando...' : 
+           params?.lang === 'he' ? 'טוען...' : 
+           params?.lang === 'ru' ? 'Загрузка...' : 
+           params?.lang === 'zh' ? '加载中...' : 'Loading...'}</div>;
+  }
   
   return (
     <div 
@@ -72,7 +90,7 @@ export default function PlayerCardsPage({ params }: { params: { lang: string } }
       <div className="absolute inset-0 bg-black opacity-50"></div>
       <div className="max-w-7xl mx-auto relative z-10">
         <h1 className="text-3xl font-bold text-white mb-8">
-          Player Scorecards
+          {dict.playerCardsPage.title}
         </h1>
         
         <div className="flex justify-end mb-4">
@@ -80,18 +98,17 @@ export default function PlayerCardsPage({ params }: { params: { lang: string } }
             href={`/${lang}/player-cards/new`} 
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
           >
-            Add New Scorecard
+            {dict.playerCardsPage.addNewScorecard}
           </Link>
         </div>
         
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
           <p className="text-gray-700 dark:text-gray-300 mb-4">
-            View all player scorecards from the database. This page displays data from the player_cards table, 
-            showing information like scores, differentials, and round status.
+            {dict.playerCardsPage.description}
           </p>
         </div>
         
-        <Suspense fallback={<div className="text-white">Loading scorecards...</div>}>
+        <Suspense fallback={<div className="text-white">{dict.playerCardsPage.loadingScorecardsText}</div>}>
           <PlayerCardsList />
         </Suspense>
       </div>

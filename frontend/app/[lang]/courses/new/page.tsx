@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
+import { getCommonDictionary } from '../../../dictionaries';
 import CourseInfoSection from '../../../components/courses/CourseInfoSection';
 import TeeBoxesSection from '../../../components/courses/TeeBoxesSection';
 import HolesSection from '../../../components/courses/HolesSection';
@@ -31,6 +32,7 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [dict, setDict] = useState<Record<string, any>>({});
 
   // Course Info State
   const [courseName, setCourseName] = useState('');
@@ -65,6 +67,22 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
 
   // Confirmation
   const [isConfirmed, setIsConfirmed] = useState(false);
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(params.lang);
+        setDict(dictionary);
+      } catch (err) {
+        console.error('Error loading dictionary in NewCoursePage:', err);
+      }
+    };
+    
+    if (params.lang) {
+      loadDictionary();
+    }
+  }, [params.lang]);
 
   // Check for authentication
   useEffect(() => {
@@ -178,7 +196,7 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
         });
       }
 
-      setSuccess('Course successfully submitted!');
+      setSuccess(dict.courseSubmissionForm?.successMessage || 'Course successfully submitted!');
 
       // Reset form
       setTimeout(() => {
@@ -190,10 +208,10 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
         setError(
           err.response?.data?.error ||
           err.response?.data?.errors?.[0]?.msg ||
-          'Failed to submit course.'
+          (dict.courseSubmissionForm?.defaultError || 'Failed to submit course.')
         );
       } else {
-        setError('Failed to submit course.');
+        setError(dict.courseSubmissionForm?.defaultError || 'Failed to submit course.');
       }
     } finally {
       setIsLoading(false);
@@ -204,7 +222,9 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative">
       <div className="max-w-[900px] mx-auto bg-white dark:bg-[#1a1a1a] rounded-lg shadow-md overflow-hidden">
         <header className="bg-[#2d6a4f] text-white p-6 text-center">
-          <h1 className="text-2xl sm:text-3xl font-bold">Golf Course Submission Form</h1>
+          <h1 className="text-2xl sm:text-3xl font-bold">
+            {dict.courseSubmissionForm?.title || 'Golf Course Submission Form'}
+          </h1>
         </header>
 
         {error && (
@@ -229,6 +249,7 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
             setCityProvince={setCityProvince}
             website={website}
             setWebsite={setWebsite}
+            lang={params.lang}
           />
 
           <TeeBoxesSection
@@ -236,18 +257,22 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
             updateTeeBox={updateTeeBox}
             addTeeBox={addTeeBox}
             removeTeeBox={removeTeeBox}
+            lang={params.lang}
           />
 
           <HolesSection
             holes={holes}
             updateHole={updateHole}
+            lang={params.lang}
           />
 
           {/* Confirmation Section */}
           <div className="p-6 border-t border-gray-200 dark:border-gray-800">
             <div className="bg-[#f1faee] dark:bg-[#2d3748] p-4 mb-6 -mx-6 flex items-center">
               <span className="text-2xl mr-2">✅</span>
-              <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-white">Confirmation</h2>
+              <h2 className="text-xl font-semibold text-[#2d6a4f] dark:text-white">
+                {dict.courseSubmissionForm?.confirmationHeader || 'Confirmation'}
+              </h2>
             </div>
 
             <div className="mb-6">
@@ -261,7 +286,7 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
                   required
                 />
                 <label htmlFor="confirmation" className="font-medium">
-                  I confirm this data is accurate to the best of my knowledge.
+                  {dict.courseSubmissionForm?.confirmationText || 'I confirm this data is accurate to the best of my knowledge.'}
                 </label>
               </div>
             </div>
@@ -271,7 +296,10 @@ export default function NewCoursePage({ params }: { params: { lang: string } }) 
               disabled={isLoading}
               className="w-full bg-[#2d6a4f] hover:bg-[#1b4332] text-white py-4 px-6 rounded-md text-lg font-medium transition-colors duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? 'Submitting...' : 'Submit Course Information'}
+              {isLoading 
+                ? (dict.courseSubmissionForm?.submitting || 'Submitting...') 
+                : (dict.courseSubmissionForm?.submitButton || 'Submit Course Information')
+              }
             </button>
           </div>
         </form>

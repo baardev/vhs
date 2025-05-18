@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useParams, usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
+import { getCommonDictionary } from '../dictionaries';
+import FlagIcon, { USAFlag, SpainFlag, IsraelFlag, RussiaFlag, ChinaFlag } from './FlagIcons';
 
 /**
  * @component Footer
@@ -35,10 +37,23 @@ const Footer = () => {
   const pathname = usePathname();
   const currentLang = (params.lang as string) || 'en';
   const [mounted, setMounted] = useState(false);
+  const [dict, setDict] = useState<Record<string, any>>({});
 
   useEffect(() => {
     setMounted(true);
-  }, []);
+    
+    // Load dictionary
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(currentLang);
+        setDict(dictionary);
+      } catch (error) {
+        console.error('Error loading dictionary in Footer:', error);
+      }
+    };
+    
+    loadDictionary();
+  }, [currentLang]);
 
   // Get the path without the language prefix
   const getPathWithoutLang = () => {
@@ -61,33 +76,80 @@ const Footer = () => {
   }
 
   return (
-    <footer className="w-full flex flex-col items-center gap-4 py-8 mt-auto bg-gray-100 dark:bg-gray-900">
-      <div className="flex gap-[24px] flex-wrap items-center justify-center">
-        <Link
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href={`/${currentLang}/about`}
-        >
-          About
-        </Link>
-        <Link
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href={`/${currentLang}/privacy`}
-        >
-          Privacy
-        </Link>
-        <Link
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href={`/${currentLang}/terms`}
-        >
-          Terms
-        </Link>
-      </div>
-      <div className="flex flex-wrap space-x-3 justify-center mt-2">
-        <Link href={`/en${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">English</Link>
-        <Link href={`/es${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Español</Link>
-        <Link href={`/he${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">עברית</Link>
-        <Link href={`/ru${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">Русский</Link>
-        <Link href={`/zh${getPathWithoutLang()}`} className="bg-blue-500 text-white px-4 py-2 rounded-md mb-2">中文</Link>
+    <footer className="w-full flex flex-col gap-4 py-8 mt-auto bg-gray-100 dark:bg-gray-900">
+      <div className="container mx-auto px-4 flex flex-wrap justify-between items-center">
+        <div className="flex gap-[24px] flex-wrap items-center">
+          <Link
+            className="flex items-center gap-2 hover:underline hover:underline-offset-4 text-gray-700 dark:text-gray-300"
+            href={`/${currentLang}/about`}
+          >
+            {dict.navigation?.about || 'About'}
+          </Link>
+          <Link
+            className="flex items-center gap-2 hover:underline hover:underline-offset-4 text-gray-700 dark:text-gray-300"
+            href={`/${currentLang}/privacy`}
+          >
+            {dict.navigation?.privacy || 'Privacy'}
+          </Link>
+          <Link
+            className="flex items-center gap-2 hover:underline hover:underline-offset-4 text-gray-700 dark:text-gray-300"
+            href={`/${currentLang}/terms`}
+          >
+            {dict.navigation?.terms || 'Terms'}
+          </Link>
+        </div>
+        <div className="flex flex-wrap space-x-3 items-center mt-4 sm:mt-0">
+          <Link 
+            href={`/en${getPathWithoutLang()}`} 
+            className={`opacity-70 hover:opacity-100 transition-opacity ${
+              currentLang === 'en' ? 'opacity-100' : ''
+            }`}
+            title={dict.languages?.english || 'English'}
+            aria-label={dict.languages?.english || 'English'}
+          >
+            <USAFlag className="w-5.5 h-4" />
+          </Link>
+          <Link 
+            href={`/es${getPathWithoutLang()}`} 
+            className={`opacity-70 hover:opacity-100 transition-opacity ${
+              currentLang === 'es' ? 'opacity-100' : ''
+            }`}
+            title={dict.languages?.spanish || 'Español'}
+            aria-label={dict.languages?.spanish || 'Español'}
+          >
+            <SpainFlag className="w-5.5 h-4" />
+          </Link>
+          <Link 
+            href={`/he${getPathWithoutLang()}`} 
+            className={`opacity-70 hover:opacity-100 transition-opacity ${
+              currentLang === 'he' ? 'opacity-100' : ''
+            }`}
+            title={dict.languages?.hebrew || 'עברית'}
+            aria-label={dict.languages?.hebrew || 'עברית'}
+          >
+            <IsraelFlag className="w-5.5 h-4" />
+          </Link>
+          <Link 
+            href={`/ru${getPathWithoutLang()}`} 
+            className={`opacity-70 hover:opacity-100 transition-opacity ${
+              currentLang === 'ru' ? 'opacity-100' : ''
+            }`}
+            title={dict.languages?.russian || 'Русский'}
+            aria-label={dict.languages?.russian || 'Русский'}
+          >
+            <RussiaFlag className="w-5.5 h-4" />
+          </Link>
+          <Link 
+            href={`/zh${getPathWithoutLang()}`} 
+            className={`opacity-70 hover:opacity-100 transition-opacity ${
+              currentLang === 'zh' ? 'opacity-100' : ''
+            }`}
+            title={dict.languages?.chinese || '中文'}
+            aria-label={dict.languages?.chinese || '中文'}
+          >
+            <ChinaFlag className="w-5.5 h-4" />
+          </Link>
+        </div>
       </div>
     </footer>
   );

@@ -12,19 +12,23 @@ export default function AdminLogsPage({ params }: { params: { lang: string } }) 
       setDictionary(dict);
     };
     
-    loadDictionary();
+    loadDictionary(); 
   }, [params.lang]);
 
   if (!dictionary) {
-    return <div>Loading...</div>;
+    return <div>{params?.lang === 'en' ? 'Loading...' : 
+           params?.lang === 'es' ? 'Cargando...' : 
+           params?.lang === 'he' ? 'טוען...' : 
+           params?.lang === 'ru' ? 'Загрузка...' : 
+           params?.lang === 'zh' ? '加载中...' : 'Loading...'}</div>;
   }
 
   return (
     <div className="p-8">
-      <h1 className="text-2xl font-bold mb-4">Admin Logs</h1>
-      <p className="mb-4">This is a placeholder for the Admin Logs page.</p>
+      <h1 className="text-2xl font-bold mb-4">{dictionary.adminLogs?.title || 'Admin Logs'}</h1>
+      <p className="mb-4">{dictionary.adminLogs?.placeholder || 'This is a placeholder for the Admin Logs page.'}</p>
       <div className="p-4 bg-yellow-100 border border-yellow-400 rounded">
-        <p>⚠️ Under Construction</p>
+        <p>{dictionary.adminLogs?.underConstruction || '⚠️ Under Construction'}</p>
       </div>
     </div>
   );

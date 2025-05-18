@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { getLoginDictionary } from '../dictionaries';
+import { getLoginDictionary } from '../dictionaries'; 
 
 /**
  * @page LoginPage

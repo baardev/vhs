@@ -25,7 +25,7 @@ const geistMono = Geist_Mono({
 
 // Type for the dictionary
 interface Dictionary {
-  debugLogs?: {
+  debugLogsPage?: {
     title?: string;
     viewLogsLink?: string;
   };
@@ -47,12 +47,12 @@ export default function DebugLogs({ params: { lang } }) {
   return (
     <div className={`${geistSans.className} ${geistMono.className} container mx-auto px-4 py-8`}>
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-800 dark:text-white">
-        {dict?.debugLogs?.title || 'Debug Logs'}
+        {dict?.debugLogsPage?.title || 'Debug Logs'}
       </h1>
       
       <p className="text-center">
         <Link href={`/${lang}/view-logs`} className="text-blue-500 hover:underline">
-          {dict?.debugLogs?.viewLogsLink || 'Go to the logs viewer'}
+          {dict?.debugLogsPage?.viewLogsLink || 'Go to the logs viewer'}
         </Link>
       </p>
     </div>

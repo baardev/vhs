@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useParams } from 'next/navigation';
+import { getCommonDictionary } from '../../dictionaries';
 
 /**
  * @interface User
@@ -71,30 +73,35 @@ const UserDeleteModal: React.FC<UserDeleteModalProps> = ({ user, onClose, onDele
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const params = useParams() || {};
+  const lang = (params.lang as string) || locale || 'en';
+
   useEffect(() => {
     const loadDictionary = async () => {
       try {
-        // In a real implementation, we would load the dictionary from a JSON file
-        // For now, we'll use a simple fallback
-        const dictionaryData = {
+        const loadedDictionary = await getCommonDictionary(lang);
+        setDictionary(loadedDictionary);
+      } catch (error) {
+        console.error('Error loading dictionary in UserDeleteModal:', error);
+        setDictionary({
           admin: {
             confirmDelete: 'Confirm Delete',
-            deleteConfirmation: `Are you sure you want to delete the user "${user.username}"?`,
-            deleteWarning: 'This action cannot be undone.',
+            deleteConfirmation: 'Are you sure you want to delete the user {{username}}?',
+            deleteWarning: 'This action cannot be undone. All user data will be permanently deleted.',
             cancel: 'Cancel',
             delete: 'Delete',
             deleting: 'Deleting...',
             errorDeletingUser: 'Error deleting user'
+          },
+          common: {
+            loading: 'Loading...'
           }
-        };
-        setDictionary(dictionaryData);
-      } catch (error) {
-        console.error('Error loading dictionary:', error);
+        });
       }
     };
 
     loadDictionary();
-  }, [locale, user.username]);
+  }, [lang]);
 
   const handleDelete = async () => {
     setLoading(true);

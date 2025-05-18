@@ -3,6 +3,7 @@
 import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { getCommonDictionary } from '../../dictionaries';
 
 /**
  * @interface PlayerCard
@@ -93,9 +94,11 @@ interface PlayerCard {
  * @interface PlayerCardDetailProps
  * @description Defines the props for the PlayerCardDetail component.
  * @property {number} cardId - The unique identifier of the player card to display.
+ * @property {string} [lang='en'] - The language code for translations.
  */
 interface PlayerCardDetailProps {
   cardId: number;
+  lang?: string;
 }
 
 /**
@@ -104,6 +107,7 @@ interface PlayerCardDetailProps {
  * Allows editing of the player card data if the user has appropriate permissions (implicitly, through API).
  * @param {PlayerCardDetailProps} props - The props for the component.
  * @param {number} props.cardId - The ID of the player card to fetch and display.
+ * @param {string} [props.lang='en'] - The language code for translations.
  *
  * @remarks
  * - Fetches player card data from `/api/player-cards/:cardId` on mount or when `cardId` changes.
@@ -117,6 +121,7 @@ interface PlayerCardDetailProps {
  * - When not editing, displays player card details in a read-only format.
  * - Helper functions `getFrontNineTotal`, `getBackNineTotal`, and `getTotalStrokes` calculate sum of scores.
  * - Displays player name, course name, play date, and detailed sections for Score, Handicap & Status, Statistics, Scorecard (hole-by-hole), and Additional Information.
+ * - Loads translations based on the provided language code.
  *
  * Called by:
  * - `frontend/app/[lang]/player-cards/[id]/page.tsx`
@@ -127,15 +132,33 @@ interface PlayerCardDetailProps {
  * - `axios.put` (to update player card data at `/api/player-cards/:cardId`)
  * - `next/link`'s `Link` component (for navigation back to the player cards list)
  * - Internal helper functions: `getFrontNineTotal`, `getBackNineTotal`, `getTotalStrokes`.
+ * - `getCommonDictionary` (for internationalization)
  *
  * @returns {JSX.Element} The rendered player card detail view or edit form.
  */
-const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
+const PlayerCardDetail = ({ cardId, lang = 'en' }: PlayerCardDetailProps) => {
   const [playerCard, setPlayerCard] = useState<PlayerCard | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<PlayerCard | null>(null);
+  const [dict, setDict] = useState<Record<string, any>>({});
+
+  // Load dictionary
+  useEffect(() => {
+    const loadDictionary = async () => {
+      try {
+        const dictionary = await getCommonDictionary(lang);
+        setDict(dictionary);
+      } catch (err) {
+        console.error('Error loading dictionary in PlayerCardDetail:', err);
+      }
+    };
+    
+    if (lang) {
+      loadDictionary();
+    }
+  }, [lang]);
 
   useEffect(() => {
     const fetchPlayerCard = async () => {
@@ -182,7 +205,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
       setError('');
     } catch (err) {
       console.error('Error updating player card:', err);
-      setError('Failed to update player card. Please try again.');
+      setError(dict?.playerCardDetail?.updateFailed || 'Failed to update player card. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -202,11 +225,11 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
     setFormData(prev => prev ? { ...prev, [name]: processedValue } : null);
   };
 
-  if (loading && !isEditing) return <div className="text-center py-8">Loading player card details...</div>;
+  if (loading && !isEditing) return <div className="text-center py-8">{dict?.playerCardDetail?.loading || 'Loading player card details...'}</div>;
   if (error && !isEditing) return <div className="text-center py-8 text-red-600">{error}</div>;
-  if (!playerCard && !isEditing) return <div className="text-center py-8">Player card not found</div>;
-  if (!formData && isEditing) return <div className="text-center py-8">Loading edit form...</div>;
-  if (!playerCard && !formData) return <div className="text-center py-8">Player card data unavailable.</div>;
+  if (!playerCard && !isEditing) return <div className="text-center py-8">{dict?.playerCardDetail?.notFound || 'Player card not found'}</div>;
+  if (!formData && isEditing) return <div className="text-center py-8">{dict?.playerCardDetail?.loadingEdit || 'Loading edit form...'}</div>;
+  if (!playerCard && !formData) return <div className="text-center py-8">{dict?.playerCardDetail?.dataUnavailable || 'Player card data unavailable.'}</div>;
 
   const displayData = isEditing && formData ? formData : playerCard;
   if (!displayData) return <div className="text-center py-8">Data unavailable.</div>;
@@ -239,73 +262,73 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
             <div>
               <div className="mb-4">
                 <Link href="/player-cards" className="text-white hover:underline">
-                  &larr; Back to Player Cards
+                  &larr; {dict?.playerCardDetail?.backToCards || 'Back to Player Cards'}
                 </Link>
               </div>
               <h1 className="text-2xl font-bold mb-2">
-                Editing: {formData.player_name || `Player #${formData.player_id}`} - {new Date(formData.play_date).toLocaleDateString()}
+                {dict?.playerCardDetail?.editing || 'Editing:'} {formData.player_name || `Player #${formData.player_id}`} - {new Date(formData.play_date).toLocaleDateString()}
               </h1>
               <p className="text-lg">{formData.course_name || `Course #${formData.course_id}`}</p>
             </div>
             <div>
               <button type="submit" disabled={loading} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mr-2 disabled:opacity-50">
-                {loading ? 'Saving...' : 'Save'}
+                {loading ? (dict?.playerCardDetail?.savingButton || 'Saving...') : (dict?.playerCardDetail?.saveButton || 'Save')}
               </button>
               <button type="button" onClick={handleCancel} disabled={loading} className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded disabled:opacity-50">
-                Cancel
+                {dict?.playerCardDetail?.cancelButton || 'Cancel'}
               </button>
             </div>
           </div>
           {error && <div className="p-4 bg-red-100 text-red-700 text-center">{error}</div>}
           
           <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Score Details</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{dict?.playerCardDetail?.scoreDetails || 'Score Details'}</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">Score</h3>
+                <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">{dict?.playerCardDetail?.score?.title || 'Score'}</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Gross</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.score?.gross || 'Gross'}</p>
                     <input type="number" name="gross" value={formData.gross ?? ''} onChange={handleChange} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Net</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.score?.net || 'Net'}</p>
                     <input type="number" name="net" value={formData.net ?? ''} onChange={handleChange} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Front 9 (Display)</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.score?.front9 || 'Front 9'} (Display)</p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.ida || getFrontNineTotal(formData) || '-'}</p>
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Back 9 (Display)</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.score?.back9 || 'Back 9'} (Display)</p>
                     <p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.vta || getBackNineTotal(formData) || '-'}</p>
                   </div>
                 </div>
               </div>
               
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">Handicap & Status</h3>
+                <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">{dict?.playerCardDetail?.handicapStatus || 'Handicap & Status'}</h3>
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">HCPI</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.handicap?.hcpi || 'HCPI'}</p>
                     <input type="number" step="0.1" name="hcpi" value={formData.hcpi ?? ''} onChange={handleChange} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">HCP</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.handicap?.hcp || 'HCP'}</p>
                     <input type="number" step="0.1" name="hcp" value={formData.hcp ?? ''} onChange={handleChange} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Differential</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.handicap?.differential || 'Differential'}</p>
                     <input type="number" step="0.1" name="differential" value={formData.differential ?? ''} onChange={handleChange} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Category</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.handicap?.category || 'Category'}</p>
                     <input type="text" name="category" value={formData.category ?? ''} onChange={handleChange} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600" />
                   </div>
                   <div>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Status (Tarj)</p>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.handicap?.status || 'Status (Tarj)'}</p>
                     <select name="tarj" value={formData.tarj ?? ''} onChange={handleChange} className="w-full p-2 border rounded-md dark:bg-gray-700 dark:text-white dark:border-gray-600">
-                      <option value="">Select Status</option>
+                      <option value="">{dict?.playerCardDetail?.handicap?.selectStatus || 'Select Status'}</option>
                       <option value="OK">OK</option>
                       <option value="NPT">NPT</option>
                       <option value="ERR">ERR</option>
@@ -313,7 +336,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                   </div>
                   <div>
                     <label htmlFor="verifiedEdit" className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                      Verified:
+                      {dict?.playerCardDetail?.handicap?.verified || 'Verified:'}
                       <input type="checkbox" id="verifiedEdit" name="verified" checked={formData.verified ?? false} onChange={handleChange} className="ml-2 h-4 w-4 text-indigo-600 border-gray-300 rounded dark:bg-gray-900 dark:border-gray-600 focus:ring-indigo-500" />
                     </label>
                   </div>
@@ -321,27 +344,27 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
               </div>
               
               <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">Statistics (Display)</h3>
+                <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">{dict?.playerCardDetail?.statistics || 'Statistics'} (Display)</h3>
                 <div className="grid grid-cols-2 gap-4">
-                  <div><p className="text-sm text-gray-500 dark:text-gray-400">Pars</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.par_holes || '-'}</p></div>
-                  <div><p className="text-sm text-gray-500 dark:text-gray-400">Birdies</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.bir || '-'}</p></div>
-                  <div><p className="text-sm text-gray-500 dark:text-gray-400">Bogeys</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.bog || '-'}</p></div>
-                  <div><p className="text-sm text-gray-500 dark:text-gray-400">Double Bogeys</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.bg2 || '-'}</p></div>
+                  <div><p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.stats?.pars || 'Pars'}</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.par_holes || '-'}</p></div>
+                  <div><p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.stats?.birdies || 'Birdies'}</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.bir || '-'}</p></div>
+                  <div><p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.stats?.bogeys || 'Bogeys'}</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.bog || '-'}</p></div>
+                  <div><p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.stats?.doubleBogeys || 'Double Bogeys'}</p><p className="text-lg font-semibold text-gray-900 dark:text-white">{formData.bg2 || '-'}</p></div>
                 </div>
               </div>
             </div>
           </div>
 
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Scorecard</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{dict?.playerCardDetail?.scorecard || 'Scorecard'}</h2>
             
             <div className="overflow-x-auto mb-6">
-              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">Front Nine</h3>
+              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">{dict?.playerCardDetail?.frontNine || 'Front Nine'}</h3>
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                      Hole
+                      {dict?.playerCardDetail?.hole || 'Hole'}
                     </th>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                       <th key={num} className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
@@ -349,7 +372,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                       </th>
                     ))}
                     <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      OUT
+                      {dict?.playerCardDetail?.out || 'OUT'}
                     </th>
                   </tr>
                 </thead>
@@ -381,12 +404,12 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
             </div>
             
             <div className="overflow-x-auto">
-              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">Back Nine</h3>
+              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">{dict?.playerCardDetail?.backNine || 'Back Nine'}</h3>
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                      Hole
+                      {dict?.playerCardDetail?.hole || 'Hole'}
                     </th>
                     {[10, 11, 12, 13, 14, 15, 16, 17, 18].map(num => (
                       <th key={num} className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
@@ -394,10 +417,10 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                       </th>
                     ))}
                     <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                      IN
+                      {dict?.playerCardDetail?.in || 'IN'}
                     </th>
                     <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      TOTAL
+                      {dict?.playerCardDetail?.total || 'TOTAL'}
                     </th>
                   </tr>
                 </thead>
@@ -433,10 +456,10 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
           </div>
 
           <div className="p-6 bg-gray-50 dark:bg-gray-700">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Additional Information</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{dict?.playerCardDetail?.additionalInfo || 'Additional Information'}</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Weather</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.weather || 'Weather'}</p>
                 <input 
                   type="text" 
                   name="weather" 
@@ -446,7 +469,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                 />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Day of Week</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.dayOfWeek || 'Day of Week'}</p>
                 <input 
                   type="text" 
                   name="day_of_week" 
@@ -456,7 +479,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                 />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Post</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.post || 'Post'}</p>
                 <textarea 
                   name="post" 
                   value={formData.post ?? ''} 
@@ -466,7 +489,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                 />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Judges</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.judges || 'Judges'}</p>
                 <textarea 
                   name="judges" 
                   value={formData.judges ?? ''} 
@@ -476,7 +499,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                 />
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Tee</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.tee || 'Tee'}</p>
                 <input 
                   type="text" 
                   name="tee_id"
@@ -611,15 +634,15 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
           </div>
 
           <div className="p-6">
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Scorecard</h2>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">{dict?.playerCardDetail?.scorecard || 'Scorecard'}</h2>
             
             <div className="overflow-x-auto mb-6">
-              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">Front Nine</h3>
+              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">{dict?.playerCardDetail?.frontNine || 'Front Nine'}</h3>
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                      Hole
+                      {dict?.playerCardDetail?.hole || 'Hole'}
                     </th>
                     {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(num => (
                       <th key={num} className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
@@ -627,7 +650,7 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                       </th>
                     ))}
                     <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      OUT
+                      {dict?.playerCardDetail?.out || 'OUT'}
                     </th>
                   </tr>
                 </thead>
@@ -653,12 +676,12 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
             </div>
             
             <div className="overflow-x-auto">
-              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">Back Nine</h3>
+              <h3 className="text-md font-medium mb-2 text-gray-700 dark:text-gray-300">{dict?.playerCardDetail?.backNine || 'Back Nine'}</h3>
               <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 border border-gray-200 dark:border-gray-700">
                 <thead className="bg-gray-100 dark:bg-gray-700">
                   <tr>
                     <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                      Hole
+                      {dict?.playerCardDetail?.hole || 'Hole'}
                     </th>
                     {[10, 11, 12, 13, 14, 15, 16, 17, 18].map(num => (
                       <th key={num} className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
@@ -666,10 +689,10 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
                       </th>
                     ))}
                     <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider border-r">
-                      IN
+                      {dict?.playerCardDetail?.in || 'IN'}
                     </th>
                     <th className="px-3 py-2 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      TOTAL
+                      {dict?.playerCardDetail?.total || 'TOTAL'}
                     </th>
                   </tr>
                 </thead>
@@ -702,23 +725,23 @@ const PlayerCardDetail = ({ cardId }: PlayerCardDetailProps) => {
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-white">Additional Information</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Weather</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.weather || 'Weather'}</p>
                 <p className="text-md font-medium text-gray-900 dark:text-white">{playerCard.weather || '-'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Day of Week</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.dayOfWeek || 'Day of Week'}</p>
                 <p className="text-md font-medium text-gray-900 dark:text-white">{playerCard.day_of_week || '-'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Post</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.post || 'Post'}</p>
                 <p className="text-md font-medium text-gray-900 dark:text-white">{playerCard.post || '-'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Judges</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.judges || 'Judges'}</p>
                 <p className="text-md font-medium text-gray-900 dark:text-white">{playerCard.judges || '-'}</p>
               </div>
               <div>
-                <p className="text-sm text-gray-500 dark:text-gray-400">Tee</p>
+                <p className="text-sm text-gray-500 dark:text-gray-400">{dict?.playerCardDetail?.additional?.tee || 'Tee'}</p>
                 <p className="text-md font-medium text-gray-900 dark:text-white">{playerCard.tee_name || playerCard.tee_id || '-'}</p>
               </div>
             </div>

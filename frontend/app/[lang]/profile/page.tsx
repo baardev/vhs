@@ -23,7 +23,7 @@ import { getCommonDictionary } from '../dictionaries';
  * 
  * @calledBy
  * - Next.js App Router (when user navigates to /{lang}/profile)
- * - Navbar component (when user clicks on their username or profile link)
+ * - Navbar component (when user clicks on their username or profile link) 
  * 
  * @calls
  * - API: GET /api/auth/profile (to fetch user profile data)

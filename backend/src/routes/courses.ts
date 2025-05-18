@@ -83,7 +83,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction): Promise
   console.log('Query running with x_course_names table:', q);
 
   try {
-    const coursesResult = await pool.query(q);
+    const coursesResult = await pool.query(q);    
     console.log(`Found ${coursesResult.rowCount} courses`);    
     res.json(coursesResult.rows);
   } catch (error) {

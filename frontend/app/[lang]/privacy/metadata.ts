@@ -1,5 +1,9 @@
-export function generateMetadata({ params: { lang } }) {
+import { getCommonDictionary } from '../../dictionaries';
+
+export async function generateMetadata({ params: { lang } }) {
+  const dict = await getCommonDictionary(lang);
+  
   return {
-    title: 'Privacy Policy - Virtual Handicap System'
+    title: dict?.privacyPage?.title || 'Privacy Policy - Virtual Handicap System'
   };
 } 

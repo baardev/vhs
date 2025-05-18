@@ -23,7 +23,7 @@ import { getCommonDictionary } from '../../[lang]/dictionaries';
  * 
  * @calledBy
  * - Next.js App Router (when user navigates to /{lang}/terms)
- * - Footer links (typically contains a "Terms of Service" link)
+ * - Footer links (typically contains a "Terms of Service" link) 
  * - Registration page (for users to review before creating an account)
  * - Legal notice references throughout the application
  * 

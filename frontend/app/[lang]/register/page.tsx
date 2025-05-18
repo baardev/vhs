@@ -21,7 +21,7 @@ const geistSans = Geist({
  * @description Next.js font optimization for Geist Mono font.
  */
 const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+  variable: "--font-geist-mono", 
   subsets: ["latin"],
 });
 
