@@ -1,26 +1,39 @@
 #!/bin/bash
+# Simple script to export variables from .env file with command substitution
+# Shows colored output: variable names in red, values in green
 
-source ${HOME}/sites/vhs/.env
+# Color codes
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m' # No Color
+
+while IFS= read -r line || [[ -n "$line" ]]; do
+  # Skip comments and empty lines
+  if [[ $line != \#* ]] && [[ -n $line ]]; then
+    # Handle export keyword if present
+    [[ $line == export* ]] && line="${line#export }"
+    
+    # Get variable name
+    var_name="${line%%=*}"
+    
+    # Evaluate and export the line (handles command substitution)
+    eval "export $line"
+    
+    # Get and print the actual value after evaluation with colors
+    eval "echo -e \"Exported: ${RED}$var_name${NC}=${GREEN}\$$var_name${NC}\""
+  fi
+done < .env
+
+# Add any additional variables here
+export NODE_ENV=development
+echo -e "Exported: ${RED}NODE_ENV${NC}=${GREEN}$NODE_ENV${NC}"
+
+echo -e "${NC}Environment variables loaded successfully!${NC}"
+
 
 export NODE_ENV=production
-export ROOT_DIR=$(git rev-parse --show-toplevel)
+echo -e "${NC}OVERIDE: ${RED}NODE_ENV${NC}=${GREEN}${NODE_ENV}${NC}"
 
 
-echo "DISPLAY: [$DISPLAY]"
-echo "DB_USER: [$DB_USER]"
-echo "DB_NAME: [$DB_NAME]"
-echo "DB_HOST: [$DB_HOST]"
-echo "DB_PORT: [$PGPORT]"
-echo "DATABASE_URL: [$DATABASE_URL]"
-echo "PGUSER: [$PGUSER]"
-echo "PGDATABASE: [$PGDATABASE]"    
-echo "DB_CONTAINER: [$DB_CONTAINER]"
-echo "PGHOST: [$PGHOST]"
-echo "PGPORT: [$PGPORT]"
-echo "NODE_ENV: [$NODE_ENV]"
-echo "COMPOSE_BAKE: [$COMPOSE_BAKE]"
-echo "ROOT_DIR: [$ROOT_DIR]"
-echo "PATH: [$PATH]"
 
-echo "PGPASSWORD: [$PGPASSWORD]"
-echo "DB_PASSWORD: [$DB_PASSWORD]"
+
