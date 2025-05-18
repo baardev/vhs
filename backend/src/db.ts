@@ -7,7 +7,7 @@ dotenv.config();
 // Override the pg module defaults for every connection
 import * as pg from 'pg';
 // Change the default port for all pg connections
-(pg.defaults as any).port = 6541;
+(pg.defaults as any).port = parseInt(process.env.PGPORT || '6541');
 
 // Create a simple dummy data implementation if database connection fails
 let useDummyData = false;
@@ -50,8 +50,7 @@ const pool = new Pool({
   host: process.env.DB_HOST || 'db',
   database: process.env.DB_NAME || 'vhsdb',
   password: process.env.DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || '6541'),
-  // Force the port to be 6541 regardless of defaults
+  port: parseInt(process.env.DB_PORT || process.env.PGPORT || '5432'),
   // This explicit setting will override any defaults
 });
 

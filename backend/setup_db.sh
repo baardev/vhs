@@ -17,10 +17,10 @@ EOF
 
 # Connect to the new database and create schema
 echo "Setting up database tables..."
-PGPASSWORD=adminpassword psql -h localhost -p 5432 -U admin -d postgres -c "SELECT 1 FROM pg_database WHERE datname = 'vhsdb'" | grep -q 1 || PGPASSWORD=adminpassword psql -h localhost -p 5432 -U admin -d postgres -c "CREATE DATABASE vhsdb OWNER admin"
+PGPASSWORD=adminpassword psql -h localhost -p 6541 -U admin -d postgres -c "SELECT 1 FROM pg_database WHERE datname = 'vhsdb'" | grep -q 1 || PGPASSWORD=adminpassword psql -h localhost -p 6541 -U admin -d postgres -c "CREATE DATABASE vhsdb OWNER admin"
 
 # Run the SQL setup script
 echo "Creating tables in vhsdb database..."
-PGPASSWORD=adminpassword psql -h localhost -p 5432 -U admin -d vhsdb -f sql/setup_database.sql
+PGPASSWORD=adminpassword psql -h localhost -p 6541 -U admin -d vhsdb -f sql/setup_database.sql
 
 echo "Database setup complete!"

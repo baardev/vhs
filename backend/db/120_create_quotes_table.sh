@@ -22,7 +22,7 @@ echo "┌───────────────────────�
 echo "│ ${ROOT_DIR}/backend/db/120_create_quotes_table.sh..."
 echo "└───────────────────────────────────────────────────────┘"
 
-if docker exec -i $DB_CONTAINER psql -U admin -d vhsdb < "$SQL_FILE"; then
+if docker exec -i $DB_CONTAINER psql -U admin -d "$DB_NAME" -p ${PGPORT} < "$SQL_FILE"; then
     echo "Quotes table created successfully"
 else
     echo "Error: Failed to create quotes table"

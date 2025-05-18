@@ -16,9 +16,9 @@ from datetime import datetime
 DB_PARAMS = {
     'dbname': 'vhsdb',
     'user': 'admin',
-    'password': 'admin123',
+    'password': 'ABeoAuNKL5f',
     'host': 'localhost',
-    'port': '5432'
+    'port': '6541'
 }
 
 def connect_to_db():

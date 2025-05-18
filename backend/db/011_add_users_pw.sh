@@ -8,7 +8,7 @@ source ${HOME}/sites/vhs/.env
 # DB_NAME=${DB_NAME:-vhsdb}
 # DB_PASSWORD=${DB_PASSWORD:-"bcrypt_hashed_password_here"}
 
-docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -tAc "CREATE EXTENSION IF NOT EXISTS pgcrypto;" 
+docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -p ${PGPORT} -tAc "CREATE EXTENSION IF NOT EXISTS pgcrypto;" 
 
 function add_user_pw() {
     if [ -z "$1" ]; then
@@ -18,7 +18,7 @@ function add_user_pw() {
     
     # echo "Setting password for user '$1'..."
     
-    if docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -tAc \
+    if docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -p ${PGPORT} -tAc \
         "UPDATE users SET password = crypt('$DB_PASSWORD', gen_salt('bf')) WHERE username = '$1' RETURNING id" | grep -q "^[0-9]"; then
         echo "✅ User '$1' password updated successfully"
     else

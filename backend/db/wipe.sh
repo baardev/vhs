@@ -23,13 +23,13 @@ fi
 # fi
 
 echo "Dropping database (if exists)..."
-if ! docker exec -i $DB_CONTAINER psql -U admin -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'vhsdb' AND pid <> pg_backend_pid();" -c "DROP DATABASE IF EXISTS vhsdb;"; then
+if ! docker exec -i $DB_CONTAINER psql -U admin -p ${PGPORT} -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'vhsdb' AND pid <> pg_backend_pid();" -c "DROP DATABASE IF EXISTS vhsdb;"; then
     echo "Error: Failed to drop database."
     exit 1
 fi
 
 echo "Creating fresh database..."
-if ! docker exec -i $DB_CONTAINER psql -U admin -d postgres -c 'CREATE DATABASE vhsdb OWNER admin;'; then
+if ! docker exec -i $DB_CONTAINER psql -U admin -p ${PGPORT} -d postgres -c 'CREATE DATABASE vhsdb OWNER admin;'; then
     echo "Error: Failed to create database."
     exit 1
 fi

@@ -17,4 +17,4 @@ echo "└───────────────────────�
 
 
 docker cp ${ROOT_DIR}/backend/db/csv/country_codes.csv $DB_CONTAINER:/tmp/country_codes.csv
-docker exec -i $DB_CONTAINER psql -U admin -d vhsdb < ${ROOT_DIR}/backend/db/sql/create_country_codes.sql   
+docker exec -i $DB_CONTAINER psql -U admin -d "$DB_NAME" -p ${PGPORT} < ${ROOT_DIR}/backend/db/sql/create_country_codes.sql   

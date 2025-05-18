@@ -16,5 +16,5 @@ echo "│ ${ROOT_DIR}/backend/db/300_create_course_holes.sh..."
 echo "└───────────────────────────────────────────────────────┘"
 
 docker cp ${ROOT_DIR}/backend/db/csv/300_course_holes.csv $DB_CONTAINER:/tmp/300_course_holes.csv
-docker exec -i $DB_CONTAINER psql -U admin -d vhsdb < ${ROOT_DIR}/backend/db/sql/300_create_course_holes.sql
+docker exec -i $DB_CONTAINER psql -U admin -d "$DB_NAME" -p ${PGPORT} < ${ROOT_DIR}/backend/db/sql/300_create_course_holes.sql
 
