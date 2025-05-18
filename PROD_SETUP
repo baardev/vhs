@@ -26,12 +26,11 @@ done < .env
 
 # Add any additional variables here
 
-export NODE_ENV=production
+export NODE_ENV=development
 echo -e "${NC}OVERIDE: ${RED}NODE_ENV${NC}=${GREEN}${NODE_ENV}${NC}"
 
-export PATH=${ROOT_DIR}/sites/vhs/utils:$PATH
+ROOT_DIR=`git rev-parse --show-toplevel`
+echo -e "${NC}OVERIDE: ${RED}ROOT_DIR${NC}=${GREEN}${ROOT_DIR}${NC}"
+
+export PATH=${ROOT_DIR}/utils:$PATH
 echo -e "${NC}OVERIDE: ${RED}PATH${NC}=${GREEN}${PATH}${NC}"
-
-
-
-
