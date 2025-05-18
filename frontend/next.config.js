@@ -31,6 +31,7 @@ const nextConfig = {
   env: {
     NEXT_PUBLIC_HOSTNAME: '',
     NEXT_PUBLIC_BASE_URL: '',
+    NEXT_PUBLIC_CACHE_BUSTER: Date.now().toString(),
   },
   
   typescript: {
@@ -57,9 +58,15 @@ const nextConfig = {
   // Add rewrites to direct API requests to the backend server
   async rewrites() {
     return [
+      // First try to use the local Next.js API routes (for /api/courses)
+      {
+        source: '/api/courses',
+        destination: '/api/courses',
+      },
+      // Then fallback to the backend for all other API routes
       {
         source: '/api/:path*',
-        destination: '/api/:path*', // Use relative URLs
+        destination: 'http://backend:4000/api/:path*',
       },
     ];
   },

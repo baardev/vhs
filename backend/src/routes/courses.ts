@@ -64,27 +64,30 @@ const upload = multer({
 
 // Get all courses
 router.get('/', async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  console.log('=== GET /api/courses received ===');
 
-  // Using data_by_tee view to get unique courses
+  // Using x_course_names table to get courses
   const q = `
-    SELECT DISTINCT 
+    SELECT 
       course_id, 
       course_name AS name, 
-      SPLIT_PART(course_name, ' - ', 1) AS city, 
-      'Argentina' AS country, 
-      'Buenos Aires Province' AS province_state 
+      city, 
+      country_code AS country, 
+      province AS province_state 
     FROM 
-      data_by_tee 
+      x_course_names 
     ORDER BY 
       course_name ASC
   `;
   
-  console.log('Query running with data_by_tee view:', q);
+  console.log('Query running with x_course_names table:', q);
 
   try {
-    const coursesResult = await pool.query(q);    
+    const coursesResult = await pool.query(q);
+    console.log(`Found ${coursesResult.rowCount} courses`);    
     res.json(coursesResult.rows);
   } catch (error) {
+    console.error('Error executing query:', error);
     next(error);
   }
 });

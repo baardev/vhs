@@ -129,7 +129,7 @@ CREATE TABLE public.x_course_names (
     address1 text,
     address2 text,
     city text,
-    province character varying(15),
+    province character varying(30),
     country_code character varying(2),
     telephone character varying(50),
     website text,

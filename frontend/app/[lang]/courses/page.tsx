@@ -35,6 +35,12 @@ export default function CoursesPage({ params }: { params: { lang: string } }) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [pageRenders, setPageRenders] = useState(0);
+
+  useEffect(() => {
+    setPageRenders(prev => prev + 1);
+    console.log(`CoursesPage render #${pageRenders + 1}`);
+  }, []);
 
   useEffect(() => {
     // Safety check for browser environment
@@ -49,9 +55,19 @@ export default function CoursesPage({ params }: { params: { lang: string } }) {
 
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('/api/courses');
+        console.log('CoursesPage: Fetching courses from API...');
+        const response = await axios.get(`/api/courses?cacheBuster=${Date.now()}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        console.log('CoursesPage: API response:', response);
+        
         // Ensure we always have an array, even if API returns null or undefined
         if (Array.isArray(response.data)) {
+          console.log('CoursesPage: Got courses array:', response.data.length, 'items');
           setCourses(response.data);
         } else {
           console.error('API returned non-array data:', response.data);
@@ -62,12 +78,29 @@ export default function CoursesPage({ params }: { params: { lang: string } }) {
         console.error('Error fetching courses:', err);
         setError('Failed to load courses. Please try again later.');
       } finally {
+        console.log('CoursesPage: Setting isLoading to false');
         setIsLoading(false);
       }
     };
 
     fetchCourses();
   }, []);
+  
+  useEffect(() => {
+    console.log('CoursesPage STATE updated:', {
+      coursesLength: courses.length,
+      isLoading,
+      error,
+      isAuthenticated
+    });
+  }, [courses, isLoading, error, isAuthenticated]);
+
+  console.log('CoursesPage RENDER:', {
+    coursesLength: courses.length,
+    isLoading,
+    error: error || 'none',
+    render: pageRenders
+  });
 
   return (
     <div className="min-h-screen bg-[#f8f9fa] dark:bg-[#111] py-12 px-4 sm:px-6 lg:px-8 relative">
@@ -95,6 +128,10 @@ export default function CoursesPage({ params }: { params: { lang: string } }) {
           <p className="text-gray-700 dark:text-[#b5ceff] text-lg">
             Browse our comprehensive database of golf courses. Click on a card to view detailed information including tee options, course ratings, and hole-by-hole data.
           </p>
+        </div>
+
+        <div className="p-2 mb-4 bg-gray-100 dark:bg-gray-800 rounded text-xs">
+          Debug: Page render #{pageRenders} | API data loaded: {courses.length} courses | Loading: {isLoading ? 'Yes' : 'No'}
         </div>
 
         <CourseCardGrid 

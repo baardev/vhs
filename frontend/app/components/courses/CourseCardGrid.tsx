@@ -55,17 +55,78 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
   const [courses, setCourses] = useState<Course[]>(propCourses || []);
   const [isLoading, setIsLoading] = useState(propIsLoading !== undefined ? propIsLoading : true);
   const [error, setError] = useState(propError || '');
+  // Add debugging state to track renders
+  const [renderCount, setRenderCount] = useState(0);
+
+  // Debug effects
+  useEffect(() => {
+    // Log when component receives new props
+    console.log('CourseCardGrid PROPS received:', { 
+      propCourses: propCourses?.length || 0, 
+      propIsLoading, 
+      propError,
+      lang
+    });
+  }, [propCourses, propIsLoading, propError, lang]);
+
+  // Initialize renderCount only once on mount
+  useEffect(() => {
+    setRenderCount(1);
+  }, []);
+
+  // Increment render count only when key props change
+  useEffect(() => {
+    if (renderCount > 0) { // Only increment after initial render
+      setRenderCount(prev => prev + 1);
+    }
+  }, [propCourses, propIsLoading, propError]); // Only update on prop changes
+
+  useEffect(() => {
+    // Log state changes without incrementing renderCount
+    console.log('CourseCardGrid STATE updated:', { 
+      coursesLength: courses.length,
+      isLoading,
+      error,
+      renderCount
+    });
+    // Removed setRenderCount to prevent infinite loops
+  }, [courses, isLoading, error, renderCount]);
+
+  // Monitor parent prop changes and update local state
+  useEffect(() => {
+    console.log('propCourses changed:', propCourses?.length || 0, 'items');
+    if (propCourses !== undefined) {
+      setCourses(propCourses);
+    }
+  }, [propCourses]);
+  
+  useEffect(() => {
+    if (propIsLoading !== undefined) {
+      setIsLoading(propIsLoading);
+    }
+  }, [propIsLoading]);
 
   // Only fetch courses if they weren't provided via props
   useEffect(() => {
     if (propCourses !== undefined) {
+      console.log('Skipping fetch - using provided courses');
       return; // Skip fetching if courses are provided via props
     }
 
     const fetchCourses = async () => {
       try {
-        const response = await axios.get('/api/courses');
+        console.log('CourseCardGrid fetching courses from API...');
+        // Add a cache buster to prevent caching
+        const response = await axios.get(`/api/courses?ts=${Date.now()}`, {
+          headers: {
+            'Cache-Control': 'no-cache, no-store, must-revalidate',
+            'Pragma': 'no-cache',
+            'Expires': '0'
+          }
+        });
+        console.log('CourseCardGrid API response:', response);
         if (Array.isArray(response.data)) {
+          console.log('CourseCardGrid setting courses:', response.data.length, 'items');
           setCourses(response.data);
         } else {
           console.error('API returned non-array data:', response.data);
@@ -76,6 +137,7 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
         console.error('Error fetching courses:', err);
         setError('Failed to load courses. Please try again later.');
       } finally {
+        console.log('CourseCardGrid setting isLoading to false');
         setIsLoading(false);
       }
     };
@@ -85,6 +147,13 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
 
   // Ensure courses is always an array
   const safeCourses = Array.isArray(courses) ? courses : [];
+  
+  console.log('CourseCardGrid RENDER state:', { 
+    isLoading, 
+    hasError: !!error, 
+    coursesCount: safeCourses.length,
+    renderCount
+  });
 
   if (isLoading) {
     return (
@@ -130,36 +199,45 @@ const CourseCardGrid: React.FC<CourseCardGridProps> = ({
     );
   }
 
+  // This is what should display the courses
+  console.log('CourseCardGrid rendering grid with courses:', safeCourses.map(c => c.course_id));
+  
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      {safeCourses.map((course) => (
-        <div
-          key={course.course_id}
-          className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
-        >
-          <div className="px-6 py-4">
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
-              {course.name || "Unknown Course"}
-            </h2>
-            <div className="flex items-center mt-2 text-gray-500 dark:text-[#b5ceff]">
-              <span>{course.city || "Unknown City"}, {course.province_state || "Unknown Province"}, {course.country || "Unknown Country"}</span>
-            </div>
-            
-            <div className="flex justify-between items-center mt-4">
-              <div className="text-sm text-gray-500 dark:text-gray-400">
-                Course ID: {course.course_id}
+    <div>
+      <div className="mb-4 p-2 text-xs text-gray-500 bg-gray-100 dark:bg-gray-800 rounded">
+        Debug: Loaded {safeCourses.length} courses | Loading: {isLoading ? 'Yes' : 'No'} | Render #{renderCount}
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {safeCourses.map((course) => (
+          <div
+            key={course.course_id}
+            className="bg-white dark:bg-[#1a2b41] rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow duration-300"
+          >
+            <div className="px-6 py-4">
+              <h2 className="text-xl font-semibold text-gray-800 dark:text-white truncate">
+                {course.name || "Unknown Course"}
+              </h2>
+              <div className="flex items-center mt-2 text-gray-500 dark:text-[#b5ceff]">
+                <span>{course.city || "Unknown City"}, {course.province_state || "Unknown Province"}, {course.country || "Unknown Country"}</span>
               </div>
-              <Link 
-                href={`/${lang}/courses/${course.course_id}`}
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#2d6a4f] hover:bg-[#1b4332] dark:bg-[#00cc7e] dark:hover:bg-[#00aa69] rounded-md"
-                onClick={(e) => e.stopPropagation()}
-              >
-                View Details
-              </Link>
+              
+              <div className="flex justify-between items-center mt-4">
+                <div className="text-sm text-gray-500 dark:text-gray-400">
+                  Course ID: {course.course_id}
+                </div>
+                <Link 
+                  href={`/${lang}/courses/${course.course_id}`}
+                  className="inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-[#2d6a4f] hover:bg-[#1b4332] dark:bg-[#00cc7e] dark:hover:bg-[#00aa69] rounded-md"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  View Details
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 };

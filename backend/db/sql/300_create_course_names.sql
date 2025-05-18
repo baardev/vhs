@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS x_course_names (
     address1 TEXT,
     address2 TEXT,
     city TEXT,
-    province VARCHAR(15),
+    province VARCHAR(30),
     country_code VARCHAR(2),
     telephone VARCHAR(50),
     website TEXT,
