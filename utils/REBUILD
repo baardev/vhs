@@ -179,7 +179,7 @@ wipe_all_data() {
         # Clean specific local directories if needed
         if [ -d "${ROOT_DIR}/frontend/.next" ]; then
             log_info "Cleaning ${ROOT_DIR}/frontend/.next..."
-            sudo chmod -R 777 "${ROOT_DIR}/frontend/.next"
+            chmod -R 777 "${ROOT_DIR}/frontend/.next"
             rm -rf "${ROOT_DIR}/frontend/.next"
         fi
         # Add other specific directory cleanups here if necessary
