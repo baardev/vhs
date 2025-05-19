@@ -10,7 +10,9 @@ services:
       - ./nginx/ssl:/etc/nginx/ssl
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
-      -  /var/log/nginx:/home/jw/sites/vhs/logs/nginx
+      - ./logs/nginx:/var/log/nginx   # needed to access the log files for Fail2Ban
+
+    
 
 
     depends_on:
