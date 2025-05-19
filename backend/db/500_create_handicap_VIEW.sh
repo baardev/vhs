@@ -30,7 +30,7 @@ echo "┌───────────────────────�
 echo "│ ${ROOT_DIR}/backend/db/500_create_handicap_VIEW.sh..."
 echo "└───────────────────────────────────────────────────────┘"
 
-if docker exec -i $DB_CONTAINER psql -U admin -d "$DB_NAME" -p ${PGPORT} < "$SQL_FILE"; then
+if docker exec -i $DB_CONTAINER psql -U admin -d "$DB_NAME" -p "${DB_PORT}" < "$SQL_FILE"; then
 
     echo "Handicap views created successfully"
 else

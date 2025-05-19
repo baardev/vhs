@@ -10,7 +10,7 @@
 db_exec() {
     local db=$1
     local cmd=$2
-    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p ${PGPORT} -c "$cmd"
+    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p "${DB_PORT}" -c "$cmd"
 }
 
 # Execute a PostgreSQL script file in the database container
@@ -18,7 +18,7 @@ db_exec() {
 db_exec_file() {
     local db=$1
     local file=$2
-    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p ${PGPORT} < "$file"
+    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p "${DB_PORT}" < "$file"
 }
 
 # Execute a PostgreSQL command with table-only output (no headers, aligned)
@@ -26,7 +26,7 @@ db_exec_file() {
 db_exec_table() {
     local db=$1
     local cmd=$2
-    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p ${PGPORT} -tA -c "$cmd"
+    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p "${DB_PORT}" -tA -c "$cmd"
 }
 
 # Check if a table exists in the database
@@ -34,8 +34,8 @@ db_exec_table() {
 db_table_exists() {
     local db=$1
     local table=$2
-    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p ${PGPORT} -tAc \
+    docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$db" -p "${DB_PORT}" -tAc \
         "SELECT EXISTS(SELECT 1 FROM information_schema.tables WHERE table_name='$table')" | grep -q t
 }
 
-echo "PostgreSQL helper functions loaded (using port ${PGPORT})" 
+echo "PostgreSQL helper functions loaded (using port ${DB_PORT})" 

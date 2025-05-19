@@ -105,7 +105,7 @@ rebuild_database() {
 
   #! save latest schema
   echo -e "\033[0;36mSaving latest schema to ${ROOT_DIR}/backend/db/sql/latest_schema.sql"
-  docker exec -i $DB_CONTAINER pg_dump -U admin -p ${PGPORT} --schema-only -d vhsdb > ${ROOT_DIR}/backend/db/sql/latest_schema.sql
+  docker exec -i $DB_CONTAINER pg_dump -U admin -p "${DB_PORT}" --schema-only -d vhsdb > ${ROOT_DIR}/backend/db/sql/latest_schema.sql
 
 
   echo -e "\033[0;36mVerifying..."

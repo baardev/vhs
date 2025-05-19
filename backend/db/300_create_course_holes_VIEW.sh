@@ -27,7 +27,7 @@ echo "┌───────────────────────�
 echo "│ ${ROOT_DIR}/backend/db/300_create_course_holes_VIEW.sh..."
 echo "└───────────────────────────────────────────────────────┘"
 
-if docker exec -i $DB_CONTAINER psql -U admin -d "$DB_NAME" -p ${PGPORT} < "$SQL_FILE"; then
+if docker exec -i $DB_CONTAINER psql -U admin -d "$DB_NAME" -p "${DB_PORT}" < "$SQL_FILE"; then
 
     echo "Course names view created successfully"
 else

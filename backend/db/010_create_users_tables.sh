@@ -24,6 +24,6 @@ fi
 echo "Creating user tables..."
 
 # Pass the password as a psql variable
-cat "$SQL_FILE" | docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -p ${PGPORT}  -v db_pass="'$DB_PASSWORD'"
+cat "$SQL_FILE" | docker exec -i "$DB_CONTAINER" psql -U "$DB_USER" -d "$DB_NAME" -p "${DB_PORT}" -v db_pass="'$DB_PASSWORD'"
 
 echo "User tables created successfully"
