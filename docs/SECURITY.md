@@ -363,6 +363,54 @@ group cpulimited {
 
 This will limit processes to 50% CPU usage.
 
+
+
+# Docker Specific
+
+## Docker has it’s own UFW rules, so ufw in general will not help secure docker’.  This docker wrapper help.  Biew README.md in repo
+
+```sh
+git clone https://github.com/chaifeng/ufw-docker.git
+cd ufw-docker
+sudo ./install.sh
+./ufw-docker install
+sudo ./ufw-docker install
+```
+Unless specifrdied explicity, all are using docker interface `docker0`.  
+
+To ban an IP
+
+```sh
+cd ~/src/ufw-docker
+sudo ./ufw-docker deny in on docker0 from 152.237.64.11
+LOGS # to test 
+sudo ufw status verbose # to confirm it is in the iptables
+```
+I also had to run the following to discover I was dropping ALL incoming, undo that, and reenable block only on one IP
+
+```sh
+sudo ufw status verbose
+sudo iptables -L DOCKER-USER -n -v
+sudo iptables -L ufw-user-forward -n -v
+sudo iptables -L ufw-docker-logging-deny -n -v
+sudo iptables -F ufw-docker-logging-deny
+sudo iptables -I DOCKER-USER -s 152.237.64.11 -j DROP
+# these work better
+
+sudo ufw deny from 1.0.0.0/8 to any
+sudo ufw deny from 1.2.0.0/16 to any
+sudo ufw deny from 1.2.3.0/24 to any
+sudo ufw deny from 1.2.3.4 to any
+```
+
+
+## Move postgress to a new port
+
+
+
+
+
+
 ## Conclusion
 
 These measures significantly harden your Ubuntu server against various attacks, including cryptocurrency mining. Remember to:
