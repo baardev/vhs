@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { getCommonDictionary } from './dictionaries';
 import RandomQuote from '../components/RandomQuote';
+import PdfSlideshow from '../components/PdfSlideshow';
 
 /**
  * @page HomePage 
@@ -113,6 +114,9 @@ export default function Home({ params }: { params: { lang: string } | Promise<{ 
           Descargar Reglas de Hándicap (2020, PDF, Español, 132 pgs)
         </a>
       </div>
+
+      {/* PDF Slideshow */}
+      <PdfSlideshow />
 
       {/* Features Section */}
       <div className="bg-gradient-to-r from-white to-blue-50 py-16 shadow-inner">
