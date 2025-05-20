@@ -168,6 +168,21 @@ export default function AdminDashboard({ params }: { params: { lang: string } })
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">{dict?.admin?.dashboard || 'Admin Dashboard'}</h1>
 
+        <div className="mb-6 flex gap-4">
+          <button
+            onClick={() => window.open('https://24.199.78.109:9090/', '_blank', 'noopener,noreferrer')}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none"
+          >
+            cockpit
+          </button>
+          <button
+            onClick={() => window.open('https://cloud.digitalocean.com/projects/709d047c-e020-4b6c-8531-2efb6176407f/resources?i=8b1fb3', '_blank', 'noopener,noreferrer')}
+            className="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 focus:outline-none"
+          >
+            ISP
+          </button>
+        </div>
+
         <div className="bg-white dark:bg-[#1a1a1a] shadow overflow-hidden sm:rounded-lg">
           <div className="px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700">
             <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{dict?.admin?.userManagement || 'User Management'}</h2>

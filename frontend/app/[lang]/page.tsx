@@ -94,6 +94,26 @@ export default function Home({ params }: { params: { lang: string } | Promise<{ 
         </div>
       </div>
 
+      {/* Download PDF Link */}
+      <div className="w-full flex flex-col items-center mb-8 gap-4">
+        <a
+          href="/2024-Rules-of-Handicapping-USGA_EN.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-6 py-3 bg-blue-700 text-white font-semibold rounded shadow hover:bg-blue-800 transition-colors"
+        >
+          Download the Rules of Handicapping - USGA (2024, PDF, English, 132 pgs)
+        </a>
+        <a
+          href="/2020-Rules-of-Handicapping-USGA_ES.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-block px-6 py-3 bg-green-700 text-white font-semibold rounded shadow hover:bg-green-800 transition-colors"
+        >
+          Descargar Reglas de Hándicap (2020, PDF, Español, 132 pgs)
+        </a>
+      </div>
+
       {/* Features Section */}
       <div className="bg-gradient-to-r from-white to-blue-50 py-16 shadow-inner">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

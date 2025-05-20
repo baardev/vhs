@@ -39,3 +39,11 @@ docs/implementation-plan.md
 frontend/app/[lang]/test/
 frontend/components.zip
 frontend/pages.zip
+RUNCURSOR
+docker-compose_broke.yml
+frontend/app/[lang]/test/
+logs/
+test-connection.js
+update_db_ports.sh
+updates.zip
+frontend/app/\[lang\]/test/
