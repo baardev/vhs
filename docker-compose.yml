@@ -19,7 +19,7 @@ services:
       - backend
       - frontend
     networks:
-      - web-network  # Changed to web-network for public-facing service
+      - app-network 
     build:
       context: ./nginx
       args:
@@ -52,7 +52,7 @@ services:
       # Add a custom pg_hba.conf with restricted access
       - ./db/config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
     networks:
-      - db-network  # Changed to db-network for database isolation
+      - app-network  # Changed to db-network for database isolation
     restart: unless-stopped
   backend:
     build:
@@ -88,8 +88,7 @@ services:
     ports:
       - "127.0.0.1:4000:4000"  # Restricted to localhost access only
     networks:
-      - db-network  # For database access
-      - web-network  # For frontend access
+      - app-network  # For frontend access
     volumes:
       - ./backend/blocked_news_words.txt:/app/blocked_news_words.txt:ro
     restart: unless-stopped
@@ -117,8 +116,5 @@ volumes:
   frontend_next_cache:
 
 networks:
-  web-network:  # For public-facing services
+  app-network:  # For public-facing services
     driver: bridge
-  db-network:   # For database communication (isolated)
-    driver: bridge
-    internal: true  # This network cannot be accessed from outside Docker

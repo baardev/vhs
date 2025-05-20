@@ -73,9 +73,72 @@ Fail2ban helps protect against brute force attacks:
 sudo apt install fail2ban
 sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.local
 sudo nano /etc/fail2ban/jail.local
+
+sudo systemctl start fail2ban
+sudo sudo systemctl enable fail2ban
 ```
 
-Configure for SSH (using your custom port) and Nginx:
+notes:
+
+```sh
+# most mount/bind the docker dir to the local volume
+services:
+  nginx:
+    volumes:
+      - ./logs/nginx:/var/log/nginx   # needed to access the log files for Fail2Ban
+
+```
+
+cat /etc/fail2ban/jail.local
+
+```sh
+[nginx-malicious]
+enabled = true
+port = http,https
+filter = nginx-malicious
+logpath = /home/jw/sites/vhs/logs/nginx/access.log
+maxretry = 1
+findtime = 60
+bantime = 86400
+backend = auto
+
+```
+
+cat  /etc/fail2ban/jail.d/defaults-debian.conf
+
+```sh
+[DEFAULT]
+banaction = nftables
+banaction_allports = nftables[type=allports]
+backend = systemd
+
+[sshd]
+enabled = true
+
+```
+
+cat  /etc/fail2ban/jail.d/nginx-malicious.conf
+
+```sh
+[nginx-malicious]
+enabled = true
+filter  = nginx-malicious
+port    = http,https
+logpath = /home/jw/sites/vhs/logs/nginx/access.log
+bantime = 86400
+findtime = 300
+maxretry = 1
+action = iptables[name=nginx-malicious, port=http, protocol=tcp]
+
+```
+
+
+
+
+
+
+
+## Configure for SSH (using your custom port) and Nginx:
 
 ```
 [sshd]
