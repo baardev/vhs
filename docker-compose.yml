@@ -1,3 +1,4 @@
+
 services:
   nginx:
     image: nginx:alpine
@@ -11,18 +12,22 @@ services:
       - ./nginx/certbot/conf:/etc/letsencrypt
       - ./nginx/certbot/www:/var/www/certbot
       - ./logs/nginx:/var/log/nginx   # needed to access the log files for Fail2Ban
+
+    
+
+
     depends_on:
       - backend
       - frontend
     networks:
-      - web-network  # Changed to web-network for public-facing service
+      - app-network 
     build:
       context: ./nginx
       args:
-        - NODE_ENV=production
+        - NODE_ENV=${NODE_ENV}
       dockerfile: Dockerfile
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
   # certbot:
   # image: certbot/certbot
   # volumes:
@@ -36,7 +41,7 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_PORT=6541
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
     # IMPORTANT: Removed public port exposure
     # ports:
     #  - "5432:5432"
@@ -48,7 +53,7 @@ services:
       # Add a custom pg_hba.conf with restricted access
       - ./db/config/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
     networks:
-      - db-network  # Changed to db-network for database isolation
+      - app-network  # Changed to db-network for database isolation
     restart: unless-stopped
   backend:
     build:
@@ -84,8 +89,7 @@ services:
     ports:
       - "127.0.0.1:4000:4000"  # Restricted to localhost access only
     networks:
-      - db-network  # For database access
-      - web-network  # For frontend access
+      - app-network  # For frontend access
     volumes:
       - ./backend/blocked_news_words.txt:/app/blocked_news_words.txt:ro
     restart: unless-stopped
@@ -93,16 +97,16 @@ services:
     build:
       context: ./frontend
       args:
-        - NODE_ENV=production
+        - NODE_ENV=${NODE_ENV}
     container_name: vhs-frontend
     ports:
-      - "127.0.0.1:3000:3000"  # Restricted to localhost access only
+      - "3000:3000"  # unRestricted by IP
     depends_on:
       - backend
     networks:
-      - web-network  # Changed to web-network
+      - app-network  # Changed to web-network
     environment:
-      - NODE_ENV=production
+      - NODE_ENV=${NODE_ENV}
       - NEXT_PUBLIC_HOSTNAME=libronico.com
       - NEXTAUTH_URL=https://libronico.com
       - NEXT_PUBLIC_BASE_URL=https://libronico.com
@@ -113,8 +117,5 @@ volumes:
   frontend_next_cache:
 
 networks:
-  web-network:  # For public-facing services
+  app-network:  # For public-facing services
     driver: bridge
-  db-network:   # For database communication (isolated)
-    driver: bridge
-    internal: true  # This network cannot be accessed from outside Docker

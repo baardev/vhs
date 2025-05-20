@@ -117,26 +117,7 @@ enabled = true
 
 ```
 
-cat  /etc/fail2ban/jail.d/nginx-malicious.conf
-
-```sh
-[nginx-malicious]
-enabled = true
-filter  = nginx-malicious
-port    = http,https
-logpath = /home/jw/sites/vhs/logs/nginx/access.log
-bantime = 86400
-findtime = 300
-maxretry = 1
-action = iptables[name=nginx-malicious, port=http, protocol=tcp]
-
-```
-
-
-
-
-
-
+ 
 
 ## Configure for SSH (using your custom port) and Nginx:
 
@@ -425,6 +406,37 @@ group cpulimited {
 ```
 
 This will limit processes to 50% CPU usage.
+
+```sh
+sudo nft list ruleset
+sudo iptables -L -n -v # Show IPv4 iptables rules (filter table — default):
+
+sudo iptables -t nat -L -n -v # 🔍 Show IPv4 iptables rules for the NAT table:
+sudo iptables-save #  List all iptables rules including custom chains
+
+sudo iptables -L DOCKER-USER -v -n # View Docker user-defined rules:
+sudo iptables -I DOCKER-USER -s 203.0.113.100 -j DROP # Add a custom Docker rule.
+sudo iptables -L DOCKER-USER --line-numbers -n # First list them with line numbers:
+sudo iptables -D DOCKER-USER 3 # Then delete, for example, line 3
+sudo iptables -F DOCKER-USER # lush all custom Docker rules
+
+# If no DOCKER chain exists:
+docker ps # make sure all containers are up
+sudo systemctl restart docker  # resdtart docker
+sudo iptables -L DOCKER-USER -v -n
+
+# Block all inbound traffic from a malicious IP to Docker
+sudo iptables -I DOCKER-USER -s 203.0.113.66 -j DROP 
+
+# Allow only your IP to reach Docker containers
+sudo iptables -I DOCKER-USER -s YOUR.IP.ADDRESS.HERE -j ACCEPT
+sudo iptables -A DOCKER-USER -j DROP
+
+
+sudo iptables -F DOCKER-USER #  clear the DOCKER-USER rules
+```
+
+
 
 
 
