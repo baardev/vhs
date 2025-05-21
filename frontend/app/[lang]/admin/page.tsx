@@ -181,6 +181,12 @@ export default function AdminDashboard({ params }: { params: { lang: string } })
           >
             ISP
           </button>
+          <button
+            onClick={() => window.open('https://libronico.com/reports/report.html', '_blank', 'noopener,noreferrer')}
+            className="px-4 py-2 bg-purple-600 text-white rounded hover:bg-purple-700 focus:outline-none"
+          >
+            Reports
+          </button>
         </div>
 
         <div className="bg-white dark:bg-[#1a1a1a] shadow overflow-hidden sm:rounded-lg">
