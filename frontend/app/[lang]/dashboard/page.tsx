@@ -5,6 +5,7 @@ import { AuthContext } from '../../../src/contexts/AuthContext';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { getCommonDictionary } from '../dictionaries';
+import { forceValidateTokenOrLogout } from '../../../src/utils/authUtils';
 
 /**
  * @page Dashboard
@@ -33,6 +34,15 @@ export default function Dashboard({ params }: { params: { lang: string } }) {
     };
     loadDictionary();
   }, [params.lang]);
+
+  // Validate token on page load
+  useEffect(() => {
+    const validateSession = async () => {
+      await forceValidateTokenOrLogout(params.lang, router.push);
+    };
+    
+    validateSession();
+  }, [params.lang, router]);
 
   useEffect(() => {
     async function fetchData() {
@@ -77,6 +87,16 @@ export default function Dashboard({ params }: { params: { lang: string } }) {
       setLoading(false);
     }
   }, [user]);
+
+  // Handles navigation while ensuring valid token
+  const handleViewScorecards = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    // Validate token before navigating
+    const isValid = await forceValidateTokenOrLogout(params.lang, router.push);
+    if (isValid) {
+      router.push(`/${params.lang}/player-cards`);
+    }
+  };
 
   if (!user) {
     return (
@@ -177,9 +197,13 @@ export default function Dashboard({ params }: { params: { lang: string } }) {
                     <p className="text-gray-500 dark:text-gray-400 text-center">No recent activity</p>
                   )}
                   <div className="mt-4 text-center">
-                    <Link href={`/${params.lang}/player-cards`} className="text-sm text-blue-600 dark:text-blue-400 hover:underline">
+                    <a 
+                      href="#" 
+                      onClick={handleViewScorecards}
+                      className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                    >
                       View All Scorecards →
-                    </Link>
+                    </a>
                   </div>
                 </div>
               )}
@@ -237,12 +261,13 @@ export default function Dashboard({ params }: { params: { lang: string } }) {
               <h2 className="text-lg font-semibold text-gray-900 dark:text-white">Quick Actions</h2>
             </div>
             <div className="p-5 grid grid-cols-2 gap-4">
-              <Link 
-                href={`/${params.lang}/player-cards`} 
+              <a 
+                href="#" 
+                onClick={handleViewScorecards}
                 className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 View Scorecards
-              </Link>
+              </a>
               <Link 
                 href={`/${params.lang}/profile`} 
                 className="inline-flex items-center justify-center px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600"

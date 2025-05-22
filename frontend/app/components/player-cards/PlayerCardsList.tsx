@@ -40,6 +40,7 @@ ChartJS.register(
  * @property {string} play_date - Date of play.
  * @property {number} course_id - Identifier for the course.
  * @property {number} differential - Calculated score differential for the round.
+ * @property {number} g_differential - Alternative name for differential in some API responses.
  * @property {number} hcpi - Handicap index at the time of play.
  * @property {number} hcp - Course handicap for the round.
  * @property {number} gross - Gross score for the round.
@@ -54,6 +55,7 @@ interface PlayerCard {
   play_date: string;
   course_id: number;
   differential: number;
+  g_differential?: number; // Added for backend API compatibility
   hcpi: number;
   hcp: number;
   gross: number;
@@ -146,24 +148,53 @@ const PlayerCardsList = () => {
     const fetchPlayerCards = async () => {
       try {
         setLoading(true);
+        
+        // Check if user is logged in
+        if (!user) {
+          setError(dict?.playerCardsList?.authError || 'Please log in to view your player cards.');
+          setLoading(false);
+          setPlayerCards([]);
+          return;
+        }
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError(dict?.playerCardsList?.tokenError || 'Authentication token not found. Please log in again.');
+          setLoading(false);
+          setPlayerCards([]);
+          return;
+        }
+        
         console.log('Fetching player cards from /api/player-cards');
-        const response = await axios.get('/api/player-cards');
+        const response = await axios.get('/api/player-cards', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
         console.log('Player cards response:', response.data);
         setPlayerCards(response.data);
       } catch (err) {
         console.error('Error fetching player cards:', err);
         if (axios.isAxiosError(err)) {
-          setError(`${dict?.playerCardsList?.error || 'Failed to load player cards: '}${err.message} (${err.response?.status || 'unknown'} ${err.response?.statusText || ''})`);
+          if (err.response?.status === 401) {
+            setError(dict?.playerCardsList?.authError || 'Your session has expired. Please log in again.');
+            logout(); // Call logout from AuthContext to clear user state and token
+            router.push(`/${lang}/login`); // Redirect to login page with language
+          } else {
+            setError(`${dict?.playerCardsList?.error || 'Failed to load player cards: '}${err.message} (${err.response?.status || 'unknown'} ${err.response?.statusText || ''})`);
+          }
         } else {
           setError(`${dict?.playerCardsList?.error || 'Failed to load player cards: '}${err.toString()}`);
         }
+        setPlayerCards([]);
       } finally {
         setLoading(false);
       }
     };
 
     fetchPlayerCards();
-  }, [dict]);
+  }, [dict, user, logout, router, lang]);
 
   // Fetch chart data (requires authentication)
   useEffect(() => {
@@ -197,31 +228,52 @@ const PlayerCardsList = () => {
           // Data is already reversed by backend to be chronological (oldest first)
           const labels = response.data.map(d => new Date(d.play_date)); // Use Date objects for time scale
           
+          // Calculate min and max values for Y-axis
+          const allValues = [
+            ...response.data.map(d => d.gross).filter(v => v !== null && v !== undefined) as number[],
+            ...response.data.map(d => d.net).filter(v => v !== null && v !== undefined) as number[],
+            ...response.data.map(d => d.differential).filter(v => v !== null && v !== undefined) as number[]
+          ];
+          
+          // Logging to debug
+          console.log('All chart values:', allValues);
+          
+          // Calculate min and max with a little extra padding
+          const minValue = Math.floor(Math.min(...allValues)) - 5;
+          const maxValue = Math.ceil(Math.max(...allValues)) + 5;
+          
+          console.log('Calculated Y range - min:', minValue, 'max:', maxValue);
+          
+          // Create chart.js datasets
+          const chartDatasets = [
+            {
+              label: dict?.playerCardsList?.tableHeaders?.gross || 'Gross',
+              data: response.data.map(d => d.gross),
+              borderColor: 'rgb(255, 99, 132)',
+              backgroundColor: 'rgba(255, 99, 132, 0.5)',
+              tension: 0.1,
+            },
+            {
+              label: dict?.playerCardsList?.tableHeaders?.net || 'Net',
+              data: response.data.map(d => d.net),
+              borderColor: 'rgb(54, 162, 235)',
+              backgroundColor: 'rgba(54, 162, 235, 0.5)',
+              tension: 0.1,
+            },
+            {
+              label: dict?.playerCardsList?.tableHeaders?.differential || 'Differential',
+              data: response.data.map(d => d.differential),
+              borderColor: 'rgb(75, 192, 192)',
+              backgroundColor: 'rgba(75, 192, 192, 0.5)',
+              tension: 0.1,
+            },
+          ];
+          
           setChartData({
             labels,
-            datasets: [
-              {
-                label: dict?.playerCardsList?.tableHeaders?.gross || 'Gross',
-                data: response.data.map(d => d.gross),
-                borderColor: 'rgb(255, 99, 132)',
-                backgroundColor: 'rgba(255, 99, 132, 0.5)',
-                tension: 0.1,
-              },
-              {
-                label: dict?.playerCardsList?.tableHeaders?.net || 'Net',
-                data: response.data.map(d => d.net),
-                borderColor: 'rgb(54, 162, 235)',
-                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                tension: 0.1,
-              },
-              {
-                label: dict?.playerCardsList?.tableHeaders?.differential || 'Differential',
-                data: response.data.map(d => d.differential),
-                borderColor: 'rgb(75, 192, 192)',
-                backgroundColor: 'rgba(75, 192, 192, 0.5)',
-                tension: 0.1,
-              },
-            ],
+            datasets: chartDatasets,
+            // Store calculated min/max values to be used in chart options
+            _calculatedYRange: { min: minValue, max: maxValue }
           });
         } else {
           setChartData(null); // No data to display
@@ -244,6 +296,7 @@ const PlayerCardsList = () => {
     fetchChartData();
   }, [user, logout, router, dict, lang]); // Depend on user from AuthContext, logout, router, dict, and lang
 
+  // Create chart options with dynamic Y-axis min and max values based on data
   const chartOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -272,7 +325,15 @@ const PlayerCardsList = () => {
         }
       },
       y: {
-        beginAtZero: true, // Or false if scores can be negative / differentials
+        // Use calculated min/max if available, otherwise use default
+        min: chartData?._calculatedYRange?.min,
+        max: chartData?._calculatedYRange?.max,
+        beginAtZero: false, // Force Chart.js not to start at zero
+        suggestedMin: chartData?._calculatedYRange?.min, // Alternative way to set min
+        suggestedMax: chartData?._calculatedYRange?.max, // Alternative way to set max
+        ticks: {
+          precision: 0 // Use integers only for the tick values
+        },
         title: {
           display: true,
           text: dict?.playerCardsList?.chartYAxis || 'Score / Differential'
@@ -295,6 +356,17 @@ const PlayerCardsList = () => {
         )}
       </div>
 
+      {/* Authentication Message */}
+      {!user && (
+        <div className="mb-8 p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md text-center">
+          <h2 className="text-xl font-semibold mb-3">{dict?.playerCardsList?.authTitle || 'Authentication Required'}</h2>
+          <p className="mb-4">{dict?.playerCardsList?.authMessage || 'Please log in to view your player cards.'}</p>
+          <Link href={`/${lang}/login`} className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded inline-flex items-center">
+            <span>{dict?.playerCardsList?.loginButton || 'Log In'}</span>
+          </Link>
+        </div>
+      )}
+
       {/* Chart Section - Only show if user is logged in (implicitly handled by useEffect dependency) */}
       {user && (
         <div className="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
@@ -302,7 +374,25 @@ const PlayerCardsList = () => {
           {chartError && <div className="text-center py-4 text-red-600">{chartError}</div>}
           {!chartLoading && !chartError && chartData && (
             <div style={{ height: '400px' }}> {/* Set a fixed height for the chart container */}
-              <Line options={chartOptions} data={chartData} />
+              <Line 
+                options={{
+                  ...chartOptions,
+                  scales: {
+                    ...chartOptions.scales,
+                    y: {
+                      ...chartOptions.scales.y,
+                      // Force these settings directly in the render
+                      min: chartData._calculatedYRange.min,
+                      max: chartData._calculatedYRange.max,
+                      beginAtZero: false
+                    }
+                  }
+                }} 
+                data={chartData} 
+              />
+              <div className="text-xs text-gray-500 text-center mt-1">
+                Y-axis range: {chartData._calculatedYRange.min} to {chartData._calculatedYRange.max}
+              </div>
             </div>
           )}
           {!chartLoading && !chartError && !chartData && (
@@ -311,60 +401,38 @@ const PlayerCardsList = () => {
         </div>
       )}
 
-      {/* Table Section */}
-      {playerCards.length === 0 && !loading && <div className="text-center py-8">{dict?.playerCardsList?.noCardsFound || 'No player cards found in table.'}</div>}
-      {playerCards.length > 0 && (
-        <div className="overflow-x-auto">
-          <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-md">
-            <thead className="bg-gray-100 dark:bg-gray-700">
+      {/* Error Display */}
+      {error && (
+        <div className="mb-8 p-4 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <div className="text-center py-4 text-red-600">{error}</div>
+        </div>
+      )}
+
+      {/* Table Section - Only show if user is logged in and data is loaded */}
+      {user && !loading && playerCards.length > 0 && (
+        <div className="overflow-x-auto bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.player || 'Player'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.date || 'Date'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.course || 'Course'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.gross || 'Gross'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.net || 'Net'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.differential || 'Differential'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.status || 'Status'}
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                  {dict?.playerCardsList?.tableHeaders?.action || 'Action'}
-                </th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.player || 'Player'}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.date || 'Date'}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.course || 'Course'}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.gross || 'Gross'}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.net || 'Net'}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.differential || 'Differential'}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.status || 'Status'}</th>
+                <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">{dict?.playerCardsList?.tableHeaders?.actions || 'Actions'}</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
               {playerCards.map((card) => (
                 <tr key={card.id} className="hover:bg-gray-50 dark:hover:bg-gray-700">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
-                    {card.player_name || card.player_id}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {new Date(card.play_date).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {card.course_name || `Course #${card.course_id}`}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {card.gross || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {card.net || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">
-                    {card.differential != null && !isNaN(Number(card.differential)) ? Number(card.differential).toFixed(1) : '-'}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{card.player_name || '—'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{new Date(card.play_date).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{card.course_name || '—'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{card.gross || '—'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{card.net || '—'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{card.differential || card.g_differential || '—'}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span 
                       className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -387,6 +455,20 @@ const PlayerCardsList = () => {
               ))}
             </tbody>
           </table>
+        </div>
+      )}
+      
+      {/* No cards found message - Only show if user is logged in and not loading */}
+      {user && !loading && playerCards.length === 0 && !error && (
+        <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          {dict?.playerCardsList?.noCardsFound || 'No player cards found.'}
+        </div>
+      )}
+      
+      {/* Loading message */}
+      {loading && (
+        <div className="text-center py-8 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          {dict?.playerCardsList?.loading || 'Loading player cards...'}
         </div>
       )}
     </div>

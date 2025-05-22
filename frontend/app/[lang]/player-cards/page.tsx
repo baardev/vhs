@@ -1,10 +1,13 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, Suspense, useContext } from 'react';
 import { Geist, Geist_Mono } from "next/font/google";
 import PlayerCardsList from '../../components/player-cards/PlayerCardsList';
 import Link from 'next/link';
 import { getCommonDictionary } from '../dictionaries';
+import { useRouter } from 'next/navigation';
+import { AuthContext } from '../../../src/contexts/AuthContext';
+import { forceValidateTokenOrLogout } from '../../../src/utils/authUtils';
 
 /**
  * @constant geistSans
@@ -62,55 +65,58 @@ const geistMono = Geist_Mono({
  * @returns {JSX.Element} The rendered page displaying the list of player scorecards.
  */
 export default function PlayerCardsPage({ params }: { params: { lang: string } }) {
-  // Update to handle params properly without React.use() since we're in a client component
-  const { lang } = params;
-  const [dict, setDict] = useState<Record<string, any> | null>(null);
+  const router = useRouter();
+  const { user } = useContext(AuthContext);
+  const [dictionary, setDictionary] = useState<any>({});
 
+  // Load dictionary
   useEffect(() => {
     const loadDictionary = async () => {
-      const dictionary = await getCommonDictionary(lang);
-      setDict(dictionary);
+      const dict = await getCommonDictionary(params.lang);
+      setDictionary(dict);
     };
     loadDictionary();
-  }, [lang]);
-  
-  if (!dict) {
-    return <div>{params?.lang === 'en' ? 'Loading...' : 
-           params?.lang === 'es' ? 'Cargando...' : 
-           params?.lang === 'he' ? 'טוען...' : 
-           params?.lang === 'ru' ? 'Загрузка...' : 
-           params?.lang === 'zh' ? '加载中...' : 'Loading...'}</div>;
-  }
-  
+  }, [params.lang]);
+
+  // Validate token on page load
+  useEffect(() => {
+    const validateSession = async () => {
+      await forceValidateTokenOrLogout(params.lang, router.push);
+    };
+    
+    validateSession();
+  }, [params.lang, router]);
+
   return (
-    <div 
-      className={`${geistSans.className} ${geistMono.className} min-h-screen py-12 px-4 sm:px-6 lg:px-8 relative`}
-      style={{ backgroundImage: "url('/wp-golf-1.webp')" }}
-    >
-      <div className="absolute inset-0 bg-black opacity-50"></div>
-      <div className="max-w-7xl mx-auto relative z-10">
-        <h1 className="text-3xl font-bold text-white mb-8">
-          {dict.playerCardsPage.title}
-        </h1>
-        
-        <div className="flex justify-end mb-4">
-          <Link 
-            href={`/${lang}/player-cards/new`} 
-            className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
-          >
-            {dict.playerCardsPage.addNewScorecard}
-          </Link>
+    <div className="min-h-screen">
+      {/* Background with overlay */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute inset-0 bg-black opacity-50"></div>
+        <img
+          src="/wp-golf-1.webp"
+          alt="Golf background"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-8">
+        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+          <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+              {dictionary?.playerCards?.title || "Player Cards"}
+            </h1>
+            <p className="text-gray-600 dark:text-gray-400">
+              {dictionary?.playerCards?.description || "View and manage your golf round records."}
+            </p>
+          </div>
+          
+          <div className="p-6">
+            <Suspense fallback={<div>Loading player cards...</div>}>
+              <PlayerCardsList />
+            </Suspense>
+          </div>
         </div>
-        
-        <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
-          <p className="text-gray-700 dark:text-gray-300 mb-4">
-            {dict.playerCardsPage.description}
-          </p>
-        </div>
-        
-        <Suspense fallback={<div className="text-white">{dict.playerCardsPage.loadingScorecardsText}</div>}>
-          <PlayerCardsList />
-        </Suspense>
       </div>
     </div>
   );

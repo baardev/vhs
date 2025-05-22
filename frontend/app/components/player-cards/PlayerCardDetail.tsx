@@ -1,9 +1,11 @@
 'use client';
 
-import { useState, useEffect, ChangeEvent, FormEvent } from 'react';
+import { useState, useEffect, ChangeEvent, FormEvent, useContext } from 'react';
 import axios from 'axios';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { getCommonDictionary } from '../../dictionaries';
+import { AuthContext } from '../../../src/contexts/AuthContext';
 
 /**
  * @interface PlayerCard
@@ -143,6 +145,8 @@ const PlayerCardDetail = ({ cardId, lang = 'en' }: PlayerCardDetailProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState<PlayerCard | null>(null);
   const [dict, setDict] = useState<Record<string, any>>({});
+  const { user, logout } = useContext(AuthContext);
+  const router = useRouter();
 
   // Load dictionary
   useEffect(() => {
@@ -164,11 +168,46 @@ const PlayerCardDetail = ({ cardId, lang = 'en' }: PlayerCardDetailProps) => {
     const fetchPlayerCard = async () => {
       try {
         setLoading(true);
-        const response = await axios.get(`/api/player-cards/${cardId}`);
+        
+        // Check if user is logged in
+        if (!user) {
+          setError(dict?.playerCardDetail?.notAuthenticated || 'Please log in to view player card details');
+          setLoading(false);
+          return;
+        }
+        
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError(dict?.playerCardDetail?.tokenError || 'Authentication token not found. Please log in again.');
+          setLoading(false);
+          return;
+        }
+        
+        const response = await axios.get(`/api/player-cards/${cardId}`, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
         setPlayerCard(response.data);
       } catch (err) {
         console.error('Error fetching player card:', err);
-        setError('Failed to load player card details');
+        if (axios.isAxiosError(err)) {
+          const status = err.response?.status;
+          if (status === 401) {
+            setError(dict?.playerCardDetail?.sessionExpired || 'Your session has expired. Please log in again.');
+            logout();
+            router.push(`/${lang}/login`);
+          } else if (status === 403) {
+            setError(dict?.playerCardDetail?.unauthorized || 'You do not have permission to view this player card. You can only view your own cards.');
+          } else if (status === 404) {
+            setError(dict?.playerCardDetail?.notFound || 'Player card not found.');
+          } else {
+            setError(dict?.playerCardDetail?.fetchError || `Failed to load player card: ${err.message}`);
+          }
+        } else {
+          setError(dict?.playerCardDetail?.fetchError || 'An error occurred while loading the player card.');
+        }
       } finally {
         setLoading(false);
       }
@@ -177,7 +216,7 @@ const PlayerCardDetail = ({ cardId, lang = 'en' }: PlayerCardDetailProps) => {
     if (cardId) {
       fetchPlayerCard();
     }
-  }, [cardId]);
+  }, [cardId, user, logout, router, dict, lang]);
 
   useEffect(() => {
     if (playerCard) {
@@ -197,15 +236,50 @@ const PlayerCardDetail = ({ cardId, lang = 'en' }: PlayerCardDetailProps) => {
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     if (!formData) return;
+    
+    if (!user) {
+      setError(dict?.playerCardDetail?.notAuthenticated || 'Please log in to update player card details');
+      return;
+    }
+    
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setError(dict?.playerCardDetail?.tokenError || 'Authentication token not found. Please log in again.');
+      return;
+    }
+    
     setLoading(true);
     try {
-      const response = await axios.put(`/api/player-cards/${cardId}`, formData);
+      const response = await axios.put(
+        `/api/player-cards/${cardId}`, 
+        formData,
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          }
+        }
+      );
+      
       setPlayerCard(response.data);
       setIsEditing(false);
       setError('');
     } catch (err) {
       console.error('Error updating player card:', err);
-      setError(dict?.playerCardDetail?.updateFailed || 'Failed to update player card. Please try again.');
+      if (axios.isAxiosError(err)) {
+        const status = err.response?.status;
+        if (status === 401) {
+          setError(dict?.playerCardDetail?.sessionExpired || 'Your session has expired. Please log in again.');
+          logout();
+          router.push(`/${lang}/login`);
+        } else if (status === 403) {
+          setError(dict?.playerCardDetail?.unauthorizedUpdate || 'You do not have permission to update this player card. You can only update your own cards.');
+        } else {
+          setError(dict?.playerCardDetail?.updateFailed || 'Failed to update player card. Please try again.');
+        }
+      } else {
+        setError(dict?.playerCardDetail?.updateFailed || 'Failed to update player card. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -226,7 +300,32 @@ const PlayerCardDetail = ({ cardId, lang = 'en' }: PlayerCardDetailProps) => {
   };
 
   if (loading && !isEditing) return <div className="text-center py-8">{dict?.playerCardDetail?.loading || 'Loading player card details...'}</div>;
-  if (error && !isEditing) return <div className="text-center py-8 text-red-600">{error}</div>;
+  
+  // If there's an error, display an error message with a link back to the player cards list
+  if (error) {
+    return (
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 text-center">
+        <div className="mb-6">
+          <Link href={`/${lang}/player-cards`} className="text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300">
+            &larr; {dict?.playerCardDetail?.backToList || 'Back to Player Cards'}
+          </Link>
+        </div>
+        <div className="text-red-600 dark:text-red-400 text-lg mb-4">{error}</div>
+        {error.includes('permission') && (
+          <div className="text-gray-600 dark:text-gray-300 mt-4">
+            <p className="mb-2">{dict?.playerCardDetail?.permissionInfo || 'You can only access your own player cards.'}</p>
+            <Link 
+              href={`/${lang}/player-cards`} 
+              className="inline-block mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+            >
+              {dict?.playerCardDetail?.viewYourCards || 'View Your Cards'}
+            </Link>
+          </div>
+        )}
+      </div>
+    );
+  }
+  
   if (!playerCard && !isEditing) return <div className="text-center py-8">{dict?.playerCardDetail?.notFound || 'Player card not found'}</div>;
   if (!formData && isEditing) return <div className="text-center py-8">{dict?.playerCardDetail?.loadingEdit || 'Loading edit form...'}</div>;
   if (!playerCard && !formData) return <div className="text-center py-8">{dict?.playerCardDetail?.dataUnavailable || 'Player card data unavailable.'}</div>;

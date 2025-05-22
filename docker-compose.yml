@@ -66,6 +66,8 @@ services:
     networks:
       - app-network  # Your comment suggests db-network but using app-network
     restart: unless-stopped
+    ports:
+     - "127.0.0.1:6541:6541"
   
   backend:
     build:
